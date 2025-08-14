@@ -1,0 +1,227 @@
+---
+title: "Basic stats sgRNA library"
+author: "Author: Stefanus Bernard"
+date: "Date: `r format(Sys.time(), '%d %B %Y')`"
+output: 
+    html_document:
+      theme: cerulean
+      toc: true
+      toc_float: true
+      number_sections: true
+      self_contained: true
+---
+
+```{r}
+library(tidyverse)
+library(readxl)
+library(VennDiagram)
+library(grid)
+library(paletteer)
+library(RColorBrewer)
+source('../sgRNA_library_refinement_pipeline_functions.R')
+```
+
+# Import the data of sgRNA library report
+
+```{r}
+brunello <- 'broadgpp-brunello-library-contents'
+toronto <- 'tkov3_guide_sequence'
+avana <- 'avana_library'
+yusa <- 'yusa_hcrispr_ko_grnas'
+
+brunello_report <- read_excel(paste('../output_cleaning/', brunello, '_full_report.xlsx', sep = ''))
+toronto_report <- read_excel(paste('../output_cleaning/', toronto, '_full_report.xlsx', sep = ''))
+avana_report <- read_excel(paste('../output_cleaning/', avana, '_full_report.xlsx', sep = ''))
+yusa_report <- read_excel(paste('../output_cleaning/', yusa, '_full_report.xlsx', sep = ''))
+
+
+
+# cellecta_M1 <- 'sample_M1_150K_full_report.xlsx'
+# cellecta_M2 <- 'sample_M2_150K_full_report.xlsx'
+# cellecta_M3 <- 'sample_M3_150K_full_report.xlsx'
+# 
+# cellecta_report_M1 <- read_excel(paste('./output_cleaning/', cellecta_M1, sep = ''))
+# cellecta_report_M2 <- read_excel(paste('./output_cleaning/', cellecta_M2, sep = ''))
+# cellecta_report_M3 <- read_excel(paste('./output_cleaning/', cellecta_M3, sep = ''))
+# 
+# cellecta_report <- rbind(cellecta_report_M1, cellecta_report_M2, cellecta_report_M3)
+# cellecta_report <- cellecta_report %>%
+#     arrange() %>%
+#     distinct()
+
+```
+
+# Calculate the percentage of multi-target, single-mismatch, and PAM-distal double mismatch sgRNA in each libraries
+
+```{r}
+
+calculate_percentage <- function(library_report, discarded_sgrna, original_sgrna) {
+    percentage_discarded <- (sum(library_report[[discarded_sgrna]])/sum(library_report[[original_sgrna]])) * 100
+    return(percentage_discarded)
+}
+
+
+brunello_multi_target <- round(calculate_percentage(brunello_report, "multi-target sgRNA", "sgRNA number"), 2)
+toronto_multi_target <- round(calculate_percentage(toronto_report, "multi-target sgRNA", "sgRNA number"), 2)
+avana_multi_target <- round(calculate_percentage(avana_report, "multi-target sgRNA", "sgRNA number"), 2)
+yusa_multi_target <- round(calculate_percentage(yusa_report, "multi-target sgRNA", "sgRNA number"), 2)
+
+brunello_single_mismatch <- round(calculate_percentage(brunello_report, "single mismatch sgRNA", "sgRNA number"), 2)
+toronto_single_mismatch <- round(calculate_percentage(toronto_report, "single mismatch sgRNA", "sgRNA number"), 2)
+avana_single_mismatch <- round(calculate_percentage(avana_report, "single mismatch sgRNA", "sgRNA number"), 2)
+yusa_single_mismatch <- round(calculate_percentage(yusa_report, "single mismatch sgRNA", "sgRNA number"), 2)
+
+brunello_pam_distal <- round(calculate_percentage(brunello_report, "PAM distal double mismatch", "sgRNA number"), 2)
+toronto_pam_distal <- round(calculate_percentage(toronto_report, "PAM distal double mismatch", "sgRNA number"), 2)
+avana_pam_distal <- round(calculate_percentage(avana_report, "PAM distal double mismatch", "sgRNA number"), 2)
+yusa_pam_distal <- round(calculate_percentage(yusa_report, "PAM distal double mismatch", "sgRNA number"), 2)
+
+
+# cellecta_multi_target <- round(calculate_percentage(cellecta_report, "multi-target sgRNA", "sgRNA number"), 2)
+# cellecta_single_mismatch <- round(calculate_percentage(cellecta_report, "single mismatch sgRNA", "sgRNA number"), 2)
+# cellecta_pam_distal <- round(calculate_percentage(cellecta_report, "PAM distal double mismatch", "sgRNA number"), 2)
+
+# Create dataframe for multi-target, single-mismatch, and pam-distal from all library
+
+multi_target <- c(brunello_multi_target, toronto_multi_target, yusa_multi_target, avana_multi_target)
+single_mismatch <- c(brunello_single_mismatch, toronto_single_mismatch, yusa_single_mismatch, avana_single_mismatch)
+pam_distal <- c(brunello_pam_distal, toronto_pam_distal, yusa_pam_distal, avana_pam_distal)
+
+library <- c("brunello", "toronto_v3", "yusa", "avana")
+factor <- c(1,2,3,4)
+
+sum_dataframe <- data.frame(library, multi_target, single_mismatch, pam_distal)
+
+# Histogram of multi-target/off-target sgRNAs in Cellecta, Brunello, and Toronto
+
+# Reorder the library factor to ensure the bars are ordered as Cellecta, Brunello, and Toronto
+sum_dataframe_long <- sum_dataframe %>%
+    pivot_longer(cols = c("multi_target", "single_mismatch", "pam_distal"), 
+                 names_to = "category", 
+                 values_to = "percentage") %>%
+    mutate(category = factor(category, levels = c("multi_target", "single_mismatch", "pam_distal")),
+           library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana")))
+
+
+# Define custom colors for the libraries
+my_palette <- brewer.pal(n = 4, name = "Set2")
+
+
+
+# Create the grouped multibar chart for each sgRNA libraries
+multi_bar_chart <- ggplot(sum_dataframe_long, aes(x = category, y = percentage, fill = library)) +
+    geom_bar(stat = "identity", position = position_dodge2(padding = 0.2), width = 0.7) +
+    theme_minimal() +
+    labs(title = "", x = "", y = "sgRNA (%)") +
+    scale_x_discrete(labels = c('multi_target' = 'Multi-target sgRNA',
+                                'single_mismatch' = 'Single mismatch sgRNA',
+                                'pam_distal' = 'PAM distal \n double mismatch sgRNA')) +
+    geom_text(aes(label = paste(percentage, "%", sep = '')), position = position_dodge2(width = 0.7), vjust = -0.5, size = 9) +
+    theme(axis.text.x = element_text(size = 40, vjust = 0.7, colour = 'black'),
+          axis.text.y = element_text(size = 40),
+          axis.title.y = element_text(size = 40, vjust = 0.5, margin = margin(r = 20)),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          axis.line.x = element_line(size = 0.5),
+          axis.line.y = element_line(size = 0.5),
+          legend.title = element_text(size = 40),
+          legend.text = element_text(size = 40),
+          plot.margin = margin(1, 1, 1, 1), 
+          line = element_line((size = 4), colour = 'black'),
+          legend.spacing.x = unit(1, 'cm')) +
+    scale_fill_manual(values = my_palette,
+                      name = 'Library',
+                      breaks = c("brunello", "toronto_v3", "yusa", "avana"),
+                      labels = c("brunello" = "Brunello",
+                                 "toronto_v3" = "Toronto Knockout V3",
+                                 "yusa" = "Yusa Project Score",
+                                 "avana" = "Avana"))
+
+multi_bar_chart
+
+ggsave(
+    path = './',
+    width = 30,
+    height = 15,
+    dpi = 300,
+    plot = multi_bar_chart,
+    filename = paste('./plot/percentage_off_target.png', sep = ''))
+```
+
+
+# Percentage of genes targeted by at least 3 good sgRNAs
+
+```{r}
+
+import_library <- function(lib_dir){
+  library <- read_tsv(lib_dir, col_names = FALSE)
+  colnames(library) <- c("sgrna", "spacer", "gene")
+  
+  return(library)
+}
+
+brunello_library <- import_library("../public_crispr_library/avana_library.tsv")
+toronto_library <- import_library("../public_crispr_library/tkov3_guide_sequence.tsv")
+avana_library <- import_library("../public_crispr_library/avana_library.tsv")
+yusa_library <- import_library("../public_crispr_library/yusa_hcrispr_ko_grnas.tsv")
+
+brunello_refined <- import_library("../output_cleaning/broadgpp-brunello-library-contents_65K_refined.tsv")
+toronto_refined <- import_library("../output_cleaning/tkov3_guide_sequence_62K_refined.tsv")
+avana_refined <- import_library("../output_cleaning/avana_library_57K_refined.tsv")
+yusa_refined <- import_library("../output_cleaning/yusa_hcrispr_ko_grnas_77K_refined.tsv")
+
+percentage_brunello <- round(length(unique(brunello_refined$sgrna)) / length(unique(brunello_library$sgrna)) * 100, 2)
+percentage_toronto <- round(length(unique(toronto_refined$sgrna)) / length(unique(toronto_library$sgrna)) * 100, 2)
+percentage_avana <- round(length(unique(avana_refined$sgrna)) / length(unique(avana_library$sgrna)) * 100, 2)
+percentage_yusa <- round(length(unique(yusa_refined$sgrna)) / length(unique(yusa_library$sgrna)) * 100, 2)
+
+df_percentage <- data.frame(library = c("brunello", "toronto_v3", "yusa", "avana"),
+                            percentage_genes = c(percentage_brunello, percentage_toronto, percentage_yusa, percentage_avana))
+
+df_percentage <- df_percentage %>%
+  mutate(library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana")))
+
+my_palette <- brewer.pal(n = 4, name = "Set2")
+
+percentage_bar_chart <- ggplot(df_percentage, aes(x = library, y = percentage_genes, fill = library)) +
+    geom_bar(stat = "identity", position = position_dodge2(padding = 0.2), width = 0.7) +
+    theme_minimal() +
+    labs(title = "", x = "", y = "sgRNA (%)") +
+    scale_x_discrete(labels = c("brunello" = "Brunello",
+                                 "toronto_v3" = "Toronto \nKnockout V3",
+                                 "yusa" = "Yusa \nProject Score",
+                                 "avana" = "Avana")) +
+    geom_text(aes(label = paste(percentage_genes, "%", sep = '')), position = position_dodge2(width = 0.7), vjust = -0.5, size = 12) +
+    theme(axis.text.x = element_text(size = 40, vjust = 0.7, colour = 'black'),
+          axis.text.y = element_text(size = 40),
+          axis.title.y = element_text(size = 40, vjust = 0.5, margin = margin(r = 20)),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          axis.line.x = element_line(size = 0.5),
+          axis.line.y = element_line(size = 0.5),
+          legend.title = element_text(size = 40),
+          legend.text = element_text(size = 40),
+          plot.margin = margin(1, 1, 1, 1), 
+          line = element_line((size = 4), colour = 'black'),
+          legend.spacing.x = unit(1, 'cm')) +
+    scale_fill_manual(values = my_palette,
+                      name = 'Library',
+                      breaks = c("brunello", "toronto_v3", "yusa", "avana"),
+                      labels = c("brunello" = "Brunello",
+                                 "toronto_v3" = "Toronto Knockout V3",
+                                 "yusa" = "Yusa Project Score",
+                                 "avana" = "Avana")) +
+    ylim(0, 100)
+
+percentage_bar_chart
+
+ggsave(
+    path = './',
+    width = 25,
+    height = 15,
+    dpi = 300,
+    plot = percentage_bar_chart,
+    filename = paste('./plot/library_sgrna_bar_chart.png', sep = ''))
+
+```
+

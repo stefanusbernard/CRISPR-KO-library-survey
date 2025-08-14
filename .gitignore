@@ -1,0 +1,12 @@
+*.csv
+*.ebwt
+*.fa.gz
+*.tsv
+*.txt
+*.html
+*.xlsx
+*.log
+*.png
+*.gz
+*.out
+*.gtf
