@@ -6,7 +6,6 @@
 *.html
 *.xlsx
 *.log
-*.png
 *.gz
 *.out
 *.gtf
