@@ -15,8 +15,11 @@ library(tidyverse)
 library(VennDiagram)
 library(ggvenn)
 library(ggbreak)
+library(BSgenome)
+library(BSgenome.Hsapiens.UCSC.hg38)
+library(BSgenome.Hsapiens.NCBI.T2T.CHM13v2.0)
 
-source('../sgRNA_library_refinement_pipeline_functions.R')
+source('../CRISPR-KO-library-refinement-pipeline/sgRNA_library_refinement_pipeline_functions.R')
 ```
 
 # Function to import data
@@ -24,17 +27,40 @@ source('../sgRNA_library_refinement_pipeline_functions.R')
 ```{r}
 # import sgRNA library
 # WE SHOULD DISPOSE ANY CONTROL FROM THE SGRNA LIBRARY AS THEY ARE NOT USED IN THIS ANALYSIS
+
+terms <- c("CONTROL", "Control", "control", "INTRON", "Intron", "intron", "LacZ", "luciferase")
+# lacZ and luciferase are the control in Toronto V3 library
+
+terms_for_filtering <- paste(terms, collapse = "|")
+
 import_sgrna_library <- function(data_dir) {
   library <- read_tsv(data_dir, col_names = FALSE)
   colnames(library) <- c('sgRNA', 'spacer', 'gene')
+  
+  # remove any non-targeting control or control sgRNA
+  
+  # detect any control/intron control sgRNA
+  library <- library %>% filter(!str_detect(gene, terms_for_filtering))
+  
   return(library)
 }
 
 # import alignment data and keep alignment for normal chromosome only
-import_sgrna_library_alignment <- function(data_dir) {
-  library <- read_csv(data_dir)
-  aln_normal_chr <- alignment_normal_chr(library)
-  return(aln_normal_chr)
+import_sgrna_library_alignment <- function(data_dir, genome_type) {
+  
+  if (str_detect("T2T-CHM13", genome_type)) {
+    alignment <- read_csv(data_dir) %>% distinct()
+    alignment <- alignment %>% filter(!str_detect(gene, terms_for_filtering))
+    return(alignment)
+    
+  } else if (str_detect("hg38", genome_type)) {
+    alignment <- read_csv(data_dir) %>% distinct()
+    alignment <- alignment %>% filter(!str_detect(gene, terms_for_filtering))
+    
+    aln_normal_chr <- alignment_normal_chr(alignment)
+    return(aln_normal_chr)
+
+  }
 }
 
 # import list off target guides (multi-target/single-mismatch/double-mismatch-pam-distal)
@@ -54,23 +80,47 @@ import_list_off_target_guides <- function(data_dir) {
 
 ```{r}
 
-avana_library_meyers <- import_sgrna_library("../public_crispr_library/avana_library.tsv")
-avana_alignment_meyers <- alignment_normal_chr(import_sgrna_library_alignment("../object_intermediate/avana_library_aln.csv") %>% distinct())
+avana_library_meyers <- import_sgrna_library("../CRISPR-KO-library-refinement-pipeline/public_crispr_library/avana_library.tsv")
+brunello_library <- import_sgrna_library("../CRISPR-KO-library-refinement-pipeline/public_crispr_library/broadgpp-brunello-library-contents.tsv")
+toronto_library <- import_sgrna_library("../CRISPR-KO-library-refinement-pipeline/public_crispr_library/tkov3_guide_sequence.tsv")
+yusa_library <- import_sgrna_library("../CRISPR-KO-library-refinement-pipeline/public_crispr_library/yusa_hcrispr_ko_grnas.tsv")
 
-avana_library_fortin <- import_sgrna_library("../public_crispr_library/STable_02_AvanaLibrary.tsv")
-avana_alignment_fortin <- alignment_normal_chr(import_sgrna_library_alignment("../object_intermediate/STable_02_AvanaLibrary_aln.csv") %>% distinct())
+# hg38
+# avana_alignment_meyers <- import_sgrna_library_alignment("../CRISPR-KO-library-refinement-pipeline/object_intermediate/hg38/avana_library_aln.csv", "hg38")
+# brunello_alignment <- import_sgrna_library_alignment("../CRISPR-KO-library-refinement-pipeline/object_intermediate/hg38/broadgpp-brunello-library-contents_aln.csv", "hg38")
+# toronto_alignment <- import_sgrna_library_alignment("../CRISPR-KO-library-refinement-pipeline/object_intermediate/hg38/tkov3_guide_sequence_aln.csv", "hg38")
+# yusa_alignment <- import_sgrna_library_alignment("../CRISPR-KO-library-refinement-pipeline/object_intermediate/hg38/yusa_hcrispr_ko_grnas_aln.csv", "hg38")
 
-brunello_library <- import_sgrna_library("../public_crispr_library/broadgpp-brunello-library-contents.tsv")
-brunello_alignment <- alignment_normal_chr(import_sgrna_library_alignment("../object_intermediate/broadgpp-brunello-library-contents_aln.csv") %>% distinct())
+# T2T-CHM13
+avana_alignment_meyers <- import_sgrna_library_alignment("../CRISPR-KO-library-refinement-pipeline/object_intermediate/T2T-CHM13_bsgenome/avana_library_aln.csv", "T2T-CHM13")
+brunello_alignment <- import_sgrna_library_alignment("../CRISPR-KO-library-refinement-pipeline/object_intermediate/T2T-CHM13_bsgenome/broadgpp-brunello-library-contents_aln.csv", "T2T-CHM13")
+toronto_alignment <- import_sgrna_library_alignment("../CRISPR-KO-library-refinement-pipeline/object_intermediate/T2T-CHM13_bsgenome/tkov3_guide_sequence_aln.csv", "T2T-CHM13")
+yusa_alignment <- import_sgrna_library_alignment("../CRISPR-KO-library-refinement-pipeline/object_intermediate/T2T-CHM13_bsgenome/yusa_hcrispr_ko_grnas_aln.csv", "T2T-CHM13")
 
-toronto_library <- import_sgrna_library("../public_crispr_library/tkov3_guide_sequence.tsv")
-toronto_alignment <- alignment_normal_chr(import_sgrna_library_alignment("../object_intermediate/tkov3_guide_sequence_aln.csv") %>% distinct())
+```
 
-yusa_library <- import_sgrna_library("../public_crispr_library/yusa_hcrispr_ko_grnas.tsv")
-yusa_alignment <- alignment_normal_chr(import_sgrna_library_alignment("../object_intermediate/yusa_hcrispr_ko_grnas_aln.csv") %>% distinct())
+## Import paralog data from Barbara's paper
 
-cellecta_M1_library <- import_sgrna_library("../cellecta_library/sample_M1_150K.tsv")
-cellecta_M1_alignment <- alignment_normal_chr(import_sgrna_library_alignment("../object_intermediate/sample_M1_150K_aln.csv") %>% distinct())
+```{r}
+
+# Function to obtain the list of paralog pairs from Barbara's dataset
+
+list_paralog_gene_pairs <- function(dataset = "./barbara_36K_paralog_pairs.csv") {
+  
+  predicted_paralog_dataset <- read_csv(dataset) %>%
+    mutate(sorted_gene_pair_2 = paste(A2, "_", A1, sep = "")) %>%
+    relocate(.after = sorted_gene_pair)
+  
+  gene_pair_1 <- predicted_paralog_dataset$sorted_gene_pair
+  gene_pair_2 <- predicted_paralog_dataset$sorted_gene_pair_2
+  
+  gene_pair <- unique(union(gene_pair_1, gene_pair_2))
+  return(gene_pair)
+}
+
+# import predicted paralog pairs from Barbara's paper
+
+predicted_paralog_pairs <- list_paralog_gene_pairs()
 
 ```
 
@@ -147,9 +197,10 @@ visualize_off_target_alignment <- function(alignment_bin_df, xlabel) {
                           scale_y_break(c((alignment_bin_df$number_of_sgrnas[alignment_bin_df$num_of_alignments == 2] + 1500),
                                           (alignment_bin_df$number_of_sgrnas[alignment_bin_df$num_of_alignments == 1] - 1500))) +
                           labs(x = xlabel, y = "Number of sgRNAs") +
-                          geom_text(aes(label = paste("n=", number_of_sgrnas)),
-                                    nudge_y = 150,
-                                    size = 3.5)
+                          geom_text(aes(label = paste("n=", number_of_sgrnas, sep="")),
+                                    nudge_y = 100,
+                                    nudge_x = 0,
+                                    size = 2.5)
 
 }
 
@@ -164,7 +215,6 @@ avana_classification <- off_target_classification(avana_alignment_meyers)
 brunello_classification <- off_target_classification(brunello_alignment)
 toronto_classification <- off_target_classification(toronto_alignment)
 yusa_classification <- off_target_classification(yusa_alignment)
-cellecta_M1_classification <- off_target_classification(cellecta_M1_alignment)
 
 ```
 
@@ -173,21 +223,40 @@ cellecta_M1_classification <- off_target_classification(cellecta_M1_alignment)
 ```{r}
 
 avana_stratify_multi_target <- off_target_alignment_bin(avana_classification[[1]], c("perfect", "multi-target guides", "non-targeting"))
-visualize_off_target_alignment(avana_stratify_multi_target[[2]], "Number of on-target alignments")
 
 brunello_stratify_multi_target <- off_target_alignment_bin(brunello_classification[[1]], c("perfect", "multi-target guides", "non-targeting"))
-visualize_off_target_alignment(brunello_stratify_multi_target[[2]], "Number of on-target alignments")
 
 toronto_stratify_multi_target <- off_target_alignment_bin(toronto_classification[[1]], c("perfect", "multi-target guides", "non-targeting"))
-visualize_off_target_alignment(toronto_stratify_multi_target[[2]], "Number of on-target alignments")
 
 yusa_stratify_multi_target <- off_target_alignment_bin(yusa_classification[[1]], c("perfect", "multi-target guides", "non-targeting"))
-visualize_off_target_alignment(yusa_stratify_multi_target[[2]], "Number of on-target alignments")
 
-cellecta_M1_stratify_multi_target <- off_target_alignment_bin(cellecta_M1_classification[[1]], c("perfect", "multi-target guides", "non-targeting"))
-visualize_off_target_alignment(cellecta_M1_stratify_multi_target[[2]], "Number of on-target alignments")
+```
 
+# Export the bar chart showing stratification of multi-target sgRNAs
 
+```{r}
+export_images <- function(object, filename_dir, genome_type) {
+  ggsave(
+    path = './',
+    width = 5,
+    height = 6,
+    dpi = 300,
+    plot = object,
+    filename = paste(filename_dir, genome_type, ".png", sep=""))
+}
+
+export_images(visualize_off_target_alignment(avana_stratify_multi_target[[2]], "Number of on-target alignments"),
+              "./plot/avana_stratification_",
+              "hg38")
+export_images(visualize_off_target_alignment(brunello_stratify_multi_target[[2]], "Number of on-target alignments"),
+              "./plot/brunello_stratification_",
+              "hg38")
+export_images(visualize_off_target_alignment(toronto_stratify_multi_target[[2]], "Number of on-target alignments"),
+              "./plot/toronto_stratification_",
+              "hg38")
+export_images(visualize_off_target_alignment(yusa_stratify_multi_target[[2]], "Number of on-target alignments"),
+              "./plot/yusa_stratification_",
+              "hg38")
 ```
 
 
@@ -198,22 +267,55 @@ visualize_off_target_alignment(cellecta_M1_stratify_multi_target[[2]], "Number o
 ```{r}
 
 # annotate off-target sgRNAs
-annotate_off_target <- function(alignment_data) {
-  ccds <- read_ccds_data('../CCDS.20221027.txt')
-  transformed_ccds <- transform_gene_annotation_ccds(ccds)
+annotate_off_target <- function(alignment_data, annotation_data, bsgenome, bsgenome_text) {
+  
+  if (grepl("\\.txt$", annotation_data)) {
+  
+    print(paste("Processing:", annotation_data))
+  
+    # import ccds data
+    ccds <- read_ccds_data(ccds_filename = annotation_data)
+    
+    # transform gene annotation data
+    transformed_gene_annotation <- transform_gene_annotation_ccds(ccds, chosen_genome = bsgenome_text)
+    
+    # take ccds_exon data from transformed gene annotation
+    ccds_exon <- transformed_gene_annotation$ccds_exon
+    
+    # take granges data from transformed gene annotation
+    gene_annot_granges <- transformed_gene_annotation$gene_annot_granges_df
+   
+    
+  } else if (grepl("\\.rds$", annotation_data)) {
+    
+      print(paste("Processing:", annotation_data))
+    
+      # import .rds data
+      gene_annot_granges <- readRDS(file = annotation_data)
+    
+  }
+  
+  # ccds <- read_ccds_data('../CCDS.20221027.txt')
+  # transformed_ccds <- transform_gene_annotation_ccds(ccds)
+  
   modified_alignment <- add_cut_pos_pam_pos(alignment_data)
-  off_target_granges <- make_granges_from_alignment_data(modified_alignment)
-  gene_df_overlap <- find_overlaps_gene_annotation_and_alignment(off_target_granges, transformed_ccds$gene_annot_granges_df)
+  
+  # NCBI if using T2T-CHM13; UCSC if using hg38
+  off_target_granges <- make_granges_from_alignment_data(modified_alignment, bsgenome)
+  
+  gene_df_overlap <- find_overlaps_gene_annotation_and_alignment(off_target_granges, gene_annot_granges)
+  
   return(gene_df_overlap)
 }
 
+
 # off target annotation (can be multi-target, single-mismatch, or pam-distal double mismatches) used to annotate whether the sgRNA target random genomic loci, protein-coding genes or intended target gene
 
-off_target_annotation <- function(alignment_data, library, list_sgrna, num_mismatches, library_name){
+off_target_annotation <- function(alignment_data, annotation_data, bsgenome, bsgenome_text, library, list_sgrna, num_mismatches, library_name){
   
   alignment_data <- alignment_data %>% filter(sgRNA %in% list_sgrna)
   
-  gene_df <- annotate_off_target(alignment_data)
+  gene_df <- annotate_off_target(alignment_data, annotation_data, bsgenome, bsgenome_text)
   gene_df <- gene_df %>%
     dplyr::rename('actual_chr' = 'chr',
                   'actual_gene' = 'gene')
@@ -299,6 +401,9 @@ off_target_annotation <- function(alignment_data, library, list_sgrna, num_misma
 
 list_guides <- avana_stratify_multi_target[[1]] %>% filter(alignment_bin %in% c(2,3,4,5,6,7,8,"> 8")) %>% pull(sgRNA)
 avana_multi_protein_coding_genes <- off_target_annotation(avana_alignment_meyers, 
+                                                          "../CRISPR-KO-library-refinement-pipeline/annotation_file/T2T-CHM13v2.0_gene_annot_granges.rds",
+                                                          BSgenome.Hsapiens.NCBI.T2T.CHM13v2.0,
+                                                          "T2T-CHM13v2.0",
                                                           avana_library_meyers, 
                                                           list_guides,
                                                           0,
@@ -306,35 +411,37 @@ avana_multi_protein_coding_genes <- off_target_annotation(avana_alignment_meyers
 
 list_guides <- brunello_stratify_multi_target[[1]] %>% filter(alignment_bin %in% c(2,3,4,5,6,7,8,"> 8")) %>% pull(sgRNA)
 brunello_multi_protein_coding_genes <- off_target_annotation(brunello_alignment, 
-                                                          brunello_library, 
-                                                          list_guides,
-                                                          0,
-                                                          "brunello")
+                                                             "../CRISPR-KO-library-refinement-pipeline/annotation_file/T2T-CHM13v2.0_gene_annot_granges.rds",
+                                                            BSgenome.Hsapiens.NCBI.T2T.CHM13v2.0,
+                                                            "T2T-CHM13v2.0",
+                                                            brunello_library, 
+                                                            list_guides,
+                                                            0,
+                                                            "brunello")
 
 list_guides <- toronto_stratify_multi_target[[1]] %>% filter(alignment_bin %in% c(2,3,4,5,6,7,8,"> 8")) %>% pull(sgRNA)
 toronto_multi_protein_coding_genes <- off_target_annotation(toronto_alignment, 
-                                                          toronto_library, 
-                                                          list_guides,
-                                                          0,
-                                                          "toronto")
+                                                            "../CRISPR-KO-library-refinement-pipeline/annotation_file/T2T-CHM13v2.0_gene_annot_granges.rds",
+                                                            BSgenome.Hsapiens.NCBI.T2T.CHM13v2.0,
+                                                            "T2T-CHM13v2.0",
+                                                            toronto_library, 
+                                                            list_guides,
+                                                            0,
+                                                            "toronto")
 
 list_guides <- yusa_stratify_multi_target[[1]] %>% filter(alignment_bin %in% c(2,3,4,5,6,7,8,"> 8")) %>% pull(sgRNA)
 yusa_multi_protein_coding_genes <- off_target_annotation(yusa_alignment, 
-                                                          yusa_library, 
-                                                          list_guides,
-                                                          0,
-                                                          "yusa")
-
-list_guides <- cellecta_M1_stratify_multi_target[[1]] %>% filter(alignment_bin %in% c(2,3,4,5,6,7,8,"> 8")) %>% pull(sgRNA)
-cellecta_M1_multi_protein_coding_genes <- off_target_annotation(cellecta_M1_alignment, 
-                                                                cellecta_M1_library, 
-                                                                list_guides,
-                                                                0,
-                                                                "cellecta_M1")
+                                                         "../CRISPR-KO-library-refinement-pipeline/annotation_file/T2T-CHM13v2.0_gene_annot_granges.rds",
+                                                         BSgenome.Hsapiens.NCBI.T2T.CHM13v2.0,
+                                                         "T2T-CHM13v2.0",
+                                                        yusa_library, 
+                                                        list_guides,
+                                                        0,
+                                                        "yusa")
 
 ```
 
-## Percentage of multi-target sgRNAs in each libraries
+## Percentage of multi-target sgRNAs in each libraries and their target locations
 
 ```{r}
 
@@ -380,9 +487,13 @@ ggsave(
     height = 15,
     dpi = 300,
     plot = grouped_barplot,
-    filename = paste('./plot/percentage_multi_target.png', sep = ''))
+    filename = paste('./plot/percentage_multi_target_T2T.png', sep = ''))
 
+```
 
+## Percentage of genes affected by multi-target sgRNAs across libraries
+
+```{r}
 # barchart for genes
 
 grouped_barplot <- table_multi_target %>%
@@ -415,37 +526,12 @@ ggsave(
     height = 9,
     dpi = 300,
     plot = grouped_barplot,
-    filename = paste('genes_multi_target.png', sep = ''))
-
+    filename = paste('./plot/genes_multi_target_T2T.png', sep = ''))
 ```
+
 
 # Question 1: Are multitargeting effects more likely to target pairs of paralogs?
 # Question 2: Are genes with paralogs more likely to be subject to multi-targeting effects?
-
-## Import paralog data from Barbara's paper
-
-```{r}
-
-# Function to obtain the list of paralog pairs from Barbara's dataset
-
-list_paralog_gene_pairs <- function(dataset = "../barbara_36K_paralog_pairs.csv") {
-  
-  predicted_paralog_dataset <- read_csv(dataset) %>%
-    mutate(sorted_gene_pair_2 = paste(A2, "_", A1, sep = "")) %>%
-    relocate(.after = sorted_gene_pair)
-  
-  gene_pair_1 <- predicted_paralog_dataset$sorted_gene_pair
-  gene_pair_2 <- predicted_paralog_dataset$sorted_gene_pair_2
-  
-  gene_pair <- unique(union(gene_pair_1, gene_pair_2))
-  return(gene_pair)
-}
-
-# import predicted paralog pairs from Barbara's paper
-
-predicted_paralog_pairs <- list_paralog_gene_pairs()
-
-```
 
 ## Identify the double-target guides targeting paralog pairs and non-paralog pairs across libraries
 
@@ -581,7 +667,7 @@ ggsave(
     height = 10,
     dpi = 300,
     plot = barplot_paralog,
-    filename = paste('./plot/barplot_double_target_guides.png', sep = ''))
+    filename = paste('./plot/barplot_double_target_guides_T2T.png', sep = ''))
 
 
 ## Identify genes affected by double-target guides targeting paralog pairs across libraries
