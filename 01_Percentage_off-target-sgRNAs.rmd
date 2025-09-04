@@ -19,6 +19,7 @@ library(grid)
 library(paletteer)
 library(RColorBrewer)
 source('../CRISPR-KO-library-refinement-pipeline/sgRNA_library_refinement_pipeline_functions.R')
+source("./00_CRISPR-KO-off-target-paralog-functions.R")
 ```
 
 # Import the data of sgRNA library report
@@ -29,21 +30,26 @@ toronto <- 'tkov3_guide_sequence'
 avana <- 'avana_library'
 yusa <- 'yusa_hcrispr_ko_grnas'
 
-brunello_report <- read_excel(paste('../CRISPR-KO-library-refinement-pipeline/output_cleaning/hg38/', brunello, '_full_report.xlsx', sep = ''))
-toronto_report <- read_excel(paste('../CRISPR-KO-library-refinement-pipeline/output_cleaning/hg38/', toronto, '_full_report.xlsx', sep = ''))
-avana_report <- read_excel(paste('../CRISPR-KO-library-refinement-pipeline/output_cleaning/hg38/', avana, '_full_report.xlsx', sep = ''))
-yusa_report <- read_excel(paste('../CRISPR-KO-library-refinement-pipeline/output_cleaning/hg38/', yusa, '_full_report.xlsx', sep = ''))
+brunello_report <- read_excel(paste('../CRISPR-KO-library-refinement-pipeline/output_cleaning/T2T-CHM13/', brunello, '_full_report.xlsx', sep = ''))
+toronto_report <- read_excel(paste('../CRISPR-KO-library-refinement-pipeline/output_cleaning/T2T-CHM13/', toronto, '_full_report.xlsx', sep = ''))
+avana_report <- read_excel(paste('../CRISPR-KO-library-refinement-pipeline/output_cleaning/T2T-CHM13/', avana, '_full_report.xlsx', sep = ''))
+yusa_report <- read_excel(paste('../CRISPR-KO-library-refinement-pipeline/output_cleaning/T2T-CHM13/', yusa, '_full_report.xlsx', sep = ''))
+
+```
+
+## Import paralog data from Barbara's paper
+
+```{r}
+
+# import predicted paralog pairs from Barbara's paper
+
+predicted_paralog_pairs <- list_paralog_gene_pairs()
 
 ```
 
 # Calculate the percentage of multi-target, single-mismatch, and PAM-distal double mismatch sgRNA in each libraries
 
 ```{r}
-
-calculate_percentage <- function(library_report, discarded_sgrna, original_sgrna) {
-    percentage_discarded <- (sum(library_report[[discarded_sgrna]])/sum(library_report[[original_sgrna]])) * 100
-    return(percentage_discarded)
-}
 
 brunello_multi_target <- round(calculate_percentage(brunello_report, "multi-target sgRNA", "sgRNA number"), 2)
 toronto_multi_target <- round(calculate_percentage(toronto_report, "multi-target sgRNA", "sgRNA number"), 2)
@@ -125,7 +131,7 @@ ggsave(
     height = 15,
     dpi = 300,
     plot = multi_bar_chart,
-    filename = paste('./plot/percentage_off_target.png', sep = ''))
+    filename = paste('./plot/percentage_off_target_T2T.png', sep = ''))
 ```
 
 # Percentage of sgRNAs not represented after library refinement
@@ -133,40 +139,77 @@ ggsave(
 
 ```{r}
 
-import_library <- function(lib_dir){
-  library <- read_tsv(lib_dir, col_names = FALSE)
-  colnames(library) <- c("sgrna", "spacer", "gene")
-  
-  return(library)
-}
+# brunello_library <- import_library("../CRISPR-KO-library-refinement-pipeline/public_crispr_library/broadgpp-brunello-library-contents.tsv")
+# toronto_library <- import_library("../CRISPR-KO-library-refinement-pipeline/public_crispr_library/tkov3_guide_sequence.tsv")
+# avana_library <- import_library("../CRISPR-KO-library-refinement-pipeline/public_crispr_library/avana_library.tsv")
+# yusa_library <- import_library("../CRISPR-KO-library-refinement-pipeline/public_crispr_library/yusa_hcrispr_ko_grnas.tsv")
+# 
+# brunello_refined <- import_library("../CRISPR-KO-library-refinement-pipeline/output_cleaning/hg38/broadgpp-brunello-library-contents_65K_refined.tsv")
+# toronto_refined <- import_library("../CRISPR-KO-library-refinement-pipeline/output_cleaning/hg38/tkov3_guide_sequence_62K_refined.tsv")
+# avana_refined <- import_library("../CRISPR-KO-library-refinement-pipeline/output_cleaning/hg38/avana_library_56K_refined.tsv")
+# yusa_refined <- import_library("../CRISPR-KO-library-refinement-pipeline/output_cleaning/hg38/yusa_hcrispr_ko_grnas_76K_refined.tsv")
 
-brunello_library <- import_library("../CRISPR-KO-library-refinement-pipeline/public_crispr_library/broadgpp-brunello-library-contents.tsv")
-toronto_library <- import_library("../CRISPR-KO-library-refinement-pipeline/public_crispr_library/tkov3_guide_sequence.tsv")
-avana_library <- import_library("../CRISPR-KO-library-refinement-pipeline/public_crispr_library/avana_library.tsv")
-yusa_library <- import_library("../CRISPR-KO-library-refinement-pipeline/public_crispr_library/yusa_hcrispr_ko_grnas.tsv")
 
-brunello_refined <- import_library("../CRISPR-KO-library-refinement-pipeline/output_cleaning/hg38/broadgpp-brunello-library-contents_65K_refined.tsv")
-toronto_refined <- import_library("../CRISPR-KO-library-refinement-pipeline/output_cleaning/hg38/tkov3_guide_sequence_62K_refined.tsv")
-avana_refined <- import_library("../CRISPR-KO-library-refinement-pipeline/output_cleaning/hg38/avana_library_56K_refined.tsv")
-yusa_refined <- import_library("../CRISPR-KO-library-refinement-pipeline/output_cleaning/hg38/yusa_hcrispr_ko_grnas_76K_refined.tsv")
+avana_result_gene <- percentages_and_list_genes(avana_report, predicted_paralog_pairs[[2]])
+brunello_result_gene <- percentages_and_list_genes(brunello_report, predicted_paralog_pairs[[2]])
+toronto_result_gene <- percentages_and_list_genes(toronto_report, predicted_paralog_pairs[[2]])
+yusa_result_gene <- percentages_and_list_genes(yusa_report, predicted_paralog_pairs[[2]])
 
-round(length(unique(brunello_refined$sgrna)))
-round(length(unique(brunello_library$sgrna)))
-
-percentage_brunello <- round(100 - round(length(unique(brunello_refined$gene)) / length(unique(brunello_library$gene)) * 100, 2), 2)
-percentage_toronto <- round(100 - round(length(unique(toronto_refined$gene)) / length(unique(toronto_library$gene)) * 100, 2), 2)
-percentage_avana <- round(100 - round(length(unique(avana_refined$gene)) / length(unique(avana_library$gene)) * 100, 2), 2)
-percentage_yusa <- round(100 - round(length(unique(yusa_refined$gene)) / length(unique(yusa_library$gene)) * 100, 2), 2)
 
 df_percentage <- data.frame(library = c("brunello", "toronto_v3", "yusa", "avana"),
-                            percentage_genes = c(percentage_brunello, percentage_toronto, percentage_yusa, percentage_avana))
+                            paralog = c(brunello_result_gene[[2]], toronto_result_gene[[2]], yusa_result_gene[[2]], avana_result_gene[[2]]),
+                            not_paralog = c(brunello_result_gene[[3]], toronto_result_gene[[3]], yusa_result_gene[[3]], avana_result_gene[[3]])
+                            )
 
 df_percentage <- df_percentage %>%
-  mutate(library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana")))
+  mutate(library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana"))) %>%
+  pivot_longer(!library, names_to = "not_represented_genes", values_to = "percentage")
 
 
 ```
-# Plot of sgRNAs and genes that are not represented in the refined library
+
+# Plot of genes that are not well represented in the refined library
+
+```{r}
+
+removed_paralog <- ggplot(df_percentage, aes(x = library, y = percentage, fill = not_represented_genes)) +
+      geom_bar(stat = "identity", position = "stack") +
+      scale_fill_discrete(
+          name = "Gene type",
+          labels = c("Not paralog", "Paralog")) +
+        theme_minimal() +
+        labs(title = "", x = "", y = "Genes targeted by < 3 sgRNAs (%)") +
+        scale_x_discrete(labels = c("brunello" = "Brunello",
+                                     "toronto_v3" = "Toronto \nKnockout V3",
+                                     "yusa" = "Yusa \nProject Score",
+                                     "avana" = "Avana")) +
+        geom_text(aes(label = paste(percentage, "%", sep = '')), position = position_stack(), vjust = 2, size = 6) +
+        theme(axis.text.x = element_text(size = 25, vjust = 0.7, colour = 'black'),
+              axis.text.y = element_text(size = 25),
+              axis.title.y = element_text(size = 25, vjust = 0.5, margin = margin(r = 20)),
+              panel.grid.major = element_blank(),
+              panel.grid.minor = element_blank(),
+              axis.line.x = element_line(size = 0.5),
+              axis.line.y = element_line(size = 0.5),
+              legend.title = element_text(size = 25),
+              legend.text = element_text(size = 25),
+              plot.margin = margin(1, 1, 1, 1), 
+              line = element_line((size = 4), colour = 'black'),
+              legend.spacing.x = unit(1, 'cm')) +
+      ylim(0, 100)
+
+ggsave(
+    path = './',
+    width = 15,
+    height = 10,
+    dpi = 300,
+    plot = removed_paralog,
+    filename = paste('./plot/library_genes_removed_paralog_hg38.png', sep = ''))
+
+
+```
+
+# Plot of sgRNAs that are not represented in the refined library
 
 ```{r}
 
@@ -210,7 +253,7 @@ ggsave(
     height = 15,
     dpi = 300,
     plot = percentage_bar_chart,
-    filename = paste('./plot/library_genes_bar_chart.png', sep = ''))
+    filename = paste('./plot/library_genes_bar_chart_T2T.png', sep = ''))
 
 ```
 
