@@ -19,9 +19,8 @@ library(BSgenome)
 library(BSgenome.Hsapiens.UCSC.hg38)
 library(BSgenome.Hsapiens.NCBI.T2TCHM13v2.0)
 
-
 source('../CRISPR-KO-library-refinement-pipeline/sgRNA_library_refinement_pipeline_functions.R')
-source("./00_CRISPR-KO-off-target-paralog-functions.R")
+source("./00_CRISPR-KO-library-survey-functions.R")
 ```
 
 # Import alignment data of each sgRNA libraries and library
@@ -309,50 +308,62 @@ yusa_multi_paralog <- find_multi_target_paralog(yusa_multi_protein_coding_genes[
 # the number of query guides (3054) and the total number of paralog classification (605+262+2253=3120) does not match, kindly check this function
 # corrected number is 2967
 
-
 # Summary table of double-target sgRNAs targeting paralogs
 table_dbl_target_paralog <- rbind(brunello_multi_paralog$summary_count_df,
                                   toronto_multi_paralog$summary_count_df,
                                   yusa_multi_paralog$summary_count_df,
                                   avana_multi_paralog$summary_count_df)
 
+my_palette <- brewer.pal(n = 3, name = "Set2")
 
 # Barplot of percentage of sgRNA targeting paralog pairs and non-paralog pairs across libraries
 barplot_paralog <- table_dbl_target_paralog %>%
   arrange(library_name) %>%
   select(-c(count_sgrna_paralog, count_sgrna_other_genes, count_sgrna_other_genomic_loci)) %>%
   pivot_longer(c(percentage_sgrna_paralog, percentage_sgrna_other_genes, percentage_sgrna_other_genomic_loci), names_to = 'names', values_to = 'percent') %>%
+  mutate(
+    names = factor(
+      names,
+      levels = c("percentage_sgrna_other_genomic_loci",
+                 "percentage_sgrna_other_genes",
+                 "percentage_sgrna_paralog")),
+    library_name = factor(library_name, levels = c("brunello", "toronto", "yusa", "avana"))) %>%
   ggplot(aes(library_name, percent, fill = names)) +
   geom_bar(position = "stack", stat = "identity") +
   theme_minimal() +
-  labs(title = "", x = "sgRNA libraries", y = "Percentage of double-target guides (%)", fill = "Target") +
+  labs(title = "", x = "", y = "Percentage of double-target guides (%)", fill = "Target") +
   scale_x_discrete(labels = c('brunello' = 'Brunello',
-                'yusa' = 'Yusa \nProject Score',
-                'toronto' = 'Toronto \nKnockout V3',
+                'yusa' = 'Yusa \n(Project Score)',
+                'toronto' = 'TKOv3',
                 'avana' = 'Avana')) +
   scale_fill_manual(labels = c("percentage_sgrna_paralog" = "Paralog pairs",
-                               "percentage_sgrna_other_genes" = "Other protein-coding genes",
-                               "percentage_sgrna_other_genomic_loci" = "Other genomic loci"),
-                    values = c("percentage_sgrna_paralog" = "#B3589A",
-                              "percentage_sgrna_other_genes" = "#E7F7D5",
-                              "percentage_sgrna_other_genomic_loci" = "mistyrose")) +
-  theme(axis.text.x = element_text(size = 15),
-      axis.text.y = element_text(size = 15),
-      axis.title.x = element_text(size = 18, vjust = -1, margin = margin(r = 10)),
-      axis.title.y = element_text(size = 18, margin = margin(r = 10)),
-      legend.title = element_text(size = 15),
-      legend.text = element_text(size = 13)) +
-  geom_text(aes(label = paste0(percent, "%")), position = position_stack(vjust = .5), size = 5)
+                               "percentage_sgrna_other_genes" = "Paralog + protein-coding gene",
+                               "percentage_sgrna_other_genomic_loci" = "Paralog + non-coding region"),
+                    values = c("percentage_sgrna_paralog" = "#009E73",
+                              "percentage_sgrna_other_genes" = "#0072B2",
+                              "percentage_sgrna_other_genomic_loci" = "#E69F00")) +
+  theme(axis.text.x = element_text(size = 20, colour = 'black'),
+      axis.text.y = element_text(size = 20, colour = 'black'),
+      axis.title.x = element_text(size = 20, margin = margin(r = 10)),
+      axis.title.y = element_text(size = 20, margin = margin(r = 10)),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      legend.title = element_text(size = 20),
+      legend.text = element_text(size = 20),
+      axis.line.x = element_line(size = 0.5),
+      axis.line.y = element_line(size = 0.5),
+      line = element_line((size = 4), colour = 'black')) +
+  geom_text(aes(label = percent), position = position_stack(vjust = .5), size = 7)
 
 barplot_paralog
 
 ggsave(
     path = './',
-    width = 10,
+    width = 12,
     height = 10,
     dpi = 300,
     plot = barplot_paralog,
-    filename = paste('./plot/barplot_double_target_guides_T2T.png', sep = ''))
+    filename = paste('./plot/barplot_double_target_guides_hg38.png', sep = ''))
 
 
 ## Identify genes affected by double-target guides targeting paralog pairs across libraries

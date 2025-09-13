@@ -19,7 +19,7 @@ library(grid)
 library(paletteer)
 library(RColorBrewer)
 source('../CRISPR-KO-library-refinement-pipeline/sgRNA_library_refinement_pipeline_functions.R')
-source("./00_CRISPR-KO-off-target-paralog-functions.R")
+source("./00_CRISPR-KO-library-survey-functions.R")
 ```
 
 # Import the data of sgRNA library report

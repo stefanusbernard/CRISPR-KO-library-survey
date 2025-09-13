@@ -1,0 +1,45 @@
+---
+title: "Analysis of multi-target and off-target sgRNAs across libraries"
+author: "Author: Stefanus Bernard"
+date: "Date: `r format(Sys.time(), '%d %B %Y')`"
+output: 
+  html_document :
+    theme : cerulean
+    toc : true
+    toc_float : true
+    number_section : true
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(VennDiagram)
+library(ggvenn)
+library(ggbreak)
+library(BSgenome)
+library(BSgenome.Hsapiens.UCSC.hg38)
+library(BSgenome.Hsapiens.NCBI.T2TCHM13v2.0)
+
+source('../CRISPR-KO-library-refinement-pipeline/sgRNA_library_refinement_pipeline_functions.R')
+source("./00_CRISPR-KO-library-survey-functions.R")
+```
+
+# Import sgRNA library and sgRNA log-fold-change data
+
+```{r}
+avana_library_meyers <- read_tsv("../CRISPR-KO-library-refinement-pipeline/public_crispr_library/avana_library.tsv", col_names = FALSE)
+colnames(avana_library_meyers) <- c("sgrna", "spacer", "gene")
+
+avana_lfc <- read_csv("./sgrna_logfc/AvanaLogfoldChange.csv")
+names(avana_lfc)[1] <- "spacer"
+
+# left join
+
+avana_sgrna_lfc <- avana_lfc %>%
+  left_join(avana_library_meyers, join_by("spacer")) %>%
+  relocate(sgrna, .before = spacer) %>%
+  relocate(gene, .after = spacer) %>%
+  arrange(gene)
+
+
+```
+
