@@ -52,6 +52,7 @@ import_library <- function(lib_dir){
 
 percentages_and_list_genes <- function(report, list_paralog) {
   
+  # pull only the gene list for failed and passed genes
   failed_genes <- report %>%
     filter(`quality check` == "fail") %>%
     pull(gene)
@@ -60,21 +61,39 @@ percentages_and_list_genes <- function(report, list_paralog) {
     filter(`quality check` == "pass") %>%
     pull(gene)
   
+  # pull the dataframe
+  failed_genes_df <- report %>%
+    filter(`quality check` == "fail")
+  
+  passed_genes_df <- report %>%
+    filter(`quality check` == "pass")
+  
+  # exclude not counted (symbol change) for total percentage of failed sgRNAs
+  # cleaned_report <- report %>%
+  #   filter(!`quality check` == "not counted (symbol change)")
+  
+  # total percentage of failed genes
+  percentage_failed_genes <- round(length(unique(failed_genes)) / (length(unique(failed_genes)) + length(unique(passed_genes))), 4) * 100
+  
+  # total percentage of failed sgRNAs (check with this again later)
+  percentage_failed_sgrna <-  round((sum(report$`sgRNA number`) - sum(report$`actual total sgRNA`)) / sum(report$`sgRNA number`), 4) * 100
+  
+  # percentage of failed genes (paralog and non-paralog protein-coding genes)
   failed_paralog <- failed_genes[unlist(failed_genes) %in% unlist(list_paralog)]
+  failed_not_paralog <- failed_genes[!unlist(failed_genes) %in% unlist(list_paralog)]
   
-  percentages_failed_genes <- round(length(unique(failed_genes)) / (length(unique(failed_genes)) + length(unique(passed_genes))), 4) * 100
-  
-  percentages_failed_paralog <- round(length(unique(failed_paralog)) / (length(unique(failed_genes)) + length(unique(passed_genes))), 4) * 100
-  
-  percentages_failed_not_paralog <- percentages_failed_genes - percentages_failed_paralog
+  percentage_failed_paralog <- round(length(unique(failed_paralog)) / (length(unique(failed_genes))), 4) * 100
+  percentage_failed_not_paralog <- round(length(unique(failed_not_paralog)) / (length(unique(failed_genes))), 4) * 100
   
   return(list(
-    percentage_failed_genes = percentages_failed_genes, 
-    paralog_genes = percentages_failed_paralog,
-    not_paralog_genes = percentages_failed_not_paralog,
+    percentage_failed_paralog = percentage_failed_paralog,
+    percentage_failed_not_paralog = percentage_failed_not_paralog,
+    total_percentage_failed_genes = percentage_failed_genes,
+    total_percentage_failed_sgrna = percentage_failed_sgrna,
     failed_genes = failed_genes, 
     passed_genes = passed_genes, 
-    failed_paralog = failed_paralog))
+    failed_paralog = failed_paralog,
+    failed_not_paralog = failed_not_paralog))
 }
 
 
@@ -361,10 +380,17 @@ find_multi_target_paralog <- function(alignment_gene_df, list_guides, paralog_da
     ungroup()
   
   list_paralog_guides <- dbl_target_classification %>% filter(target == "targeting paralog gene") %>% pull(sgrna) %>% unique()
-  list_other_genes <- dbl_target_classification %>% filter(target == "other protein-coding gene") %>% pull(sgrna) %>% unique()
-  list_other_genomic_loci_guides <- dbl_target_classification %>% filter(target == "other genomic loci") %>% pull(sgrna) %>% unique()
+  list_other_genes_guides <- dbl_target_classification %>% filter(target == "other protein-coding gene") %>% pull(sgrna) %>% unique()
+  list_other_genomic_loci <- dbl_target_classification %>% filter(target == "other genomic loci") %>% pull(sgrna) %>% unique()
   
-  list_not_paralog_guides <- union(list_other_genes, list_other_genomic_loci_guides)
+  list_other_genomic_loci_guides <- setdiff(
+    list_other_genomic_loci,
+    c(list_other_genes_guides, list_paralog_guides)
+  )
+  
+  
+  
+  list_not_paralog_guides <- union(list_other_genes_guides, list_other_genomic_loci_guides)
   
   # obtain the affected genes by looking at the actual target from double-target guides
   list_paralog_genes <- unique(aln_multi_target_paralog$actual_gene)
@@ -372,7 +398,7 @@ find_multi_target_paralog <- function(alignment_gene_df, list_guides, paralog_da
   # count percentage of the double target paralog guides
   
   count_sgrna_paralog <- length(list_paralog_guides)
-  count_sgrna_other_genes <- length(list_other_genes)
+  count_sgrna_other_genes <- length(list_other_genes_guides)
   count_sgrna_other_genomic_loci <- length(list_other_genomic_loci_guides)
   
   percentage_sgrna_paralog <- round((count_sgrna_paralog/sum(count_sgrna_paralog, count_sgrna_other_genes, count_sgrna_other_genomic_loci) * 100), 2)
@@ -399,7 +425,7 @@ find_multi_target_paralog <- function(alignment_gene_df, list_guides, paralog_da
               aln_multi_target_paralog_df = aln_multi_target_paralog,
               summary_count_df = summary_df,
               multi_target_paralog_guides = list_paralog_guides,
-              multi_target_other_genes = list_other_genes,
+              multi_target_other_genes = list_other_genes_guides,
               multi_target_other_genomic_loci = list_other_genomic_loci_guides,
               paralog_affected_list = list_paralog_genes,
               paralog_affected_df = count_gene))
