@@ -41,26 +41,26 @@ yusa_library <- import_sgrna_library("../CRISPR-KO-library-refinement-pipeline/p
 
 
 # some parameters
-annotation <- "../CRISPR-KO-library-refinement-pipeline/annotation_file/CCDS.20221027.txt"
-genome_type_version <- "hg38"
-bsgenome <- BSgenome.Hsapiens.UCSC.hg38
+# annotation <- "../CRISPR-KO-library-refinement-pipeline/annotation_file/CCDS.20221027.txt"
+# genome_type_version <- "hg38"
+# bsgenome <- BSgenome.Hsapiens.UCSC.hg38
 
-# annotation <- "../CRISPR-KO-library-refinement-pipeline/annotation_file/T2T-CHM13v2.0_gene_annot_granges.rds"
-# genome_type_version <- "T2T-CHM13"
-# bsgenome <- BSgenome.Hsapiens.NCBI.T2TCHM13v2.0
+annotation <- "../CRISPR-KO-library-refinement-pipeline/annotation_file/T2T-CHM13v2.0_gene_annot_granges.rds"
+genome_type_version <- "T2T-CHM13"
+bsgenome <- BSgenome.Hsapiens.NCBI.T2TCHM13v2.0
 
 
 # hg38
-avana_alignment_meyers <- import_sgrna_library_alignment("../CRISPR-KO-library-refinement-pipeline/object_intermediate/hg38/avana_library_aln.csv", genome_type_version)
-brunello_alignment <- import_sgrna_library_alignment("../CRISPR-KO-library-refinement-pipeline/object_intermediate/hg38/broadgpp-brunello-library-contents_aln.csv", genome_type_version)
-toronto_alignment <- import_sgrna_library_alignment("../CRISPR-KO-library-refinement-pipeline/object_intermediate/hg38/tkov3_guide_sequence_aln.csv", genome_type_version)
-yusa_alignment <- import_sgrna_library_alignment("../CRISPR-KO-library-refinement-pipeline/object_intermediate/hg38/yusa_hcrispr_ko_grnas_aln.csv", genome_type_version)
+# avana_alignment_meyers <- import_sgrna_library_alignment("../CRISPR-KO-library-refinement-pipeline/object_intermediate/hg38/avana_library_aln.csv", genome_type_version)
+# brunello_alignment <- import_sgrna_library_alignment("../CRISPR-KO-library-refinement-pipeline/object_intermediate/hg38/broadgpp-brunello-library-contents_aln.csv", genome_type_version)
+# toronto_alignment <- import_sgrna_library_alignment("../CRISPR-KO-library-refinement-pipeline/object_intermediate/hg38/tkov3_guide_sequence_aln.csv", genome_type_version)
+# yusa_alignment <- import_sgrna_library_alignment("../CRISPR-KO-library-refinement-pipeline/object_intermediate/hg38/yusa_hcrispr_ko_grnas_aln.csv", genome_type_version)
 
 # T2T-CHM13
-# avana_alignment_meyers <- import_sgrna_library_alignment("../CRISPR-KO-library-refinement-pipeline/object_intermediate/T2T-CHM13_bsgenome/avana_library_aln.csv", "T2T-CHM13")
-# brunello_alignment <- import_sgrna_library_alignment("../CRISPR-KO-library-refinement-pipeline/object_intermediate/T2T-CHM13_bsgenome/broadgpp-brunello-library-contents_aln.csv", "T2T-CHM13")
-# toronto_alignment <- import_sgrna_library_alignment("../CRISPR-KO-library-refinement-pipeline/object_intermediate/T2T-CHM13_bsgenome/tkov3_guide_sequence_aln.csv", "T2T-CHM13")
-# yusa_alignment <- import_sgrna_library_alignment("../CRISPR-KO-library-refinement-pipeline/object_intermediate/T2T-CHM13_bsgenome/yusa_hcrispr_ko_grnas_aln.csv", "T2T-CHM13")
+avana_alignment_meyers <- import_sgrna_library_alignment("../CRISPR-KO-library-refinement-pipeline/object_intermediate/T2T-CHM13_bsgenome/avana_library_aln.csv", "T2T-CHM13")
+brunello_alignment <- import_sgrna_library_alignment("../CRISPR-KO-library-refinement-pipeline/object_intermediate/T2T-CHM13_bsgenome/broadgpp-brunello-library-contents_aln.csv", "T2T-CHM13")
+toronto_alignment <- import_sgrna_library_alignment("../CRISPR-KO-library-refinement-pipeline/object_intermediate/T2T-CHM13_bsgenome/tkov3_guide_sequence_aln.csv", "T2T-CHM13")
+yusa_alignment <- import_sgrna_library_alignment("../CRISPR-KO-library-refinement-pipeline/object_intermediate/T2T-CHM13_bsgenome/yusa_hcrispr_ko_grnas_aln.csv", "T2T-CHM13")
 
 ```
 
@@ -93,6 +93,7 @@ yusa_classification <- off_target_classification(yusa_alignment)
 ```{r}
 
 avana_stratify_multi_target <- off_target_alignment_bin(avana_classification[[1]], c("perfect", "multi-target guides", "non-targeting"))
+write_csv(avana_stratify_multi_target[[1]], "./sgrna_logfc/avana_stratify_multi_target.csv")
 
 brunello_stratify_multi_target <- off_target_alignment_bin(brunello_classification[[1]], c("perfect", "multi-target guides", "non-targeting"))
 
@@ -105,6 +106,7 @@ yusa_stratify_multi_target <- off_target_alignment_bin(yusa_classification[[1]],
 # Export the bar chart showing stratification of multi-target sgRNAs
 
 ```{r}
+
 export_images <- function(object, filename_dir, genome_type) {
   ggsave(
     path = './',
@@ -337,7 +339,7 @@ barplot_paralog <- table_dbl_target_paralog %>%
                 'toronto' = 'TKOv3',
                 'avana' = 'Avana')) +
   scale_fill_manual(labels = c("percentage_sgrna_paralog" = "Paralog pairs",
-                               "percentage_sgrna_other_genes" = "Paralog + protein-coding gene",
+                               "percentage_sgrna_other_genes" = "Paralog + singleton",
                                "percentage_sgrna_other_genomic_loci" = "Paralog + non-coding region"),
                     values = c("percentage_sgrna_paralog" = "#009E73",
                               "percentage_sgrna_other_genes" = "#0072B2",
@@ -363,7 +365,7 @@ ggsave(
     height = 10,
     dpi = 300,
     plot = barplot_paralog,
-    filename = paste('./plot/barplot_double_target_guides_hg38.png', sep = ''))
+    filename = paste('./plot/barplot_double_target_guides_T2T.png', sep = ''))
 
 
 ## Identify genes affected by double-target guides targeting paralog pairs across libraries

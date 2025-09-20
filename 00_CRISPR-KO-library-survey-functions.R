@@ -210,19 +210,21 @@ visualize_off_target_alignment <- function(alignment_bin_df, xlabel) {
   
   ggplot(alignment_bin_df, aes(x = num_of_alignments, y = number_of_sgrnas, fill = "mistyrose")) +
     geom_col() +
-    theme(axis.text.x = element_text(size = 10),
-          axis.text.y = element_text(size = 10),
+    theme(axis.text.x = element_text(size = 10, colour = "black"),
+          axis.text.y = element_text(size = 10, colour = "black"),
           panel.background = element_blank(),
           axis.line.x = element_line(size = 0.5),
           axis.line.y = element_line(size = 0.5),
           legend.position = "none") +
+    # scale_y_break(c(5000, 60000)) +
     scale_y_break(c((alignment_bin_df$number_of_sgrnas[alignment_bin_df$num_of_alignments == 2] + 1500),
                     (alignment_bin_df$number_of_sgrnas[alignment_bin_df$num_of_alignments == 1] - 1500))) +
     labs(x = xlabel, y = "Number of sgRNAs") +
     geom_text(aes(label = paste("n=", number_of_sgrnas, sep="")),
               nudge_y = 100,
               nudge_x = 0,
-              size = 2.5)
+              size = 2.5) +
+    ylim(0, 90000)
   
 }
 

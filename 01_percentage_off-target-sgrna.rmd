@@ -44,10 +44,10 @@ import_report_without_control <- function(file_dir, control_terms) {
   
 }
 
-brunello_report <- import_report_without_control(paste('../CRISPR-KO-library-refinement-pipeline/output_cleaning/hg38/', brunello, '_full_report.xlsx', sep = ''))
-toronto_report <- import_report_without_control(paste('../CRISPR-KO-library-refinement-pipeline/output_cleaning/hg38/', toronto, '_full_report.xlsx', sep = ''))
-avana_report <- import_report_without_control(paste('../CRISPR-KO-library-refinement-pipeline/output_cleaning/hg38/', avana, '_full_report.xlsx', sep = ''))
-yusa_report <- import_report_without_control(paste('../CRISPR-KO-library-refinement-pipeline/output_cleaning/hg38/', yusa, '_full_report.xlsx', sep = ''))
+brunello_report <- import_report_without_control(paste('../CRISPR-KO-library-refinement-pipeline/output_cleaning/T2T-CHM13/', brunello, '_full_report.xlsx', sep = ''))
+toronto_report <- import_report_without_control(paste('../CRISPR-KO-library-refinement-pipeline/output_cleaning/T2T-CHM13/', toronto, '_full_report.xlsx', sep = ''))
+avana_report <- import_report_without_control(paste('../CRISPR-KO-library-refinement-pipeline/output_cleaning/T2T-CHM13/', avana, '_full_report.xlsx', sep = ''))
+yusa_report <- import_report_without_control(paste('../CRISPR-KO-library-refinement-pipeline/output_cleaning/T2T-CHM13/', yusa, '_full_report.xlsx', sep = ''))
 
 ```
 
@@ -120,8 +120,8 @@ multi_bar_chart <- ggplot(sum_dataframe_long, aes(x = category, y = percentage, 
                                 'single_mismatch' = 'Single mismatch sgRNA',
                                 'pam_distal' = 'PAM distal \n double mismatch sgRNA')) +
     geom_text(aes(label = percentage), position = position_dodge2(width = 0.7), vjust = -0.5, size = 9) +
-    theme(axis.text.x = element_text(size = 40, vjust = 0.7, colour = 'black'),
-          axis.text.y = element_text(size = 40),
+    theme(axis.text.x = element_text(size = 40, vjust = 0.7, colour = "black"),
+          axis.text.y = element_text(size = 40, colour = "black"),
           axis.title.y = element_text(size = 40, vjust = 0.5, margin = margin(r = 20)),
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
@@ -176,7 +176,7 @@ main_df_percentage <- data.frame(library = c("brunello", "toronto_v3", "yusa", "
                             )
 
 failed_paralog_percentage <- main_df_percentage %>%
-  select(!total_percentage_failed_genes) %>%
+  select(!c(total_percentage_failed_genes, total_percentage_failed_sgrna)) %>%
   mutate(library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana"))) %>%
   pivot_longer(!library, names_to = "not_represented_genes", values_to = "percentage")
 
@@ -187,7 +187,7 @@ failed_paralog_percentage <- main_df_percentage %>%
 
 ```{r}
 
-removed_paralog <- ggplot(df_percentage, aes(x = library, y = percentage, fill = not_represented_genes)) +
+removed_paralog <- ggplot(failed_paralog_percentage, aes(x = library, y = percentage, fill = not_represented_genes)) +
       geom_bar(stat = "identity", position = "stack") +
       scale_fill_discrete(
           name = "",
@@ -198,9 +198,9 @@ removed_paralog <- ggplot(df_percentage, aes(x = library, y = percentage, fill =
                                      "toronto_v3" = "TKOv3",
                                      "yusa" = "Yusa \n(Project Score)",
                                      "avana" = "Avana")) +
-        geom_text(aes(label = percentage), position = position_stack(), vjust = 2, size = 7) +
-        theme(axis.text.x = element_text(size = 25, vjust = 0.7, colour = 'black'),
-              axis.text.y = element_text(size = 25),
+        geom_text(aes(label = percentage), position = position_stack(), vjust = 2, size = 8) +
+        theme(axis.text.x = element_text(size = 25, vjust = 0.7, colour = "black"),
+              axis.text.y = element_text(size = 25, colour = "black"),
               axis.title.y = element_text(size = 25, vjust = 0.5, margin = margin(r = 20)),
               panel.grid.major = element_blank(),
               panel.grid.minor = element_blank(),
@@ -209,7 +209,7 @@ removed_paralog <- ggplot(df_percentage, aes(x = library, y = percentage, fill =
               legend.title = element_text(size = 25),
               legend.text = element_text(size = 25),
               plot.margin = margin(1, 1, 1, 1), 
-              line = element_line((size = 4), colour = 'black'),
+              line = element_line((size = 4), colour = "black"),
               legend.spacing.x = unit(1, 'cm')) +
       ylim(0, 100)
 
@@ -221,7 +221,7 @@ ggsave(
     height = 10,
     dpi = 300,
     plot = removed_paralog,
-    filename = paste('./plot/library_genes_removed_paralog_hg38.png', sep = ''))
+    filename = paste('./plot/library_genes_removed_paralog_T2T.png', sep = ''))
 
 
 ```
