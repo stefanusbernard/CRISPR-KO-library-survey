@@ -33,7 +33,7 @@ terms_for_filtering <- paste(terms, collapse = "|")
 
 brunello <- 'broadgpp-brunello-library-contents'
 toronto <- 'tkov3_guide_sequence'
-avana <- 'avana_library'
+avana <- 'AvanaGuideMap'
 yusa <- 'yusa_hcrispr_ko_grnas'
 
 import_report_without_control <- function(file_dir, control_terms) {

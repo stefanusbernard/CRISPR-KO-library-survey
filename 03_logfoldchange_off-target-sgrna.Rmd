@@ -26,44 +26,63 @@ source("./00_CRISPR-KO-library-survey-functions.R")
 # Import sgRNA library and sgRNA log-fold-change data
 
 ```{r}
-avana_library_meyers <- read_tsv("../CRISPR-KO-library-refinement-pipeline/public_crispr_library/avana_library.tsv", col_names = FALSE)
-colnames(avana_library_meyers) <- c("sgrna", "spacer", "gene")
+avana_library <- read_tsv("../CRISPR-KO-library-refinement-pipeline/public_crispr_library/avana_library.tsv", col_names = FALSE)
+colnames(avana_library) <- c("sgRNA", "spacer", "gene")
 
-avana_lfc <- read_csv("./sgrna_logfc/AvanaLogfoldChange.csv")
-names(avana_lfc)[1] <- "spacer"
+avana_lfc <- read_csv("./sgrna_logfc/normalized/avana_normalized_lfc.csv")
+avana_stratification <- read_csv("./sgrna_logfc/avana_stratify_multi_target.csv") %>% select(sgRNA, alignment_bin)
 
 # left join
 avana_sgrna_lfc <- avana_lfc %>%
-  left_join(avana_library_meyers, join_by("spacer")) %>%
-  relocate(sgrna, .before = spacer) %>%
+  left_join(avana_library, by = c("sgRNA", "spacer", "gene")) %>%
+  relocate(sgRNA, .before = spacer) %>%
   relocate(gene, .after = spacer) %>%
-  arrange(gene)
+  arrange(sgRNA)
 
 
 terms <- c("CONTROL", "Control", "control", "INTRON", "Intron", "intron", "LacZ", "luciferase")
 # lacZ and luciferase are the control in Toronto V3 library
-
 terms_for_filtering <- paste(terms, collapse = "|")
 
-annotation <- "../CRISPR-KO-library-refinement-pipeline/annotation_file/CCDS.20221027.txt"
-genome_type_version <- "hg38"
-bsgenome <- BSgenome.Hsapiens.UCSC.hg38
+# separate control from the library
 
-avana_alignment_meyers <- import_sgrna_library_alignment("../CRISPR-KO-library-refinement-pipeline/object_intermediate/hg38/avana_library_aln.csv", genome_type_version)
-
-avana_classification <- off_target_classification(avana_alignment_meyers)
-
-avana_stratify_multi_target <- off_target_alignment_bin(avana_classification[[1]], c("perfect", "multi-target guides", "non-targeting"))
-
-selected_df <- avana_stratify_multi_target[[1]] %>%
-  select(sgRNA, alignment, alignment_bin) %>%
-  dplyr::rename("sgrna" = "sgRNA")
+avana_control <- avana_sgrna_lfc %>% filter(str_detect(gene, terms_for_filtering))
 
 avana_sgrna_lfc <- avana_sgrna_lfc %>%
-  left_join(selected_df, join_by(sgrna)) %>%
-  relocate(alignment, .after = gene) %>%
-  relocate(alignment_bin, .after = alignment)
+  filter(!str_detect(gene, terms_for_filtering)) %>%
+  left_join(avana_stratification, join_by(sgRNA)) %>%
+  filter(alignment_bin %in% c(0, 1, 2, 3, 4, 5, 6, 7, 8 ,"> 8"))
 
+avana_sgrna_lfc$alignment_bin <- factor(avana_sgrna_lfc$alignment_bin, levels = c(0, 1, 2, 3, 4, 5, 6, 7, 8, "> 8"))
+
+
+boxplot_lfc <- avana_sgrna_lfc %>%
+  ggplot(aes(alignment_bin, mean, group = alignment_bin)) +
+  geom_boxplot(outlier.shape = NA, size = 1) +
+  geom_smooth(method = "lm", color = "blue", aes(group = mean)) +
+  theme_minimal() +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "black", size = 1) +
+  geom_hline(yintercept = -1, linetype = "dashed", color = "black", size = 1) +
+  labs(title = "", x = "Number of perfect on-target alignment", y = "Averaged median sgRNA LFC") +
+  theme(plot.margin = margin(10, 10, 25, 10),
+        axis.text.x = element_text(size = 40, vjust = 0.7, colour = "black"),
+        axis.text.y = element_text(size = 40, colour = "black"),
+        axis.title.x = element_text(size = 40, vjust = 0.5, margin = margin(r = 10)),
+        axis.title.y = element_text(size = 40, vjust = 0.5, margin = margin(b = 10)),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line.x = element_line(size = 0.5),
+        axis.line.y = element_line(size = 0.5), 
+        line = element_line((size = 4), colour = 'black'))
+
+
+ggsave(
+    path = './',
+    width = 20,
+    height = 15,
+    dpi = 300,
+    plot = boxplot_lfc,
+    filename = paste('./plot/avana_lfc.png', sep = ''))
 
 
 ```
