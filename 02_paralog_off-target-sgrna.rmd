@@ -93,11 +93,12 @@ yusa_classification <- off_target_classification(yusa_alignment)
 ```{r}
 
 avana_stratify_multi_target <- off_target_alignment_bin(avana_classification[[1]], c("perfect", "multi-target guides", "non-targeting"))
-write_csv(avana_stratify_multi_target[[1]], "./sgrna_logfc/avana_stratify_multi_target.csv")
+write_csv(avana_stratify_multi_target[[1]], "./sgrna_logfc/avana_data/avana_stratify_multi_target.csv")
 
 brunello_stratify_multi_target <- off_target_alignment_bin(brunello_classification[[1]], c("perfect", "multi-target guides", "non-targeting"))
 
 toronto_stratify_multi_target <- off_target_alignment_bin(toronto_classification[[1]], c("perfect", "multi-target guides", "non-targeting"))
+write_csv(toronto_stratify_multi_target[[1]], "./sgrna_logfc/tkov3_data/tkov3_stratify_multi_target.csv")
 
 yusa_stratify_multi_target <- off_target_alignment_bin(yusa_classification[[1]], c("perfect", "multi-target guides", "non-targeting"))
 
