@@ -94,7 +94,7 @@ ggsave(
 tkov3_library <- read_tsv("../CRISPR-KO-library-refinement-pipeline/public_crispr_library/tkov3_guide_sequence.tsv", col_names = FALSE)
 colnames(tkov3_library) <- c("sgRNA", "spacer", "gene")
 
-tkov3_lfc <- read_csv("./sgrna_logfc/output_normalized/tkov3_rpe1_normalized_lfc.csv")
+tkov3_lfc <- read_csv("./sgrna_logfc/output_normalized/tkov3_rpe1_lfc_drugz.csv")
 tkov3_stratification <- read_csv("./sgrna_logfc/tkov3_data/tkov3_stratify_multi_target.csv") %>% select(sgRNA, alignment_bin)
 
 # left join
@@ -145,7 +145,7 @@ ggsave(
     height = 15,
     dpi = 300,
     plot = boxplot_lfc,
-    filename = paste('./plot/tkov3_lfc.png', sep = ''))
+    filename = paste('./plot/tkov3_lfc_drugz.png', sep = ''))
 
 ```
 

@@ -12,6 +12,15 @@ def normalize_column(col):
         return centered
     return centered / mad
 
+def import_common_essential():
+    common_essential = pd.read_csv('AchillesCommonEssentialControls_25Q2.csv')
+    common_essential[['gene', 'accession']] = common_essential['Gene'].str.split(' ', n = 1, expand = True)
+    common_essential = common_essential[['gene', 'accession']]
+
+    list_common_essential = list(common_essential['gene'])
+    list_common_essential
+    return list_common_essential
+
 # function to scaled LFC by the absolute average LFC value across cell lines for guides targeting essential genes (Achilles Common Essential Controls)
 def scale_essential(df):
     common_essential = pd.read_csv('AchillesCommonEssentialControls_25Q2.csv')
