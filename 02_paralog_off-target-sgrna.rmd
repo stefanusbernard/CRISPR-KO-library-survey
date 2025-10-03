@@ -70,10 +70,11 @@ yusa_alignment <- import_sgrna_library_alignment("../CRISPR-KO-library-refinemen
 
 # import predicted paralog pairs from Barbara's paper
 
-barbara_paralog <- list_paralog_gene_pairs()
+# barbara_paralog <- list_paralog_gene_pairs()
+ensembl_paralog <- ensembl_paralog_gene_pairs()
 
-paralog_pairs <- barbara_paralog[[1]]
-paralog_individual <- barbara_paralog[[2]]
+paralog_pairs <- ensembl_paralog[[1]]
+paralog_individual <- ensembl_paralog[[2]]
 
 ```
 
@@ -96,11 +97,13 @@ avana_stratify_multi_target <- off_target_alignment_bin(avana_classification[[1]
 write_csv(avana_stratify_multi_target[[1]], "./sgrna_logfc/avana_data/avana_stratify_multi_target.csv")
 
 brunello_stratify_multi_target <- off_target_alignment_bin(brunello_classification[[1]], c("perfect", "multi-target guides", "non-targeting"))
+write_csv(brunello_stratify_multi_target[[1]], "./sgrna_logfc/brunello_data/brunello_stratify_multi_target.csv")
 
 toronto_stratify_multi_target <- off_target_alignment_bin(toronto_classification[[1]], c("perfect", "multi-target guides", "non-targeting"))
 write_csv(toronto_stratify_multi_target[[1]], "./sgrna_logfc/tkov3_data/tkov3_stratify_multi_target.csv")
 
 yusa_stratify_multi_target <- off_target_alignment_bin(yusa_classification[[1]], c("perfect", "multi-target guides", "non-targeting"))
+write_csv(yusa_stratify_multi_target[[1]], "./sgrna_logfc/yusa_data/yusa_stratify_multi_target.csv")
 
 ```
 
@@ -111,8 +114,8 @@ yusa_stratify_multi_target <- off_target_alignment_bin(yusa_classification[[1]],
 export_images <- function(object, filename_dir, genome_type) {
   ggsave(
     path = './',
-    width = 5,
-    height = 6,
+    width = 13,
+    height = 11,
     dpi = 300,
     plot = object,
     filename = paste(filename_dir, genome_type, ".png", sep=""))
@@ -140,8 +143,8 @@ export_images(visualize_off_target_alignment(yusa_stratify_multi_target[[2]], "N
 ```{r}
 
 
-list_guides <- avana_stratify_multi_target[[1]] %>% filter(alignment_bin %in% c(2,3,4,5,6,7,8,"> 8")) %>% pull(sgRNA)
-avana_multi_protein_coding_genes <- off_target_annotation(avana_alignment_meyers,                                               
+list_guides <- avana_stratify_multi_target[[1]] %>% filter(alignment_bin %in% c(2,3,4,5,"> 5")) %>% pull(sgRNA)
+avana_multi_protein_coding_genes <- off_target_annotation(avana_alignment_meyers,                                       
                                                           annotation,
                                                           bsgenome,
                                                           genome_type_version,
@@ -150,7 +153,7 @@ avana_multi_protein_coding_genes <- off_target_annotation(avana_alignment_meyers
                                                           0,
                                                           "avana")
 
-list_guides <- brunello_stratify_multi_target[[1]] %>% filter(alignment_bin %in% c(2,3,4,5,6,7,8,"> 8")) %>% pull(sgRNA)
+list_guides <- brunello_stratify_multi_target[[1]] %>% filter(alignment_bin %in% c(2,3,4,5,"> 5")) %>% pull(sgRNA)
 brunello_multi_protein_coding_genes <- off_target_annotation(brunello_alignment, 
                                                              annotation,
                                                              bsgenome,
@@ -160,7 +163,7 @@ brunello_multi_protein_coding_genes <- off_target_annotation(brunello_alignment,
                                                              0,
                                                              "brunello")
 
-list_guides <- toronto_stratify_multi_target[[1]] %>% filter(alignment_bin %in% c(2,3,4,5,6,7,8,"> 8")) %>% pull(sgRNA)
+list_guides <- toronto_stratify_multi_target[[1]] %>% filter(alignment_bin %in% c(2,3,4,5,"> 5")) %>% pull(sgRNA)
 toronto_multi_protein_coding_genes <- off_target_annotation(toronto_alignment, 
                                                             annotation,
                                                             bsgenome,
@@ -170,7 +173,7 @@ toronto_multi_protein_coding_genes <- off_target_annotation(toronto_alignment,
                                                             0,
                                                             "toronto")
 
-list_guides <- yusa_stratify_multi_target[[1]] %>% filter(alignment_bin %in% c(2,3,4,5,6,7,8,"> 8")) %>% pull(sgRNA)
+list_guides <- yusa_stratify_multi_target[[1]] %>% filter(alignment_bin %in% c(2,3,4,5,"> 5")) %>% pull(sgRNA)
 yusa_multi_protein_coding_genes <- off_target_annotation(yusa_alignment, 
                                                          annotation,
                                                          bsgenome,
@@ -273,6 +276,89 @@ ggsave(
 # Question 1: Are multitargeting effects more likely to target pairs of paralogs?
 # Question 2: Are genes with paralogs more likely to be subject to multi-targeting effects?
 
+## How many double-target guides originally target paralog and singleton ?
+
+```{r}
+
+dbl_target_avana <- avana_stratify_multi_target[[1]] %>% filter(alignment_bin == 2) %>% pull(sgRNA)
+dbl_target_brunello <- brunello_stratify_multi_target[[1]] %>% filter(alignment_bin == 2) %>% pull(sgRNA)
+dbl_target_toronto <- toronto_stratify_multi_target[[1]] %>% filter(alignment_bin == 2) %>% pull(sgRNA)
+dbl_target_yusa <- yusa_stratify_multi_target[[1]] %>% filter(alignment_bin == 2) %>% pull(sgRNA)
+
+
+summarize_paralog_targets <- function(sgRNA, paralogs, library) {
+  # extract gene names
+  genes <- str_extract(sgRNA, "(?<=sg_?)[A-Za-z0-9]+")
+  
+  # classify paralog vs non-paralog
+  paralog_indicator <- ifelse(genes %in% paralogs, "paralog", "singleton")
+  
+  df_dbl_target_paralog <- data.frame(sgRNA, genes, paralog_indicator, library)
+  
+  # summary counts + percentages
+  df <- data.frame(category = paralog_indicator) %>%
+    count(category) %>%
+    dplyr::rename("count" = "n") %>%
+    mutate(percentage = round(count / sum(count) * 100, 2),
+           library = library)
+  
+  return(list(df, df_dbl_target_paralog))
+}
+
+avana_dbl_target_genes_paralog <- summarize_paralog_targets(dbl_target_avana, paralog_individual, "avana")[[1]]
+brunello_dbl_target_genes_paralog <- summarize_paralog_targets(dbl_target_brunello, paralog_individual, "brunello")[[1]]
+toronto_dbl_target_genes_paralog <- summarize_paralog_targets(dbl_target_toronto, paralog_individual, "toronto_v3")[[1]]
+yusa_dbl_target_genes_paralog <- summarize_paralog_targets(dbl_target_yusa, paralog_individual, "yusa")[[1]]
+
+df_summary = rbind(avana_dbl_target_genes_paralog, 
+                   brunello_dbl_target_genes_paralog, 
+                   toronto_dbl_target_genes_paralog, 
+                   yusa_dbl_target_genes_paralog)
+
+df_summary <- df_summary %>% mutate(library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana")),
+                                    category = factor(category, levels = c("singleton", "paralog")))
+
+
+df_paralog_dbl_target_genes <- ggplot(df_summary, aes(x = library, y = percentage, fill = category)) +
+      geom_bar(stat = "identity", position = "stack") +
+      scale_fill_discrete(
+          name = "",
+          labels = c("Singleton", "Paralog")) +
+        theme_minimal() +
+        labs(title = "", x = "", y = "Intended target gene of double-target guides (%)", fill = "Target") +
+        scale_x_discrete(labels = c("brunello" = "Brunello",
+                                     "toronto_v3" = "TKOv3",
+                                     "yusa" = "Yusa \n(Project Score)",
+                                     "avana" = "Avana")) +
+        geom_text(aes(label = percentage), position = position_stack(), vjust = 2, size = 8) +
+        theme(axis.text.x = element_text(size = 25, vjust = 0.7, colour = "black"),
+              axis.text.y = element_text(size = 25, colour = "black"),
+              axis.title.y = element_text(size = 25, vjust = 0.5, margin = margin(r = 20)),
+              panel.grid.major = element_blank(),
+              panel.grid.minor = element_blank(),
+              axis.line.x = element_line(size = 0.5),
+              axis.line.y = element_line(size = 0.5),
+              legend.title = element_text(size = 25),
+              legend.text = element_text(size = 25),
+              plot.margin = margin(1, 1, 1, 1), 
+              line = element_line((size = 4), colour = "black"),
+              legend.spacing.x = unit(1, 'cm')) +
+      ylim(0, 100)
+
+df_paralog_dbl_target_genes
+
+ggsave(
+    path = './',
+    width = 12,
+    height = 10,
+    dpi = 300,
+    plot = df_paralog_dbl_target_genes,
+    filename = paste('./plot/dbl_target_guides_original_genes_paralog_T2T.png', sep = ''))
+
+```
+
+
+
 ## Identify the double-target guides targeting paralog pairs and non-paralog pairs across libraries
 
 ```{r}
@@ -284,28 +370,40 @@ ggsave(
 # ALL NUMBERS BELOW ARE IN HG38
 
 # Avana paralog analysis for double-target guides
-list_query_guides_paralog <- avana_stratify_multi_target[[1]] %>% filter(alignment_bin == 2) %>% pull(sgRNA)
+# list_query_guides_paralog <- avana_stratify_multi_target[[1]] %>% filter(alignment_bin == 2) %>% pull(sgRNA)
+
+list_query_guides_paralog <- summarize_paralog_targets(dbl_target_avana, paralog_individual, "avana")[[2]] %>% filter(paralog_indicator == "paralog") %>% pull(sgRNA)
+
 avana_multi_paralog <- find_multi_target_paralog(avana_multi_protein_coding_genes[[1]], list_query_guides_paralog, paralog_pairs, avana_library_meyers, "avana")
 
 # the number of query guides (2878) and the total number of paralog classification (694+244+2017=2955) does not match, kindly check this function
 # corrected number is 2818
 
 # Brunello paralog analysis for double-target guides
-list_query_guides_paralog <- brunello_stratify_multi_target[[1]] %>% filter(alignment_bin == 2) %>% pull(sgRNA)
+# list_query_guides_paralog <- brunello_stratify_multi_target[[1]] %>% filter(alignment_bin == 2) %>% pull(sgRNA)
+
+list_query_guides_paralog <- summarize_paralog_targets(dbl_target_brunello, paralog_individual, "brunello")[[2]] %>% filter(paralog_indicator == "paralog") %>% pull(sgRNA)
+
 brunello_multi_paralog <- find_multi_target_paralog(brunello_multi_protein_coding_genes[[1]], list_query_guides_paralog, paralog_pairs, brunello_library, "brunello")
 
 # the number of query guides (1747) and the total number of paralog classification (810+167+703=1680) does not match, kindly check this function
 # corrected number is 1615
 
 # toronto paralog analysis for double-target guides
-list_query_guides_paralog <- toronto_stratify_multi_target[[1]] %>% filter(alignment_bin == 2) %>% pull(sgRNA)
+# list_query_guides_paralog <- toronto_stratify_multi_target[[1]] %>% filter(alignment_bin == 2) %>% pull(sgRNA)
+
+list_query_guides_paralog <- summarize_paralog_targets(dbl_target_toronto, paralog_individual, "toronto_v3")[[2]] %>% filter(paralog_indicator == "paralog") %>% pull(sgRNA)
+
 toronto_multi_paralog <- find_multi_target_paralog(toronto_multi_protein_coding_genes[[1]], list_query_guides_paralog, paralog_pairs, toronto_library, "toronto")
 
 # the number of query guides (1773) and the total number of paralog classification (57+124+1688=1869) does not match, kindly check this function
 # corrected number is 1771
 
 # yusa paralog analysis for double-target guides
-list_query_guides_paralog <- yusa_stratify_multi_target[[1]] %>% filter(alignment_bin == 2) %>% pull(sgRNA)
+# list_query_guides_paralog <- yusa_stratify_multi_target[[1]] %>% filter(alignment_bin == 2) %>% pull(sgRNA)
+
+list_query_guides_paralog <- summarize_paralog_targets(dbl_target_yusa, paralog_individual, "yusa")[[2]] %>% filter(paralog_indicator == "paralog") %>% pull(sgRNA)
+
 yusa_multi_paralog <- find_multi_target_paralog(yusa_multi_protein_coding_genes[[1]], list_query_guides_paralog, paralog_pairs, yusa_library, "yusa")
 
 # the number of query guides (3054) and the total number of paralog classification (605+262+2253=3120) does not match, kindly check this function
@@ -334,12 +432,12 @@ barplot_paralog <- table_dbl_target_paralog %>%
   ggplot(aes(library_name, percent, fill = names)) +
   geom_bar(position = "stack", stat = "identity") +
   theme_minimal() +
-  labs(title = "", x = "", y = "Percentage of double-target guides (%)", fill = "Target") +
+  labs(title = "", x = "", y = "Paralog + off-target location of double-target guides (%)", fill = "") +
   scale_x_discrete(labels = c('brunello' = 'Brunello',
                 'yusa' = 'Yusa \n(Project Score)',
                 'toronto' = 'TKOv3',
                 'avana' = 'Avana')) +
-  scale_fill_manual(labels = c("percentage_sgrna_paralog" = "Paralog pairs",
+  scale_fill_manual(labels = c("percentage_sgrna_paralog" = "Paralog + paralog (ENSEMBL pairs)",
                                "percentage_sgrna_other_genes" = "Paralog + singleton",
                                "percentage_sgrna_other_genomic_loci" = "Paralog + non-coding region"),
                     values = c("percentage_sgrna_paralog" = "#009E73",

@@ -26,3 +26,7 @@
     - Dataset_S2_readcounts.txt (we only take Dataset_S2 because this read count data for drugs screened with TKOv3)
     - Screen_Library.csv (not all treatment/replicates were performed in TKOv3!)
     - TKOv3 containing 71090 guides targeting 18056 genes (Olivieri et al, 2020)
+
+5. Brunello library (Samson et al, 2018) --> https://www.nature.com/articles/s41467-018-07901-8#article-info
+    - The Brunello library comprises 77,441 sgRNAs, an average of 4 sgRNAs per gene, and 1000 non-targeting control sgRNAs. 
+    - We conducted genome-wide negative selection (dropout) screens in A375 melanoma cells that were first engineered to express Cas9. 

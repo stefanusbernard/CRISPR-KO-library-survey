@@ -33,7 +33,7 @@ terms_for_filtering <- paste(terms, collapse = "|")
 
 brunello <- 'broadgpp-brunello-library-contents'
 toronto <- 'tkov3_guide_sequence'
-avana <- 'AvanaGuideMap'
+avana <- 'avana_library'
 yusa <- 'yusa_hcrispr_ko_grnas'
 
 import_report_without_control <- function(file_dir, control_terms) {
@@ -58,9 +58,10 @@ yusa_report <- import_report_without_control(paste('../CRISPR-KO-library-refinem
 # import predicted paralog pairs from Barbara's paper
 
 barbara_paralog <- list_paralog_gene_pairs()
+ensembl_paralog <- ensembl_paralog_gene_pairs()
 
-paralog_pairs <- barbara_paralog[[1]]
-paralog_individual <- barbara_paralog[[2]]
+paralog_pairs <- ensembl_paralog[[1]]
+paralog_individual <- ensembl_paralog[[2]]
 
 
 ```
@@ -211,7 +212,7 @@ removed_paralog <- ggplot(failed_paralog_percentage, aes(x = library, y = percen
               plot.margin = margin(1, 1, 1, 1), 
               line = element_line((size = 4), colour = "black"),
               legend.spacing.x = unit(1, 'cm')) +
-      ylim(0, 100)
+      ylim(0, 101)
 
 removed_paralog
 
@@ -274,7 +275,7 @@ ggsave(
     height = 10,
     dpi = 300,
     plot = percentage_bar_chart,
-    filename = paste('./plot/library_genes_bar_chart_hg38.png', sep = ''))
+    filename = paste('./plot/library_genes_bar_chart_T2T.png', sep = ''))
 
 ```
 
@@ -326,7 +327,7 @@ ggsave(
     height = 10,
     dpi = 300,
     plot = percentage_bar_chart,
-    filename = paste('./plot/library_sgrna_bar_chart_hg38.png', sep = ''))
+    filename = paste('./plot/library_sgrna_bar_chart_T2T.png', sep = ''))
 
 
 ```

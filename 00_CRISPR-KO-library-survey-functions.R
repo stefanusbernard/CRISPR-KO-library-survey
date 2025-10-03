@@ -36,6 +36,24 @@ list_paralog_gene_pairs <- function(dataset = "./barbara_36K_paralog_pairs.csv")
   return(list(gene_pair, combined))
 }
 
+
+# Function to obtain the list of paralog pairs from ENSEMBL 115
+
+ensembl_paralog_gene_pairs <- function(dataset = "./ensembl_115_human_paralogs.txt") {
+  
+  ensembl_paralog <- read_csv(dataset) %>% 
+    drop_na() %>%
+    mutate(gene_pair = paste(`Gene name`, "_", `Human paralogue associated gene name`, sep = ""))
+  
+  gene_pair <- unique(ensembl_paralog$gene_pair)
+  gene_list <- unique(ensembl_paralog$`Gene name`)
+  
+  return(list(gene_pair, gene_list))
+  
+}
+
+
+
 # Calculate the percentage of multi-target, single-mismatch, and PAM-distal double mismatch sgRNA in each libraries
 
 calculate_percentage <- function(library_report, discarded_sgrna, original_sgrna) {
@@ -192,8 +210,8 @@ off_target_alignment_bin <- function(classification_alignment, alignment_type) {
   # bin the number of alignments to see how many guides targeting two until more than 8 different locations in the genome with perfect match
   
   count_on_target_alignments$alignment_bin <- cut(count_on_target_alignments$num_alignments,
-                                                  breaks = c(-0.5, 0.5:8.5, Inf),  # -0.5 to 8.5 for 0–8, then Inf for >8
-                                                  labels = c(as.character(0:8), "> 8"),
+                                                  breaks = c(-0.5, 0.5:5.5, Inf),  # -0.5 to 5.5 for 0–5, then Inf for >5
+                                                  labels = c(as.character(0:5), "> 5"),
                                                   right = TRUE)
   
   alignment_bin_df <- count_on_target_alignments %>% 
@@ -208,24 +226,30 @@ off_target_alignment_bin <- function(classification_alignment, alignment_type) {
 
 visualize_off_target_alignment <- function(alignment_bin_df, xlabel) {
   
-  ggplot(alignment_bin_df, aes(x = num_of_alignments, y = number_of_sgrnas, fill = "mistyrose")) +
+  ggplot(alignment_bin_df, aes(x = num_of_alignments, y = number_of_sgrnas, fill = "#E66100")) +
     geom_col() +
-    theme(axis.text.x = element_text(size = 10, colour = "black"),
-          axis.text.y = element_text(size = 10, colour = "black"),
-          panel.background = element_blank(),
-          axis.line.x = element_line(size = 0.5),
-          axis.line.y = element_line(size = 0.5),
-          legend.position = "none") +
-    # scale_y_break(c(5000, 60000)) +
+    theme_minimal() +
     scale_y_break(c((alignment_bin_df$number_of_sgrnas[alignment_bin_df$num_of_alignments == 2] + 1500),
                     (alignment_bin_df$number_of_sgrnas[alignment_bin_df$num_of_alignments == 1] - 1500))) +
     labs(x = xlabel, y = "Number of sgRNAs") +
     geom_text(aes(label = paste("n=", number_of_sgrnas, sep="")),
               nudge_y = 100,
               nudge_x = 0,
-              size = 2.5) +
-    ylim(0, 90000)
-  
+              size = 9) +
+    theme(axis.text.x = element_text(size = 25, vjust = 0.7, colour = 'black'),
+          axis.text.y = element_text(size = 25, colour = "black"),
+          axis.title.x = element_text(size = 25, vjust = 0.5, margin = margin(r = 20), colour = "black"),
+          axis.title.y = element_text(size = 25, vjust = 0.5, margin = margin(r = 20), colour = "black"),
+          axis.line.y.right = element_blank(),
+          axis.ticks.y.right = element_blank(), 
+          axis.text.y.right = element_blank(), 
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          axis.line.x = element_line(size = 0.5, colour = "black"),
+          axis.line.y = element_line(size = 0.5, colour = "black"),
+          legend.position = "none",
+          plot.margin = margin(1, 1, 1, 1),
+          legend.spacing.x = unit(1, 'cm'))
 }
 
 
