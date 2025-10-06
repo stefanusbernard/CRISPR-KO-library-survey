@@ -1,2 +1,3 @@
-# CRISPR-KO-off-target-paralog
-A repository containing the script for the analysis of CRISPR-KO sgRNA library with off-target sgRNAs targeting paralog
+# A survey of multi-targeting and off-targeting sgRNAs across CRISPR-KO sgRNA libraries
+
+A repository containing the script for the analysis of CRISPR-KO sgRNA libraries
