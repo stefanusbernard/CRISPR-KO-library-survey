@@ -9,5 +9,5 @@
 *.gz
 *.out
 *.gtf
-*.png
+old_plot/*
 .Rproj.user
