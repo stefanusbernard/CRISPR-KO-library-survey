@@ -361,4 +361,119 @@ ggsave(
 
 ```
 
+## Double-target guides and their sgRNA log-fold-change
+## Find "clean" double-target guides
+Clean double-target guides should be
+1. Multi-target guides that strictly target 2 protein-coding genes
+2. Not having additional single mismatches
+3. Not having additional double mismatches
+
+Afterwards we try to find where guide that co-targeting a pair of paralog genes (clean double-target guides) and compare it with at least one single-target guide for each of the two paralogs
+
+
+```{r}
+
+clean_double_target_guides <- function(list_guides, alignment_data, library_data, library_name, refined_library_dir) {
+  
+  # fetch double-target guides (without any additional single or double mismatches)
+  cleaned_double_target_guides <- alignment_data %>%
+        filter(sgRNA %in% list_guides) %>%
+        group_by(sgRNA) %>%
+        filter(all(n_mismatches == 0)) %>%
+        distinct(sgRNA) %>%
+        pull(sgRNA)
+    
+  # annotate the cleaned double-target guides, fetch double-target guides targeting protein-coding genes only
+  annotate_cleaned_double_target_guides <- off_target_annotation(
+                                            alignment_data,                                       
+                                            annotation,
+                                            bsgenome,
+                                            genome_type_version,
+                                            library_data, 
+                                            cleaned_double_target_guides,
+                                            0,
+                                            library_name)
+  
+  # fetch double-target guides targeting paralogs
+  double_target_paralog <- find_multi_target_paralog(annotate_cleaned_double_target_guides[[1]], 
+                                                     cleaned_double_target_guides, 
+                                                     paralog_pairs, 
+                                                     library_data, 
+                                                     library_name)
+  
+  # list of cleaned double-target guides targeting paralogs
+  cleaned_double_target_paralog_guides <- double_target_paralog[[4]]
+  
+  # list of paralog genes affected by double-target guides
+  paralog_affected_double_target_guides <- double_target_paralog[[7]]
+  
+  # import refined library and filter for gene paralog that affected by double-target guides
+  # this is to filter the paralog gene that still has "clean" sgRNA upon refinement
+  refined_library <- import_library(refined_library_dir) %>%
+    filter(gene %in% paralog_affected_double_target_guides)
+  
+  # dataframe containing the alignment of cleaned double-target guides targeting paralogs
+  # this is to filter for cleaned double-target-guides and gene in the refined library
+  aln_double_target_paralog_guides <- double_target_paralog[[1]] %>% 
+    filter(sgrna %in% cleaned_double_target_paralog_guides & gene %in% refined_library$gene)
+    # select(sgrna, spacer, gene, actual_gene, target)
+  
+  # add another filter to fetch genes that match the criteria from aln_double_target_paralog_guides
+  refined_library <- refined_library %>%
+    filter(gene %in% unique(aln_double_target_paralog_guides$gene))
+  
+  combined_df <- bind_rows(refined_library, aln_double_target_paralog_guides)
+  combined_df <- combined_df %>% 
+    arrange(sgrna, gene)
+    
+  return(list(
+    double_target_paralog = double_target_paralog,
+    dbl_target_paralog_guides = cleaned_double_target_paralog_guides, 
+    paralog_affected = paralog_affected_double_target_guides,
+    df_single_target_guides = refined_library,
+    df_co_targeting_guides = aln_double_target_paralog_guides,
+    combined_df = combined_df))
+
+}
+
+# fetch perfect alignment at two locations
+list_query_guides_paralog <- avana_stratify_multi_target[[1]] %>% filter(alignment_bin == 2) %>% pull(sgRNA)
+
+avana_dbl_target_guides <- clean_double_target_guides(list_query_guides_paralog, 
+                               avana_alignment_meyers, 
+                               avana_library_meyers, 
+                               "avana",
+                               "../CRISPR-KO-library-refinement-pipeline/output_cleaning/hg38/avana_library_56K_refined.tsv")
+
+
+list_query_guides_paralog <- brunello_stratify_multi_target[[1]] %>% filter(alignment_bin == 2) %>% pull(sgRNA)
+
+brunello_dbl_target_guides <- clean_double_target_guides(list_query_guides_paralog, 
+                               brunello_alignment, 
+                               brunello_library, 
+                               "brunello",
+                               "../CRISPR-KO-library-refinement-pipeline/output_cleaning/hg38/broadgpp-brunello-library-contents_65K_refined.tsv")
+
+
+list_query_guides_paralog <- toronto_stratify_multi_target[[1]] %>% filter(alignment_bin == 2) %>% pull(sgRNA)
+
+toronto_dbl_target_guides <- clean_double_target_guides(list_query_guides_paralog, 
+                               toronto_alignment, 
+                               toronto_library, 
+                               "toronto",
+                               "../CRISPR-KO-library-refinement-pipeline/output_cleaning/hg38/tkov3_guide_sequence_62K_refined.tsv")
+
+
+list_query_guides_paralog <- yusa_stratify_multi_target[[1]] %>% filter(alignment_bin == 2) %>% pull(sgRNA)
+
+yusa_dbl_target_guides <- clean_double_target_guides(list_query_guides_paralog, 
+                               yusa_alignment, 
+                               yusa_library, 
+                               "yusa",
+                               "../CRISPR-KO-library-refinement-pipeline/output_cleaning/hg38/yusa_hcrispr_ko_grnas_76K_refined.tsv")
+
+
+
+```
+
 

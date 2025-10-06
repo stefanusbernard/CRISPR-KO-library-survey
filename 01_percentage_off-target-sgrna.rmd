@@ -18,7 +18,7 @@ library(VennDiagram)
 library(grid)
 library(paletteer)
 library(RColorBrewer)
-source('../CRISPR-KO-library-refinement-pipeline/sgRNA_library_refinement_pipeline_functions.R')
+source('../CRISPR-KO-GuideRefine/GuideRefine_functions.R')
 source("./00_CRISPR-KO-library-survey-functions.R")
 ```
 
@@ -44,10 +44,10 @@ import_report_without_control <- function(file_dir, control_terms) {
   
 }
 
-brunello_report <- import_report_without_control(paste('../CRISPR-KO-library-refinement-pipeline/output_cleaning/T2T-CHM13/', brunello, '_full_report.xlsx', sep = ''))
-toronto_report <- import_report_without_control(paste('../CRISPR-KO-library-refinement-pipeline/output_cleaning/T2T-CHM13/', toronto, '_full_report.xlsx', sep = ''))
-avana_report <- import_report_without_control(paste('../CRISPR-KO-library-refinement-pipeline/output_cleaning/T2T-CHM13/', avana, '_full_report.xlsx', sep = ''))
-yusa_report <- import_report_without_control(paste('../CRISPR-KO-library-refinement-pipeline/output_cleaning/T2T-CHM13/', yusa, '_full_report.xlsx', sep = ''))
+brunello_report <- import_report_without_control(paste('../CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', brunello, '_full_report.xlsx', sep = ''))
+toronto_report <- import_report_without_control(paste('../CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', toronto, '_full_report.xlsx', sep = ''))
+avana_report <- import_report_without_control(paste('../CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', avana, '_full_report.xlsx', sep = ''))
+yusa_report <- import_report_without_control(paste('../CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', yusa, '_full_report.xlsx', sep = ''))
 
 ```
 
@@ -158,10 +158,10 @@ ggsave(
 
 ```{r}
 
-# brunello_library <- import_library("../CRISPR-KO-library-refinement-pipeline/public_crispr_library/broadgpp-brunello-library-contents.tsv")
-# toronto_library <- import_library("../CRISPR-KO-library-refinement-pipeline/public_crispr_library/tkov3_guide_sequence.tsv")
-# avana_library <- import_library("../CRISPR-KO-library-refinement-pipeline/public_crispr_library/avana_library.tsv")
-# yusa_library <- import_library("../CRISPR-KO-library-refinement-pipeline/public_crispr_library/yusa_hcrispr_ko_grnas.tsv")
+# brunello_library <- import_library("../CRISPR-KO-GuideRefine/public_crispr_library/broadgpp-brunello-library-contents.tsv")
+# toronto_library <- import_library("../CRISPR-KO-GuideRefine/public_crispr_library/tkov3_guide_sequence.tsv")
+# avana_library <- import_library("../CRISPR-KO-GuideRefine/public_crispr_library/avana_library.tsv")
+# yusa_library <- import_library("../CRISPR-KO-GuideRefine/public_crispr_library/yusa_hcrispr_ko_grnas.tsv")
 
 avana_result_gene <- percentages_and_list_genes(avana_report, paralog_individual)
 brunello_result_gene <- percentages_and_list_genes(brunello_report, paralog_individual)

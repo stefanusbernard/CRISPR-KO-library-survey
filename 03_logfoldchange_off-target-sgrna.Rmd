@@ -19,46 +19,54 @@ library(BSgenome)
 library(BSgenome.Hsapiens.UCSC.hg38)
 library(BSgenome.Hsapiens.NCBI.T2TCHM13v2.0)
 
-source('../CRISPR-KO-library-refinement-pipeline/sgRNA_library_refinement_pipeline_functions.R')
+source('../CRISPR-KO-GuideRefine/GuideRefine_functions.R')
 source("./00_CRISPR-KO-library-survey-functions.R")
 ```
 
-# Avana Library
+# A function to obtain and process sgRNA library Log-fold-change data
 
 ```{r}
-avana_library <- read_tsv("../CRISPR-KO-library-refinement-pipeline/public_crispr_library/avana_library.tsv", col_names = FALSE)
-colnames(avana_library) <- c("sgRNA", "spacer", "gene")
 
-avana_lfc <- read_csv("./sgrna_logfc/output_normalized/avana_normalized_lfc.csv")
-avana_stratification <- read_csv("./sgrna_logfc/avana_data/avana_stratify_multi_target.csv", col_types = cols(
-  alignment_bin = col_character()
-)) %>% select(sgRNA, alignment_bin)
+obtain_required_data <- function(library, normalized_lfc_data, stratification_data) {
+  
+  library <- read_tsv(library, col_names = FALSE)
+  colnames(library) <- c("sgRNA", "spacer", "gene")
+  
+  normalized_lfc_data <- read_csv(normalized_lfc_data)
+  library_stratification <- read_csv(stratification_data, col_types = cols(alignment_bin = col_character()
+  )) %>% select(sgRNA, alignment_bin)
+  
+  # left join
+  library_lfc_data <- normalized_lfc_data %>%
+    left_join(library, by = c("sgRNA", "spacer", "gene")) %>%
+    relocate(sgRNA, .before = spacer) %>%
+    relocate(gene, .after = spacer) %>%
+    arrange(sgRNA)
+  
+  
+  terms <- c("CONTROL", "Control", "control", "INTRON", "Intron", "intron", "LacZ", "luciferase")
+  # lacZ and luciferase are the control in Toronto V3 library
+  terms_for_filtering <- paste(terms, collapse = "|")
+  
+  # separate control from the library
 
-# left join
-avana_sgrna_lfc <- avana_lfc %>%
-  left_join(avana_library, by = c("sgRNA", "spacer", "gene")) %>%
-  relocate(sgRNA, .before = spacer) %>%
-  relocate(gene, .after = spacer) %>%
-  arrange(sgRNA)
+  control_lfc_data <- library_lfc_data %>% filter(str_detect(gene, terms_for_filtering))
+  
+  library_lfc_data <- library_lfc_data %>%
+    filter(!str_detect(gene, terms_for_filtering)) %>%
+    left_join(library_stratification, join_by(sgRNA)) %>%
+    filter(alignment_bin %in% c(0, 1, 2, 3, 4, 5,"> 5"))
+  
+  library_lfc_data$alignment_bin <- factor(library_lfc_data$alignment_bin, levels = c(0, 1, 2, 3, 4, 5, "> 5"))
+  
+  return(library_lfc_data)
+  
+}
 
 
-terms <- c("CONTROL", "Control", "control", "INTRON", "Intron", "intron", "LacZ", "luciferase")
-# lacZ and luciferase are the control in Toronto V3 library
-terms_for_filtering <- paste(terms, collapse = "|")
-
-# separate control from the library
-
-avana_control <- avana_sgrna_lfc %>% filter(str_detect(gene, terms_for_filtering))
-
-avana_sgrna_lfc <- avana_sgrna_lfc %>%
-  filter(!str_detect(gene, terms_for_filtering)) %>%
-  left_join(avana_stratification, join_by(sgRNA)) %>%
-  filter(alignment_bin %in% c(0, 1, 2, 3, 4, 5,"> 5"))
-
-avana_sgrna_lfc$alignment_bin <- factor(avana_sgrna_lfc$alignment_bin, levels = c(0, 1, 2, 3, 4, 5, "> 5"))
-
-
-boxplot_lfc <- avana_sgrna_lfc %>%
+visualize_lfc <- function(library_lfc_data, boxplot_output_name) {
+  
+  boxplot_lfc <- library_lfc_data %>%
   ggplot(aes(alignment_bin, mean, group = alignment_bin)) +
   geom_boxplot(outlier.shape = NA, size = 1) +
   theme_minimal() +
@@ -76,16 +84,29 @@ boxplot_lfc <- avana_sgrna_lfc %>%
         axis.line.x = element_line(size = 0.5),
         axis.line.y = element_line(size = 0.5), 
         line = element_line((size = 4), colour = 'black'))
-
-
-ggsave(
+  
+  ggsave(
     path = './',
     width = 15,
     height = 15,
     dpi = 300,
     plot = boxplot_lfc,
-    filename = paste('./plot/avana_lfc.png', sep = ''))
+    filename = boxplot_output_name)
+  
+}
 
+
+```
+
+# Avana Library
+
+```{r}
+
+avana_library_and_lfc_data <- obtain_required_data("../CRISPR-KO-GuideRefine/public_crispr_library/avana_library.tsv", 
+                                                   "./sgrna_logfc/output_normalized/avana_normalized_lfc.csv", 
+                                                   "./sgrna_logfc/avana_data/avana_stratify_multi_target.csv")
+
+visualize_lfc(avana_library_and_lfc_data, "./plot/avana_lfc.png")
 
 ```
 
@@ -93,64 +114,12 @@ ggsave(
 
 ```{r}
 
-tkov3_library <- read_tsv("../CRISPR-KO-library-refinement-pipeline/public_crispr_library/tkov3_guide_sequence.tsv", col_names = FALSE)
-colnames(tkov3_library) <- c("sgRNA", "spacer", "gene")
+tkov3_library_and_lfc_data <- obtain_required_data("../CRISPR-KO-GuideRefine/public_crispr_library/tkov3_guide_sequence.tsv", 
+                                                   "./sgrna_logfc/output_normalized/tkov3_rpe1_normalized_lfc.csv", 
+                                                   "./sgrna_logfc/tkov3_data/tkov3_stratify_multi_target.csv")
 
-tkov3_lfc <- read_csv("./sgrna_logfc/output_normalized/tkov3_rpe1_normalized_lfc.csv")
-tkov3_stratification <- read_csv("./sgrna_logfc/tkov3_data/tkov3_stratify_multi_target.csv", col_types = cols(
-  alignment_bin = col_character()
-)) %>% select(sgRNA, alignment_bin)
+visualize_lfc(tkov3_library_and_lfc_data, "./plot/tkov3_lfc.png")
 
-# left join
-tkov3_sgrna_lfc <- tkov3_lfc %>%
-  left_join(tkov3_library, by = c("sgRNA", "spacer", "gene")) %>%
-  relocate(sgRNA, .before = spacer) %>%
-  relocate(gene, .after = spacer) %>%
-  arrange(sgRNA)
-
-
-terms <- c("CONTROL", "Control", "control", "INTRON", "Intron", "intron", "LacZ", "luciferase")
-# lacZ and luciferase are the control in Toronto V3 library
-terms_for_filtering <- paste(terms, collapse = "|")
-
-# separate control from the library
-
-tkov3_control <- tkov3_sgrna_lfc %>% filter(str_detect(gene, terms_for_filtering))
-
-tkov3_sgrna_lfc <- tkov3_sgrna_lfc %>%
-  filter(!str_detect(gene, terms_for_filtering)) %>%
-  left_join(tkov3_stratification, join_by(sgRNA)) %>%
-  filter(alignment_bin %in% c(0, 1, 2, 3, 4, 5, "> 5"))
-
-tkov3_sgrna_lfc$alignment_bin <- factor(tkov3_sgrna_lfc$alignment_bin, levels = c(0, 1, 2, 3, 4, 5, "> 5"))
-
-boxplot_lfc <- tkov3_sgrna_lfc %>%
-  ggplot(aes(alignment_bin, mean, group = alignment_bin)) +
-  geom_boxplot(outlier.shape = NA, size = 1) +
-  theme_minimal() +
-  geom_hline(yintercept = 0, linetype = "dashed", color = "black", size = 1) +
-  geom_hline(yintercept = -1, linetype = "dashed", color = "black", size = 1) +
-  scale_y_continuous(limits = c(-3, 3), breaks = seq(-3, 3, by = 1)) +
-  labs(title = "", x = "Number of perfect on-target alignment", y = "Averaged median sgRNA Log2FC") +
-  theme(plot.margin = margin(10, 10, 25, 10),
-        axis.text.x = element_text(size = 40, vjust = 0.7, colour = "black"),
-        axis.text.y = element_text(size = 40, colour = "black"),
-        axis.title.x = element_text(size = 40, vjust = 0.5, margin = margin(t = 20)),
-        axis.title.y = element_text(size = 40, vjust = 0.5, margin = margin(r = 20)),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.line.x = element_line(size = 0.5),
-        axis.line.y = element_line(size = 0.5), 
-        line = element_line((size = 4), colour = 'black'))
-
-
-ggsave(
-    path = './',
-    width = 15,
-    height = 15,
-    dpi = 300,
-    plot = boxplot_lfc,
-    filename = paste('./plot/tkov3_lfc.png', sep = ''))
 
 ```
 
@@ -158,64 +127,12 @@ ggsave(
 
 ```{r}
 
-yusa_library <- read_tsv("../CRISPR-KO-library-refinement-pipeline/public_crispr_library/yusa_hcrispr_ko_grnas.tsv", col_names = FALSE)
-colnames(yusa_library) <- c("sgRNA", "spacer", "gene")
+yusa_library_and_lfc_data <- obtain_required_data("../CRISPR-KO-GuideRefine/public_crispr_library/yusa_hcrispr_ko_grnas.tsv", 
+                                                   "./sgrna_logfc/output_normalized/yusa_normalized_lfc.csv", 
+                                                   "./sgrna_logfc/yusa_data/yusa_stratify_multi_target.csv")
 
-yusa_lfc <- read_csv("./sgrna_logfc/output_normalized/yusa_normalized_lfc.csv")
-yusa_stratification <- read_csv("./sgrna_logfc/yusa_data/yusa_stratify_multi_target.csv", col_types = cols(
-  alignment_bin = col_character()
-)) %>% select(sgRNA, alignment_bin)
+visualize_lfc(yusa_library_and_lfc_data, "./plot/yusa_lfc.png")
 
-# left join
-yusa_sgrna_lfc <- yusa_lfc %>%
-  left_join(yusa_library, by = c("sgRNA", "spacer", "gene")) %>%
-  relocate(sgRNA, .before = spacer) %>%
-  relocate(gene, .after = spacer) %>%
-  arrange(sgRNA)
-
-
-terms <- c("CONTROL", "Control", "control", "INTRON", "Intron", "intron", "LacZ", "luciferase")
-# lacZ and luciferase are the control in Toronto V3 library
-terms_for_filtering <- paste(terms, collapse = "|")
-
-# separate control from the library
-
-yusa_control <- yusa_sgrna_lfc %>% filter(str_detect(gene, terms_for_filtering))
-
-yusa_sgrna_lfc <- yusa_sgrna_lfc %>%
-  filter(!str_detect(gene, terms_for_filtering)) %>%
-  left_join(yusa_stratification, join_by(sgRNA)) %>%
-  filter(alignment_bin %in% c(0, 1, 2, 3, 4, 5, "> 5"))
-
-yusa_sgrna_lfc$alignment_bin <- factor(yusa_sgrna_lfc$alignment_bin, levels = c(0, 1, 2, 3, 4, 5, "> 5"))
-
-boxplot_lfc <- yusa_sgrna_lfc %>%
-  ggplot(aes(alignment_bin, mean, group = alignment_bin)) +
-  geom_boxplot(outlier.shape = NA, size = 1) +
-  theme_minimal() +
-  geom_hline(yintercept = 0, linetype = "dashed", color = "black", size = 1) +
-  geom_hline(yintercept = -1, linetype = "dashed", color = "black", size = 1) +
-  scale_y_continuous(limits = c(-3, 3), breaks = seq(-3, 3, by = 1)) +
-  labs(title = "", x = "Number of perfect on-target alignment", y = "Averaged median sgRNA Log2FC") +
-  theme(plot.margin = margin(10, 10, 25, 10),
-        axis.text.x = element_text(size = 40, vjust = 0.7, colour = "black"),
-        axis.text.y = element_text(size = 40, colour = "black"),
-        axis.title.x = element_text(size = 40, vjust = 0.5, margin = margin(t = 20)),
-        axis.title.y = element_text(size = 40, vjust = 0.5, margin = margin(r = 20)),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.line.x = element_line(size = 0.5),
-        axis.line.y = element_line(size = 0.5), 
-        line = element_line((size = 4), colour = 'black'))
-
-
-ggsave(
-    path = './',
-    width = 15,
-    height = 15,
-    dpi = 300,
-    plot = boxplot_lfc,
-    filename = paste('./plot/yusa_lfc.png', sep = ''))
 
 ```
 
@@ -223,64 +140,12 @@ ggsave(
 
 ```{r}
 
-brunello_library <- read_tsv("../CRISPR-KO-library-refinement-pipeline/public_crispr_library/broadgpp-brunello-library-contents.tsv", col_names = FALSE)
-colnames(brunello_library) <- c("sgRNA", "spacer", "gene")
+brunello_library_and_lfc_data <- obtain_required_data("../CRISPR-KO-GuideRefine/public_crispr_library/broadgpp-brunello-library-contents.tsv", 
+                                                     "./sgrna_logfc/output_normalized/brunello_a375_normalized_lfc.csv", 
+                                                     "./sgrna_logfc/brunello_data/brunello_stratify_multi_target.csv")
 
-brunello_lfc <- read_csv("./sgrna_logfc/output_normalized/brunello_a375_normalized_lfc.csv")
-brunello_stratification <- read_csv("./sgrna_logfc/brunello_data/brunello_stratify_multi_target.csv", col_types = cols(
-  alignment_bin = col_character()
-)) %>% select(sgRNA, alignment_bin)
+visualize_lfc(brunello_library_and_lfc_data, "./plot/brunello_lfc.png")
 
-# left join
-brunello_sgrna_lfc <- brunello_lfc %>%
-  left_join(brunello_library, by = c("sgRNA", "spacer", "gene")) %>%
-  relocate(sgRNA, .before = spacer) %>%
-  relocate(gene, .after = spacer) %>%
-  arrange(sgRNA)
-
-
-terms <- c("CONTROL", "Control", "control", "INTRON", "Intron", "intron", "LacZ", "luciferase")
-# lacZ and luciferase are the control in Toronto V3 library
-terms_for_filtering <- paste(terms, collapse = "|")
-
-# separate control from the library
-
-brunello_control <- brunello_sgrna_lfc %>% filter(str_detect(gene, terms_for_filtering))
-
-brunello_sgrna_lfc <- brunello_sgrna_lfc %>%
-  filter(!str_detect(gene, terms_for_filtering)) %>%
-  left_join(brunello_stratification, join_by(sgRNA)) %>%
-  filter(alignment_bin %in% c(0, 1, 2, 3, 4, 5, "> 5"))
-
-brunello_sgrna_lfc$alignment_bin <- factor(brunello_sgrna_lfc$alignment_bin, levels = c(0, 1, 2, 3, 4, 5, "> 5"))
-
-boxplot_lfc <- brunello_sgrna_lfc %>%
-  ggplot(aes(alignment_bin, mean, group = alignment_bin)) +
-  geom_boxplot(outlier.shape = NA, size = 1) +
-  theme_minimal() +
-  geom_hline(yintercept = 0, linetype = "dashed", color = "black", size = 1) +
-  geom_hline(yintercept = -1, linetype = "dashed", color = "black", size = 1) +
-  scale_y_continuous(limits = c(-3, 3), breaks = seq(-3, 3, by = 1)) +
-  labs(title = "", x = "Number of perfect on-target alignment", y = "Averaged median sgRNA Log2FC") +
-  theme(plot.margin = margin(10, 10, 25, 10),
-        axis.text.x = element_text(size = 40, vjust = 0.7, colour = "black"),
-        axis.text.y = element_text(size = 40, colour = "black"),
-        axis.title.x = element_text(size = 40, vjust = 0.5, margin = margin(t = 20)),
-        axis.title.y = element_text(size = 40, vjust = 0.5, margin = margin(r = 20)),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.line.x = element_line(size = 0.5),
-        axis.line.y = element_line(size = 0.5), 
-        line = element_line((size = 4), colour = 'black'))
-
-
-ggsave(
-    path = './',
-    width = 15,
-    height = 15,
-    dpi = 300,
-    plot = boxplot_lfc,
-    filename = paste('./plot/brunello_lfc.png', sep = ''))
 
 
 ```
