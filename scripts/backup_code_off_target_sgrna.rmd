@@ -571,10 +571,166 @@ ggsave(
     filename = paste('./plot/genes_multi_target.png', sep = ''))
 ```
 
+## Backup code function 00_CRISPR-KO-library-survey-functions.R
+
+```{r}
+
+off_target_annotation <- function(alignment_data, annotation_data, bsgenome, bsgenome_text, library, list_sgrna, num_mismatches, library_name){
+  
+  alignment_data <- alignment_data %>% filter(sgRNA %in% list_sgrna)
+  
+  gene_df <- annotate_off_target(alignment_data, annotation_data, bsgenome, bsgenome_text)
+  gene_df <- gene_df %>%
+    dplyr::rename('actual_chr' = 'chr',
+                  'actual_gene' = 'gene')
+  
+  alignment_data <- add_cut_pos_pam_pos(alignment_data)
+  alignment_data <- alignment_data %>%
+    select(unique_aln_id, sgRNA, spacer, protospacer, gene, chr, n_mismatches, cut_pos) %>%
+    dplyr::rename('sgrna' = 'sgRNA')
+  
+  # one version of alignment data for paralog analysis (you will need the actual gene to detect which multi-target sgRNA targeting only two protein-coding genes - one is the actual gene, the other one is the paralog pairs)
+  alignment_data_gene_df <- alignment_data %>%
+    filter(n_mismatches == num_mismatches) %>%
+    left_join(gene_df, by = join_by(unique_aln_id, sgrna, spacer, protospacer, cut_pos)) %>%
+    select(unique_aln_id, sgrna, spacer, protospacer, gene, chr, n_mismatches, cut_pos, actual_chr, actual_gene) %>%
+    mutate(target = case_when(gene == actual_gene ~ 'actual target gene',
+                              gene != actual_gene ~ 'other protein-coding genes',
+                              is.na(actual_gene) ~ 'other genomic loci')) %>%
+    distinct()
+  
+  summary_target_df <- alignment_data_gene_df %>%
+    filter(target != "actual target gene") %>%
+    select(sgrna, target) %>%
+    group_by(sgrna) %>%
+    # first removal of duplicate data to remove duplicate alignment to multiple locations 
+    distinct() %>%
+    # there may be a case where a single sgRNA can perfectly target both protein-coding gene and genomic loci, this code is used assign those sgRNA those sgRNA as targeting protein-coding gene only (which may result in duplicated data)
+    mutate(target = ifelse(n() > 1, 'other protein-coding genes', target)) %>%
+    ungroup() %>%
+    # second removal of duplicate data
+    distinct()
+  
+  # there is a possibility a single guide target multiple locations of the same gene and other gene/random genomic locations, this code is used to separate the sgRNA that align multiple times to the same gene with those align to other gene/genomic loci
+  multiple_aln_same_target <- alignment_data_gene_df %>%
+    filter(target == "actual target gene" & !sgrna %in% summary_target_df$sgrna) %>%
+    count(sgrna) %>%
+    filter(n > 1) %>%
+    dplyr::rename("number_of_alignments" = "n")
+  
+  # count affected genes
+  
+  sgrna_target_genes <- summary_target_df %>%
+    filter(target == "other protein-coding genes") %>%
+    distinct() %>%
+    pull(sgrna)
+  
+  affected_genes <- alignment_data_gene_df %>%
+    filter(sgrna %in% sgrna_target_genes & target == "other protein-coding genes") %>%
+    select(actual_gene) %>%
+    distinct() %>%
+    pull(actual_gene)
+  
+  df_affected_genes_percentage <- data.frame(target = c("other genomic loci", "other protein-coding genes"),
+                                             count_genes = c(0, length(affected_genes)),
+                                             percent_genes = c(0, round(length(affected_genes)/length(unique(library$gene))*100, 2)))
+  
+  
+  # create frequency table
+  
+  calculate_freq_table <- summary_target_df %>%
+    select(target) %>%
+    count(target) %>%
+    dplyr::rename('count_sgrna' = 'n') %>%
+    arrange(desc(count_sgrna)) %>%
+    mutate(percent_sgrna_among_library = round(count_sgrna/length(unique(library$sgRNA))*100 ,2),
+           percent_sgrna_among_off_target = round(count_sgrna/length(unique(alignment_data_gene_df$sgrna))*100, 2),
+           library = library_name) %>%
+    relocate(library, .before = target) %>%
+    left_join(df_affected_genes_percentage, join_by(target))
+  
+  
+  return(list(
+    aln_data_df = alignment_data_gene_df,
+    multiple_aln_same_target = multiple_aln_same_target,
+    summary_df = summary_target_df, 
+    freq_table = calculate_freq_table,
+    list_affected_genes = affected_genes))
+}
 
 
+# ----------------------------------------------------------------------------------------------------------------------------------------------
 
 
+# Function to identify multi-target alignment targeting paralog pairs, strictly only for 2 protein-coding genes (paralog A1 and paralog A2)
+
+find_multi_target_paralog <- function(alignment_gene_df, list_guides, paralog_dataset, library, library_name) {
+  dbl_target_classification <- alignment_gene_df %>%
+    filter(sgrna %in% list_guides) %>%
+    mutate(target = case_when(paste(gene, actual_gene, sep ='_') %in% paralog_dataset ~ 'targeting paralog gene',
+                              gene == actual_gene ~ 'actual gene',
+                              is.na(actual_gene) ~ 'other genomic loci',
+                              TRUE ~ 'other protein-coding gene'))
+  
+  aln_multi_target_paralog <- dbl_target_classification %>%
+    group_by(sgrna) %>%
+    filter(all(c("targeting paralog gene", "actual gene") %in% target),
+           n_distinct(target) > 1) %>%
+    ungroup()
+  
+  list_paralog_guides <- dbl_target_classification %>% filter(target == "targeting paralog gene") %>% pull(sgrna) %>% unique()
+  list_other_genes_guides <- dbl_target_classification %>% filter(target == "other protein-coding gene") %>% pull(sgrna) %>% unique()
+  list_other_genomic_loci <- dbl_target_classification %>% filter(target == "other genomic loci") %>% pull(sgrna) %>% unique()
+  
+  list_other_genomic_loci_guides <- setdiff(
+    list_other_genomic_loci,
+    c(list_other_genes_guides, list_paralog_guides)
+  )
+  
+  
+  
+  list_not_paralog_guides <- union(list_other_genes_guides, list_other_genomic_loci_guides)
+  
+  # obtain the affected genes by looking at the actual target from double-target guides
+  list_paralog_genes <- unique(aln_multi_target_paralog$actual_gene)
+  
+  # count percentage of the double target paralog guides
+  
+  count_sgrna_paralog <- length(list_paralog_guides)
+  count_sgrna_other_genes <- length(list_other_genes_guides)
+  count_sgrna_other_genomic_loci <- length(list_other_genomic_loci_guides)
+  
+  percentage_sgrna_paralog <- round((count_sgrna_paralog/sum(count_sgrna_paralog, count_sgrna_other_genes, count_sgrna_other_genomic_loci) * 100), 2)
+  percentage_sgrna_other_genes <- round((count_sgrna_other_genes/sum(count_sgrna_paralog, count_sgrna_other_genes, count_sgrna_other_genomic_loci) * 100), 2)
+  percentage_sgrna_other_genomic_loci <- round((count_sgrna_other_genomic_loci/sum(count_sgrna_paralog, count_sgrna_other_genes, count_sgrna_other_genomic_loci) * 100), 2)
+  
+  summary_df <- data.frame(library_name,
+                           count_sgrna_paralog, 
+                           count_sgrna_other_genes, 
+                           count_sgrna_other_genomic_loci, 
+                           percentage_sgrna_paralog, 
+                           percentage_sgrna_other_genes, 
+                           percentage_sgrna_other_genomic_loci)
+  
+  # count percentage of genes affected
+  
+  paralog_genes_affected <- length(list_paralog_genes)
+  total_genes_library <- length(unique(library$gene))
+  percentage_genes_affected <- round((paralog_genes_affected/total_genes_library)*100, 2)
+  
+  count_gene <- data.frame(library_name, paralog_genes_affected, total_genes_library, percentage_genes_affected)
+  
+  return(list(df_target_classification = dbl_target_classification,
+              aln_multi_target_paralog_df = aln_multi_target_paralog,
+              summary_count_df = summary_df,
+              multi_target_paralog_guides = list_paralog_guides,
+              multi_target_other_genes = list_other_genes_guides,
+              multi_target_other_genomic_loci = list_other_genomic_loci_guides,
+              paralog_affected_list = list_paralog_genes,
+              paralog_affected_df = count_gene))
+  
+}
 
 
+```
 

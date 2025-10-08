@@ -13,14 +13,13 @@ library(RColorBrewer)
 
 source('~/CRISPR-KO-GuideRefine/GuideRefine_functions.R')
 
-
-# FUNCTION FOR 01_Percentage_off-target-sgRNAs.rmd
+# FUNCTION to import paralog data
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------
 
 # Function to obtain the list of paralog pairs from Barbara's dataset
 
-list_paralog_gene_pairs <- function(dataset = "../data/paralog_data/barbara_36K_paralog_pairs.csv") {
+barbara_paralog_gene_pairs <- function(dataset = "../data/paralog_data/barbara_36K_paralog_pairs.csv") {
   
   predicted_paralog_dataset <- read_csv(dataset) %>%
     mutate(sorted_gene_pair_2 = paste(A2, "_", A1, sep = "")) %>%
@@ -52,7 +51,9 @@ ensembl_paralog_gene_pairs <- function(dataset = "../data/paralog_data/ensembl_1
   
 }
 
+# FUNCTION FOR 01_analysis_off-target-sgrna.rmd
 
+# ----------------------------------------------------------------------------------------------------------------------------------------------
 
 # Calculate the percentage of multi-target, single-mismatch, and PAM-distal double mismatch sgRNA in each libraries
 
@@ -114,9 +115,7 @@ percentages_and_list_genes <- function(report, list_paralog) {
     failed_not_paralog = failed_not_paralog))
 }
 
-
-
-# FUNCTION FOR 02_Paralog_off-target-sgRNAs.rmd
+# FUNCTION FOR 02_analysis_paralog_off-target-sgrna.rmd
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -207,7 +206,7 @@ off_target_alignment_bin <- function(classification_alignment, alignment_type) {
   count_on_target_alignments <- classification_alignment %>%
     filter(alignment %in% alignment_type)
   
-  # bin the number of alignments to see how many guides targeting two until more than 8 different locations in the genome with perfect match
+  # bin the number of alignments to see how many guides targeting two until more than 5 different locations in the genome with perfect match
   
   count_on_target_alignments$alignment_bin <- cut(count_on_target_alignments$num_alignments,
                                                   breaks = c(-0.5, 0.5:5.5, Inf),  # -0.5 to 5.5 for 0–5, then Inf for >5
@@ -255,10 +254,9 @@ visualize_off_target_alignment <- function(alignment_bin_df, xlabel) {
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------
 
-# FUNCTION TO ANNOTATE MULTI-TARGET-/OFF-TARGET SGRNAS
+# Function to annotate all sgRNAs (in the end only sgRNA targeting coding genes are obtained; this includes on-target and off-target guides)
 
-# annotate off-target sgRNAs
-annotate_off_target <- function(alignment_data, annotation_data, bsgenome, bsgenome_text) {
+annotate_sgrna_coding_genes <- function(alignment_data, annotation_data, bsgenome, bsgenome_text) {
   
   if (grepl("\\.txt$", annotation_data)) {
     
@@ -286,177 +284,141 @@ annotate_off_target <- function(alignment_data, annotation_data, bsgenome, bsgen
     
   }
   
-  # ccds <- read_ccds_data('../CCDS.20221027.txt')
-  # transformed_ccds <- transform_gene_annotation_ccds(ccds)
-  
   modified_alignment <- add_cut_pos_pam_pos(alignment_data)
   
   # NCBI if using T2T-CHM13; UCSC if using hg38
-  off_target_granges <- make_granges_from_alignment_data(modified_alignment, bsgenome)
+  sgrna_target_granges <- make_granges_from_alignment_data(modified_alignment, bsgenome)
   
-  gene_df_overlap <- find_overlaps_gene_annotation_and_alignment(off_target_granges, gene_annot_granges)
+  gene_df_overlap <- find_overlaps_gene_annotation_and_alignment(sgrna_target_granges, gene_annot_granges)
   
   return(gene_df_overlap)
 }
 
 
-# off target annotation (can be multi-target, single-mismatch, or pam-distal double mismatches) used to annotate whether the sgRNA target random genomic loci, protein-coding genes or intended target gene
+# Function to annotate all sgRNA (coding and non-coding)
+# left join the annotated data (gene_df) with not annotate data (alignment_data)
+# to differentiate guides targeting coding and non-coding (other genomic loci)
 
-off_target_annotation <- function(alignment_data, annotation_data, bsgenome, bsgenome_text, library, list_sgrna, num_mismatches, library_name){
+annotate_all_sgrna <- function(alignment_data, annotation_data, bsgenome, bsgenome_text, list_sgrna, list_paralog_individual, list_paralog_pairs){
   
   alignment_data <- alignment_data %>% filter(sgRNA %in% list_sgrna)
   
-  gene_df <- annotate_off_target(alignment_data, annotation_data, bsgenome, bsgenome_text)
+  # ----------------- Main code to process the data --------------------------
+  
+  # annotate the alignment_data (the sgRNA will be annotated based on the protein-coding genes location; sgRNA targeting other genomic loci is not annotated)
+  gene_df <- annotate_sgrna_coding_genes(alignment_data, annotation_data, bsgenome, bsgenome_text)
   gene_df <- gene_df %>%
     dplyr::rename('actual_chr' = 'chr',
                   'actual_gene' = 'gene')
   
+  # this is the standard alignment data (composed of all sgRNA from the alignment; has not been annotated)
   alignment_data <- add_cut_pos_pam_pos(alignment_data)
   alignment_data <- alignment_data %>%
     select(unique_aln_id, sgRNA, spacer, protospacer, gene, chr, n_mismatches, cut_pos) %>%
     dplyr::rename('sgrna' = 'sgRNA')
   
-  # one version of alignment data for paralog analysis (you will need the actual gene to detect which multi-target sgRNA targeting only two protein-coding genes - one is the actual gene, the other one is the paralog pairs)
+  # alignment_data left joined with the gene_df; so we know which sgRNA are targeting other genomic loci and which sgRNA target coding genes
   alignment_data_gene_df <- alignment_data %>%
-    filter(n_mismatches == num_mismatches) %>%
     left_join(gene_df, by = join_by(unique_aln_id, sgrna, spacer, protospacer, cut_pos)) %>%
     select(unique_aln_id, sgrna, spacer, protospacer, gene, chr, n_mismatches, cut_pos, actual_chr, actual_gene) %>%
-    mutate(target = case_when(gene == actual_gene ~ 'actual target gene',
-                              gene != actual_gene ~ 'other protein-coding genes',
-                              is.na(actual_gene) ~ 'other genomic loci')) %>%
+    relocate(gene, .before = actual_gene) %>%
+    relocate(chr, .before = actual_chr) %>%
+    mutate(actual_gene = replace_na(actual_gene, "non-coding"),
+           target = case_when(gene == actual_gene & !gene %in% paralog_individual ~ "on-target singleton",
+                              gene != actual_gene & !gene %in% paralog_individual & !actual_gene %in% paralog_individual & !actual_gene == "non-coding" ~ "off-target singleton_singleton",
+                              gene != actual_gene & !gene %in% paralog_individual & actual_gene %in% paralog_individual ~ "off-target singleton_paralog",
+                              gene != actual_gene & !gene %in% paralog_individual & actual_gene == "non-coding" ~ "off-target singleton_noncoding",
+                              gene == actual_gene & gene %in% paralog_individual ~ "on-target paralog",
+                              gene != actual_gene & !paste(gene, "_", actual_gene, sep = "") %in% paralog_pairs & !actual_gene == "non-coding" ~ "off-target paralog_singleton",
+                              gene != actual_gene & paste(gene, "_", actual_gene, sep = "") %in% paralog_pairs ~ "off-target paralog_paralog",
+                              gene != actual_gene & gene %in% paralog_individual & actual_gene == "non-coding" ~ "off-target paralog_non-coding",
+                              TRUE ~ "Uncategorized"
+           )) %>%
     distinct()
   
-  summary_target_df <- alignment_data_gene_df %>%
-    filter(target != "actual target gene") %>%
-    select(sgrna, target) %>%
-    group_by(sgrna) %>%
-    # first removal of duplicate data to remove duplicate alignment to multiple locations 
-    distinct() %>%
-    # there may be a case where a single sgRNA can perfectly target both protein-coding gene and genomic loci, this code is used assign those sgRNA those sgRNA as targeting protein-coding gene only (which may result in duplicated data)
-    mutate(target = ifelse(n() > 1, 'other protein-coding genes', target)) %>%
-    ungroup() %>%
-    # second removal of duplicate data
-    distinct()
+  if ("Uncategorized" %in% unique(alignment_data_gene_df$target)) {
+    print("Uncategorized is in alignment_data_gene_df; kindly check the classification of sgRNA target location")
+  } else {
+    print("Uncategorized is not in alignment_data_gene_df")
+  }
   
-  # there is a possibility a single guide target multiple locations of the same gene and other gene/random genomic locations, this code is used to separate the sgRNA that align multiple times to the same gene with those align to other gene/genomic loci
-  multiple_aln_same_target <- alignment_data_gene_df %>%
-    filter(target == "actual target gene" & !sgrna %in% summary_target_df$sgrna) %>%
-    count(sgrna) %>%
-    filter(n > 1) %>%
-    dplyr::rename("number_of_alignments" = "n")
-  
-  # count affected genes
-  
-  sgrna_target_genes <- summary_target_df %>%
-    filter(target == "other protein-coding genes") %>%
-    distinct() %>%
-    pull(sgrna)
-  
-  affected_genes <- alignment_data_gene_df %>%
-    filter(sgrna %in% sgrna_target_genes & target == "other protein-coding genes") %>%
-    select(actual_gene) %>%
-    distinct() %>%
-    pull(actual_gene)
-  
-  df_affected_genes_percentage <- data.frame(target = c("other genomic loci", "other protein-coding genes"),
-                                             count_genes = c(0, length(affected_genes)),
-                                             percent_genes = c(0, round(length(affected_genes)/length(unique(library$gene))*100, 2)))
-  
-  
-  # create frequency table
-  
-  calculate_freq_table <- summary_target_df %>%
-    select(target) %>%
-    count(target) %>%
-    dplyr::rename('count_sgrna' = 'n') %>%
-    arrange(desc(count_sgrna)) %>%
-    mutate(percent_sgrna_among_library = round(count_sgrna/length(unique(library$sgRNA))*100 ,2),
-           percent_sgrna_among_off_target = round(count_sgrna/length(unique(alignment_data_gene_df$sgrna))*100, 2),
-           library = library_name) %>%
-    relocate(library, .before = target) %>%
-    left_join(df_affected_genes_percentage, join_by(target))
-  
-  
-  return(list(
-    aln_data_df = alignment_data_gene_df,
-    multiple_aln_same_target = multiple_aln_same_target,
-    summary_df = summary_target_df, 
-    freq_table = calculate_freq_table,
-    list_affected_genes = affected_genes))
+  return(alignment_data_gene_df)
 }
+  
 
+summarize_paralog_targets <- function(sgRNA, paralogs, library) {
+  # extract gene names
+  genes <- str_extract(sgRNA, "(?<=sg_?)[A-Za-z0-9]+")
+  
+  # classify paralog vs non-paralog
+  paralog_indicator <- ifelse(genes %in% paralogs, "paralog", "singleton")
+  
+  df_dbl_target_paralog <- data.frame(sgRNA, genes, paralog_indicator, library)
+  
+  # summary counts + percentages
+  df <- data.frame(category = paralog_indicator) %>%
+    count(category) %>%
+    dplyr::rename("count" = "n") %>%
+    mutate(percentage = round(count / sum(count) * 100, 2),
+           library = library)
+  
+  return(list(df, df_dbl_target_paralog))
+}
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------
 
-
 # Function to identify multi-target alignment targeting paralog pairs, strictly only for 2 protein-coding genes (paralog A1 and paralog A2)
 
-find_multi_target_paralog <- function(alignment_gene_df, list_guides, paralog_dataset, library, library_name) {
-  dbl_target_classification <- alignment_gene_df %>%
-    filter(sgrna %in% list_guides) %>%
-    mutate(target = case_when(paste(gene, actual_gene, sep ='_') %in% paralog_dataset ~ 'targeting paralog gene',
-                              gene == actual_gene ~ 'actual gene',
-                              is.na(actual_gene) ~ 'other genomic loci',
-                              TRUE ~ 'other protein-coding gene'))
+find_multi_target_paralog <- function(gene_df, list_query_guides_paralog, library_name) {
   
-  aln_multi_target_paralog <- dbl_target_classification %>%
+  # select guides without any additional single or double-mismatches and should target paralog pairs
+  aln_paralog_clean <- gene_df %>%
+    filter(sgrna %in% list_query_guides_paralog) %>%
+    # select guides without any additional single or double-mismatches
     group_by(sgrna) %>%
-    filter(all(c("targeting paralog gene", "actual gene") %in% target),
-           n_distinct(target) > 1) %>%
-    ungroup()
+    filter(all(n_mismatches == 0)) %>%
+    distinct()
   
-  list_paralog_guides <- dbl_target_classification %>% filter(target == "targeting paralog gene") %>% pull(sgrna) %>% unique()
-  list_other_genes_guides <- dbl_target_classification %>% filter(target == "other protein-coding gene") %>% pull(sgrna) %>% unique()
-  list_other_genomic_loci <- dbl_target_classification %>% filter(target == "other genomic loci") %>% pull(sgrna) %>% unique()
+  # list guides that align with additional single or double-mismatches
+  list_excluded_guides <- gene_df %>%
+    filter(sgrna %in% list_query_guides_paralog) %>%
+    # select guides with any additional single or double-mismatches
+    group_by(sgrna) %>%
+    filter(!all(n_mismatches == 0)) %>%
+    pull(sgrna) %>%
+    unique()
   
-  list_other_genomic_loci_guides <- setdiff(
-    list_other_genomic_loci,
-    c(list_other_genes_guides, list_paralog_guides)
-  )
+  list_paralog_guides <- aln_paralog_clean %>% filter(target == "off-target paralog_paralog") %>% pull(sgrna) %>% unique()
+  list_singleton_guides <- aln_paralog_clean %>% filter(target %in% c("off-target singleton_paralog", "off-target paralog_singleton")) %>% pull(sgrna) %>% unique()
+  list_non_coding_guides <- aln_paralog_clean %>% filter(target %in% c("off-target singleton_non-coding", "off-target paralog_non-coding")) %>% pull(sgrna) %>% unique()
   
+  percentage_excluded <- round((length(list_excluded_guides) / sum(length(list_excluded_guides), length(list_paralog_guides), length(list_singleton_guides), length(list_non_coding_guides)) * 100), 2)
+  percentage_paralog <- round((length(list_paralog_guides) / sum(length(list_excluded_guides), length(list_paralog_guides), length(list_singleton_guides), length(list_non_coding_guides)) * 100), 2)
+  percentage_singleton <- round((length(list_singleton_guides) / sum(length(list_excluded_guides), length(list_paralog_guides), length(list_singleton_guides), length(list_non_coding_guides)) * 100), 2)
+  percentage_non_coding <- round((length(list_non_coding_guides) / sum(length(list_excluded_guides), length(list_paralog_guides), length(list_singleton_guides), length(list_non_coding_guides)) * 100), 2)
   
+  summary_df <- data.frame(library_name = library_name,
+                           count_sgrna_excluded = length(list_excluded_guides),
+                           count_sgrna_paralog = length(list_paralog_guides), 
+                           count_sgrna_singleton = length(list_singleton_guides), 
+                           count_sgrna_non_coding = length(list_non_coding_guides),
+                           percentage_sgrna_excluded = percentage_excluded,
+                           percentage_sgrna_paralog = percentage_paralog, 
+                           percentage_sgrna_singleton = percentage_singleton, 
+                           percentage_sgrna_non_coding = percentage_non_coding)
   
-  list_not_paralog_guides <- union(list_other_genes_guides, list_other_genomic_loci_guides)
-  
-  # obtain the affected genes by looking at the actual target from double-target guides
-  list_paralog_genes <- unique(aln_multi_target_paralog$actual_gene)
-  
-  # count percentage of the double target paralog guides
-  
-  count_sgrna_paralog <- length(list_paralog_guides)
-  count_sgrna_other_genes <- length(list_other_genes_guides)
-  count_sgrna_other_genomic_loci <- length(list_other_genomic_loci_guides)
-  
-  percentage_sgrna_paralog <- round((count_sgrna_paralog/sum(count_sgrna_paralog, count_sgrna_other_genes, count_sgrna_other_genomic_loci) * 100), 2)
-  percentage_sgrna_other_genes <- round((count_sgrna_other_genes/sum(count_sgrna_paralog, count_sgrna_other_genes, count_sgrna_other_genomic_loci) * 100), 2)
-  percentage_sgrna_other_genomic_loci <- round((count_sgrna_other_genomic_loci/sum(count_sgrna_paralog, count_sgrna_other_genes, count_sgrna_other_genomic_loci) * 100), 2)
-  
-  summary_df <- data.frame(library_name,
-                           count_sgrna_paralog, 
-                           count_sgrna_other_genes, 
-                           count_sgrna_other_genomic_loci, 
-                           percentage_sgrna_paralog, 
-                           percentage_sgrna_other_genes, 
-                           percentage_sgrna_other_genomic_loci)
-  
-  # count percentage of genes affected
-  
-  paralog_genes_affected <- length(list_paralog_genes)
-  total_genes_library <- length(unique(library$gene))
-  percentage_genes_affected <- round((paralog_genes_affected/total_genes_library)*100, 2)
-  
-  count_gene <- data.frame(library_name, paralog_genes_affected, total_genes_library, percentage_genes_affected)
-  
-  return(list(df_target_classification = dbl_target_classification,
-              aln_multi_target_paralog_df = aln_multi_target_paralog,
-              summary_count_df = summary_df,
-              multi_target_paralog_guides = list_paralog_guides,
-              multi_target_other_genes = list_other_genes_guides,
-              multi_target_other_genomic_loci = list_other_genomic_loci_guides,
-              paralog_affected_list = list_paralog_genes,
-              paralog_affected_df = count_gene))
-  
+  return(summary_df)
 }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
 
 
