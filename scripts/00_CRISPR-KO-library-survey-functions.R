@@ -151,7 +151,6 @@ import_sgrna_library_alignment <- function(data_dir, genome_type) {
   }
 }
 
-
 # import list off target guides (multi-target/single-mismatch/double-mismatch-pam-distal)
 import_list_off_target_guides <- function(data_dir) {
   off_target_guides <- read_tsv(data_dir)
@@ -201,7 +200,7 @@ off_target_classification <- function(library_alignment) {
   return(list(classification_alignment, library_alignment_non_targeting))
 }
 
-off_target_alignment_bin <- function(classification_alignment, alignment_type) {
+multi_target_alignment_bin <- function(classification_alignment, alignment_type) {
   
   count_on_target_alignments <- classification_alignment %>%
     filter(alignment %in% alignment_type)
@@ -222,6 +221,24 @@ off_target_alignment_bin <- function(classification_alignment, alignment_type) {
   
 }
 
+
+single_mismatch_off_target_alignment_bin <- function(classification_alignment) {
+  
+  count_single_mismatch <- classification_alignment %>%
+    mutate(single_mismatch_alignment = ifelse(alignment == "single mismatch", num_alignments, 0))
+  
+  count_single_mismatch$alignment_bin <- cut(count_single_mismatch$single_mismatch_alignment,
+                                             breaks = c(-0.5, 0.5:5.5, Inf),  # -0.5 to 5.5 for 0–5, then Inf for >5
+                                             labels = c(as.character(0:5), "> 5"),
+                                             right = TRUE)
+  
+  alignment_bin_df <- count_single_mismatch %>% 
+    count(alignment_bin) %>%
+    dplyr::rename("num_of_alignments" = "alignment_bin",
+                  "number_of_sgrnas" = "n")
+  
+  return(list(count_single_mismatch, alignment_bin_df))
+}
 
 visualize_off_target_alignment <- function(alignment_bin_df, xlabel) {
   
@@ -324,14 +341,19 @@ annotate_all_sgrna <- function(alignment_data, annotation_data, bsgenome, bsgeno
     relocate(gene, .before = actual_gene) %>%
     relocate(chr, .before = actual_chr) %>%
     mutate(actual_gene = replace_na(actual_gene, "non-coding"),
-           target = case_when(gene == actual_gene & !gene %in% paralog_individual ~ "on-target singleton",
-                              gene != actual_gene & !gene %in% paralog_individual & !actual_gene %in% paralog_individual & !actual_gene == "non-coding" ~ "off-target singleton_singleton",
-                              gene != actual_gene & !gene %in% paralog_individual & actual_gene %in% paralog_individual ~ "off-target singleton_paralog",
-                              gene != actual_gene & !gene %in% paralog_individual & actual_gene == "non-coding" ~ "off-target singleton_noncoding",
-                              gene == actual_gene & gene %in% paralog_individual ~ "on-target paralog",
-                              gene != actual_gene & !paste(gene, "_", actual_gene, sep = "") %in% paralog_pairs & !actual_gene == "non-coding" ~ "off-target paralog_singleton",
-                              gene != actual_gene & paste(gene, "_", actual_gene, sep = "") %in% paralog_pairs ~ "off-target paralog_paralog",
-                              gene != actual_gene & gene %in% paralog_individual & actual_gene == "non-coding" ~ "off-target paralog_non-coding",
+           target = case_when(gene == actual_gene & !gene %in% list_paralog_individual ~ "on-target singleton",
+                              gene != actual_gene & !gene %in% list_paralog_individual & !actual_gene %in% list_paralog_individual & !actual_gene == "non-coding" ~ "off-target singleton_singleton",
+                              gene != actual_gene & !gene %in% list_paralog_individual & actual_gene %in% list_paralog_individual ~ "off-target singleton_paralog",
+                              gene != actual_gene & !gene %in% list_paralog_individual & actual_gene == "non-coding" ~ "off-target singleton_noncoding",
+                              gene == actual_gene & gene %in% list_paralog_individual ~ "on-target paralog",
+                              gene != actual_gene & !paste(gene, "_", actual_gene, sep = "") %in% list_paralog_pairs & !actual_gene == "non-coding" ~ "off-target paralog_singleton",
+                              
+                              # obtain paralog - paralog (non-related)
+                              gene != actual_gene & !paste(gene, "_", actual_gene, sep = "") %in% list_paralog_pairs & actual_gene %in% list_paralog_individual & !actual_gene == "non-coding" ~ "off-target paralog_paralog_unrelated",
+                              # obtain paralog - paralog (related)
+                              gene != actual_gene & paste(gene, "_", actual_gene, sep = "") %in% list_paralog_pairs ~ "off-target paralog_paralog",
+                              # obtain paralog - non-coding
+                              gene != actual_gene & gene %in% list_paralog_individual & actual_gene == "non-coding" ~ "off-target paralog_non-coding",
                               TRUE ~ "Uncategorized"
            )) %>%
     distinct()
@@ -389,21 +411,30 @@ find_multi_target_paralog <- function(gene_df, list_query_guides_paralog, librar
     unique()
   
   list_paralog_guides <- aln_paralog_clean %>% filter(target == "off-target paralog_paralog") %>% pull(sgrna) %>% unique()
+  
+  # if you want to look for paralog + paralog unrelated (not pairs), kindly enable list_paralog_unrelated_guides put it in the summary_df
+  list_paralog_unrelated_guides <- aln_paralog_clean %>% filter(target == "off-target paralog_paralog_unrelated") %>% pull(sgrna) %>% unique()
   list_singleton_guides <- aln_paralog_clean %>% filter(target %in% c("off-target singleton_paralog", "off-target paralog_singleton")) %>% pull(sgrna) %>% unique()
+  
+  list_paralog_other_genes <- c(list_paralog_unrelated_guides, list_singleton_guides)
   list_non_coding_guides <- aln_paralog_clean %>% filter(target %in% c("off-target singleton_non-coding", "off-target paralog_non-coding")) %>% pull(sgrna) %>% unique()
   
   percentage_excluded <- round((length(list_excluded_guides) / sum(length(list_excluded_guides), length(list_paralog_guides), length(list_singleton_guides), length(list_non_coding_guides)) * 100), 2)
   percentage_paralog <- round((length(list_paralog_guides) / sum(length(list_excluded_guides), length(list_paralog_guides), length(list_singleton_guides), length(list_non_coding_guides)) * 100), 2)
+  percentage_paralog_unrelated <- round((length(list_paralog_unrelated_guides) / sum(length(list_excluded_guides), length(list_paralog_guides), length(list_singleton_guides), length(list_non_coding_guides)) * 100), 2)
+
+  percentage_paralog_other_genes <- round((length(list_paralog_other_genes) / sum(length(list_excluded_guides), length(list_paralog_guides), length(list_singleton_guides), length(list_non_coding_guides)) * 100), 2)
   percentage_singleton <- round((length(list_singleton_guides) / sum(length(list_excluded_guides), length(list_paralog_guides), length(list_singleton_guides), length(list_non_coding_guides)) * 100), 2)
   percentage_non_coding <- round((length(list_non_coding_guides) / sum(length(list_excluded_guides), length(list_paralog_guides), length(list_singleton_guides), length(list_non_coding_guides)) * 100), 2)
   
   summary_df <- data.frame(library_name = library_name,
                            count_sgrna_excluded = length(list_excluded_guides),
                            count_sgrna_paralog = length(list_paralog_guides), 
-                           count_sgrna_singleton = length(list_singleton_guides), 
+                           count_sgrna_paralog_other_genes = length(list_paralog_other_genes), 
                            count_sgrna_non_coding = length(list_non_coding_guides),
                            percentage_sgrna_excluded = percentage_excluded,
                            percentage_sgrna_paralog = percentage_paralog, 
+                           percentage_sgrna_paralog_other_genes = percentage_paralog_other_genes,
                            percentage_sgrna_singleton = percentage_singleton, 
                            percentage_sgrna_non_coding = percentage_non_coding)
   

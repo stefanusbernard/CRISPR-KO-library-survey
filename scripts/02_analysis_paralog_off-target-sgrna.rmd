@@ -78,17 +78,36 @@ yusa_classification <- off_target_classification(yusa_alignment)
 
 ```{r}
 
-avana_stratify_multi_target <- off_target_alignment_bin(avana_classification[[1]], c("perfect", "multi-target guides", "non-targeting"))
+avana_stratify_multi_target <- multi_target_alignment_bin(avana_classification[[1]], c("perfect", "multi-target guides", "non-targeting"))
 write_csv(avana_stratify_multi_target[[1]], "../data/sgrna_lfc_data/avana_data/avana_stratify_multi_target.csv")
 
-brunello_stratify_multi_target <- off_target_alignment_bin(brunello_classification[[1]], c("perfect", "multi-target guides", "non-targeting"))
+brunello_stratify_multi_target <- multi_target_alignment_bin(brunello_classification[[1]], c("perfect", "multi-target guides", "non-targeting"))
 write_csv(brunello_stratify_multi_target[[1]], "../data/sgrna_lfc_data/brunello_data/brunello_stratify_multi_target.csv")
 
-toronto_stratify_multi_target <- off_target_alignment_bin(toronto_classification[[1]], c("perfect", "multi-target guides", "non-targeting"))
+toronto_stratify_multi_target <- multi_target_alignment_bin(toronto_classification[[1]], c("perfect", "multi-target guides", "non-targeting"))
 write_csv(toronto_stratify_multi_target[[1]], "../data/sgrna_lfc_data/tkov3_data/tkov3_stratify_multi_target.csv")
 
-yusa_stratify_multi_target <- off_target_alignment_bin(yusa_classification[[1]], c("perfect", "multi-target guides", "non-targeting"))
+yusa_stratify_multi_target <- multi_target_alignment_bin(yusa_classification[[1]], c("perfect", "multi-target guides", "non-targeting"))
 write_csv(yusa_stratify_multi_target[[1]], "../data/sgrna_lfc_data/yusa_data/yusa_stratify_multi_target.csv")
+
+```
+
+# Stratify single-mismatch sgRNAs (sgRNA align with single mismatch)
+
+```{r}
+
+avana_stratify_single_mismatch <- single_mismatch_off_target_alignment_bin(avana_classification[[1]])
+write_csv(avana_stratify_single_mismatch[[1]], "../data/sgrna_lfc_data/avana_data/avana_stratify_single_mismatch.csv")
+
+brunello_stratify_single_mismatch <- single_mismatch_off_target_alignment_bin(brunello_classification[[1]])
+write_csv(brunello_stratify_single_mismatch[[1]], "../data/sgrna_lfc_data/brunello_data/brunello_stratify_single_mismatch.csv")
+
+toronto_stratify_single_mismatch <- single_mismatch_off_target_alignment_bin(toronto_classification[[1]])
+write_csv(toronto_stratify_single_mismatch[[1]], "../data/sgrna_lfc_data/tkov3_data/tkov3_stratify_single_mismatch.csv")
+
+yusa_stratify_single_mismatch <- single_mismatch_off_target_alignment_bin(yusa_classification[[1]])
+write_csv(yusa_stratify_single_mismatch[[1]], "../data/sgrna_lfc_data/yusa_data/yusa_stratify_single_mismatch.csv")
+
 
 ```
 
@@ -262,14 +281,14 @@ my_palette <- brewer.pal(n = 3, name = "Set2")
 # Barplot of percentage of sgRNA targeting paralog pairs and non-paralog pairs across libraries
 barplot_paralog <- table_dbl_target_paralog %>%
   arrange(library_name) %>%
-  select(-c(count_sgrna_excluded, count_sgrna_paralog, count_sgrna_singleton, count_sgrna_non_coding)) %>%
-  pivot_longer(c(percentage_sgrna_excluded, percentage_sgrna_paralog, percentage_sgrna_singleton, percentage_sgrna_non_coding), names_to = 'names', values_to = 'percent') %>%
+  select(-c(count_sgrna_excluded, count_sgrna_paralog, count_sgrna_paralog_other_genes, count_sgrna_non_coding)) %>%
+  pivot_longer(c(percentage_sgrna_excluded, percentage_sgrna_paralog, percentage_sgrna_paralog_other_genes, percentage_sgrna_non_coding), names_to = 'names', values_to = 'percent') %>%
   mutate(
     names = factor(
       names,
       levels = c("percentage_sgrna_excluded",
                  "percentage_sgrna_non_coding",
-                 "percentage_sgrna_singleton",
+                 "percentage_sgrna_paralog_other_genes",
                  "percentage_sgrna_paralog")),
     library_name = factor(library_name, levels = c("brunello", "toronto", "yusa", "avana"))) %>%
   ggplot(aes(library_name, percent, fill = names)) +
@@ -281,11 +300,11 @@ barplot_paralog <- table_dbl_target_paralog %>%
                 'toronto' = 'TKOv3',
                 'avana' = 'Avana')) +
   scale_fill_manual(labels = c("percentage_sgrna_paralog" = "Paralog + paralog (ENSEMBL 115 pairs)",
-                               "percentage_sgrna_singleton" = "Paralog + singleton",
+                               "percentage_sgrna_paralog_other_genes" = "Paralog + other protein-coding genes",
                                "percentage_sgrna_non_coding" = "Paralog + non-coding region",
                                "percentage_sgrna_excluded" = "Guides excluded because of additional mismatches"),
                     values = c("percentage_sgrna_paralog" = "#009E73",
-                              "percentage_sgrna_singleton" = "#0072B2",
+                              "percentage_sgrna_paralog_other_genes" = "#0072B2",
                               "percentage_sgrna_non_coding" = "#E69F00",
                               "percentage_sgrna_excluded" = "lightgrey")) +
   theme(axis.text.x = element_text(size = 20, colour = 'black'),
@@ -314,8 +333,15 @@ ggsave(
 ```
 
 
+From 2,760 double-target guides in Avana library:
+1. 2009 double-target guides originally target gene with paralog pairs
+2. 751 double-target guides originally target singleton gene
 
-
+From 2009 double-target guides that originally target a gene that has paralog pairs:
+1. 1357 guides are excluded because it has additional single or double mismatches (67.51%)
+2. 212 guides have their pair target annotated as paralog (paralog + paralog) (10.55%)
+3. 14 guides have their pair target as singleton (paralog + singleton) (0.7%)
+4. 427 guides target non-coding have their pair target non-coding (paralog + non-coding) (21.24%)
 
 
 

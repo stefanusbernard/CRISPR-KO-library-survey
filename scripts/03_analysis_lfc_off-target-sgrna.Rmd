@@ -73,7 +73,7 @@ visualize_lfc <- function(library_lfc_data, boxplot_output_name) {
   geom_hline(yintercept = 0, linetype = "dashed", color = "black", size = 1) +
   geom_hline(yintercept = -1, linetype = "dashed", color = "black", size = 1) +
   scale_y_continuous(limits = c(-3, 3), breaks = seq(-3, 3, by = 1)) +
-  labs(title = "", x = "Number of perfect on-target alignment", y = "Averaged median sgRNA Log2FC") +
+  labs(title = "", x = "Number of single mismatch off-target alignment", y = "Averaged median sgRNA Log2FC") +
   theme(plot.margin = margin(10, 10, 25, 10),
         axis.text.x = element_text(size = 40, vjust = 0.7, colour = "black"),
         axis.text.y = element_text(size = 40, colour = "black"),
@@ -104,9 +104,9 @@ visualize_lfc <- function(library_lfc_data, boxplot_output_name) {
 
 avana_library_and_lfc_data <- obtain_required_data("../data/library_data/avana_library.tsv", 
                                                    "../data/sgrna_lfc_data/output_normalized/avana_normalized_lfc.csv", 
-                                                   "../data/sgrna_lfc_data/avana_data/avana_stratify_multi_target.csv")
+                                                   "../data/sgrna_lfc_data/avana_data/avana_stratify_single_mismatch.csv")
 
-visualize_lfc(avana_library_and_lfc_data, "../figure/03_fig_analysis_lfc_off-target-sgrna/avana_lfc.png")
+visualize_lfc(avana_library_and_lfc_data, "../figure/03_fig_analysis_lfc_off-target-sgrna/avana_lfc_single_mismatch.png")
 
 ```
 
@@ -116,9 +116,9 @@ visualize_lfc(avana_library_and_lfc_data, "../figure/03_fig_analysis_lfc_off-tar
 
 tkov3_library_and_lfc_data <- obtain_required_data("../data/library_data/tkov3_guide_sequence.tsv", 
                                                    "../data/sgrna_lfc_data/output_normalized/tkov3_rpe1_normalized_lfc.csv", 
-                                                   "../data/sgrna_lfc_data/tkov3_data/tkov3_stratify_multi_target.csv")
+                                                   "../data/sgrna_lfc_data/tkov3_data/tkov3_stratify_single_mismatch.csv")
 
-visualize_lfc(tkov3_library_and_lfc_data, "../figure/03_fig_analysis_lfc_off-target-sgrna/tkov3_lfc.png")
+visualize_lfc(tkov3_library_and_lfc_data, "../figure/03_fig_analysis_lfc_off-target-sgrna/tkov3_lfc_single_mismatch.png")
 
 ```
 
@@ -128,9 +128,9 @@ visualize_lfc(tkov3_library_and_lfc_data, "../figure/03_fig_analysis_lfc_off-tar
 
 yusa_library_and_lfc_data <- obtain_required_data("../data/library_data/yusa_hcrispr_ko_grnas.tsv", 
                                                  "../data/sgrna_lfc_data/output_normalized/yusa_normalized_lfc.csv", 
-                                                 "../data/sgrna_lfc_data/yusa_data/yusa_stratify_multi_target.csv")
+                                                 "../data/sgrna_lfc_data/yusa_data/yusa_stratify_single_mismatch.csv")
 
-visualize_lfc(yusa_library_and_lfc_data, "../figure/03_fig_analysis_lfc_off-target-sgrna/yusa_lfc.png")
+visualize_lfc(yusa_library_and_lfc_data, "../figure/03_fig_analysis_lfc_off-target-sgrna/yusa_lfc_single_mismatch.png")
 
 ```
 
@@ -140,9 +140,9 @@ visualize_lfc(yusa_library_and_lfc_data, "../figure/03_fig_analysis_lfc_off-targ
 
 brunello_library_and_lfc_data <- obtain_required_data("../data/library_data/broadgpp-brunello-library-contents.tsv", 
                                                      "../data/sgrna_lfc_data/output_normalized/brunello_a375_normalized_lfc.csv", 
-                                                     "../data/sgrna_lfc_data/brunello_data/brunello_stratify_multi_target.csv")
+                                                     "../data/sgrna_lfc_data/brunello_data/brunello_stratify_single_mismatch.csv")
 
-visualize_lfc(brunello_library_and_lfc_data, "../figure/03_fig_analysis_lfc_off-target-sgrna/brunello_lfc.png")
+visualize_lfc(brunello_library_and_lfc_data, "../figure/03_fig_analysis_lfc_off-target-sgrna/brunello_lfc_single_mismatch.png")
 
 ```
 

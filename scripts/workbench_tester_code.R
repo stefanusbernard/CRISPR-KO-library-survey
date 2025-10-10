@@ -104,3 +104,32 @@ df <- alignment_data_gene_df %>%
   filter(sgrna %in% investigate_guides)
 
 
+
+count_single_mismatch <- avana_classification[[1]] %>%
+  mutate(single_mismatch_alignment = ifelse(alignment == "single mismatch", num_alignments, 0))
+
+# bin the number of alignments to see how many guides targeting two until more than 5 different locations in the genome with perfect match
+
+count_single_mismatch$alignment_bin <- cut(count_single_mismatch$single_mismatch_alignment,
+                                                breaks = c(-0.5, 0.5:5.5, Inf),  # -0.5 to 5.5 for 0–5, then Inf for >5
+                                                labels = c(as.character(0:5), "> 5"),
+                                                right = TRUE)
+alignment_bin_df <- count_single_mismatch %>% 
+  count(alignment_bin) %>%
+  dplyr::rename("num_of_alignments" = "alignment_bin",
+                "number_of_sgrnas" = "n")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
