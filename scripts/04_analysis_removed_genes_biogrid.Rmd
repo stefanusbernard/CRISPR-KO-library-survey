@@ -1,0 +1,54 @@
+---
+title: "Analysis of multi-target and off-target sgRNAs across libraries"
+author: "Author: Stefanus Bernard"
+date: "Date: `r format(Sys.time(), '%d %B %Y')`"
+output: 
+  html_document :
+    theme : cerulean
+    toc : true
+    toc_float : true
+    number_section : true
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(VennDiagram)
+library(ggvenn)
+library(ggbreak)
+library(BSgenome)
+library(BSgenome.Hsapiens.UCSC.hg38)
+library(BSgenome.Hsapiens.NCBI.T2TCHM13v2.0)
+
+source('~/CRISPR-KO-GuideRefine/GuideRefine_functions.R')
+source("./00_CRISPR-KO-library-survey-functions.R")
+```
+
+# Genes removed from each library
+
+```{r}
+
+avana_result_gene <- percentages_and_list_genes(avana_report, paralog_individual)
+brunello_result_gene <- percentages_and_list_genes(brunello_report, paralog_individual)
+toronto_result_gene <- percentages_and_list_genes(toronto_report, paralog_individual)
+yusa_result_gene <- percentages_and_list_genes(yusa_report, paralog_individual)
+
+```
+
+# BIOGrid data analysis
+
+```{r}
+
+biogrid_index <- read_tsv("../data/biogrid_crispr_ko_data/raw_data/BIOGRID-ORCS-SCREEN_INDEX-2.0.18.index.tab.txt")
+
+selected_screen <- biogrid_index %>%
+  filter(PHENOTYPE == "cell proliferation" & LIBRARY_TYPE == "CRISPRn" & FULL_SIZE_AVAILABLE == "Yes")
+
+
+test_crispr_ko <- read_tsv("../data/biogrid_crispr_ko_data/BIOGRID-ORCS-SCREEN_17-2.0.18.screen.tab.txt")
+
+```
+
+
+
+
+

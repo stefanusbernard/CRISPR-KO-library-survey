@@ -163,6 +163,51 @@ brunello_result_gene <- percentages_and_list_genes(brunello_report, paralog_indi
 toronto_result_gene <- percentages_and_list_genes(toronto_report, paralog_individual)
 yusa_result_gene <- percentages_and_list_genes(yusa_report, paralog_individual)
 
+# Export the removed genes from each library (input for script 04_analysis_removed_genes_biogrid.Rmd)
+
+max_len <- max(length(avana_result_gene[["failed_genes"]]), 
+               length(avana_result_gene[["failed_paralog"]]), 
+               length(avana_result_gene[["failed_not_paralog"]]),
+               length(brunello_result_gene[["failed_genes"]]), 
+               length(brunello_result_gene[["failed_paralog"]]), 
+               length(brunello_result_gene[["failed_not_paralog"]]),
+               length(toronto_result_gene[["failed_genes"]]), 
+               length(toronto_result_gene[["failed_paralog"]]), 
+               length(toronto_result_gene[["failed_not_paralog"]]),
+               length(yusa_result_gene[["failed_genes"]]), 
+               length(yusa_result_gene[["failed_paralog"]]), 
+               length(yusa_result_gene[["failed_not_paralog"]])
+               )
+
+pad <- function(x, n) {
+  length(x) <- n 
+  return(x)
+}
+
+df_removed_genes <- data.frame(
+  avana_removed_genes_all = pad(avana_result_gene[["failed_genes"]], max_len),
+  avana_removed_paralog = pad(avana_result_gene[["failed_paralog"]], max_len),
+  avana_removed_singleton = pad(avana_result_gene[["failed_not_paralog"]], max_len),
+  brunello_removed_genes_all = pad(brunello_result_gene[["failed_genes"]], max_len),
+  brunello_removed_paralog = pad(brunello_result_gene[["failed_paralog"]], max_len),
+  brunello_removed_singleton = pad(brunello_result_gene[["failed_not_paralog"]], max_len),
+  toronto_removed_genes_all = pad(toronto_result_gene[["failed_genes"]], max_len),
+  toronto_removed_paralog = pad(toronto_result_gene[["failed_paralog"]], max_len),
+  toronto_removed_singleton = pad(toronto_result_gene[["failed_not_paralog"]], max_len),
+  yusa_removed_genes_all = pad(yusa_result_gene[["failed_genes"]], max_len),
+  yusa_removed_paralog = pad(yusa_result_gene[["failed_paralog"]], max_len),
+  yusa_removed_singleton = pad(yusa_result_gene[["failed_not_paralog"]], max_len),
+  stringsAsFactors = FALSE
+)
+
+write_csv(df_removed_genes, "../data/biogrid_crispr_ko_data/important_data/removed_genes_all_library.csv")
+
+```
+
+# Data to plot genes (paralog) that are not well represented in the refined library
+
+```{r}
+
 overall_failed_paralog <- unique(c(avana_result_gene[["failed_paralog"]], 
                                    brunello_result_gene[["failed_paralog"]], 
                                    toronto_result_gene[["failed_paralog"]], 
@@ -188,7 +233,6 @@ failed_paralog_percentage <- main_df_percentage %>%
   add_row(library = "overall", paralog = percentage_overall_failed_paralog, not_paralog = percentage_overall_failed_singleton) %>%
   mutate(library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana", " ", "overall"))) %>%
   pivot_longer(!library, names_to = "not_represented_genes", values_to = "percentage")
-
 
 ```
 
@@ -341,4 +385,5 @@ ggsave(
 
 
 ```
+
 
