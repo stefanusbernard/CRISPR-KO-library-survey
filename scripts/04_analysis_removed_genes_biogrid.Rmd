@@ -15,39 +15,73 @@ library(tidyverse)
 library(VennDiagram)
 library(ggvenn)
 library(ggbreak)
-library(BSgenome)
-library(BSgenome.Hsapiens.UCSC.hg38)
-library(BSgenome.Hsapiens.NCBI.T2TCHM13v2.0)
 
 source('~/CRISPR-KO-GuideRefine/GuideRefine_functions.R')
 source("./00_CRISPR-KO-library-survey-functions.R")
 ```
 
-# Genes removed from each library
+# Import data containing removed genes from each library
 
 ```{r}
 
-avana_result_gene <- percentages_and_list_genes(avana_report, paralog_individual)
-brunello_result_gene <- percentages_and_list_genes(brunello_report, paralog_individual)
-toronto_result_gene <- percentages_and_list_genes(toronto_report, paralog_individual)
-yusa_result_gene <- percentages_and_list_genes(yusa_report, paralog_individual)
+removed_genes <- read_csv("../data/biogrid_crispr_ko_data/important_data/removed_genes_all_library.csv")
 
 ```
 
-# BIOGrid data analysis
+# Prepare data from BIOGRID
 
 ```{r}
 
-biogrid_index <- read_tsv("../data/biogrid_crispr_ko_data/raw_data/BIOGRID-ORCS-SCREEN_INDEX-2.0.18.index.tab.txt")
+biogrid_index <- read_tsv("../data/biogrid_crispr_ko_data/important_data/BIOGRID-ORCS-SCREEN_INDEX-2.0.18.index.tab.txt")
 
-selected_screen <- biogrid_index %>%
-  filter(PHENOTYPE == "cell proliferation" & LIBRARY_TYPE == "CRISPRn" & FULL_SIZE_AVAILABLE == "Yes")
+# we select CRISPR KO screen based on cell proliferation, library type is CRISPR knockout (CRISPRn), and containing list of full genes and their hits (full size available - yes)
 
+# available library total:  37
+# selected library:
+# 1. Avana
+# 2. Brunello (human)
+# 3. Toronto Knockout version 3 (TKOv3)
+# 4. None for Project Score
 
-test_crispr_ko <- read_tsv("../data/biogrid_crispr_ko_data/BIOGRID-ORCS-SCREEN_17-2.0.18.screen.tab.txt")
+# create blank dataframe
+df_avana_screen <- data.frame()
+
+avana_screen_studies <- biogrid_index %>%
+  filter(PHENOTYPE == "cell proliferation" & LIBRARY_TYPE == "CRISPRn" & FULL_SIZE_AVAILABLE == "Yes" & LIBRARY == "Avana") %>%
+  pull(`#SCREEN_ID`)
+
+test_crispr_ko <- read_tsv("../data/biogrid_crispr_ko_data/BIOGRID-ORCS-SCREEN_17-2.0.18.screen.tab.txt", col_names = FALSE, skip = 1)
+
+for (screen_id in avana_screen_studies) {
+  data = read_tsv(paste("../data/biogrid_crispr_ko_data/BIOGRID-ORCS-SCREEN_", screen_id, "-2.0.18.screen.tab.txt", sep = ""), col_names = FALSE, skip = 1)
+  
+  # X13 is column indicating whether the genes is the hits or not
+  data <- data %>% filter(X13 == "YES")
+  df_avana_screen = rbind(df_avana_screen, data)
+}
+
+colnames(df_avana_screen) <- c("SCREEN_ID", "IDENTIFIER_ID", "IDENTIFIER_TYPE", "OFFICIAL_SYMBOL", "ALIASES", "ORGANISM_ID", "ORGANISM_OFFICIAL", "SCORE.1", "SCORE.2", "SCORE.3", "SCORE.4", "SCORE.5", "HIT", "SOURCE")
 
 ```
 
+# Check if the removed genes is in the CRISPR screen data
+
+```{r}
+
+test <- df_avana_screen %>% 
+  filter(OFFICIAL_SYMBOL %in% removed_genes$avana_removed_genes_all) %>%
+  count(OFFICIAL_SYMBOL) %>%
+  dplyr::rename("count_appear_in_screen" = "n") %>%
+  count(count_appear_in_screen) %>%
+  dplyr::rename("num_genes" = "n")
+
+test_2 <- df_avana_screen %>% 
+  filter(OFFICIAL_SYMBOL %in% removed_genes$avana_removed_genes_all)
+
+# next step = put the removed genes that never part of the hits in avana screen, and then create a binned bar chart similar to alignments
+
+
+```
 
 
 
