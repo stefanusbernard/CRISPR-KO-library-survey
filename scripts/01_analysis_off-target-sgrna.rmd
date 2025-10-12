@@ -57,7 +57,7 @@ yusa_report <- import_report_without_control(paste('~/CRISPR-KO-GuideRefine/outp
 
 # import predicted paralog pairs from Barbara's paper
 
-barbara_paralog <- list_paralog_gene_pairs()
+# barbara_paralog <- barbara_paralog_gene_pairs()
 ensembl_paralog <- ensembl_paralog_gene_pairs()
 
 paralog_pairs <- ensembl_paralog[[1]]
@@ -163,17 +163,30 @@ brunello_result_gene <- percentages_and_list_genes(brunello_report, paralog_indi
 toronto_result_gene <- percentages_and_list_genes(toronto_report, paralog_individual)
 yusa_result_gene <- percentages_and_list_genes(yusa_report, paralog_individual)
 
+overall_failed_paralog <- unique(c(avana_result_gene[["failed_paralog"]], 
+                                   brunello_result_gene[["failed_paralog"]], 
+                                   toronto_result_gene[["failed_paralog"]], 
+                                   yusa_result_gene[["failed_paralog"]]))
+overall_failed_singleton <- unique(c(avana_result_gene[["failed_not_paralog"]], 
+                                   brunello_result_gene[["failed_not_paralog"]], 
+                                   toronto_result_gene[["failed_not_paralog"]], 
+                                   yusa_result_gene[["failed_not_paralog"]]))
+
+percentage_overall_failed_paralog <- round(length(overall_failed_paralog) / (length(overall_failed_paralog) + length(overall_failed_singleton))*100, 2)
+percentage_overall_failed_singleton <- round(length(overall_failed_singleton) / (length(overall_failed_paralog) + length(overall_failed_singleton))*100, 2)
+
 
 main_df_percentage <- data.frame(library = c("brunello", "toronto_v3", "yusa", "avana"),
-                            paralog = c(brunello_result_gene[[1]], toronto_result_gene[[1]], yusa_result_gene[[1]], avana_result_gene[[1]]),
-                            not_paralog = c(brunello_result_gene[[2]], toronto_result_gene[[2]], yusa_result_gene[[2]], avana_result_gene[[2]]),
-                            total_percentage_failed_genes = c(brunello_result_gene[[3]], toronto_result_gene[[3]], yusa_result_gene[[3]], avana_result_gene[[3]]),
-                            total_percentage_failed_sgrna = c(brunello_result_gene[[4]], toronto_result_gene[[4]], yusa_result_gene[[4]], avana_result_gene[[4]])
+                                 paralog = c(brunello_result_gene[[1]], toronto_result_gene[[1]], yusa_result_gene[[1]], avana_result_gene[[1]]),
+                                 not_paralog = c(brunello_result_gene[[2]], toronto_result_gene[[2]], yusa_result_gene[[2]], avana_result_gene[[2]]),
+                                 total_percentage_failed_genes = c(brunello_result_gene[[3]], toronto_result_gene[[3]], yusa_result_gene[[3]], avana_result_gene[[3]]),
+                                 total_percentage_failed_sgrna = c(brunello_result_gene[[4]], toronto_result_gene[[4]], yusa_result_gene[[4]], avana_result_gene[[4]])
                             )
 
 failed_paralog_percentage <- main_df_percentage %>%
   select(!c(total_percentage_failed_genes, total_percentage_failed_sgrna)) %>%
-  mutate(library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana"))) %>%
+  add_row(library = "overall", paralog = percentage_overall_failed_paralog, not_paralog = percentage_overall_failed_singleton) %>%
+  mutate(library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana", " ", "overall"))) %>%
   pivot_longer(!library, names_to = "not_represented_genes", values_to = "percentage")
 
 
@@ -193,8 +206,10 @@ removed_paralog <- ggplot(failed_paralog_percentage, aes(x = library, y = percen
         scale_x_discrete(labels = c("brunello" = "Brunello",
                                      "toronto_v3" = "TKOv3",
                                      "yusa" = "Yusa \n(Project Score)",
-                                     "avana" = "Avana")) +
-        geom_text(aes(label = percentage), position = position_stack(), vjust = 2, size = 8) +
+                                     "avana" = "Avana",
+                                     "overall" = "Overall")) +
+        geom_text(aes(label = percentage), position = position_stack(vjust = 0.5), vjust = 0, size = 8) +
+        geom_hline(yintercept = percentage_overall_failed_paralog, linetype = "solid", color = "black", size = 0.5) +
         theme(axis.text.x = element_text(size = 25, vjust = 0.7, colour = "black"),
               axis.text.y = element_text(size = 25, colour = "black"),
               axis.title.y = element_text(size = 25, vjust = 0.5, margin = margin(r = 20)),
@@ -213,7 +228,7 @@ removed_paralog
 
 ggsave(
     path = './',
-    width = 13,
+    width = 15,
     height = 10,
     dpi = 300,
     plot = removed_paralog,
