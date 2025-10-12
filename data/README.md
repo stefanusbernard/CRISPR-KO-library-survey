@@ -35,9 +35,9 @@
     
 # CRISPR-KO BIOGRID
 
-1. BIOGRID CRISPR-KO data obtained from https://downloads.thebiogrid.org/BioGRID-ORCS/Release-Archive/BIOGRID-ORCS-2.0.18/ on 12th October 2025
-
-2. BioGRID ORCS Release 2.0.18
+1. Data obtained from : https://downloads.thebiogrid.org/BioGRID-ORCS/Release-Archive/BIOGRID-ORCS-2.0.18/
+2. Data obtained in 12th October 2025
+3. Additional notes about BioGRID ORCS Release 2.0.18
    - This download directory contains the 2.0.18 data release from BioGRID ORCS. This release was compiled on Sept 9, 2025 and contains all curated CRISPR screen data processed prior to this date. If you are starting a new project using our data, it is HIGHLY recommended that you use the data files in the most recent release as it will contain the most up-to-date version of our data. The best data to use is in the CURRENT RELEASE directory.
 
 
