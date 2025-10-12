@@ -119,24 +119,48 @@ export_images <- function(object, filename_dir, genome_type) {
   ggsave(
     path = './',
     width = 13,
-    height = 11,
+    height = 12,
     dpi = 300,
     plot = object,
     filename = paste(filename_dir, genome_type, ".png", sep=""))
 }
 
-export_images(visualize_off_target_alignment(avana_stratify_multi_target[[2]], "Number of on-target alignments"),
-              "../figure/02_fig_analysis_paralog_off-target-sgrna/avana_stratification_",
+# stratification of multi-target sgRNAs
+
+export_images(visualize_off_target_alignment(avana_stratify_multi_target[[2]], "Number of on-target alignments", aln_break_2 = 2, aln_break_1 = 1),
+              "../figure/02_fig_analysis_paralog_off-target-sgrna/avana_stratification_multi_target_",
               genome_type_version)
-export_images(visualize_off_target_alignment(brunello_stratify_multi_target[[2]], "Number of on-target alignments"),
-              "../figure/02_fig_analysis_paralog_off-target-sgrna/brunello_stratification_",
+
+export_images(visualize_off_target_alignment(brunello_stratify_multi_target[[2]], "Number of on-target alignments", aln_break_2 = 2, aln_break_1 = 1),
+              "../figure/02_fig_analysis_paralog_off-target-sgrna/brunello_stratification_multi_target_",
               genome_type_version)
-export_images(visualize_off_target_alignment(toronto_stratify_multi_target[[2]], "Number of on-target alignments"),
-              "../figure/02_fig_analysis_paralog_off-target-sgrna/toronto_stratification_",
+
+export_images(visualize_off_target_alignment(toronto_stratify_multi_target[[2]], "Number of on-target alignments", aln_break_2 = 2, aln_break_1 = 1),
+              "../figure/02_fig_analysis_paralog_off-target-sgrna/toronto_stratification_multi_target_",
               genome_type_version)
-export_images(visualize_off_target_alignment(yusa_stratify_multi_target[[2]], "Number of on-target alignments"),
-              "../figure/02_fig_analysis_paralog_off-target-sgrna/yusa_stratification_",
+
+export_images(visualize_off_target_alignment(yusa_stratify_multi_target[[2]], "Number of on-target alignments", aln_break_2 = 2, aln_break_1 = 1),
+              "../figure/02_fig_analysis_paralog_off-target-sgrna/yusa_stratification_multi_target_",
               genome_type_version)
+
+# stratification of single mismatch sgRNAs
+
+export_images(visualize_off_target_alignment(avana_stratify_single_mismatch[[2]], "Number of single-mismatch off-target alignments", aln_break_2 = 1, aln_break_1 = 0),
+              "../figure/02_fig_analysis_paralog_off-target-sgrna/avana_stratification_single_mismatch_",
+              genome_type_version)
+
+export_images(visualize_off_target_alignment(brunello_stratify_single_mismatch[[2]], "Number of single-mismatch off-target alignments", aln_break_2 = 1, aln_break_1 = 0),
+              "../figure/02_fig_analysis_paralog_off-target-sgrna/brunello_stratification_single_mismatch_",
+              genome_type_version)
+
+export_images(visualize_off_target_alignment(toronto_stratify_single_mismatch[[2]], "Number of single-mismatch off-target alignments", aln_break_2 = 1, aln_break_1 = 0),
+              "../figure/02_fig_analysis_paralog_off-target-sgrna/toronto_stratification_single_mismatch_",
+              genome_type_version)
+
+export_images(visualize_off_target_alignment(yusa_stratify_single_mismatch[[2]], "Number of single-mismatch off-target alignments", aln_break_2 = 1, aln_break_1 = 0),
+              "../figure/02_fig_analysis_paralog_off-target-sgrna/yusa_stratification_single_mismatch_",
+              genome_type_version)
+
 ```
 
 

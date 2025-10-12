@@ -240,18 +240,18 @@ single_mismatch_off_target_alignment_bin <- function(classification_alignment) {
   return(list(count_single_mismatch, alignment_bin_df))
 }
 
-visualize_off_target_alignment <- function(alignment_bin_df, xlabel) {
+visualize_off_target_alignment <- function(alignment_bin_df, xlabel, aln_break_1, aln_break_2) {
   
   ggplot(alignment_bin_df, aes(x = num_of_alignments, y = number_of_sgrnas, fill = "#E66100")) +
     geom_col() +
     theme_minimal() +
-    scale_y_break(c((alignment_bin_df$number_of_sgrnas[alignment_bin_df$num_of_alignments == 2] + 1500),
-                    (alignment_bin_df$number_of_sgrnas[alignment_bin_df$num_of_alignments == 1] - 1500))) +
+    scale_y_break(c((alignment_bin_df$number_of_sgrnas[alignment_bin_df$num_of_alignments == aln_break_2] + 1500),
+                    (alignment_bin_df$number_of_sgrnas[alignment_bin_df$num_of_alignments == aln_break_1] - 1500))) +
     labs(x = xlabel, y = "Number of sgRNAs") +
     geom_text(aes(label = paste("n=", number_of_sgrnas, sep="")),
-              nudge_y = 100,
+              nudge_y = 150,
               nudge_x = 0,
-              size = 9) +
+              size = 8) +
     theme(axis.text.x = element_text(size = 25, vjust = 0.7, colour = 'black'),
           axis.text.y = element_text(size = 25, colour = "black"),
           axis.title.x = element_text(size = 25, vjust = 0.5, margin = margin(r = 20), colour = "black"),
@@ -265,7 +265,8 @@ visualize_off_target_alignment <- function(alignment_bin_df, xlabel) {
           axis.line.y = element_line(size = 0.5, colour = "black"),
           legend.position = "none",
           plot.margin = margin(1, 1, 1, 1),
-          legend.spacing.x = unit(1, 'cm'))
+          legend.spacing.x = unit(1, 'cm')) +
+    ylim(0, max(alignment_bin_df$number_of_sgrnas) + 1000)
 }
 
 
