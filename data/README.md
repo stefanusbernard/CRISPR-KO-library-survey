@@ -29,4 +29,27 @@
 
 5. Brunello library (Samson et al, 2018) --> https://www.nature.com/articles/s41467-018-07901-8#article-info
     - The Brunello library comprises 77,441 sgRNAs, an average of 4 sgRNAs per gene, and 1000 non-targeting control sgRNAs. 
-    - We conducted genome-wide negative selection (dropout) screens in A375 melanoma cells that were first engineered to express Cas9. 
+    - We conducted genome-wide negative selection (dropout) screens in A375 melanoma cells that were first engineered to express Cas9.
+    
+    
+    
+# CRISPR-KO BIOGRID
+
+1. BIOGRID CRISPR-KO data obtained from https://downloads.thebiogrid.org/BioGRID-ORCS/Release-Archive/BIOGRID-ORCS-2.0.18/ on 12th October 2025
+
+2. BioGRID ORCS Release 2.0.18
+This download directory contains the 2.0.18 data release from BioGRID ORCS. This release was compiled on Sept 9, 2025 and contains all curated CRISPR screen data processed prior to this date. If you are starting a new project using our data, it is HIGHLY recommended that you use the data files in the most recent release as it will contain the most up-to-date version of our data. The best data to use is in the CURRENT RELEASE directory.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
