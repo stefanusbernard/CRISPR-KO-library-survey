@@ -734,3 +734,56 @@ find_multi_target_paralog <- function(alignment_gene_df, list_guides, paralog_da
 
 ```
 
+# Code to separate paralog and singleton of double-target guides
+
+```{r}
+avana_dbl_target_genes_paralog <- summarize_paralog_targets(dbl_target_avana, paralog_individual, "avana")[[1]]
+brunello_dbl_target_genes_paralog <- summarize_paralog_targets(dbl_target_brunello, paralog_individual, "brunello")[[1]]
+toronto_dbl_target_genes_paralog <- summarize_paralog_targets(dbl_target_toronto, paralog_individual, "toronto_v3")[[1]]
+yusa_dbl_target_genes_paralog <- summarize_paralog_targets(dbl_target_yusa, paralog_individual, "yusa")[[1]]
+
+df_summary = rbind(avana_dbl_target_genes_paralog, 
+                   brunello_dbl_target_genes_paralog, 
+                   toronto_dbl_target_genes_paralog, 
+                   yusa_dbl_target_genes_paralog)
+
+df_summary <- df_summary %>% mutate(library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana")),
+                                    category = factor(category, levels = c("singleton", "paralog")))
+
+df_paralog_dbl_target_genes <- ggplot(df_summary, aes(x = library, y = percentage, fill = category)) +
+      geom_bar(stat = "identity", position = "stack") +
+      scale_fill_discrete(
+          name = "",
+          labels = c("Singleton", "Paralog")) +
+        theme_minimal() +
+        labs(title = "", x = "", y = "Intended target gene of double-target guides (%)", fill = "Target") +
+        scale_x_discrete(labels = c("brunello" = "Brunello",
+                                     "toronto_v3" = "TKOv3",
+                                     "yusa" = "Yusa \n(Project Score)",
+                                     "avana" = "Avana")) +
+        geom_text(aes(label = percentage), position = position_stack(), vjust = 2, size = 8) +
+        theme(axis.text.x = element_text(size = 25, vjust = 0.7, colour = "black"),
+              axis.text.y = element_text(size = 25, colour = "black"),
+              axis.title.y = element_text(size = 25, vjust = 0.5, margin = margin(r = 20)),
+              panel.grid.major = element_blank(),
+              panel.grid.minor = element_blank(),
+              axis.line.x = element_line(size = 0.5),
+              axis.line.y = element_line(size = 0.5),
+              legend.title = element_text(size = 25),
+              legend.text = element_text(size = 25),
+              plot.margin = margin(1, 1, 1, 1), 
+              line = element_line((size = 4), colour = "black"),
+              legend.spacing.x = unit(1, 'cm')) +
+      ylim(0, 100)
+
+df_paralog_dbl_target_genes
+
+ggsave(
+    path = './',
+    width = 12,
+    height = 10,
+    dpi = 300,
+    plot = df_paralog_dbl_target_genes,
+    filename = paste('../figure/02_fig_analysis_paralog_off-target-sgrna/dbl_target_guides_original_genes_paralog_T2T.png', sep = ''))
+```
+

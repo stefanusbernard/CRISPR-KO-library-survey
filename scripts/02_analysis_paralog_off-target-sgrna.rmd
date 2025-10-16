@@ -212,7 +212,7 @@ yusa_annotated <- annotate_all_sgrna(yusa_alignment,
 # Question 1: Are multitargeting effects more likely to target pairs of paralogs?
 # Question 2: Are genes with paralogs more likely to be subject to multi-targeting effects?
 
-## How many double-target guides originally target paralog and singleton ?
+## Identify the double-target guides targeting paralog pairs and non-paralog pairs across libraries
 
 ```{r}
 
@@ -221,78 +221,17 @@ dbl_target_brunello <- brunello_stratify_multi_target[[1]] %>% filter(alignment_
 dbl_target_toronto <- toronto_stratify_multi_target[[1]] %>% filter(alignment_bin == 2) %>% pull(sgRNA)
 dbl_target_yusa <- yusa_stratify_multi_target[[1]] %>% filter(alignment_bin == 2) %>% pull(sgRNA)
 
-avana_dbl_target_genes_paralog <- summarize_paralog_targets(dbl_target_avana, paralog_individual, "avana")[[1]]
-brunello_dbl_target_genes_paralog <- summarize_paralog_targets(dbl_target_brunello, paralog_individual, "brunello")[[1]]
-toronto_dbl_target_genes_paralog <- summarize_paralog_targets(dbl_target_toronto, paralog_individual, "toronto_v3")[[1]]
-yusa_dbl_target_genes_paralog <- summarize_paralog_targets(dbl_target_yusa, paralog_individual, "yusa")[[1]]
+# list_query_guides_paralog <- summarize_paralog_targets(dbl_target_avana, paralog_individual, "avana")[[2]] %>% filter(paralog_indicator %in% c("paralog")) %>% pull(sgRNA)
+avana_multi_paralog <- find_multi_target_paralog(avana_annotated, dbl_target_avana, "avana")
 
-df_summary = rbind(avana_dbl_target_genes_paralog, 
-                   brunello_dbl_target_genes_paralog, 
-                   toronto_dbl_target_genes_paralog, 
-                   yusa_dbl_target_genes_paralog)
+# list_query_guides_paralog <- summarize_paralog_targets(dbl_target_brunello, paralog_individual, "brunello")[[2]] %>% filter(paralog_indicator == "paralog") %>% pull(sgRNA)
+brunello_multi_paralog <- find_multi_target_paralog(brunello_annotated, dbl_target_brunello, "brunello")
 
-df_summary <- df_summary %>% mutate(library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana")),
-                                    category = factor(category, levels = c("singleton", "paralog")))
+# list_query_guides_paralog <- summarize_paralog_targets(dbl_target_toronto, paralog_individual, "toronto_v3")[[2]] %>% filter(paralog_indicator == "paralog") %>% pull(sgRNA)
+toronto_multi_paralog <- find_multi_target_paralog(toronto_annotated, dbl_target_toronto, "toronto")
 
-df_paralog_dbl_target_genes <- ggplot(df_summary, aes(x = library, y = percentage, fill = category)) +
-      geom_bar(stat = "identity", position = "stack") +
-      scale_fill_discrete(
-          name = "",
-          labels = c("Singleton", "Paralog")) +
-        theme_minimal() +
-        labs(title = "", x = "", y = "Intended target gene of double-target guides (%)", fill = "Target") +
-        scale_x_discrete(labels = c("brunello" = "Brunello",
-                                     "toronto_v3" = "TKOv3",
-                                     "yusa" = "Yusa \n(Project Score)",
-                                     "avana" = "Avana")) +
-        geom_text(aes(label = percentage), position = position_stack(), vjust = 2, size = 8) +
-        theme(axis.text.x = element_text(size = 25, vjust = 0.7, colour = "black"),
-              axis.text.y = element_text(size = 25, colour = "black"),
-              axis.title.y = element_text(size = 25, vjust = 0.5, margin = margin(r = 20)),
-              panel.grid.major = element_blank(),
-              panel.grid.minor = element_blank(),
-              axis.line.x = element_line(size = 0.5),
-              axis.line.y = element_line(size = 0.5),
-              legend.title = element_text(size = 25),
-              legend.text = element_text(size = 25),
-              plot.margin = margin(1, 1, 1, 1), 
-              line = element_line((size = 4), colour = "black"),
-              legend.spacing.x = unit(1, 'cm')) +
-      ylim(0, 100)
-
-df_paralog_dbl_target_genes
-
-ggsave(
-    path = './',
-    width = 12,
-    height = 10,
-    dpi = 300,
-    plot = df_paralog_dbl_target_genes,
-    filename = paste('../figure/02_fig_analysis_paralog_off-target-sgrna/dbl_target_guides_original_genes_paralog_T2T.png', sep = ''))
-
-```
-
-
-
-## Identify the double-target guides targeting paralog pairs and non-paralog pairs across libraries
-
-```{r}
-
-# Using annotated exons from GENCODE (comprehensive gene annotation, human v28), we found that 2503 (95.2%) of the double-target guides have both targets located in coding regions (Fortin et al, 2019) (totally different than my own findings)
-
-# Among the 2503 double-target guides, 297 (11.9%) guides have their pair of targets annotated as being paralogs using the PANTHER database (Fortin et al, 2019)
-
-list_query_guides_paralog <- summarize_paralog_targets(dbl_target_avana, paralog_individual, "avana")[[2]] %>% filter(paralog_indicator == "paralog") %>% pull(sgRNA)
-avana_multi_paralog <- find_multi_target_paralog(avana_annotated, list_query_guides_paralog, "avana")
-
-list_query_guides_paralog <- summarize_paralog_targets(dbl_target_brunello, paralog_individual, "brunello")[[2]] %>% filter(paralog_indicator == "paralog") %>% pull(sgRNA)
-brunello_multi_paralog <- find_multi_target_paralog(brunello_annotated, list_query_guides_paralog, "brunello")
-
-list_query_guides_paralog <- summarize_paralog_targets(dbl_target_toronto, paralog_individual, "toronto_v3")[[2]] %>% filter(paralog_indicator == "paralog") %>% pull(sgRNA)
-toronto_multi_paralog <- find_multi_target_paralog(toronto_annotated, list_query_guides_paralog, "toronto")
-
-list_query_guides_paralog <- summarize_paralog_targets(dbl_target_yusa, paralog_individual, "yusa")[[2]] %>% filter(paralog_indicator == "paralog") %>% pull(sgRNA)
-yusa_multi_paralog <- find_multi_target_paralog(yusa_annotated, list_query_guides_paralog, "yusa")
+# list_query_guides_paralog <- summarize_paralog_targets(dbl_target_yusa, paralog_individual, "yusa")[[2]] %>% filter(paralog_indicator == "paralog") %>% pull(sgRNA)
+yusa_multi_paralog <- find_multi_target_paralog(yusa_annotated, dbl_target_yusa, "yusa")
 
 # Summary table of double-target sgRNAs targeting paralogs
 table_dbl_target_paralog <- rbind(brunello_multi_paralog,
@@ -305,30 +244,31 @@ my_palette <- brewer.pal(n = 3, name = "Set2")
 # Barplot of percentage of sgRNA targeting paralog pairs and non-paralog pairs across libraries
 barplot_paralog <- table_dbl_target_paralog %>%
   arrange(library_name) %>%
-  select(-c(count_sgrna_excluded, count_sgrna_paralog, count_sgrna_paralog_other_genes, count_sgrna_non_coding)) %>%
-  pivot_longer(c(percentage_sgrna_excluded, percentage_sgrna_paralog, percentage_sgrna_paralog_other_genes, percentage_sgrna_non_coding), names_to = 'names', values_to = 'percent') %>%
+  select(-c(total_dbl_target_sgrna, count_sgrna_excluded, count_sgrna_paralog, count_sgrna_other_genes, count_sgrna_non_coding)) %>%
+  pivot_longer(c(percentage_sgrna_excluded, percentage_sgrna_paralog, percentage_sgrna_other_genes, percentage_sgrna_non_coding), names_to = 'names', values_to = 'percent') %>%
   mutate(
     names = factor(
       names,
       levels = c("percentage_sgrna_excluded",
                  "percentage_sgrna_non_coding",
-                 "percentage_sgrna_paralog_other_genes",
+                 "percentage_sgrna_other_genes",
                  "percentage_sgrna_paralog")),
     library_name = factor(library_name, levels = c("brunello", "toronto", "yusa", "avana"))) %>%
   ggplot(aes(library_name, percent, fill = names)) +
   geom_bar(position = "stack", stat = "identity") +
   theme_minimal() +
-  labs(title = "", x = "", y = "Paralog + off-target location of double-target guides (%)", fill = "") +
+  labs(title = "", x = "", y = "Off-target location of double-target guides (%)", fill = "") +
   scale_x_discrete(labels = c('brunello' = 'Brunello',
                 'yusa' = 'Yusa \n(Project Score)',
                 'toronto' = 'TKOv3',
                 'avana' = 'Avana')) +
-  scale_fill_manual(labels = c("percentage_sgrna_paralog" = "Paralog + paralog (ENSEMBL 115 pairs)",
-                               "percentage_sgrna_paralog_other_genes" = "Paralog + other protein-coding genes",
-                               "percentage_sgrna_non_coding" = "Paralog + non-coding region",
+  scale_fill_manual(name = "Target location", 
+                    labels = c("percentage_sgrna_paralog" = "Paralog + paralog (ENSEMBL 115 pairs)",
+                               "percentage_sgrna_other_genes" = "Both target protein-coding gene",
+                               "percentage_sgrna_non_coding" = "Protein-coding gene + non-coding region",
                                "percentage_sgrna_excluded" = "Guides excluded because of additional mismatches"),
                     values = c("percentage_sgrna_paralog" = "#009E73",
-                              "percentage_sgrna_paralog_other_genes" = "#0072B2",
+                              "percentage_sgrna_other_genes" = "#0072B2",
                               "percentage_sgrna_non_coding" = "#E69F00",
                               "percentage_sgrna_excluded" = "lightgrey")) +
   theme(axis.text.x = element_text(size = 20, colour = 'black'),
@@ -342,7 +282,7 @@ barplot_paralog <- table_dbl_target_paralog %>%
       axis.line.x = element_line(size = 0.5),
       axis.line.y = element_line(size = 0.5),
       line = element_line((size = 4), colour = 'black')) +
-  geom_text(aes(label = ifelse(percent > 1, percent, "")), position = position_stack(vjust = 0.5), size = 7)
+  geom_text(aes(label = ifelse(percent > 2, percent, "")), position = position_stack(vjust = 0.5), size = 7)
 
 barplot_paralog
 
@@ -352,7 +292,7 @@ ggsave(
     height = 10,
     dpi = 300,
     plot = barplot_paralog,
-    filename = paste('../figure/02_fig_analysis_paralog_off-target-sgrna/barplot_double_target_guides_T2T.png', sep = ''))
+    filename = paste('../figure/02_fig_analysis_paralog_off-target-sgrna/barplot_double_target_guides_T2T_16_Oct.png', sep = ''))
 
 ```
 
