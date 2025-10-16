@@ -18,6 +18,7 @@ library(VennDiagram)
 library(grid)
 library(paletteer)
 library(RColorBrewer)
+library(UpSetR)
 source('~/CRISPR-KO-GuideRefine/GuideRefine_functions.R')
 source("00_CRISPR-KO-library-survey-functions.R")
 ```
@@ -26,7 +27,7 @@ source("00_CRISPR-KO-library-survey-functions.R")
 
 ```{r}
 
-terms <- c("CONTROL", "Control", "control", "INTRON", "Intron", "intron", "LacZ", "luciferase")
+terms <- c("CONTROL", "Control", "control", "INTRON", "Intron", "intron", "LacZ", "luciferase", "NO_SITE", "ONE_INTERGENIC_SITE")
 # lacZ and luciferase are the control in Toronto V3 library
 
 terms_for_filtering <- paste(terms, collapse = "|")
@@ -35,6 +36,7 @@ brunello <- 'broadgpp-brunello-library-contents'
 toronto <- 'tkov3_guide_sequence'
 avana <- 'avana_library'
 yusa <- 'yusa_hcrispr_ko_grnas'
+jacquere <- 'Jacquere_PerGuideAnnotations_Quota4'
 
 import_report_without_control <- function(file_dir, control_terms) {
   
@@ -48,13 +50,13 @@ brunello_report <- import_report_without_control(paste('~/CRISPR-KO-GuideRefine/
 toronto_report <- import_report_without_control(paste('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', toronto, '_full_report.xlsx', sep = ''))
 avana_report <- import_report_without_control(paste('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', avana, '_full_report.xlsx', sep = ''))
 yusa_report <- import_report_without_control(paste('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', yusa, '_full_report.xlsx', sep = ''))
+jacquere_report <- import_report_without_control(paste('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/Jacquere_PerGuideAnnotations_Quota4_full_report.xlsx'))
 
 ```
 
 ## Import paralog data from Barbara's paper
 
 ```{r}
-
 # import predicted paralog pairs from Barbara's paper
 
 # barbara_paralog <- barbara_paralog_gene_pairs()
@@ -62,7 +64,6 @@ ensembl_paralog <- ensembl_paralog_gene_pairs()
 
 paralog_pairs <- ensembl_paralog[[1]]
 paralog_individual <- ensembl_paralog[[2]]
-
 
 ```
 
@@ -74,42 +75,42 @@ brunello_multi_target <- round(calculate_percentage(brunello_report, "multi-targ
 toronto_multi_target <- round(calculate_percentage(toronto_report, "multi-target sgRNA", "sgRNA number"), 2)
 avana_multi_target <- round(calculate_percentage(avana_report, "multi-target sgRNA", "sgRNA number"), 2)
 yusa_multi_target <- round(calculate_percentage(yusa_report, "multi-target sgRNA", "sgRNA number"), 2)
+jacquere_multi_target <- round(calculate_percentage(jacquere_report, "multi-target sgRNA", "sgRNA number"), 2)
 
 brunello_single_mismatch <- round(calculate_percentage(brunello_report, "single mismatch sgRNA", "sgRNA number"), 2)
 toronto_single_mismatch <- round(calculate_percentage(toronto_report, "single mismatch sgRNA", "sgRNA number"), 2)
 avana_single_mismatch <- round(calculate_percentage(avana_report, "single mismatch sgRNA", "sgRNA number"), 2)
 yusa_single_mismatch <- round(calculate_percentage(yusa_report, "single mismatch sgRNA", "sgRNA number"), 2)
+jacquere_single_mismatch <- round(calculate_percentage(jacquere_report, "single mismatch sgRNA", "sgRNA number"), 2)
 
 brunello_pam_distal <- round(calculate_percentage(brunello_report, "PAM distal double mismatch", "sgRNA number"), 2)
 toronto_pam_distal <- round(calculate_percentage(toronto_report, "PAM distal double mismatch", "sgRNA number"), 2)
 avana_pam_distal <- round(calculate_percentage(avana_report, "PAM distal double mismatch", "sgRNA number"), 2)
 yusa_pam_distal <- round(calculate_percentage(yusa_report, "PAM distal double mismatch", "sgRNA number"), 2)
-
+jacquere_pam_distal <- round(calculate_percentage(jacquere_report, "PAM distal double mismatch", "sgRNA number"), 2)
 
 # Create dataframe for multi-target, single-mismatch, and pam-distal from all library
 
-multi_target <- c(brunello_multi_target, toronto_multi_target, yusa_multi_target, avana_multi_target)
-single_mismatch <- c(brunello_single_mismatch, toronto_single_mismatch, yusa_single_mismatch, avana_single_mismatch)
-pam_distal <- c(brunello_pam_distal, toronto_pam_distal, yusa_pam_distal, avana_pam_distal)
+multi_target <- c(brunello_multi_target, toronto_multi_target, yusa_multi_target, avana_multi_target, jacquere_multi_target)
+single_mismatch <- c(brunello_single_mismatch, toronto_single_mismatch, yusa_single_mismatch, avana_single_mismatch, jacquere_single_mismatch)
+pam_distal <- c(brunello_pam_distal, toronto_pam_distal, yusa_pam_distal, avana_pam_distal, jacquere_pam_distal)
 
-library <- c("brunello", "toronto_v3", "yusa", "avana")
-factor <- c(1,2,3,4)
+library <- c("brunello", "toronto_v3", "yusa", "avana", "jacquere")
+factor <- c(1,2,3,4, 5)
 
 sum_dataframe <- data.frame(library, multi_target, single_mismatch, pam_distal)
 
-
-# Histogram of multi-target/off-target sgRNAs in Cellecta, Brunello, and Toronto
 # Reorder the library factor to ensure the bars are ordered as Brunello, Toronto, Yusa, Avana
 sum_dataframe_long <- sum_dataframe %>%
     pivot_longer(cols = c("multi_target", "single_mismatch", "pam_distal"), 
                  names_to = "category", 
                  values_to = "percentage") %>%
     mutate(category = factor(category, levels = c("multi_target", "single_mismatch", "pam_distal")),
-           library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana")))
+           library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana", "jacquere")))
 
 
 # Define custom colors for the libraries
-my_palette <- brewer.pal(n = 4, name = "Set2")
+my_palette <- brewer.pal(n = 5, name = "Set2")
 
 
 # Create the grouped multibar chart for each sgRNA libraries
@@ -135,11 +136,12 @@ multi_bar_chart <- ggplot(sum_dataframe_long, aes(x = category, y = percentage, 
           legend.spacing.x = unit(1, 'cm')) +
     scale_fill_manual(values = my_palette,
                       name = 'Library',
-                      breaks = c("brunello", "toronto_v3", "yusa", "avana"),
+                      breaks = c("brunello", "toronto_v3", "yusa", "avana", "jacquere"),
                       labels = c("brunello" = "Brunello",
                                  "toronto_v3" = "TKOv3",
                                  "yusa" = "Yusa (Project Score)",
-                                 "avana" = "Avana")) + 
+                                 "avana" = "Avana",
+                                 "jacquere" = "Jacquere")) + 
   scale_y_continuous(breaks=seq(0, 10, 2), limits=c(0, 10))
 
 multi_bar_chart
@@ -162,6 +164,7 @@ avana_result_gene <- percentages_and_list_genes(avana_report, paralog_individual
 brunello_result_gene <- percentages_and_list_genes(brunello_report, paralog_individual)
 toronto_result_gene <- percentages_and_list_genes(toronto_report, paralog_individual)
 yusa_result_gene <- percentages_and_list_genes(yusa_report, paralog_individual)
+jacquere_result_gene <- percentages_and_list_genes(jacquere_report, paralog_individual)
 
 # Export the removed genes from each library (input for script 04_analysis_removed_genes_biogrid.Rmd)
 
@@ -176,7 +179,10 @@ max_len <- max(length(avana_result_gene[["failed_genes"]]),
                length(toronto_result_gene[["failed_not_paralog"]]),
                length(yusa_result_gene[["failed_genes"]]), 
                length(yusa_result_gene[["failed_paralog"]]), 
-               length(yusa_result_gene[["failed_not_paralog"]])
+               length(yusa_result_gene[["failed_not_paralog"]]),
+               length(jacquere_result_gene[["failed_genes"]]), 
+               length(jacquere_result_gene[["failed_paralog"]]), 
+               length(jacquere_result_gene[["failed_not_paralog"]])
                )
 
 pad <- function(x, n) {
@@ -197,6 +203,9 @@ df_removed_genes <- data.frame(
   yusa_removed_genes_all = pad(yusa_result_gene[["failed_genes"]], max_len),
   yusa_removed_paralog = pad(yusa_result_gene[["failed_paralog"]], max_len),
   yusa_removed_singleton = pad(yusa_result_gene[["failed_not_paralog"]], max_len),
+  jacquere_removed_genes_all = pad(jacquere_result_gene[["failed_genes"]], max_len),
+  jacquere_removed_paralog = pad(jacquere_result_gene[["failed_paralog"]], max_len),
+  jacquere_removed_singleton = pad(jacquere_result_gene[["failed_not_paralog"]], max_len),
   stringsAsFactors = FALSE
 )
 
@@ -211,27 +220,29 @@ write_csv(df_removed_genes, "../data/biogrid_crispr_ko_data/important_data/remov
 overall_failed_paralog <- unique(c(avana_result_gene[["failed_paralog"]], 
                                    brunello_result_gene[["failed_paralog"]], 
                                    toronto_result_gene[["failed_paralog"]], 
-                                   yusa_result_gene[["failed_paralog"]]))
+                                   yusa_result_gene[["failed_paralog"]],
+                                   jacquere_result_gene[["failed_paralog"]]))
 overall_failed_singleton <- unique(c(avana_result_gene[["failed_not_paralog"]], 
                                    brunello_result_gene[["failed_not_paralog"]], 
                                    toronto_result_gene[["failed_not_paralog"]], 
-                                   yusa_result_gene[["failed_not_paralog"]]))
+                                   yusa_result_gene[["failed_not_paralog"]],
+                                   jacquere_result_gene[["failed_not_paralog"]]))
 
 percentage_overall_failed_paralog <- round(length(overall_failed_paralog) / (length(overall_failed_paralog) + length(overall_failed_singleton))*100, 2)
 percentage_overall_failed_singleton <- round(length(overall_failed_singleton) / (length(overall_failed_paralog) + length(overall_failed_singleton))*100, 2)
 
 
-main_df_percentage <- data.frame(library = c("brunello", "toronto_v3", "yusa", "avana"),
-                                 paralog = c(brunello_result_gene[[1]], toronto_result_gene[[1]], yusa_result_gene[[1]], avana_result_gene[[1]]),
-                                 not_paralog = c(brunello_result_gene[[2]], toronto_result_gene[[2]], yusa_result_gene[[2]], avana_result_gene[[2]]),
-                                 total_percentage_failed_genes = c(brunello_result_gene[[3]], toronto_result_gene[[3]], yusa_result_gene[[3]], avana_result_gene[[3]]),
-                                 total_percentage_failed_sgrna = c(brunello_result_gene[[4]], toronto_result_gene[[4]], yusa_result_gene[[4]], avana_result_gene[[4]])
+main_df_percentage <- data.frame(library = c("brunello", "toronto_v3", "yusa", "avana", "jacquere"),
+                                 paralog = c(brunello_result_gene[[1]], toronto_result_gene[[1]], yusa_result_gene[[1]], avana_result_gene[[1]], jacquere_result_gene[[1]]),
+                                 not_paralog = c(brunello_result_gene[[2]], toronto_result_gene[[2]], yusa_result_gene[[2]], avana_result_gene[[2]], jacquere_result_gene[[2]]),
+                                 total_percentage_failed_genes = c(brunello_result_gene[[3]], toronto_result_gene[[3]], yusa_result_gene[[3]], avana_result_gene[[3]], jacquere_result_gene[[3]]),
+                                 total_percentage_failed_sgrna = c(brunello_result_gene[[4]], toronto_result_gene[[4]], yusa_result_gene[[4]], avana_result_gene[[4]], jacquere_result_gene[[4]])
                             )
 
 failed_paralog_percentage <- main_df_percentage %>%
   select(!c(total_percentage_failed_genes, total_percentage_failed_sgrna)) %>%
   add_row(library = "overall", paralog = percentage_overall_failed_paralog, not_paralog = percentage_overall_failed_singleton) %>%
-  mutate(library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana", " ", "overall"))) %>%
+  mutate(library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana", "jacquere", " ","overall"))) %>%
   pivot_longer(!library, names_to = "not_represented_genes", values_to = "percentage")
 
 ```
@@ -251,6 +262,7 @@ removed_paralog <- ggplot(failed_paralog_percentage, aes(x = library, y = percen
                                      "toronto_v3" = "TKOv3",
                                      "yusa" = "Yusa \n(Project Score)",
                                      "avana" = "Avana",
+                                     "jacquere" = "Jacquere",
                                      "overall" = "Overall")) +
         geom_text(aes(label = percentage), position = position_stack(vjust = 0.5), vjust = 0, size = 8) +
         geom_hline(yintercept = percentage_overall_failed_paralog, linetype = "solid", color = "black", size = 0.5) +
@@ -272,7 +284,7 @@ removed_paralog
 
 ggsave(
     path = './',
-    width = 15,
+    width = 17,
     height = 10,
     dpi = 300,
     plot = removed_paralog,
@@ -285,11 +297,11 @@ ggsave(
 
 ```{r}
 
-my_palette <- brewer.pal(n = 4, name = "Set2")
+my_palette <- brewer.pal(n = 5, name = "Set2")
 
 failed_genes_percentage <- main_df_percentage %>%
   select(-c(paralog, not_paralog)) %>%
-  mutate(library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana")))
+  mutate(library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana", "jacquere")))
 
 percentage_bar_chart <- ggplot(failed_genes_percentage, aes(x = library, y = total_percentage_failed_genes, fill = library)) +
     geom_bar(stat = "identity", position = "stack") +
@@ -298,7 +310,8 @@ percentage_bar_chart <- ggplot(failed_genes_percentage, aes(x = library, y = tot
         scale_x_discrete(labels = c("brunello" = "Brunello",
                                      "toronto_v3" = "TKOv3",
                                      "yusa" = "Yusa \n(Project Score)",
-                                     "avana" = "Avana")) +
+                                     "avana" = "Avana",
+                                     "jacquere" = "Jacquere")) +
         geom_text(aes(label = total_percentage_failed_genes), position = position_stack(), vjust = -0.5, size = 7) +
         theme(axis.text.x = element_text(size = 25, vjust = 0.7, colour = 'black'),
               axis.text.y = element_text(size = 25),
@@ -314,18 +327,19 @@ percentage_bar_chart <- ggplot(failed_genes_percentage, aes(x = library, y = tot
               legend.spacing.x = unit(1, 'cm')) +
     scale_fill_manual(values = my_palette,
                       name = 'Library',
-                      breaks = c("brunello", "toronto_v3", "yusa", "avana"),
+                      breaks = c("brunello", "toronto_v3", "yusa", "avana", "jacquere"),
                       labels = c("brunello" = "Brunello",
                                  "toronto_v3" = "TKOv3",
                                  "yusa" = "Yusa (Project Score)",
-                                 "avana" = "Avana")) +
+                                 "avana" = "Avana",
+                                 "jacquere" = "Jacquere")) +
       ylim(0, 100)
 
 percentage_bar_chart
 
 ggsave(
     path = './',
-    width = 14,
+    width = 16,
     height = 10,
     dpi = 300,
     plot = percentage_bar_chart,
@@ -337,11 +351,11 @@ ggsave(
 
 ```{r}
 
-my_palette <- brewer.pal(n = 4, name = "Set2")
+my_palette <- brewer.pal(n = 5, name = "Set2")
 
 failed_sgrna_percentage <- main_df_percentage %>%
   select(-c(paralog, not_paralog, total_percentage_failed_genes)) %>%
-  mutate(library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana")))
+  mutate(library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana", "jacquere")))
 
 percentage_bar_chart <- ggplot(failed_sgrna_percentage, aes(x = library, y = total_percentage_failed_sgrna, fill = library)) +
     geom_bar(stat = "identity", position = "stack") +
@@ -350,7 +364,8 @@ percentage_bar_chart <- ggplot(failed_sgrna_percentage, aes(x = library, y = tot
         scale_x_discrete(labels = c("brunello" = "Brunello",
                                      "toronto_v3" = "TKOv3",
                                      "yusa" = "Yusa \n(Project Score)",
-                                     "avana" = "Avana")) +
+                                     "avana" = "Avana",
+                                     "jacquere" = "Jacquere")) +
         geom_text(aes(label = total_percentage_failed_sgrna), position = position_stack(), vjust = -0.5, size = 7) +
         theme(axis.text.x = element_text(size = 25, vjust = 0.7, colour = 'black'),
               axis.text.y = element_text(size = 25),
@@ -366,18 +381,19 @@ percentage_bar_chart <- ggplot(failed_sgrna_percentage, aes(x = library, y = tot
               legend.spacing.x = unit(1, 'cm')) +
     scale_fill_manual(values = my_palette,
                       name = 'Library',
-                      breaks = c("brunello", "toronto_v3", "yusa", "avana"),
+                      breaks = c("brunello", "toronto_v3", "yusa", "avana", "jacquere"),
                       labels = c("brunello" = "Brunello",
                                  "toronto_v3" = "TKOv3",
                                  "yusa" = "Yusa (Project Score)",
-                                 "avana" = "Avana")) +
+                                 "avana" = "Avana",
+                                 "jacquere" = "Jacquere")) +
       ylim(0, 100)
 
 percentage_bar_chart
 
 ggsave(
     path = './',
-    width = 14,
+    width = 16,
     height = 10,
     dpi = 300,
     plot = percentage_bar_chart,
@@ -386,4 +402,28 @@ ggsave(
 
 ```
 
+# UpSet plot for commonality of removed genes between 5 libraries
+
+```{r}
+
+removed_gene_list_combined <- list(
+  Avana = avana_result_gene[["failed_genes"]],
+  Brunello = brunello_result_gene[["failed_genes"]],
+  Toronto = toronto_result_gene[["failed_genes"]],
+  Yusa = yusa_result_gene[["failed_genes"]],
+  Jacquere = jacquere_result_gene[["failed_genes"]]
+)
+
+png("../figure/01_fig_analysis_off-target-sgrna/removed_genes_all_libraries.png", width = 10000, height = 7500, res = 1000)
+
+upset(fromList(removed_gene_list_combined), 
+      order.by = "degree",
+      main.bar.color = "#4B0092",
+      sets.bar.color = "#1AFF1A",
+      text.scale = 1.5)
+
+dev.off()
+
+
+```
 
