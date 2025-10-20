@@ -156,9 +156,9 @@ import_list_off_target_guides <- function(data_dir) {
   off_target_guides <- read_tsv(data_dir)
   
   return(list(
-    multi_target_guides = na.omit(off_target_guides$multi_target_guides),
-    single_mismatch_guides = na.omit(off_target_guides$single_mismatch_guides),
-    pam_distal_double_mismatch_guides = na.omit(off_target_guides$pam_distal_double_mismatch_guides)
+    multi_target_guides = c(na.omit(off_target_guides$multi_target_guides)),
+    single_mismatch_guides = c(na.omit(off_target_guides$single_mismatch_guides)),
+    pam_distal_double_mismatch_guides = c(na.omit(off_target_guides$pam_distal_double_mismatch_guides))
   ))
 }
 
@@ -166,7 +166,7 @@ import_list_off_target_guides <- function(data_dir) {
 
 # FUNCTION TO STRATIFY MULTI-TARGET SGRNAS
 
-off_target_classification <- function(library_alignment) {
+off_target_classification <- function(library_alignment, pam_distal_mismatch_guides) {
   
   # find any non-targeting alignment in the alignment data
   library_alignment_non_targeting <- library_alignment %>%
@@ -183,6 +183,7 @@ off_target_classification <- function(library_alignment) {
     filter(n_mismatches != 2) %>%
     mutate(alignment = case_when(
       is.na(n_mismatches) ~ "non-targeting",
+      sgRNA %in% unlist(pam_distal_mismatch_guides) ~ 'pam-distal double mismatch',
       n_mismatches == 0 & num_alignments > 1 ~ 'multi-target guides',
       n_mismatches == 0 ~ 'perfect',
       n_mismatches == 1 ~ 'single mismatch',
@@ -203,10 +204,10 @@ off_target_classification <- function(library_alignment) {
 multi_target_alignment_bin <- function(classification_alignment, alignment_type) {
   
   count_on_target_alignments <- classification_alignment %>%
+    # remove any guides with additional single-mismatches and pam-distal double mismatches
     filter(alignment %in% alignment_type)
   
   # bin the number of alignments to see how many guides targeting two until more than 5 different locations in the genome with perfect match
-  
   count_on_target_alignments$alignment_bin <- cut(count_on_target_alignments$num_alignments,
                                                   breaks = c(-0.5, 0.5:5.5, Inf),  # -0.5 to 5.5 for 0–5, then Inf for >5
                                                   labels = c(as.character(0:5), "> 5"),
@@ -222,9 +223,11 @@ multi_target_alignment_bin <- function(classification_alignment, alignment_type)
 }
 
 
-single_mismatch_off_target_alignment_bin <- function(classification_alignment) {
+single_mismatch_off_target_alignment_bin <- function(classification_alignment, alignment_type) {
   
   count_single_mismatch <- classification_alignment %>%
+    # remove any guides with additional multi-target and pam-distal double mismatches
+    filter(alignment %in% alignment_type) %>%
     mutate(single_mismatch_alignment = ifelse(alignment == "single mismatch", num_alignments, 0))
   
   count_single_mismatch$alignment_bin <- cut(count_single_mismatch$single_mismatch_alignment,
@@ -243,7 +246,7 @@ single_mismatch_off_target_alignment_bin <- function(classification_alignment) {
 visualize_off_target_alignment <- function(alignment_bin_df, xlabel, aln_break_1, aln_break_2) {
   
   ggplot(alignment_bin_df, aes(x = num_of_alignments, y = number_of_sgrnas)) +
-    geom_col(fill = "#E66100") +
+    geom_col(fill = "#1E88E5") +
     theme_minimal() +
     scale_y_break(c((alignment_bin_df$number_of_sgrnas[alignment_bin_df$num_of_alignments == aln_break_2] + 1500),
                     (alignment_bin_df$number_of_sgrnas[alignment_bin_df$num_of_alignments == aln_break_1] - 1500))) +

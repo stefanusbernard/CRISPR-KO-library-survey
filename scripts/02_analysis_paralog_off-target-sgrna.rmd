@@ -50,6 +50,13 @@ toronto_alignment <- import_sgrna_library_alignment("~/CRISPR-KO-GuideRefine/obj
 yusa_alignment <- import_sgrna_library_alignment("~/CRISPR-KO-GuideRefine/object_intermediate/T2T-CHM13_bsgenome/yusa_hcrispr_ko_grnas_aln.csv", "T2T-CHM13")
 jacquere_alignment <- import_sgrna_library_alignment("~/CRISPR-KO-GuideRefine/object_intermediate/T2T-CHM13_bsgenome/Jacquere_PerGuideAnnotations_Quota4_aln.csv", "T2T-CHM13")
 
+# list_removed_sgrna sgRNAs
+disposed_avana <- import_list_off_target_guides("~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/avana_library_disposed_sgRNAs.tsv")
+disposed_brunello <- import_list_off_target_guides("~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/broadgpp-brunello-library-contents_disposed_sgRNAs.tsv")
+disposed_toronto <- import_list_off_target_guides("~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/tkov3_guide_sequence_disposed_sgRNAs.tsv")
+disposed_yusa <- import_list_off_target_guides("~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/yusa_hcrispr_ko_grnas_disposed_sgRNAs.tsv")
+disposed_jacquere <- import_list_off_target_guides("~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/Jacquere_PerGuideAnnotations_Quota4_disposed_sgRNAs.tsv")
+
 ```
 
 ## Import paralog data from ENSEMBL 115
@@ -68,15 +75,17 @@ paralog_individual <- ensembl_paralog[[2]]
 
 ```{r}
 
-avana_classification <- off_target_classification(avana_alignment_meyers)
-brunello_classification <- off_target_classification(brunello_alignment)
-toronto_classification <- off_target_classification(toronto_alignment)
-yusa_classification <- off_target_classification(yusa_alignment)
-jacquere_classification <- off_target_classification(jacquere_alignment)
+avana_classification <- off_target_classification(avana_alignment_meyers, disposed_avana["pam_distal_double_mismatch_guides"])
+brunello_classification <- off_target_classification(brunello_alignment, disposed_brunello["pam_distal_double_mismatch_guides"])
+toronto_classification <- off_target_classification(toronto_alignment, disposed_toronto["pam_distal_double_mismatch_guides"])
+yusa_classification <- off_target_classification(yusa_alignment, disposed_yusa["pam_distal_double_mismatch_guides"])
+jacquere_classification <- off_target_classification(jacquere_alignment, disposed_jacquere["pam_distal_double_mismatch_guides"])
 
 ```
 
 # Stratify multi-target sgRNAs (perfect alignment for each sgRNAs)
+
+to investigate multi-target guides alignment to cell fitness, we exclude any single-mismatch guides, pam-distal double mismatch guides. To prevent confounding our analysis
 
 ```{r}
 
@@ -93,24 +102,31 @@ yusa_stratify_multi_target <- multi_target_alignment_bin(yusa_classification[[1]
 write_csv(yusa_stratify_multi_target[[1]], "../data/sgrna_lfc_data/yusa_data/yusa_stratify_multi_target.csv")
 
 jacquere_stratify_multi_target <- multi_target_alignment_bin(jacquere_classification[[1]], c("perfect", "multi-target guides", "non-targeting"))
+write_csv(jacquere_stratify_multi_target[[1]], "../data/sgrna_lfc_data/jacquere_data/jacquere_stratify_multi_target.csv")
+
 
 ```
 
 # Stratify single-mismatch sgRNAs (sgRNA align with single mismatch)
 
+to investigate single-mismatch off-target alignment to cell fitness, we exclude any multi-targeting guides, pam-distal double mismatch guides. To prevent confounding our analysis
+
 ```{r}
 
-avana_stratify_single_mismatch <- single_mismatch_off_target_alignment_bin(avana_classification[[1]])
+avana_stratify_single_mismatch <- single_mismatch_off_target_alignment_bin(avana_classification[[1]], c("perfect", "single mismatch", "non-targeting"))
 write_csv(avana_stratify_single_mismatch[[1]], "../data/sgrna_lfc_data/avana_data/avana_stratify_single_mismatch.csv")
 
-brunello_stratify_single_mismatch <- single_mismatch_off_target_alignment_bin(brunello_classification[[1]])
+brunello_stratify_single_mismatch <- single_mismatch_off_target_alignment_bin(brunello_classification[[1]], c("perfect", "single mismatch", "non-targeting"))
 write_csv(brunello_stratify_single_mismatch[[1]], "../data/sgrna_lfc_data/brunello_data/brunello_stratify_single_mismatch.csv")
 
-toronto_stratify_single_mismatch <- single_mismatch_off_target_alignment_bin(toronto_classification[[1]])
+toronto_stratify_single_mismatch <- single_mismatch_off_target_alignment_bin(toronto_classification[[1]], c("perfect", "single mismatch", "non-targeting"))
 write_csv(toronto_stratify_single_mismatch[[1]], "../data/sgrna_lfc_data/tkov3_data/tkov3_stratify_single_mismatch.csv")
 
-yusa_stratify_single_mismatch <- single_mismatch_off_target_alignment_bin(yusa_classification[[1]])
+yusa_stratify_single_mismatch <- single_mismatch_off_target_alignment_bin(yusa_classification[[1]], c("perfect", "single mismatch", "non-targeting"))
 write_csv(yusa_stratify_single_mismatch[[1]], "../data/sgrna_lfc_data/yusa_data/yusa_stratify_single_mismatch.csv")
+
+jacquere_stratify_single_mismatch <- single_mismatch_off_target_alignment_bin(jacquere_classification[[1]], c("perfect", "single mismatch", "non-targeting"))
+write_csv(jacquere_stratify_single_mismatch[[1]], "../data/sgrna_lfc_data/jacquere_data/jacquere_stratify_single_mismatch.csv")
 
 
 ```
@@ -147,22 +163,30 @@ export_images(visualize_off_target_alignment(yusa_stratify_multi_target[[2]], "N
               "../figure/02_fig_analysis_paralog_off-target-sgrna/yusa_stratification_multi_target_",
               genome_type_version)
 
+export_images(visualize_off_target_alignment(jacquere_stratify_multi_target[[2]], "Number of on-target alignments", aln_break_2 = 2, aln_break_1 = 1),
+              "../figure/02_fig_analysis_paralog_off-target-sgrna/jacquere_stratification_multi_target_",
+              genome_type_version)
+
 # stratification of single mismatch sgRNAs
 
-export_images(visualize_off_target_alignment(avana_stratify_single_mismatch[[2]], "Number of single-mismatch off-target alignments", aln_break_2 = 1, aln_break_1 = 0),
+export_images(visualize_off_target_alignment(avana_stratify_single_mismatch[[2]], "Number of single mismatch off-target alignments", aln_break_2 = 1, aln_break_1 = 0),
               "../figure/02_fig_analysis_paralog_off-target-sgrna/avana_stratification_single_mismatch_",
               genome_type_version)
 
-export_images(visualize_off_target_alignment(brunello_stratify_single_mismatch[[2]], "Number of single-mismatch off-target alignments", aln_break_2 = 1, aln_break_1 = 0),
+export_images(visualize_off_target_alignment(brunello_stratify_single_mismatch[[2]], "Number of single mismatch off-target alignments", aln_break_2 = 1, aln_break_1 = 0),
               "../figure/02_fig_analysis_paralog_off-target-sgrna/brunello_stratification_single_mismatch_",
               genome_type_version)
 
-export_images(visualize_off_target_alignment(toronto_stratify_single_mismatch[[2]], "Number of single-mismatch off-target alignments", aln_break_2 = 1, aln_break_1 = 0),
+export_images(visualize_off_target_alignment(toronto_stratify_single_mismatch[[2]], "Number of single mismatch off-target alignments", aln_break_2 = 1, aln_break_1 = 0),
               "../figure/02_fig_analysis_paralog_off-target-sgrna/toronto_stratification_single_mismatch_",
               genome_type_version)
 
-export_images(visualize_off_target_alignment(yusa_stratify_single_mismatch[[2]], "Number of single-mismatch off-target alignments", aln_break_2 = 1, aln_break_1 = 0),
+export_images(visualize_off_target_alignment(yusa_stratify_single_mismatch[[2]], "Number of single mismatch off-target alignments", aln_break_2 = 1, aln_break_1 = 0),
               "../figure/02_fig_analysis_paralog_off-target-sgrna/yusa_stratification_single_mismatch_",
+              genome_type_version)
+
+export_images(visualize_off_target_alignment(jacquere_stratify_single_mismatch[[2]], "Number of single mismatch off-target alignments", aln_break_2 = 1, aln_break_1 = 0),
+              "../figure/02_fig_analysis_paralog_off-target-sgrna/jacquere_stratification_single_mismatch_",
               genome_type_version)
 
 ```

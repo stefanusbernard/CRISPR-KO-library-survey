@@ -15,6 +15,7 @@ library(tidyverse)
 library(VennDiagram)
 library(ggvenn)
 library(ggbreak)
+library(clinfun)
 
 source('~/CRISPR-KO-GuideRefine/GuideRefine_functions.R')
 source("./00_CRISPR-KO-library-survey-functions.R")
@@ -61,16 +62,37 @@ obtain_required_data <- function(library, normalized_lfc_data, stratification_da
 }
 
 
-visualize_lfc <- function(library_lfc_data, boxplot_output_name) {
+calculate_spearman_corr <- function(input_data) {
+  
+  input_data$alignment_bin_num <- as.numeric(ifelse(input_data$alignment_bin == "> 5", 7, input_data$alignment_bin))
+  
+  # turn this on if you'd like to use the median of all sgRNA LFC (because the data is skewed)
+  # median_df <- input_data %>%
+  #   group_by(alignment_bin_num) %>%
+  #   summarize(median_LFC = median(mean))
+  
+  spearman_test <- cor.test(input_data$alignment_bin_num, as.numeric(input_data$mean), method="spearman", alternative="less")
+  
+  paste("spearman corr rho: ", spearman_test$estimate)
+  paste("spearman pvalue: ", format.pval(spearman_test$p.value, digits=5))
+  
+  return(list(spearman_test, input_data))
+}
+
+visualize_lfc <- function(library_lfc_data, boxplot_output_name, spearman_rho, spearman_p) {
   
   boxplot_lfc <- library_lfc_data %>%
   ggplot(aes(alignment_bin, mean, group = alignment_bin)) +
   geom_boxplot(outlier.shape = NA, size = 1) +
+  geom_smooth(aes(x = as.numeric(alignment_bin_num), y = mean),
+              method = "lm", se = FALSE) +
   theme_minimal() +
   geom_hline(yintercept = 0, linetype = "dashed", color = "black", size = 1) +
   geom_hline(yintercept = -1, linetype = "dashed", color = "black", size = 1) +
   scale_y_continuous(limits = c(-3, 3), breaks = seq(-3, 3, by = 1)) +
-  labs(title = "", x = "Number of single mismatch off-target alignment", y = "Averaged median sgRNA Log2FC") +
+  labs(title = "", 
+       x = "Number of single mismatch off-target alignment", 
+       y = "Averaged median sgRNA Log2FC") +
   theme(plot.margin = margin(10, 10, 25, 10),
         axis.text.x = element_text(size = 40, vjust = 0.7, colour = "black"),
         axis.text.y = element_text(size = 40, colour = "black"),
@@ -80,7 +102,14 @@ visualize_lfc <- function(library_lfc_data, boxplot_output_name) {
         panel.grid.minor = element_blank(),
         axis.line.x = element_line(size = 0.5),
         axis.line.y = element_line(size = 0.5), 
-        line = element_line((size = 4), colour = 'black'))
+        line = element_line((size = 4), colour = 'black')) +
+  annotate("text", 
+           x = 2,                             # x position inside plot
+           y = -2.5,       # y position above boxes
+           label = paste0("Spearman ρ=", round(spearman_rho,2),
+                          "\np=", spearman_p),
+           hjust = 0.5,                       # center horizontally
+           size = 10, color = "black")
   
   ggsave(
     path = './',
@@ -103,7 +132,12 @@ avana_library_and_lfc_data <- obtain_required_data("../data/library_data/avana_l
                                                    "../data/sgrna_lfc_data/output_normalized/avana_normalized_lfc.csv", 
                                                    "../data/sgrna_lfc_data/avana_data/avana_stratify_single_mismatch.csv")
 
-visualize_lfc(avana_library_and_lfc_data, "../figure/03_fig_analysis_lfc_off-target-sgrna/avana_lfc_single_mismatch.png")
+avana_spearman <- calculate_spearman_corr(avana_library_and_lfc_data)
+
+visualize_lfc(avana_spearman[[2]], 
+              "../figure/03_fig_analysis_lfc_off-target-sgrna/avana_lfc_single_mismatch.png",
+              avana_spearman[[1]]$estimate,
+              format.pval(avana_spearman[[1]]$p.value, digits=5))
 
 ```
 
@@ -115,8 +149,12 @@ tkov3_library_and_lfc_data <- obtain_required_data("../data/library_data/tkov3_g
                                                    "../data/sgrna_lfc_data/output_normalized/tkov3_rpe1_normalized_lfc.csv", 
                                                    "../data/sgrna_lfc_data/tkov3_data/tkov3_stratify_single_mismatch.csv")
 
-visualize_lfc(tkov3_library_and_lfc_data, "../figure/03_fig_analysis_lfc_off-target-sgrna/tkov3_lfc_single_mismatch.png")
+tkov3_spearman <- calculate_spearman_corr(tkov3_library_and_lfc_data)
 
+visualize_lfc(tkov3_spearman[[2]], 
+              "../figure/03_fig_analysis_lfc_off-target-sgrna/tkov3_lfc_single_mismatch.png",
+              tkov3_spearman[[1]]$estimate,
+              format.pval(tkov3_spearman[[1]]$p.value, digits=5))
 ```
 
 # Yusa library
@@ -127,7 +165,12 @@ yusa_library_and_lfc_data <- obtain_required_data("../data/library_data/yusa_hcr
                                                  "../data/sgrna_lfc_data/output_normalized/yusa_normalized_lfc.csv", 
                                                  "../data/sgrna_lfc_data/yusa_data/yusa_stratify_single_mismatch.csv")
 
-visualize_lfc(yusa_library_and_lfc_data, "../figure/03_fig_analysis_lfc_off-target-sgrna/yusa_lfc_single_mismatch.png")
+yusa_spearman <- calculate_spearman_corr(yusa_library_and_lfc_data)
+
+visualize_lfc(yusa_spearman[[2]], 
+              "../figure/03_fig_analysis_lfc_off-target-sgrna/yusa_lfc_single_mismatch.png",
+              yusa_spearman[[1]]$estimate,
+              format.pval(yusa_spearman[[1]]$p.value, digits=5))
 
 ```
 
@@ -139,7 +182,29 @@ brunello_library_and_lfc_data <- obtain_required_data("../data/library_data/broa
                                                      "../data/sgrna_lfc_data/output_normalized/brunello_a375_normalized_lfc.csv", 
                                                      "../data/sgrna_lfc_data/brunello_data/brunello_stratify_single_mismatch.csv")
 
-visualize_lfc(brunello_library_and_lfc_data, "../figure/03_fig_analysis_lfc_off-target-sgrna/brunello_lfc_single_mismatch.png")
+brunello_spearman <- calculate_spearman_corr(brunello_library_and_lfc_data)
+
+visualize_lfc(brunello_spearman[[2]], 
+              "../figure/03_fig_analysis_lfc_off-target-sgrna/brunello_lfc_single_mismatch.png",
+              brunello_spearman[[1]]$estimate,
+              format.pval(brunello_spearman[[1]]$p.value, digits=5))
+
+```
+
+# Jacquere library
+
+```{r}
+
+jacquere_library_and_lfc_data <- obtain_required_data("../data/library_data/Jacquere_PerGuideAnnotations_Quota4.tsv", 
+                                                     "../data/sgrna_lfc_data/output_normalized/jacquere_normalized_lfc.csv", 
+                                                     "../data/sgrna_lfc_data/jacquere_data/jacquere_stratify_single_mismatch.csv")
+
+jacquere_spearman <- calculate_spearman_corr(jacquere_library_and_lfc_data)
+
+visualize_lfc(jacquere_spearman[[2]], 
+              "../figure/03_fig_analysis_lfc_off-target-sgrna/jacqere_lfc_single_mismatch.png",
+              jacquere_spearman[[1]]$estimate,
+              format.pval(jacquere_spearman[[1]]$p.value, digits=5))
 
 ```
 
