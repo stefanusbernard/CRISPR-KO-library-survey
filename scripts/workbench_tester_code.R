@@ -31,5 +31,9 @@ avana_single_mismatch_df <- avana_alignment_meyers %>%
   arrange(sgRNA)
 
 
+# Basic Kruskal–Wallis test
+kruskal.test(avana_library_and_lfc_data$mean ~ avana_library_and_lfc_data$alignment_bin, data = avana_library_and_lfc_data)
 
+# Post-hoc pairwise comparisons (non-parametric)
+pairwise.wilcox.test(avana_library_and_lfc_data$mean, avana_library_and_lfc_data$alignment_bin, p.adjust.method = "BH")
 
