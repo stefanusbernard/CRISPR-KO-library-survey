@@ -117,7 +117,7 @@ visualize_lfc <- function(library_lfc_data, boxplot_output_name, spearman_rho, s
                             "\np=", spearman_p),
              hjust = 0.5,                       # center horizontally
              size = 10, color = "black") +
-    stat_compare_means(comparisons = list(c("0","1"), c("0","2"), c("0","3"), c("0","4"), c("0","5"), c("0","> 5")),
+    stat_compare_means(comparisons = list(c("1","0"), c("1","2"), c("1","3"), c("1","4"), c("1","5"), c("1","> 5")),
                        method = "wilcox.test",
                        p.adjust.method = "BH",
                        size = 6.5,
@@ -143,7 +143,7 @@ visualize_lfc <- function(library_lfc_data, boxplot_output_name, spearman_rho, s
 
 avana_library_and_lfc_data <- obtain_required_data("../data/library_data/avana_library.tsv", 
                                                    "../data/sgrna_lfc_data/output_normalized/avana_normalized_lfc.csv", 
-                                                   "../data/sgrna_lfc_data/avana_data/avana_stratify_single_mismatch.csv")
+                                                   "../data/sgrna_lfc_data/avana_data/avana_stratify_multi_target.csv")
 
 avana_spearman <- calculate_spearman_corr(avana_library_and_lfc_data)
 
@@ -158,7 +158,7 @@ avana_library_and_lfc_data$alignment_bin <- factor(avana_library_and_lfc_data$al
 avana_wilcox_effect <- wilcox_effsize(avana_library_and_lfc_data, formula = mean ~ alignment_bin, paired = FALSE, conf.level = 0.95)
 
 visualize_lfc(avana_spearman[[2]],
-              "../figure/03_fig_analysis_lfc_off-target-sgrna/avana_lfc_single_mismatch.png",
+              "../figure/03_fig_analysis_lfc_off-target-sgrna/avana_lfc_multi_target.png",
               avana_spearman[[1]]$estimate,
               format.pval(avana_spearman[[1]]$p.value, digits=5))
 
