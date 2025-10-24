@@ -56,33 +56,31 @@ obtain_required_data <- function(library, normalized_lfc_data, stratification_da
   library_lfc <- library_lfc_data %>%
     filter(!str_detect(gene, terms_for_filtering)) %>%
     left_join(library_stratification, join_by(sgRNA))
-    
+  
+  if (str_detect(as.character(stratification_data), "multi_target")) {
+    selected_data = "multi-target guides"
+  } else if (str_detect(as.character(stratification_data), "single_mismatch")) {
+    selected_data = "single mismatch"
+  }
     
   # for the first boxplot: stratify the number of multi-target guides and single mismatch guides based on the number of alignment
   library_lfc_alignment <- library_lfc %>%
     # multi-target guides or single mismatch
-    filter(alignment %in% c("perfect", "single mismatch"))
+    filter(alignment %in% c("perfect", as.character(selected_data)))
   
-  library_lfc_alignment$alignment <- factor(library_lfc_alignment$alignment, levels = c("perfect", "single mismatch"))
+  library_lfc_alignment$alignment <- factor(library_lfc_alignment$alignment, levels = c("perfect", as.character(selected_data)))
   
   # for the second boxplot: select guides only targeting multi-target guides or single mismatch
   library_lfc_alignment_bin <- library_lfc %>%
     filter(alignment_bin %in% c(0, 1, 2, 3, 4, 5,"> 5"))
   
   library_lfc_alignment_bin$alignment_bin <- factor(library_lfc_alignment_bin$alignment_bin, levels = c(0, 1, 2, 3, 4, 5, "> 5"))
-  
   return(list(library_lfc_alignment, library_lfc_alignment_bin))
 }
 
 calculate_spearman_corr <- function(input_data) {
   
   input_data$alignment_bin_num <- as.numeric(ifelse(input_data$alignment_bin == "> 5", 7, input_data$alignment_bin))
-  
-  # turn this on if you'd like to use the median of all sgRNA LFC (because the data is skewed)
-  # median_df <- input_data %>%
-  #   group_by(alignment_bin_num) %>%
-  #   summarize(median_LFC = median(mean))
-  
   spearman_test <- cor.test(input_data$alignment_bin_num, as.numeric(input_data$mean), method="spearman", alternative="less")
   
   paste("spearman corr rho: ", spearman_test$estimate)
@@ -99,7 +97,6 @@ calculate_wilcoxon_cliff <- function(input_data) {
   cliff.delta(mean ~ alignment, data = input_data[[1]])
   
 }
-
 
 
 visualize_two_group <- function(library_lfc_data, boxplot_output_name) {
@@ -202,25 +199,26 @@ visualize_stratify_alignment <- function(library_lfc_data, boxplot_output_name) 
 # Bind every library into one single plot
 
 ```{r}
+
 avana_library_and_lfc_data <- obtain_required_data("../data/library_data/avana_library.tsv", 
                                                    "../data/sgrna_lfc_data/output_normalized/avana_normalized_lfc.csv", 
                                                    "../data/sgrna_lfc_data/avana_data/avana_stratify_single_mismatch.csv")
 
 tkov3_library_and_lfc_data <- obtain_required_data("../data/library_data/tkov3_guide_sequence.tsv", 
                                                    "../data/sgrna_lfc_data/output_normalized/tkov3_rpe1_normalized_lfc.csv", 
-                                                   "../data/sgrna_lfc_data/tkov3_data/tkov3_stratify_single_mismatch.csv")
+                                                   "../data/sgrna_lfc_data/tkov3_data/tkov3_stratify_multi_target.csv")
 
 yusa_library_and_lfc_data <- obtain_required_data("../data/library_data/yusa_hcrispr_ko_grnas.tsv", 
                                                  "../data/sgrna_lfc_data/output_normalized/yusa_normalized_lfc.csv", 
-                                                 "../data/sgrna_lfc_data/yusa_data/yusa_stratify_single_mismatch.csv")
+                                                 "../data/sgrna_lfc_data/yusa_data/yusa_stratify_multi_target.csv")
 
 brunello_library_and_lfc_data <- obtain_required_data("../data/library_data/broadgpp-brunello-library-contents.tsv", 
                                                      "../data/sgrna_lfc_data/output_normalized/brunello_a375_normalized_lfc.csv", 
-                                                     "../data/sgrna_lfc_data/brunello_data/brunello_stratify_single_mismatch.csv")
+                                                     "../data/sgrna_lfc_data/brunello_data/brunello_stratify_multi_target.csv")
 
 jacquere_library_and_lfc_data <- obtain_required_data("../data/library_data/Jacquere_PerGuideAnnotations_Quota4.tsv", 
                                                      "../data/sgrna_lfc_data/output_normalized/jacquere_normalized_lfc.csv", 
-                                                     "../data/sgrna_lfc_data/jacquere_data/jacquere_stratify_single_mismatch.csv")
+                                                     "../data/sgrna_lfc_data/jacquere_data/jacquere_stratify_multi_target.csv")
 
 
 visualize_two_group(avana_library_and_lfc_data[[1]], "../figure/03_fig_analysis_lfc_off-target-sgrna/avana_lfc_multi_target.png")
