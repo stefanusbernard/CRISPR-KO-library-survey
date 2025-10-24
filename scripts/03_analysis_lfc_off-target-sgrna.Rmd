@@ -58,9 +58,9 @@ obtain_required_data <- function(library, normalized_lfc_data, stratification_da
     left_join(library_stratification, join_by(sgRNA))
   
   if (str_detect(as.character(stratification_data), "multi_target")) {
-    selected_data = "multi-target guides"
+    selected_data <- "multi-target guides"
   } else if (str_detect(as.character(stratification_data), "single_mismatch")) {
-    selected_data = "single mismatch"
+    selected_data <- "single mismatch"
   }
     
   # for the first boxplot: stratify the number of multi-target guides and single mismatch guides based on the number of alignment
@@ -107,7 +107,7 @@ visualize_two_group <- function(library_lfc_data, boxplot_output_name) {
   comparison_trend <- list(c("multi-target guides","perfect"))
   
   boxplot_lfc <- library_lfc_data %>%
-    ggplot(aes(alignment, mean, group = alignment)) +
+    ggplot(aes(library, mean, fill = alignment)) +
     geom_boxplot(outlier.shape = NA, size = 1) +
     theme_minimal() +
     geom_hline(yintercept = 0, linetype = "dashed", color = "black", size = 1) +
@@ -133,11 +133,11 @@ visualize_two_group <- function(library_lfc_data, boxplot_output_name) {
                        method.args = list(alternative = "less"),
                        size = 5,
                        step.increase = -0.025,
-                       label.y = c(stats[5], (stats[5]+0.5), (stats[5]+1), (stats[5]+1.5), (stats[5]+2), (stats[5]+2.5)))
+                       label.y = c(stats[5], (stats[5]+0.5)))
     
   ggsave(
     path = './',
-    width = 6,
+    width = 20,
     height = 10,
     dpi = 300,
     plot = boxplot_lfc,
@@ -202,7 +202,7 @@ visualize_stratify_alignment <- function(library_lfc_data, boxplot_output_name) 
 
 avana_library_and_lfc_data <- obtain_required_data("../data/library_data/avana_library.tsv", 
                                                    "../data/sgrna_lfc_data/output_normalized/avana_normalized_lfc.csv", 
-                                                   "../data/sgrna_lfc_data/avana_data/avana_stratify_single_mismatch.csv")
+                                                   "../data/sgrna_lfc_data/avana_data/avana_stratify_multi_target.csv")
 
 tkov3_library_and_lfc_data <- obtain_required_data("../data/library_data/tkov3_guide_sequence.tsv", 
                                                    "../data/sgrna_lfc_data/output_normalized/tkov3_rpe1_normalized_lfc.csv", 
@@ -220,8 +220,18 @@ jacquere_library_and_lfc_data <- obtain_required_data("../data/library_data/Jacq
                                                      "../data/sgrna_lfc_data/output_normalized/jacquere_normalized_lfc.csv", 
                                                      "../data/sgrna_lfc_data/jacquere_data/jacquere_stratify_multi_target.csv")
 
+avana_library_and_lfc_data[[1]] <- avana_library_and_lfc_data[[1]] %>% mutate(library = "avana") 
+tkov3_library_and_lfc_data[[1]] <- tkov3_library_and_lfc_data[[1]] %>% mutate(library = "toronto_v3") 
+yusa_library_and_lfc_data[[1]] <- yusa_library_and_lfc_data[[1]] %>% mutate(library = "yusa") 
+brunello_library_and_lfc_data[[1]] <- brunello_library_and_lfc_data[[1]] %>% mutate(library = "brunello") 
+jacquere_library_and_lfc_data[[1]] <- jacquere_library_and_lfc_data[[1]] %>% mutate(library = "jacquere") 
 
-visualize_two_group(avana_library_and_lfc_data[[1]], "../figure/03_fig_analysis_lfc_off-target-sgrna/avana_lfc_multi_target.png")
+combined_data <- rbind(avana_library_and_lfc_data[[1]], tkov3_library_and_lfc_data[[1]], yusa_library_and_lfc_data[[1]], brunello_library_and_lfc_data[[1]], jacquere_library_and_lfc_data[[1]])
+
+combined_data <- combined_data %>% mutate(library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana", "jacquere")))
+
+
+visualize_two_group(combined_data, "../figure/03_fig_analysis_lfc_off-target-sgrna/test.png")
 
 ```
 
