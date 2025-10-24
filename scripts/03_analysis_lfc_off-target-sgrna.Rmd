@@ -19,6 +19,7 @@ library(clinfun)
 library(ggsignif)
 library(ggpubr)
 library(rstatix)
+library(effsize)
 
 source('~/CRISPR-KO-GuideRefine/GuideRefine_functions.R')
 source("./00_CRISPR-KO-library-survey-functions.R")
@@ -35,7 +36,7 @@ obtain_required_data <- function(library, normalized_lfc_data, stratification_da
   
   normalized_lfc_data <- read_csv(normalized_lfc_data)
   library_stratification <- read_csv(stratification_data, col_types = cols(alignment_bin = col_character()
-  )) %>% select(sgRNA, alignment_bin)
+  )) %>% select(sgRNA, alignment, alignment_bin)
   
   # left join
   library_lfc_data <- normalized_lfc_data %>%
@@ -43,7 +44,6 @@ obtain_required_data <- function(library, normalized_lfc_data, stratification_da
     relocate(sgRNA, .before = spacer) %>%
     relocate(gene, .after = spacer) %>%
     arrange(sgRNA)
-  
   
   terms <- c("CONTROL", "Control", "control", "INTRON", "Intron", "intron", "LacZ", "luciferase")
   # lacZ and luciferase are the control in Toronto V3 library
@@ -53,17 +53,26 @@ obtain_required_data <- function(library, normalized_lfc_data, stratification_da
 
   control_lfc_data <- library_lfc_data %>% filter(str_detect(gene, terms_for_filtering))
   
-  library_lfc_data <- library_lfc_data %>%
+  library_lfc <- library_lfc_data %>%
     filter(!str_detect(gene, terms_for_filtering)) %>%
-    left_join(library_stratification, join_by(sgRNA)) %>%
+    left_join(library_stratification, join_by(sgRNA))
+    
+    
+  # for the first boxplot: stratify the number of multi-target guides and single mismatch guides based on the number of alignment
+  library_lfc_alignment <- library_lfc %>%
+    # multi-target guides or single mismatch
+    filter(alignment %in% c("perfect", "single mismatch"))
+  
+  library_lfc_alignment$alignment <- factor(library_lfc_alignment$alignment, levels = c("perfect", "single mismatch"))
+  
+  # for the second boxplot: select guides only targeting multi-target guides or single mismatch
+  library_lfc_alignment_bin <- library_lfc %>%
     filter(alignment_bin %in% c(0, 1, 2, 3, 4, 5,"> 5"))
   
-  library_lfc_data$alignment_bin <- factor(library_lfc_data$alignment_bin, levels = c(0, 1, 2, 3, 4, 5, "> 5"))
+  library_lfc_alignment_bin$alignment_bin <- factor(library_lfc_alignment_bin$alignment_bin, levels = c(0, 1, 2, 3, 4, 5, "> 5"))
   
-  return(library_lfc_data)
-  
+  return(list(library_lfc_alignment, library_lfc_alignment_bin))
 }
-
 
 calculate_spearman_corr <- function(input_data) {
   
@@ -82,11 +91,71 @@ calculate_spearman_corr <- function(input_data) {
   return(list(spearman_test, input_data))
 }
 
-visualize_lfc <- function(library_lfc_data, boxplot_output_name, spearman_rho, spearman_p) {
+
+calculate_wilcoxon_cliff <- function(input_data) {
+  
+  input_data[[1]]$alignment <- factor(input_data[[1]]$alignment, levels = c("single mismatch", "perfect"))
+  wilcox.test(input_data[[1]]$mean ~ input_data[[1]]$alignment, alternative = "less")
+  cliff.delta(mean ~ alignment, data = input_data[[1]])
+  
+}
+
+
+
+visualize_two_group <- function(library_lfc_data, boxplot_output_name) {
+  
+  x <- library_lfc_data$mean[library_lfc_data$alignment_bin == "1"]  # values for group 1, because group 0 (non-targeting guides) is excluded for two group visualization
+  stats <- boxplot.stats(x)$stats  # stats[5] is upper whisker of the boxplot
+  
+  comparison_trend <- list(c("multi-target guides","perfect"))
+  
+  boxplot_lfc <- library_lfc_data %>%
+    ggplot(aes(alignment, mean, group = alignment)) +
+    geom_boxplot(outlier.shape = NA, size = 1) +
+    theme_minimal() +
+    geom_hline(yintercept = 0, linetype = "dashed", color = "black", size = 1) +
+    geom_hline(yintercept = -1, linetype = "dashed", color = "black", size = 1) +
+    scale_y_continuous(limits = c(-2, 2), breaks = seq(-2, 2, by = 1)) +
+    scale_x_discrete(labels = c("perfect" = "On-target \nsgRNA",
+                            "multi-target guides" = "multi-target \nsgRNA")) +
+    labs(title = "", 
+         x = "", 
+         y = "Averaged median sgRNA Log2FC") +
+    theme(plot.margin = margin(10, 10, 25, 10),
+          axis.text.x = element_text(size = 20, vjust = 0.7, colour = "black"),
+          axis.text.y = element_text(size = 20, colour = "black"),
+          axis.title.x = element_text(size = 20, vjust = 0.5, margin = margin(t = 20)),
+          axis.title.y = element_text(size = 20, vjust = 0.5, margin = margin(r = 20)),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          axis.line.x = element_line(size = 0.5),
+          axis.line.y = element_line(size = 0.5), 
+          line = element_line((size = 2), colour = 'black')) +
+    stat_compare_means(comparisons = comparison_trend,
+                       method = "wilcox.test",
+                       method.args = list(alternative = "less"),
+                       size = 5,
+                       step.increase = -0.025,
+                       label.y = c(stats[5], (stats[5]+0.5), (stats[5]+1), (stats[5]+1.5), (stats[5]+2), (stats[5]+2.5)))
+    
+  ggsave(
+    path = './',
+    width = 6,
+    height = 10,
+    dpi = 300,
+    plot = boxplot_lfc,
+    filename = boxplot_output_name)
+  
+}
+
+# 2nd boxplot: visualization of strafication (increasing number of alignment tend to reduce cell fitness)
+visualize_stratify_alignment <- function(library_lfc_data, boxplot_output_name) {
   
   x <- library_lfc_data$mean[library_lfc_data$alignment_bin == "0"]  # values for group 0
   stats <- boxplot.stats(x)$stats  # min, 25%, median, 75%, max
   # stats[5] is upper whisker
+  
+  comparison_trend <- list(c("1","0"), c("1","2"), c("1","3"), c("1","4"), c("1","5"), c("1","> 5"))
   
   boxplot_lfc <- library_lfc_data %>%
     ggplot(aes(alignment_bin, mean, group = alignment_bin)) +
@@ -110,14 +179,7 @@ visualize_lfc <- function(library_lfc_data, boxplot_output_name, spearman_rho, s
           axis.line.x = element_line(size = 0.5),
           axis.line.y = element_line(size = 0.5), 
           line = element_line((size = 4), colour = 'black')) +
-    annotate("text", 
-             x = 2,                             # x position inside plot
-             y = -2.5,       # y position above boxes
-             label = paste0("Spearman ρ=", round(spearman_rho,2),
-                            "\np=", spearman_p),
-             hjust = 0.5,                       # center horizontally
-             size = 10, color = "black") +
-    stat_compare_means(comparisons = list(c("1","0"), c("1","2"), c("1","3"), c("1","4"), c("1","5"), c("1","> 5")),
+    stat_compare_means(comparisons = comparison_trend,
                        method = "wilcox.test",
                        p.adjust.method = "BH",
                        size = 6.5,
@@ -137,132 +199,34 @@ visualize_lfc <- function(library_lfc_data, boxplot_output_name, spearman_rho, s
 
 ```
 
-# Avana Library
+# Bind every library into one single plot
 
 ```{r}
-
 avana_library_and_lfc_data <- obtain_required_data("../data/library_data/avana_library.tsv", 
                                                    "../data/sgrna_lfc_data/output_normalized/avana_normalized_lfc.csv", 
-                                                   "../data/sgrna_lfc_data/avana_data/avana_stratify_multi_target.csv")
-
-avana_spearman <- calculate_spearman_corr(avana_library_and_lfc_data)
-
-# Basic Kruskal–Wallis test
-kruskal.test(avana_library_and_lfc_data$mean ~ avana_library_and_lfc_data$alignment_bin, data = avana_library_and_lfc_data)
-
-# Post-hoc pairwise comparisons (non-parametric)
-pairwise.wilcox.test(avana_library_and_lfc_data$mean, avana_library_and_lfc_data$alignment_bin, p.adjust.method = "BH")
-
-# wilcoxon test effect size
-avana_library_and_lfc_data$alignment_bin <- factor(avana_library_and_lfc_data$alignment_bin, levels = c("0","1","2","3","4","5","> 5"))
-avana_wilcox_effect <- wilcox_effsize(avana_library_and_lfc_data, formula = mean ~ alignment_bin, paired = FALSE, conf.level = 0.95)
-
-# Jonckheree test
-avana_library_and_lfc_data$alignment_bin_num <- as.numeric(as.character(avana_library_and_lfc_data$alignment_bin))
-avana_library_and_lfc_data$alignment_bin_num[avana_library_and_lfc_data$alignment_bin == ">5"] <- 6
-jonckheere.test(x = avana_library_and_lfc_data$mean, g = avana_library_and_lfc_data$alignment_bin_num, alternative = "decreasing")
-
-visualize_lfc(avana_spearman[[2]],
-              "../figure/03_fig_analysis_lfc_off-target-sgrna/avana_lfc_multi_target.png",
-              avana_spearman[[1]]$estimate,
-              format.pval(avana_spearman[[1]]$p.value, digits=5))
-
-```
-
-# TKOv3 Library
-
-```{r}
+                                                   "../data/sgrna_lfc_data/avana_data/avana_stratify_single_mismatch.csv")
 
 tkov3_library_and_lfc_data <- obtain_required_data("../data/library_data/tkov3_guide_sequence.tsv", 
                                                    "../data/sgrna_lfc_data/output_normalized/tkov3_rpe1_normalized_lfc.csv", 
                                                    "../data/sgrna_lfc_data/tkov3_data/tkov3_stratify_single_mismatch.csv")
 
-tkov3_spearman <- calculate_spearman_corr(tkov3_library_and_lfc_data)
-
-# Basic Kruskal–Wallis test
-kruskal.test(tkov3_library_and_lfc_data$mean ~ tkov3_library_and_lfc_data$alignment_bin, data = tkov3_library_and_lfc_data)
-
-# Post-hoc pairwise comparisons (non-parametric)
-pairwise.wilcox.test(tkov3_library_and_lfc_data$mean, tkov3_library_and_lfc_data$alignment_bin, p.adjust.method = "BH")
-
-# Jonckheree test
-tkov3_library_and_lfc_data$alignment_bin_num <- as.numeric(as.character(tkov3_library_and_lfc_data$alignment_bin))
-tkov3_library_and_lfc_data$alignment_bin_num[tkov3_library_and_lfc_data$alignment_bin == ">5"] <- 6
-jonckheere.test(x = tkov3_library_and_lfc_data$mean, g = tkov3_library_and_lfc_data$alignment_bin_num, alternative = "decreasing")
-
-# visualize_lfc(tkov3_spearman[[2]],
-#               "../figure/03_fig_analysis_lfc_off-target-sgrna/tkov3_stratify_single_mismatch.csv",
-#               tkov3_spearman[[1]]$estimate,
-#               format.pval(tkov3_spearman[[1]]$p.value, digits=5))
-
-```
-
-# Yusa library
-
-```{r}
-
 yusa_library_and_lfc_data <- obtain_required_data("../data/library_data/yusa_hcrispr_ko_grnas.tsv", 
                                                  "../data/sgrna_lfc_data/output_normalized/yusa_normalized_lfc.csv", 
-                                                 "../data/sgrna_lfc_data/yusa_data/yusa_stratify_multi_target.csv")
-
-yusa_spearman <- calculate_spearman_corr(yusa_library_and_lfc_data)
-
-# Basic Kruskal–Wallis test
-kruskal.test(yusa_library_and_lfc_data$mean ~ yusa_library_and_lfc_data$alignment_bin, data = yusa_library_and_lfc_data)
-
-# Post-hoc pairwise comparisons (non-parametric)
-pairwise.wilcox.test(yusa_library_and_lfc_data$mean, yusa_library_and_lfc_data$alignment_bin, p.adjust.method = "BH")
-
-visualize_lfc(yusa_spearman[[2]],
-              "../figure/03_fig_analysis_lfc_off-target-sgrna/yusa_lfc_multi_target.png",
-              yusa_spearman[[1]]$estimate,
-              format.pval(yusa_spearman[[1]]$p.value, digits=5))
-
-```
-
-# Brunello library
-
-```{r}
+                                                 "../data/sgrna_lfc_data/yusa_data/yusa_stratify_single_mismatch.csv")
 
 brunello_library_and_lfc_data <- obtain_required_data("../data/library_data/broadgpp-brunello-library-contents.tsv", 
                                                      "../data/sgrna_lfc_data/output_normalized/brunello_a375_normalized_lfc.csv", 
-                                                     "../data/sgrna_lfc_data/brunello_data/brunello_stratify_multi_target.csv")
-
-brunello_spearman <- calculate_spearman_corr(brunello_library_and_lfc_data)
-
-# Basic Kruskal–Wallis test
-kruskal.test(brunello_library_and_lfc_data$mean ~ brunello_library_and_lfc_data$alignment_bin, data = brunello_library_and_lfc_data)
-
-# Post-hoc pairwise comparisons (non-parametric)
-pairwise.wilcox.test(brunello_library_and_lfc_data$mean, brunello_library_and_lfc_data$alignment_bin, p.adjust.method = "BH")
-
-visualize_lfc(brunello_spearman[[2]],
-              "../figure/03_fig_analysis_lfc_off-target-sgrna/brunello_lfc_multi_target.png",
-              brunello_spearman[[1]]$estimate,
-              format.pval(brunello_spearman[[1]]$p.value, digits=5))
-
-```
-
-# Jacquere library
-
-```{r}
+                                                     "../data/sgrna_lfc_data/brunello_data/brunello_stratify_single_mismatch.csv")
 
 jacquere_library_and_lfc_data <- obtain_required_data("../data/library_data/Jacquere_PerGuideAnnotations_Quota4.tsv", 
                                                      "../data/sgrna_lfc_data/output_normalized/jacquere_normalized_lfc.csv", 
-                                                     "../data/sgrna_lfc_data/jacquere_data/jacquere_stratify_multi_target.csv")
+                                                     "../data/sgrna_lfc_data/jacquere_data/jacquere_stratify_single_mismatch.csv")
 
-jacquere_spearman <- calculate_spearman_corr(jacquere_library_and_lfc_data)
 
-# Basic Kruskal–Wallis test
-kruskal.test(jacquere_library_and_lfc_data$mean ~ jacquere_library_and_lfc_data$alignment_bin, data = jacquere_library_and_lfc_data)
-
-# Post-hoc pairwise comparisons (non-parametric)
-pairwise.wilcox.test(jacquere_library_and_lfc_data$mean, jacquere_library_and_lfc_data$alignment_bin, p.adjust.method = "BH")
-
-visualize_lfc(jacquere_spearman[[2]],
-              "../figure/03_fig_analysis_lfc_off-target-sgrna/jacquere_lfc_multi_target.png",
-              jacquere_spearman[[1]]$estimate,
-              format.pval(jacquere_spearman[[1]]$p.value, digits=5))
+visualize_two_group(avana_library_and_lfc_data[[1]], "../figure/03_fig_analysis_lfc_off-target-sgrna/avana_lfc_multi_target.png")
 
 ```
+
+
+
 

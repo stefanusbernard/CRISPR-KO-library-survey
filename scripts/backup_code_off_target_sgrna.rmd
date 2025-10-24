@@ -787,3 +787,30 @@ ggsave(
     filename = paste('../figure/02_fig_analysis_paralog_off-target-sgrna/dbl_target_guides_original_genes_paralog_T2T.png', sep = ''))
 ```
 
+
+# Relevant statistical test for sgRNA Log2FC
+
+```{r}
+
+tkov3_spearman <- calculate_spearman_corr(tkov3_library_and_lfc_data)
+
+# Basic Kruskal–Wallis test
+kruskal.test(tkov3_library_and_lfc_data$mean ~ tkov3_library_and_lfc_data$alignment_bin, data = tkov3_library_and_lfc_data)
+
+# Post-hoc pairwise comparisons (non-parametric)
+pairwise.wilcox.test(tkov3_library_and_lfc_data$mean, tkov3_library_and_lfc_data$alignment_bin, p.adjust.method = "BH")
+
+# Jonckheree test
+tkov3_library_and_lfc_data$alignment_bin_num <- as.numeric(as.character(tkov3_library_and_lfc_data$alignment_bin))
+tkov3_library_and_lfc_data$alignment_bin_num[tkov3_library_and_lfc_data$alignment_bin == ">5"] <- 6
+jonckheere.test(x = tkov3_library_and_lfc_data$mean, g = tkov3_library_and_lfc_data$alignment_bin_num, alternative = "decreasing")
+
+```
+
+
+
+
+
+
+
+
