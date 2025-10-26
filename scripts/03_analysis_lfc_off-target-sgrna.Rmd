@@ -213,6 +213,14 @@ jacquere_library_and_lfc_data[[1]] <- jacquere_library_and_lfc_data[[1]] %>% mut
 
 ```
 
+# Calculate effect size of multi-target/single-mismatch sgRNA
+
+```{r}
+
+calculate_wilcoxon_cliff(jacquere_library_and_lfc_data, "multi-target guides")
+
+```
+
 # Bind every library into one single plot of sgRNA Log2FC
 
 ```{r}
