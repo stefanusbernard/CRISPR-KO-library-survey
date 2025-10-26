@@ -792,6 +792,18 @@ ggsave(
 
 ```{r}
 
+calculate_spearman_corr <- function(input_data) {
+  
+  input_data$alignment_bin_num <- as.numeric(ifelse(input_data$alignment_bin == "> 5", 7, input_data$alignment_bin))
+  spearman_test <- cor.test(input_data$alignment_bin_num, as.numeric(input_data$mean), method="spearman", alternative="less")
+  
+  paste("spearman corr rho: ", spearman_test$estimate)
+  paste("spearman pvalue: ", format.pval(spearman_test$p.value, digits=5))
+  
+  return(list(spearman_test, input_data))
+}
+
+
 tkov3_spearman <- calculate_spearman_corr(tkov3_library_and_lfc_data)
 
 # Basic Kruskal–Wallis test

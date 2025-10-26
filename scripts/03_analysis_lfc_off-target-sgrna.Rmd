@@ -75,71 +75,69 @@ obtain_required_data <- function(library, normalized_lfc_data, stratification_da
     filter(alignment_bin %in% c(0, 1, 2, 3, 4, 5,"> 5"))
   
   library_lfc_alignment_bin$alignment_bin <- factor(library_lfc_alignment_bin$alignment_bin, levels = c(0, 1, 2, 3, 4, 5, "> 5"))
+  # library_lfc_alignment is for comparison of sgRNA Log2FC between two group
+  # library_lfc_alignment_bin is for stratification of multi-target guides (the reason why we put this because we included guides not targeting anywhere)
   return(list(library_lfc_alignment, library_lfc_alignment_bin))
 }
 
-calculate_spearman_corr <- function(input_data) {
+calculate_wilcoxon_cliff <- function(input_data, which_guides) {
   
-  input_data$alignment_bin_num <- as.numeric(ifelse(input_data$alignment_bin == "> 5", 7, input_data$alignment_bin))
-  spearman_test <- cor.test(input_data$alignment_bin_num, as.numeric(input_data$mean), method="spearman", alternative="less")
-  
-  paste("spearman corr rho: ", spearman_test$estimate)
-  paste("spearman pvalue: ", format.pval(spearman_test$p.value, digits=5))
-  
-  return(list(spearman_test, input_data))
-}
-
-
-calculate_wilcoxon_cliff <- function(input_data) {
-  
-  input_data[[1]]$alignment <- factor(input_data[[1]]$alignment, levels = c("single mismatch", "perfect"))
+  input_data[[1]]$alignment <- factor(input_data[[1]]$alignment, levels = c(which_guides, "perfect"))
   wilcox.test(input_data[[1]]$mean ~ input_data[[1]]$alignment, alternative = "less")
   cliff.delta(mean ~ alignment, data = input_data[[1]])
   
 }
 
 
-visualize_two_group <- function(library_lfc_data, boxplot_output_name) {
+visualize_two_group <- function(library_lfc_data, boxplot_output_name, which_guides, label_which_guides) {
+  facet_labels = c("brunello" = "Brunello",
+                   "toronto_v3" = "TKOv3",
+                   "yusa" = "Yusa (Project Score)",
+                   "avana" = "Avana",
+                   "jacquere" = "Jacquere")
   
-  x <- library_lfc_data$mean[library_lfc_data$alignment_bin == "1"]  # values for group 1, because group 0 (non-targeting guides) is excluded for two group visualization
-  stats <- boxplot.stats(x)$stats  # stats[5] is upper whisker of the boxplot
-  
-  comparison_trend <- list(c("multi-target guides","perfect"))
-  
-  boxplot_lfc <- library_lfc_data %>%
-    ggplot(aes(library, mean, fill = alignment)) +
-    geom_boxplot(outlier.shape = NA, size = 1) +
-    theme_minimal() +
-    geom_hline(yintercept = 0, linetype = "dashed", color = "black", size = 1) +
-    geom_hline(yintercept = -1, linetype = "dashed", color = "black", size = 1) +
+  boxplot_lfc <- ggboxplot(library_lfc_data, 
+            x = "alignment", 
+            y = "mean",
+            fill = "alignment",
+            facet.by = "library",
+            outliers = FALSE) +
+    stat_compare_means(comparisons = list(c(which_guides, "perfect")),
+                       method = "wilcox.test",
+                       method.args = list(alternative = "less"),
+                       size = 3.5,
+                       step.increase = 0.05,
+                       tip.length = 0.01,
+                       label = "p.format",
+                       label.y = 1) +
     scale_y_continuous(limits = c(-2, 2), breaks = seq(-2, 2, by = 1)) +
-    scale_x_discrete(labels = c("perfect" = "On-target \nsgRNA",
-                            "multi-target guides" = "multi-target \nsgRNA")) +
+    scale_fill_manual(
+      values = c("perfect" = "#0072B2", 
+                 "single mismatch" = "#E69F00"),
+      labels = c("On-target", label_which_guides)) +
     labs(title = "", 
          x = "", 
-         y = "Averaged median sgRNA Log2FC") +
+         y = "Averaged median sgRNA Log2FC",
+         fill = "Alignment:") +
     theme(plot.margin = margin(10, 10, 25, 10),
-          axis.text.x = element_text(size = 20, vjust = 0.7, colour = "black"),
-          axis.text.y = element_text(size = 20, colour = "black"),
-          axis.title.x = element_text(size = 20, vjust = 0.5, margin = margin(t = 20)),
-          axis.title.y = element_text(size = 20, vjust = 0.5, margin = margin(r = 20)),
-          panel.grid.major = element_blank(),
+          strip.text.x = element_text(size = 12),
+          axis.text.x = element_blank(),
+          axis.text.y = element_text(size = 12, colour = "black"),
+          axis.ticks.x = element_blank(), 
+          axis.title.y = element_text(size = 14, vjust = 0.5, margin = margin(r = 20)),
+          panel.grid.major = element_line(size = 0.5),
           panel.grid.minor = element_blank(),
           axis.line.x = element_line(size = 0.5),
           axis.line.y = element_line(size = 0.5), 
-          line = element_line((size = 2), colour = 'black')) +
-    stat_compare_means(comparisons = comparison_trend,
-                       method = "wilcox.test",
-                       method.args = list(alternative = "less"),
-                       size = 5,
-                       step.increase = -0.025,
-                       label.y = c(stats[5], (stats[5]+0.5)))
+          line = element_line((size = 2), colour = 'black'),
+          legend.text = element_text(size = 12)) +
+    facet_wrap(~library, ncol = 5, labeller = labeller(library = facet_labels))
     
   ggsave(
     path = './',
-    width = 20,
-    height = 10,
-    dpi = 300,
+    width = 10,
+    height = 5,
+    dpi = 1000,
     plot = boxplot_lfc,
     filename = boxplot_output_name)
   
@@ -148,46 +146,33 @@ visualize_two_group <- function(library_lfc_data, boxplot_output_name) {
 # 2nd boxplot: visualization of strafication (increasing number of alignment tend to reduce cell fitness)
 visualize_stratify_alignment <- function(library_lfc_data, boxplot_output_name) {
   
-  x <- library_lfc_data$mean[library_lfc_data$alignment_bin == "0"]  # values for group 0
-  stats <- boxplot.stats(x)$stats  # min, 25%, median, 75%, max
-  # stats[5] is upper whisker
-  
-  comparison_trend <- list(c("1","0"), c("1","2"), c("1","3"), c("1","4"), c("1","5"), c("1","> 5"))
-  
   boxplot_lfc <- library_lfc_data %>%
     ggplot(aes(alignment_bin, mean, group = alignment_bin)) +
-    geom_boxplot(outlier.shape = NA, size = 1) +
-    geom_smooth(aes(x = as.numeric(alignment_bin_num), y = mean),
-                method = "lm", se = FALSE) +
+    geom_boxplot(outlier.shape = NA, size = 0.5) +
     theme_minimal() +
-    geom_hline(yintercept = 0, linetype = "dashed", color = "black", size = 1) +
-    geom_hline(yintercept = -1, linetype = "dashed", color = "black", size = 1) +
-    scale_y_continuous(limits = c(-3.5, 3.5), breaks = seq(-3, 3, by = 1)) +
+    geom_hline(yintercept = 0, linetype = "dashed", color = "black", size = 0.5) +
+    geom_hline(yintercept = -1, linetype = "dashed", color = "black", size = 0.5) +
+    scale_y_continuous(limits = c(-3, 2), breaks = seq(-3, 2, by = 1)) +
     labs(title = "", 
          x = "Number of perfect on-target alignment", 
          y = "Averaged median sgRNA Log2FC") +
-    theme(plot.margin = margin(10, 10, 25, 10),
-          axis.text.x = element_text(size = 40, vjust = 0.7, colour = "black"),
-          axis.text.y = element_text(size = 40, colour = "black"),
-          axis.title.x = element_text(size = 40, vjust = 0.5, margin = margin(t = 20)),
-          axis.title.y = element_text(size = 40, vjust = 0.5, margin = margin(r = 20)),
+    theme(
+          axis.text.x = element_text(size = 12, vjust = 0.7, colour = "black"),
+          axis.text.y = element_text(size = 12, colour = "black"),
+          axis.title.x = element_text(size = 12, margin = margin(t = 10)),
+          axis.title.y = element_text(size = 12, margin = margin(r = 10)),
+          axis.ticks = element_line(size = 1.5),
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           axis.line.x = element_line(size = 0.5),
           axis.line.y = element_line(size = 0.5), 
-          line = element_line((size = 4), colour = 'black')) +
-    stat_compare_means(comparisons = comparison_trend,
-                       method = "wilcox.test",
-                       p.adjust.method = "BH",
-                       size = 6.5,
-                       step.increase = -0.025,
-                       label.y = c(stats[5], (stats[5]+0.5), (stats[5]+1), (stats[5]+1.5), (stats[5]+2), (stats[5]+2.5)))
+          line = element_line((size = 2), colour = 'black'))
     
   ggsave(
     path = './',
-    width = 15,
-    height = 15,
-    dpi = 300,
+    width = 4,
+    height = 5,
+    dpi = 1000,
     plot = boxplot_lfc,
     filename = boxplot_output_name)
   
@@ -226,15 +211,35 @@ yusa_library_and_lfc_data[[1]] <- yusa_library_and_lfc_data[[1]] %>% mutate(libr
 brunello_library_and_lfc_data[[1]] <- brunello_library_and_lfc_data[[1]] %>% mutate(library = "brunello") 
 jacquere_library_and_lfc_data[[1]] <- jacquere_library_and_lfc_data[[1]] %>% mutate(library = "jacquere") 
 
+```
+
+# Bind every library into one single plot of sgRNA Log2FC
+
+```{r}
+
 combined_data <- rbind(avana_library_and_lfc_data[[1]], tkov3_library_and_lfc_data[[1]], yusa_library_and_lfc_data[[1]], brunello_library_and_lfc_data[[1]], jacquere_library_and_lfc_data[[1]])
 
 combined_data <- combined_data %>% mutate(library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana", "jacquere")))
 
 
-visualize_two_group(combined_data, "../figure/03_fig_analysis_lfc_off-target-sgrna/test.png")
+visualize_two_group(combined_data, 
+                    "../figure/03_fig_analysis_lfc_off-target-sgrna/combined_library_single_mismatch.png",
+                    "multi-target guides",
+                    "Multi-targeting")
 
 ```
 
+# Generate plot of stratification multi-target sgRNAs
+
+```{r}
+
+visualize_stratify_alignment(avana_library_and_lfc_data[[2]], "../figure/03_fig_analysis_lfc_off-target-sgrna/avana_multi_target.png")
+visualize_stratify_alignment(tkov3_library_and_lfc_data[[2]], "../figure/03_fig_analysis_lfc_off-target-sgrna/tkov3_multi_target.png")
+visualize_stratify_alignment(brunello_library_and_lfc_data[[2]], "../figure/03_fig_analysis_lfc_off-target-sgrna/brunello_multi_target.png")
+visualize_stratify_alignment(yusa_library_and_lfc_data[[2]], "../figure/03_fig_analysis_lfc_off-target-sgrna/yusa_multi_target.png")
+visualize_stratify_alignment(jacquere_library_and_lfc_data[[2]], "../figure/03_fig_analysis_lfc_off-target-sgrna/jacquere_multi_target.png")
+
+```
 
 
 
