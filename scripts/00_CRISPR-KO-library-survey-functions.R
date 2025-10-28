@@ -460,8 +460,162 @@ find_multi_target_paralog <- function(gene_df, list_query_guides, library_name) 
   return(summary_df)
 }
 
+# ----------------------------------------------------------------------------------------------------------------------------------------------
+
+# A function to obtain and process sgRNA library Log-fold-change data 
+
+obtain_required_data <- function(library, normalized_lfc_data, stratification_data) {
   
+  library <- read_tsv(library, col_names = FALSE)
+  colnames(library) <- c("sgRNA", "spacer", "gene")
   
+  normalized_lfc_data <- read_csv(normalized_lfc_data)
+  library_stratification <- read_csv(stratification_data, col_types = cols(alignment_bin = col_character()
+  )) %>% select(sgRNA, alignment, alignment_bin)
+  
+  # left join
+  library_lfc_data <- normalized_lfc_data %>%
+    left_join(library, by = c("sgRNA", "spacer", "gene")) %>%
+    relocate(sgRNA, .before = spacer) %>%
+    relocate(gene, .after = spacer) %>%
+    arrange(sgRNA)
+  
+  terms <- c("CONTROL", "Control", "control", "INTRON", "Intron", "intron", "LacZ", "luciferase")
+  # lacZ and luciferase are the control in Toronto V3 library
+  terms_for_filtering <- paste(terms, collapse = "|")
+  
+  # separate control from the library
+  
+  control_lfc_data <- library_lfc_data %>% filter(str_detect(gene, terms_for_filtering))
+  
+  library_lfc <- library_lfc_data %>%
+    filter(!str_detect(gene, terms_for_filtering)) %>%
+    left_join(library_stratification, join_by(sgRNA))
+  
+  if (str_detect(as.character(stratification_data), "multi_target")) {
+    selected_data <- "multi-target guides"
+  } else if (str_detect(as.character(stratification_data), "single_mismatch")) {
+    selected_data <- "single mismatch"
+  }
+  
+  # for the first boxplot: stratify the number of multi-target guides and single mismatch guides based on the number of alignment
+  library_lfc_alignment <- library_lfc %>%
+    # multi-target guides or single mismatch
+    filter(alignment %in% c("perfect", as.character(selected_data)))
+  
+  library_lfc_alignment$alignment <- factor(library_lfc_alignment$alignment, levels = c("perfect", as.character(selected_data)))
+  
+  # for the second boxplot: select guides only targeting multi-target guides or single mismatch
+  library_lfc_alignment_bin <- library_lfc %>%
+    filter(alignment_bin %in% c(0, 1, 2, 3, 4, 5,"> 5"))
+  
+  library_lfc_alignment_bin$alignment_bin <- factor(library_lfc_alignment_bin$alignment_bin, levels = c(0, 1, 2, 3, 4, 5, "> 5"))
+  # library_lfc_alignment is for comparison of sgRNA Log2FC between two group
+  # library_lfc_alignment_bin is for stratification of multi-target guides (the reason why we put this because we included guides not targeting anywhere)
+  return(list(library_lfc_alignment, library_lfc_alignment_bin))
+}
+
+calculate_wilcoxon_cliff <- function(input_data, which_guides) {
+  
+  input_data[[1]]$alignment <- factor(input_data[[1]]$alignment, levels = c(which_guides, "perfect"))
+  wilcox.test(input_data[[1]]$mean ~ input_data[[1]]$alignment, alternative = "less")
+  cliff.delta(mean ~ alignment, data = input_data[[1]])
+  
+}
+
+
+visualize_two_group <- function(library_lfc_data, boxplot_output_name, which_guides, label_which_guides) {
+  facet_labels = c("brunello" = "Brunello",
+                   "toronto_v3" = "TKOv3",
+                   "yusa" = "Yusa (Project Score)",
+                   "avana" = "Avana",
+                   "jacquere" = "Jacquere")
+  
+  boxplot_lfc <- ggboxplot(library_lfc_data, 
+                           x = "alignment", 
+                           y = "mean",
+                           fill = "alignment",
+                           facet.by = "library",
+                           outliers = FALSE) +
+    stat_compare_means(comparisons = list(c(which_guides, "perfect")),
+                       method = "wilcox.test",
+                       method.args = list(alternative = "less"),
+                       size = 3.5,
+                       step.increase = 0.05,
+                       tip.length = 0.01,
+                       label = "p.format",
+                       label.y = 1) +
+    scale_y_continuous(limits = c(-2, 2), breaks = seq(-2, 2, by = 1)) +
+    scale_fill_manual(
+      name = "sgRNA: ",
+      values = c("perfect" = "#0072B2", 
+                 "single mismatch" = "#E69F00"),
+      labels = c("On-target", label_which_guides)) +
+    labs(title = "", 
+         x = "", 
+         y = "Averaged median sgRNA Log2FC",
+         fill = "Alignment:") +
+    theme(plot.margin = margin(10, 10, 25, 10),
+          strip.text.x = element_text(size = 12),
+          axis.text.x = element_blank(),
+          axis.text.y = element_text(size = 12, colour = "black"),
+          axis.ticks.x = element_blank(), 
+          axis.title.y = element_text(size = 14, vjust = 0.5, margin = margin(r = 20)),
+          panel.grid.major = element_line(size = 0.5),
+          panel.grid.minor = element_blank(),
+          axis.line.x = element_line(size = 0.5),
+          axis.line.y = element_line(size = 0.5), 
+          line = element_line((size = 2), colour = 'black'),
+          legend.text = element_text(size = 12)) +
+    facet_wrap(~library, ncol = 5, labeller = labeller(library = facet_labels))
+  
+  ggsave(
+    path = './',
+    width = 10,
+    height = 5,
+    dpi = 1000,
+    plot = boxplot_lfc,
+    filename = boxplot_output_name)
+  
+}
+
+# 2nd boxplot: visualization of strafication (increasing number of alignment tend to reduce cell fitness)
+visualize_stratify_alignment <- function(library_lfc_data, boxplot_output_name) {
+  
+  boxplot_lfc <- library_lfc_data %>%
+    ggplot(aes(alignment_bin, mean, group = alignment_bin)) +
+    geom_boxplot(outlier.shape = NA, size = 0.5) +
+    theme_minimal() +
+    geom_hline(yintercept = 0, linetype = "dashed", color = "black", size = 0.5) +
+    geom_hline(yintercept = -1, linetype = "dashed", color = "black", size = 0.5) +
+    scale_y_continuous(limits = c(-3, 2), breaks = seq(-3, 2, by = 1)) +
+    labs(title = "", 
+         x = "Number of on-target alignment", 
+         y = "Averaged median sgRNA Log2FC") +
+    theme(
+      axis.text.x = element_text(size = 12, vjust = 0.7, colour = "black"),
+      axis.text.y = element_text(size = 12, colour = "black"),
+      axis.title.x = element_text(size = 12, margin = margin(t = 10)),
+      axis.title.y = element_text(size = 12, margin = margin(r = 10)),
+      axis.ticks = element_line(size = 1.5),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      axis.line.x = element_line(size = 0.5),
+      axis.line.y = element_line(size = 0.5), 
+      line = element_line((size = 2), colour = 'black'))
+  
+  ggsave(
+    path = './',
+    width = 4,
+    height = 5,
+    dpi = 1000,
+    plot = boxplot_lfc,
+    filename = boxplot_output_name)
+  
+}
+
+
+
   
   
   

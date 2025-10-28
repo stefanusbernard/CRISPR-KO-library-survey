@@ -14,11 +14,11 @@ output:
 ```{r}
 library(tidyverse)
 library(readxl)
-library(VennDiagram)
 library(grid)
 library(paletteer)
 library(RColorBrewer)
 library(UpSetR)
+library(gprofiler2)
 source('~/CRISPR-KO-GuideRefine/GuideRefine_functions.R')
 source("00_CRISPR-KO-library-survey-functions.R")
 ```
@@ -426,4 +426,41 @@ dev.off()
 
 
 ```
+
+# Analysis of genes that were removed from all libraries using gprofiler2
+
+```{r}
+
+removed_genes_all_library <- Reduce(intersect, removed_gene_list_combined)
+
+gostres <- gost(query = removed_genes_all_library, organism = "hsapiens")
+
+
+# Filter significant terms (p < 0.05)
+sig <- gostres$result %>% filter(p_value < 0.05)
+
+# Select top term (lowest p-value) per source
+top_terms <- sig %>%
+  group_by(source) %>%
+  slice_min(order_by = p_value, n = 1) %>%
+  ungroup()
+
+p <- gostplot(gostres, capped = FALSE, interactive = FALSE)
+
+publish_gostplot(p, highlight_terms = top_terms$term_id, width = NA, height = NA, filename = NULL)
+
+publish_gosttable(gostres, 
+                  highlight_terms = top_terms$term_id,
+                  use_colors = TRUE, 
+                  show_columns = c("source", "term_name", "term_size", "intersection_size"),
+                  filename = NULL)
+
+```
+
+
+
+
+
+
+
 
