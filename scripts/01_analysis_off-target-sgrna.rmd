@@ -430,9 +430,19 @@ upset(fromList(removed_gene_list_combined),
 
 dev.off()
 
-
 ```
 
+# Genes removed from all libraries
+
+```{r}
+
+removed_genes_all_libraries <- Reduce(intersect, removed_gene_list_combined)
+
+
+
+
+
+```
 
 
 
