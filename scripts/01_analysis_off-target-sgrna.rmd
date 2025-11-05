@@ -170,19 +170,19 @@ jacquere_result_gene <- percentages_and_list_genes(jacquere_report, paralog_indi
 
 max_len <- max(length(avana_result_gene[["failed_genes"]]), 
                length(avana_result_gene[["failed_paralog"]]), 
-               length(avana_result_gene[["failed_not_paralog"]]),
+               length(avana_result_gene[["failed_singleton"]]),
                length(brunello_result_gene[["failed_genes"]]), 
                length(brunello_result_gene[["failed_paralog"]]), 
-               length(brunello_result_gene[["failed_not_paralog"]]),
+               length(brunello_result_gene[["failed_singleton"]]),
                length(toronto_result_gene[["failed_genes"]]), 
                length(toronto_result_gene[["failed_paralog"]]), 
-               length(toronto_result_gene[["failed_not_paralog"]]),
+               length(toronto_result_gene[["failed_singleton"]]),
                length(yusa_result_gene[["failed_genes"]]), 
                length(yusa_result_gene[["failed_paralog"]]), 
-               length(yusa_result_gene[["failed_not_paralog"]]),
+               length(yusa_result_gene[["failed_singleton"]]),
                length(jacquere_result_gene[["failed_genes"]]), 
                length(jacquere_result_gene[["failed_paralog"]]), 
-               length(jacquere_result_gene[["failed_not_paralog"]])
+               length(jacquere_result_gene[["failed_singleton"]])
                )
 
 pad <- function(x, n) {
@@ -193,19 +193,19 @@ pad <- function(x, n) {
 df_removed_genes <- data.frame(
   avana_removed_genes_all = pad(avana_result_gene[["failed_genes"]], max_len),
   avana_removed_paralog = pad(avana_result_gene[["failed_paralog"]], max_len),
-  avana_removed_singleton = pad(avana_result_gene[["failed_not_paralog"]], max_len),
+  avana_removed_singleton = pad(avana_result_gene[["failed_singleton"]], max_len),
   brunello_removed_genes_all = pad(brunello_result_gene[["failed_genes"]], max_len),
   brunello_removed_paralog = pad(brunello_result_gene[["failed_paralog"]], max_len),
-  brunello_removed_singleton = pad(brunello_result_gene[["failed_not_paralog"]], max_len),
+  brunello_removed_singleton = pad(brunello_result_gene[["failed_singleton"]], max_len),
   toronto_removed_genes_all = pad(toronto_result_gene[["failed_genes"]], max_len),
   toronto_removed_paralog = pad(toronto_result_gene[["failed_paralog"]], max_len),
-  toronto_removed_singleton = pad(toronto_result_gene[["failed_not_paralog"]], max_len),
+  toronto_removed_singleton = pad(toronto_result_gene[["failed_singleton"]], max_len),
   yusa_removed_genes_all = pad(yusa_result_gene[["failed_genes"]], max_len),
   yusa_removed_paralog = pad(yusa_result_gene[["failed_paralog"]], max_len),
-  yusa_removed_singleton = pad(yusa_result_gene[["failed_not_paralog"]], max_len),
+  yusa_removed_singleton = pad(yusa_result_gene[["failed_singleton"]], max_len),
   jacquere_removed_genes_all = pad(jacquere_result_gene[["failed_genes"]], max_len),
   jacquere_removed_paralog = pad(jacquere_result_gene[["failed_paralog"]], max_len),
-  jacquere_removed_singleton = pad(jacquere_result_gene[["failed_not_paralog"]], max_len),
+  jacquere_removed_singleton = pad(jacquere_result_gene[["failed_singleton"]], max_len),
   stringsAsFactors = FALSE
 )
 
@@ -222,26 +222,23 @@ overall_failed_paralog <- unique(c(avana_result_gene[["failed_paralog"]],
                                    toronto_result_gene[["failed_paralog"]], 
                                    yusa_result_gene[["failed_paralog"]],
                                    jacquere_result_gene[["failed_paralog"]]))
-overall_failed_singleton <- unique(c(avana_result_gene[["failed_not_paralog"]], 
-                                   brunello_result_gene[["failed_not_paralog"]], 
-                                   toronto_result_gene[["failed_not_paralog"]], 
-                                   yusa_result_gene[["failed_not_paralog"]],
-                                   jacquere_result_gene[["failed_not_paralog"]]))
-
-percentage_overall_failed_paralog <- round(length(overall_failed_paralog) / (length(overall_failed_paralog) + length(overall_failed_singleton))*100, 2)
-percentage_overall_failed_singleton <- round(length(overall_failed_singleton) / (length(overall_failed_paralog) + length(overall_failed_singleton))*100, 2)
-
+overall_failed_singleton <- unique(c(avana_result_gene[["failed_singleton"]], 
+                                   brunello_result_gene[["failed_singleton"]], 
+                                   toronto_result_gene[["failed_singleton"]], 
+                                   yusa_result_gene[["failed_singleton"]],
+                                   jacquere_result_gene[["failed_singleton"]]))
 
 main_df_percentage <- data.frame(library = c("brunello", "toronto_v3", "yusa", "avana", "jacquere"),
                                  paralog = c(brunello_result_gene[[1]], toronto_result_gene[[1]], yusa_result_gene[[1]], avana_result_gene[[1]], jacquere_result_gene[[1]]),
-                                 not_paralog = c(brunello_result_gene[[2]], toronto_result_gene[[2]], yusa_result_gene[[2]], avana_result_gene[[2]], jacquere_result_gene[[2]]),
+                                 singleton = c(brunello_result_gene[[2]], toronto_result_gene[[2]], yusa_result_gene[[2]], avana_result_gene[[2]], jacquere_result_gene[[2]]),
                                  total_percentage_failed_genes = c(brunello_result_gene[[3]], toronto_result_gene[[3]], yusa_result_gene[[3]], avana_result_gene[[3]], jacquere_result_gene[[3]]),
                                  total_percentage_failed_sgrna = c(brunello_result_gene[[4]], toronto_result_gene[[4]], yusa_result_gene[[4]], avana_result_gene[[4]], jacquere_result_gene[[4]])
                             )
 
 failed_paralog_percentage <- main_df_percentage %>%
   select(!c(total_percentage_failed_genes, total_percentage_failed_sgrna)) %>%
-  add_row(library = "overall", paralog = percentage_overall_failed_paralog, not_paralog = percentage_overall_failed_singleton) %>%
+  add_row(library = "overall", paralog = ensembl_paralog[[3]]$percentage[ensembl_paralog[[3]]$has_paralogs == TRUE], singleton = ensembl_paralog[[3]]$percentage[ensembl_paralog[[3]]$has_paralogs == FALSE]) %>%
+  
   mutate(library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana", "jacquere", " ","overall"))) %>%
   pivot_longer(!library, names_to = "not_represented_genes", values_to = "percentage")
 
@@ -300,7 +297,7 @@ ggsave(
 my_palette <- brewer.pal(n = 5, name = "Set2")
 
 failed_genes_percentage <- main_df_percentage %>%
-  select(-c(paralog, not_paralog)) %>%
+  select(-c(paralog, singleton)) %>%
   mutate(library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana", "jacquere")))
 
 percentage_bar_chart <- ggplot(failed_genes_percentage, aes(x = library, y = total_percentage_failed_genes, fill = library)) +
@@ -354,7 +351,7 @@ ggsave(
 my_palette <- brewer.pal(n = 5, name = "Set2")
 
 failed_sgrna_percentage <- main_df_percentage %>%
-  select(-c(paralog, not_paralog, total_percentage_failed_genes)) %>%
+  select(-c(paralog, singleton, total_percentage_failed_genes)) %>%
   mutate(library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana", "jacquere")))
 
 percentage_bar_chart <- ggplot(failed_sgrna_percentage, aes(x = library, y = total_percentage_failed_sgrna, fill = library)) +

@@ -38,17 +38,44 @@ barbara_paralog_gene_pairs <- function(dataset = "../data/paralog_data/barbara_3
 
 # Function to obtain the list of paralog pairs from ENSEMBL 115
 
-ensembl_paralog_gene_pairs <- function(dataset = "../data/paralog_data/ensembl_115_human_paralogs.txt") {
+ensembl_paralog_gene_pairs <- function(dataset_ensembl = "../data/paralog_data/ensembl_115_human_paralogs.txt", dataset_hgnc = "https://storage.googleapis.com/public-download-files/hgnc/tsv/tsv/hgnc_complete_set.txt") {
   
-  ensembl_paralog <- read_csv(dataset) %>% 
+  # retrieve ensembl_paralog from ENSEMBL 115
+  
+  ensembl_paralog <- read_csv(dataset_ensembl) %>%
     drop_na() %>%
-    mutate(gene_pair = paste(`Gene name`, "_", `Human paralogue associated gene name`, sep = ""))
+    mutate(gene_pair = paste(`Gene name`, "_", `Human paralogue associated gene name`, sep = "")) %>%
+    dplyr::rename(ensembl_gene_id = `Gene stable ID`) %>%
+    select(-`Gene stable ID version`)
   
   gene_pair <- unique(ensembl_paralog$gene_pair)
   gene_list <- unique(ensembl_paralog$`Gene name`)
   
-  return(list(gene_pair, gene_list))
+  # HGNC data, select protein-coding gene that has ensembl_gene_id
   
+  hgnc <- read_tsv(dataset_hgnc)
+  
+  hgnc_protein_coding <- hgnc %>%
+    filter(locus_group == "protein-coding gene" & !is.na(ensembl_gene_id)) %>%
+    select(symbol, locus_group, ensembl_gene_id)
+  
+  # ENSEMBL gene ID that has paralogs
+  
+  ensembl_has_paralog <- ensembl_paralog %>%
+    mutate(has_paralogs = TRUE) %>%
+    select(ensembl_gene_id, has_paralogs) %>%
+    distinct()
+  
+  hgnc_protein_coding <- hgnc_protein_coding %>%
+    left_join(ensembl_has_paralog, join_by(ensembl_gene_id)) %>%
+    mutate(has_paralogs = replace_na(has_paralogs, FALSE)) %>%
+    count(has_paralogs) %>%
+    dplyr::rename("number_of_genes" = "n") %>%
+    mutate(percentage = round(number_of_genes / sum(number_of_genes) * 100, 2))
+  
+  
+  
+  return(list(gene_pair, gene_list, hgnc_protein_coding))
 }
 
 # FUNCTION FOR 01_analysis_off-target-sgrna.rmd
@@ -99,20 +126,20 @@ percentages_and_list_genes <- function(report, list_paralog) {
   
   # percentage of failed genes (paralog and non-paralog protein-coding genes)
   failed_paralog <- failed_genes[unlist(failed_genes) %in% unlist(list_paralog)]
-  failed_not_paralog <- failed_genes[!unlist(failed_genes) %in% unlist(list_paralog)]
+  failed_singleton <- failed_genes[!unlist(failed_genes) %in% unlist(list_paralog)]
   
   percentage_failed_paralog <- round(length(unique(failed_paralog)) / (length(unique(failed_genes))), 4) * 100
-  percentage_failed_not_paralog <- round(length(unique(failed_not_paralog)) / (length(unique(failed_genes))), 4) * 100
+  percentage_failed_singleton <- round(length(unique(failed_singleton)) / (length(unique(failed_genes))), 4) * 100
   
   return(list(
     percentage_failed_paralog = percentage_failed_paralog,
-    percentage_failed_not_paralog = percentage_failed_not_paralog,
+    percentage_failed_singleton = percentage_failed_singleton,
     total_percentage_failed_genes = percentage_failed_genes,
     total_percentage_failed_sgrna = percentage_failed_sgrna,
     failed_genes = failed_genes, 
     passed_genes = passed_genes, 
     failed_paralog = failed_paralog,
-    failed_not_paralog = failed_not_paralog))
+    failed_singleton = failed_singleton))
 }
 
 # FUNCTION FOR 02_analysis_paralog_off-target-sgrna.rmd
@@ -166,7 +193,7 @@ import_list_off_target_guides <- function(data_dir) {
 
 # FUNCTION TO STRATIFY MULTI-TARGET SGRNAS
 
-off_target_classification <- function(library_alignment, pam_distal_mismatch_guides) {
+off_target_classification <- function(library_alignment, pam_distal_single_mismatch, pam_distal_double_mismatch) {
   
   # find any non-targeting alignment in the alignment data
   library_alignment_non_targeting <- library_alignment %>%
@@ -183,11 +210,12 @@ off_target_classification <- function(library_alignment, pam_distal_mismatch_gui
     filter(n_mismatches != 2) %>%
     mutate(alignment = case_when(
       is.na(n_mismatches) ~ "non-targeting",
-      sgRNA %in% unlist(pam_distal_mismatch_guides) ~ 'pam-distal double mismatch',
-      n_mismatches == 0 & num_alignments > 1 ~ 'multi-target guides',
-      n_mismatches == 0 ~ 'perfect',
-      n_mismatches == 1 ~ 'single mismatch',
-      TRUE ~ 'other'
+      sgRNA %in% unlist(pam_distal_single_mismatch) ~ "pam-distal single mismatch",
+      sgRNA %in% unlist(pam_distal_double_mismatch) ~ "pam-distal double mismatch",
+      n_mismatches == 0 & num_alignments > 1 ~ "multi-target guides",
+      n_mismatches == 0 ~ "perfect",
+      n_mismatches == 1 ~ "single mismatch",
+      TRUE ~ "other"
     )) %>%
     group_by(sgRNA) %>%
     mutate(alignment = if (any(alignment == "multi-target guides")) "multi-target guides" else alignment) %>%
@@ -242,6 +270,28 @@ single_mismatch_off_target_alignment_bin <- function(classification_alignment, a
   
   return(list(count_single_mismatch, alignment_bin_df))
 }
+
+
+pam_single_mismatch_off_target_alignment_bin <- function(classification_alignment, alignment_type) {
+  
+  count_pam_single_mismatch <- classification_alignment %>%
+    # remove any guides with additional multi-target and pam-distal double mismatches
+    filter(alignment %in% alignment_type) %>%
+    mutate(pam_single_mismatch_alignment = ifelse(alignment == "pam-distal single mismatch", num_alignments, 0))
+  
+  count_pam_single_mismatch$alignment_bin <- cut(count_pam_single_mismatch$pam_single_mismatch_alignment,
+                                             breaks = c(-0.5, 0.5:5.5, Inf),  # -0.5 to 5.5 for 0–5, then Inf for >5
+                                             labels = c(as.character(0:5), "> 5"),
+                                             right = TRUE)
+  
+  alignment_bin_df <- count_pam_single_mismatch %>% 
+    count(alignment_bin) %>%
+    dplyr::rename("num_of_alignments" = "alignment_bin",
+                  "number_of_sgrnas" = "n")
+  
+  return(list(count_pam_single_mismatch, alignment_bin_df))
+}
+
 
 visualize_off_target_alignment <- function(alignment_bin_df, xlabel, aln_break_1, aln_break_2) {
   
@@ -496,6 +546,8 @@ obtain_required_data <- function(library, normalized_lfc_data, stratification_da
     selected_data <- "multi-target guides"
   } else if (str_detect(as.character(stratification_data), "single_mismatch")) {
     selected_data <- "single mismatch"
+  } else if (str_detect(as.character(stratification_data), "pam_single")) {
+    selected_data <- "pam-distal single mismatch"
   }
   
   # for the first boxplot: stratify the number of multi-target guides and single mismatch guides based on the number of alignment
@@ -590,7 +642,7 @@ visualize_stratify_alignment <- function(library_lfc_data, boxplot_output_name) 
     geom_hline(yintercept = -1, linetype = "dashed", color = "black", size = 0.5) +
     scale_y_continuous(limits = c(-3, 2), breaks = seq(-3, 2, by = 1)) +
     labs(title = "", 
-         x = "Number of on-target alignment", 
+         x = "Number of pam-distal single mismatch \noff-target alignment", 
          y = "Averaged median sgRNA Log2FC") +
     theme(
       axis.text.x = element_text(size = 12, vjust = 0.7, colour = "black"),
