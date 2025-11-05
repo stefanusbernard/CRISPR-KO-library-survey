@@ -185,6 +185,7 @@ import_list_off_target_guides <- function(data_dir) {
   return(list(
     multi_target_guides = c(na.omit(off_target_guides$multi_target_guides)),
     single_mismatch_guides = c(na.omit(off_target_guides$single_mismatch_guides)),
+    pam_distal_single_mismatch_guides = c(na.omit(off_target_guides$pam_distal_single_mismatch_guides)),
     pam_distal_double_mismatch_guides = c(na.omit(off_target_guides$pam_distal_double_mismatch_guides))
   ))
 }
@@ -309,6 +310,8 @@ visualize_off_target_alignment <- function(alignment_bin_df, xlabel, aln_break_1
           axis.text.y = element_text(size = 25, colour = "black"),
           axis.title.x = element_text(size = 25, vjust = 0.5, margin = margin(r = 20), colour = "black"),
           axis.title.y = element_text(size = 25, vjust = 0.5, margin = margin(r = 20), colour = "black"),
+          axis.ticks.y = element_line(size = 1.5),
+          axis.ticks.length = unit(0.3, "cm"),
           axis.line.y.right = element_blank(),
           axis.ticks.y.right = element_blank(), 
           axis.text.y.right = element_blank(), 
@@ -544,18 +547,18 @@ obtain_required_data <- function(library, normalized_lfc_data, stratification_da
   
   if (str_detect(as.character(stratification_data), "multi_target")) {
     selected_data <- "multi-target guides"
-  } else if (str_detect(as.character(stratification_data), "single_mismatch")) {
-    selected_data <- "single mismatch"
-  } else if (str_detect(as.character(stratification_data), "pam_single")) {
+  # } else if (str_detect(as.character(stratification_data), "single_mismatch")) {
+  #   selected_data <- "single mismatch"
+  } else if (str_detect(as.character(stratification_data), "pam_distal_single_mismatch")) {
     selected_data <- "pam-distal single mismatch"
   }
   
   # for the first boxplot: stratify the number of multi-target guides and single mismatch guides based on the number of alignment
   library_lfc_alignment <- library_lfc %>%
     # multi-target guides or single mismatch
-    filter(alignment %in% c("perfect", as.character(selected_data)))
+    filter(alignment %in% c("perfect", selected_data))
   
-  library_lfc_alignment$alignment <- factor(library_lfc_alignment$alignment, levels = c("perfect", as.character(selected_data)))
+  library_lfc_alignment$alignment <- factor(library_lfc_alignment$alignment, levels = c("perfect", selected_data))
   
   # for the second boxplot: select guides only targeting multi-target guides or single mismatch
   library_lfc_alignment_bin <- library_lfc %>%
@@ -589,7 +592,7 @@ visualize_two_group <- function(library_lfc_data, boxplot_output_name, which_gui
                            fill = "alignment",
                            facet.by = "library",
                            outliers = FALSE) +
-    stat_compare_means(comparisons = list(c(which_guides, "perfect")),
+    stat_compare_means(comparisons = list(c("pam-distal single mismatch", "perfect")),
                        method = "wilcox.test",
                        method.args = list(alternative = "less"),
                        size = 3.5,
@@ -601,7 +604,7 @@ visualize_two_group <- function(library_lfc_data, boxplot_output_name, which_gui
     scale_fill_manual(
       name = "sgRNA: ",
       values = c("perfect" = "#0072B2", 
-                 "single mismatch" = "#E69F00"),
+                 "pam-distal single mismatch" = "#E69F00"),
       labels = c("On-target", label_which_guides)) +
     labs(title = "", 
          x = "", 
@@ -611,7 +614,9 @@ visualize_two_group <- function(library_lfc_data, boxplot_output_name, which_gui
           strip.text.x = element_text(size = 12),
           axis.text.x = element_blank(),
           axis.text.y = element_text(size = 12, colour = "black"),
+          axis.ticks.y = element_line(size = 1.5),
           axis.ticks.x = element_blank(), 
+          axis.ticks.length = unit(0.1, "cm"),
           axis.title.y = element_text(size = 14, vjust = 0.5, margin = margin(r = 20)),
           panel.grid.major = element_line(size = 0.5),
           panel.grid.minor = element_blank(),
@@ -632,7 +637,7 @@ visualize_two_group <- function(library_lfc_data, boxplot_output_name, which_gui
 }
 
 # 2nd boxplot: visualization of strafication (increasing number of alignment tend to reduce cell fitness)
-visualize_stratify_alignment <- function(library_lfc_data, boxplot_output_name) {
+visualize_stratify_alignment <- function(library_lfc_data, label_x, boxplot_output_name) {
   
   boxplot_lfc <- library_lfc_data %>%
     ggplot(aes(alignment_bin, mean, group = alignment_bin)) +
@@ -642,7 +647,7 @@ visualize_stratify_alignment <- function(library_lfc_data, boxplot_output_name) 
     geom_hline(yintercept = -1, linetype = "dashed", color = "black", size = 0.5) +
     scale_y_continuous(limits = c(-3, 2), breaks = seq(-3, 2, by = 1)) +
     labs(title = "", 
-         x = "Number of pam-distal single mismatch \noff-target alignment", 
+         x = label_x, 
          y = "Averaged median sgRNA Log2FC") +
     theme(
       axis.text.x = element_text(size = 12, vjust = 0.7, colour = "black"),

@@ -31,23 +31,23 @@ source("./00_CRISPR-KO-library-survey-functions.R")
 
 avana_library_and_lfc_data <- obtain_required_data("../data/library_data/avana_library.tsv", 
                                                    "../data/sgrna_lfc_data/output_normalized/avana_normalized_lfc.csv", 
-                                                   "../data/sgrna_lfc_data/avana_data/avana_stratify_single_mismatch.csv")
+                                                   "../data/sgrna_lfc_data/avana_data/avana_stratify_pam_distal_single_mismatch.csv")
 
 tkov3_library_and_lfc_data <- obtain_required_data("../data/library_data/tkov3_guide_sequence.tsv", 
                                                    "../data/sgrna_lfc_data/output_normalized/tkov3_rpe1_normalized_lfc.csv", 
-                                                   "../data/sgrna_lfc_data/tkov3_data/tkov3_stratify_single_mismatch.csv")
+                                                   "../data/sgrna_lfc_data/tkov3_data/tkov3_stratify_pam_distal_single_mismatch.csv")
 
 yusa_library_and_lfc_data <- obtain_required_data("../data/library_data/yusa_hcrispr_ko_grnas.tsv", 
                                                  "../data/sgrna_lfc_data/output_normalized/yusa_normalized_lfc.csv", 
-                                                 "../data/sgrna_lfc_data/yusa_data/yusa_stratify_single_mismatch.csv")
+                                                 "../data/sgrna_lfc_data/yusa_data/yusa_stratify_pam_distal_single_mismatch.csv")
 
 brunello_library_and_lfc_data <- obtain_required_data("../data/library_data/broadgpp-brunello-library-contents.tsv", 
                                                      "../data/sgrna_lfc_data/output_normalized/brunello_a375_normalized_lfc.csv", 
-                                                     "../data/sgrna_lfc_data/brunello_data/brunello_stratify_single_mismatch.csv")
+                                                     "../data/sgrna_lfc_data/brunello_data/brunello_stratify_pam_distal_single_mismatch.csv")
 
 jacquere_library_and_lfc_data <- obtain_required_data("../data/library_data/Jacquere_PerGuideAnnotations_Quota4.tsv", 
                                                      "../data/sgrna_lfc_data/output_normalized/jacquere_normalized_lfc.csv", 
-                                                     "../data/sgrna_lfc_data/jacquere_data/jacquere_stratify_single_mismatch.csv")
+                                                     "../data/sgrna_lfc_data/jacquere_data/jacquere_stratify_pam_distal_single_mismatch.csv")
 
 avana_library_and_lfc_data[[1]] <- avana_library_and_lfc_data[[1]] %>% mutate(library = "avana") 
 tkov3_library_and_lfc_data[[1]] <- tkov3_library_and_lfc_data[[1]] %>% mutate(library = "toronto_v3") 
@@ -68,16 +68,21 @@ calculate_wilcoxon_cliff(jacquere_library_and_lfc_data, "multi-target guides")
 # Bind every library into one single plot of sgRNA Log2FC
 
 ```{r}
+source("./00_CRISPR-KO-library-survey-functions.R")
 
-combined_data <- rbind(avana_library_and_lfc_data[[1]], tkov3_library_and_lfc_data[[1]], yusa_library_and_lfc_data[[1]], brunello_library_and_lfc_data[[1]], jacquere_library_and_lfc_data[[1]])
+combined_data <- rbind(avana_library_and_lfc_data[[1]], 
+                       tkov3_library_and_lfc_data[[1]], 
+                       yusa_library_and_lfc_data[[1]], 
+                       brunello_library_and_lfc_data[[1]], 
+                       jacquere_library_and_lfc_data[[1]])
 
 combined_data <- combined_data %>% mutate(library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana", "jacquere")))
 
 
 visualize_two_group(combined_data, 
-                    "../figure/03_fig_analysis_lfc_off-target-sgrna/combined_library_single_mismatch.png",
-                    "single mismatch",
-                    "Single Mismatch")
+                    "../figure/03_fig_analysis_lfc_off-target-sgrna/combined_library_pam_distal_single_mismatch.png",
+                    "pam-distal single mismatch",
+                    "PAM-distal single mismatch guides")
 
 ```
 
@@ -85,11 +90,11 @@ visualize_two_group(combined_data,
 
 ```{r}
 
-visualize_stratify_alignment(avana_library_and_lfc_data[[2]], "../figure/03_fig_analysis_lfc_off-target-sgrna/avana_multi_target.png")
-visualize_stratify_alignment(tkov3_library_and_lfc_data[[2]], "../figure/03_fig_analysis_lfc_off-target-sgrna/tkov3_multi_target.png")
-visualize_stratify_alignment(brunello_library_and_lfc_data[[2]], "../figure/03_fig_analysis_lfc_off-target-sgrna/brunello_multi_target.png")
-visualize_stratify_alignment(yusa_library_and_lfc_data[[2]], "../figure/03_fig_analysis_lfc_off-target-sgrna/yusa_multi_target.png")
-visualize_stratify_alignment(jacquere_library_and_lfc_data[[2]], "../figure/03_fig_analysis_lfc_off-target-sgrna/jacquere_multi_target.png")
+visualize_stratify_alignment(avana_library_and_lfc_data[[2]], "number of PAM-distal single mismatch \noff-target alignment", "../figure/03_fig_analysis_lfc_off-target-sgrna/avana_pam_distal_single_mismatch.png")
+visualize_stratify_alignment(tkov3_library_and_lfc_data[[2]], "number of PAM-distal single mismatch \noff-target alignment", "../figure/03_fig_analysis_lfc_off-target-sgrna/tkov3_pam_distal_single_mismatch.png")
+visualize_stratify_alignment(brunello_library_and_lfc_data[[2]], "number of PAM-distal single mismatch \noff-target alignment", "../figure/03_fig_analysis_lfc_off-target-sgrna/brunello_pam_distal_single_mismatch.png")
+visualize_stratify_alignment(yusa_library_and_lfc_data[[2]], "number of PAM-distal single mismatch \noff-target alignment", "../figure/03_fig_analysis_lfc_off-target-sgrna/yusa_pam_distal_single_mismatch.png")
+visualize_stratify_alignment(jacquere_library_and_lfc_data[[2]], "number of PAM-distal single mismatch \noff-target alignment", "../figure/03_fig_analysis_lfc_off-target-sgrna/jacquere_pam_distal_single_mismatch.png")
 
 ```
 
