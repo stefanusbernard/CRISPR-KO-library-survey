@@ -1,0 +1,77 @@
+---
+title: "Analysis of multi-target and off-target sgRNAs across libraries"
+author: "Author: Stefanus Bernard"
+date: "Date: `r format(Sys.time(), '%d %B %Y')`"
+output: 
+  html_document :
+    theme : cerulean
+    toc : true
+    toc_float : true
+    number_section : true
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(BSgenome.Hsapiens.NCBI.T2TCHM13v2.0)
+
+source('~/CRISPR-KO-GuideRefine/GuideRefine_functions.R')
+source("./00_CRISPR-KO-library-survey-functions.R")
+```
+
+# Import data containing removed genes from each library
+
+```{r}
+
+removed_genes <- read_csv("../data/biogrid_crispr_ko_data/important_data/removed_genes_all_library.csv")
+
+```
+
+# UpSet plot for commonality of removed genes between 5 libraries
+
+```{r}
+
+removed_gene_list_combined <- list(
+  Avana = na.omit(removed_genes[["avana_removed_genes_all"]]),
+  Brunello = na.omit(removed_genes[["brunello_removed_genes_all"]]),
+  Toronto = na.omit(removed_genes[["toronto_removed_genes_all"]]),
+  Yusa = na.omit(removed_genes[["yusa_removed_genes_all"]]),
+  Jacquere = na.omit(removed_genes[["jacquere_removed_genes_all"]])
+)
+
+# png("../figure/01_fig_analysis_off-target-sgrna/removed_genes_all_libraries.png", width = 12000, height = 7500, res = 1000)
+# 
+# par(mar = c(5, 20, 4, 2)) 
+# upset(fromList(removed_gene_list_combined), 
+#       order.by = "degree",
+#       main.bar.color = "#4B0092",
+#       sets.bar.color = "#1AFF1A",
+#       text.scale = 1.5)
+# 
+# dev.off()
+
+```
+
+# 200 Genes removed across all libraries
+
+## What are these genes?
+
+```{r}
+
+removed_genes_all_libraries <- Reduce(intersect, removed_gene_list_combined)
+# manually replace one gene that is in HGNC as previous symbol
+removed_genes_all_libraries <- replace(removed_genes_all_libraries, 5, "BKGD")
+
+hgnc <- read_tsv(url("https://storage.googleapis.com/public-download-files/hgnc/tsv/tsv/hgnc_complete_set.txt"))
+hgnc <- hgnc %>% filter(symbol %in% removed_genes_all_libraries)
+
+```
+
+## Does genes size is small ?
+
+```{r}
+
+gene_annot_granges <- readRDS(file = "~/CRISPR-KO-GuideRefine/annotation_file/T2T-CHM13v2.0_gene_annot_granges.rds")
+
+```
+
+## Does genes located in a repeat sequences ?

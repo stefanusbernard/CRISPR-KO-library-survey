@@ -19,6 +19,7 @@ library(paletteer)
 library(RColorBrewer)
 library(UpSetR)
 library(gprofiler2)
+library(biomaRt)
 source('~/CRISPR-KO-GuideRefine/GuideRefine_functions.R')
 source("00_CRISPR-KO-library-survey-functions.R")
 ```
@@ -152,7 +153,7 @@ ggsave(
     path = './',
     width = 20,
     height = 10,
-    dpi = 1000,
+    dpi = 300,
     plot = multi_bar_chart,
     filename = paste('../figure/01_fig_analysis_off-target-sgrna/percentage_off_target_T2T.png', sep = ''))
 ```
@@ -344,7 +345,7 @@ ggsave(
     path = './',
     width = 16,
     height = 10,
-    dpi = 1000,
+    dpi = 300,
     plot = percentage_bar_chart,
     filename = paste('../figure/01_fig_analysis_off-target-sgrna/library_genes_bar_chart_T2T.png', sep = ''))
 
@@ -400,46 +401,9 @@ ggsave(
     path = './',
     width = 16,
     height = 10,
-    dpi = 1000,
+    dpi = 300,
     plot = percentage_bar_chart,
     filename = paste('../figure/01_fig_analysis_off-target-sgrna/library_sgrna_bar_chart_T2T.png', sep = ''))
-
-
-```
-
-# UpSet plot for commonality of removed genes between 5 libraries
-
-```{r}
-
-removed_gene_list_combined <- list(
-  Avana = avana_result_gene[["failed_genes"]],
-  Brunello = brunello_result_gene[["failed_genes"]],
-  Toronto = toronto_result_gene[["failed_genes"]],
-  Yusa = yusa_result_gene[["failed_genes"]],
-  Jacquere = jacquere_result_gene[["failed_genes"]]
-)
-
-png("../figure/01_fig_analysis_off-target-sgrna/removed_genes_all_libraries.png", width = 12000, height = 7500, res = 1000)
-
-par(mar = c(5, 20, 4, 2)) 
-upset(fromList(removed_gene_list_combined), 
-      order.by = "degree",
-      main.bar.color = "#4B0092",
-      sets.bar.color = "#1AFF1A",
-      text.scale = 1.5)
-
-dev.off()
-
-```
-
-# Genes removed from all libraries
-
-```{r}
-
-removed_genes_all_libraries <- Reduce(intersect, removed_gene_list_combined)
-
-
-
 
 
 ```

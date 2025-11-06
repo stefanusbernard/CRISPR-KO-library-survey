@@ -61,7 +61,7 @@ jacquere_library_and_lfc_data[[1]] <- jacquere_library_and_lfc_data[[1]] %>% mut
 
 ```{r}
 
-calculate_wilcoxon_cliff(jacquere_library_and_lfc_data, "multi-target guides")
+calculate_wilcoxon_cliff(jacquere_library_and_lfc_data, "pam-distal single mismatch")
 
 ```
 
