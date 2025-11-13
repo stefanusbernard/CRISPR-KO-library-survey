@@ -38,7 +38,8 @@ barbara_paralog_gene_pairs <- function(dataset = "../data/paralog_data/barbara_3
 
 # Function to obtain the list of paralog pairs from ENSEMBL 115
 
-ensembl_paralog_gene_pairs <- function(dataset_ensembl = "../data/paralog_data/ensembl_115_human_paralogs.txt", dataset_hgnc = "https://storage.googleapis.com/public-download-files/hgnc/tsv/tsv/hgnc_complete_set.txt") {
+ensembl_paralog_gene_pairs <- function(dataset_ensembl = "../data/paralog_data/ensembl_115_human_paralogs.txt", 
+                                       dataset_hgnc = "https://storage.googleapis.com/public-download-files/hgnc/tsv/tsv/hgnc_complete_set.txt") {
   
   # retrieve ensembl_paralog from ENSEMBL 115
   
@@ -46,28 +47,35 @@ ensembl_paralog_gene_pairs <- function(dataset_ensembl = "../data/paralog_data/e
     drop_na() %>%
     mutate(gene_pair = paste(`Gene name`, "_", `Human paralogue associated gene name`, sep = "")) %>%
     dplyr::rename(ensembl_gene_id = `Gene stable ID`) %>%
-    select(-`Gene stable ID version`)
+    dplyr::select(-`Gene stable ID version`)
   
   gene_pair <- unique(ensembl_paralog$gene_pair)
   gene_list <- unique(ensembl_paralog$`Gene name`)
   
   # HGNC data, select protein-coding gene that has ensembl_gene_id
+  # barbara filtered the data by using locus_type == "gene with protein product", our approach is using locus_group
+  # if we select locus_group == "protein-coding gene", the locus_type is unique for "gene with protein product"
   
   hgnc <- read_tsv(dataset_hgnc)
   
   hgnc_protein_coding <- hgnc %>%
     filter(locus_group == "protein-coding gene" & !is.na(ensembl_gene_id)) %>%
-    select(symbol, locus_group, ensembl_gene_id)
+    dplyr::select(symbol, locus_group, ensembl_gene_id)
   
   # ENSEMBL gene ID that has paralogs
   
-  ensembl_has_paralog <- ensembl_paralog %>%
+  ensembl_paralog <- ensembl_paralog %>%
     mutate(has_paralogs = TRUE) %>%
-    select(ensembl_gene_id, has_paralogs) %>%
+    dplyr::select(ensembl_gene_id, has_paralogs) %>%
     distinct()
   
-  hgnc_protein_coding <- hgnc_protein_coding %>%
-    left_join(ensembl_has_paralog, join_by(ensembl_gene_id)) %>%
+  ensembl_singleton <- hgnc_protein_coding %>%
+    left_join(ensembl_paralog, join_by(ensembl_gene_id)) %>%
+    mutate(has_paralogs = replace_na(has_paralogs, FALSE)) %>%
+    filter(has_paralogs == FALSE)
+  
+  count_paralog_singleton <- hgnc_protein_coding %>%
+    left_join(ensembl_paralog, join_by(ensembl_gene_id)) %>%
     mutate(has_paralogs = replace_na(has_paralogs, FALSE)) %>%
     count(has_paralogs) %>%
     dplyr::rename("number_of_genes" = "n") %>%
@@ -75,7 +83,7 @@ ensembl_paralog_gene_pairs <- function(dataset_ensembl = "../data/paralog_data/e
   
   
   
-  return(list(gene_pair, gene_list, hgnc_protein_coding))
+  return(list(gene_pair, gene_list, ensembl_singleton, ensembl_paralog, count_paralog_singleton))
 }
 
 # FUNCTION FOR 01_analysis_off-target-sgrna.rmd
@@ -103,9 +111,15 @@ percentages_and_list_genes <- function(report, list_paralog) {
     filter(`quality check` == "fail") %>%
     pull(gene)
   
+  failed_genes <- checkGeneSymbols(failed_genes)
+  failed_genes <- failed_genes %>%  mutate(Suggested.Symbol = if_else(is.na(Suggested.Symbol), x, Suggested.Symbol)) %>% pull(Suggested.Symbol)
+  
   passed_genes <- report %>%
     filter(`quality check` == "pass") %>%
     pull(gene)
+  
+  passed_genes <- checkGeneSymbols(passed_genes)
+  passed_genes <- passed_genes %>%  mutate(Suggested.Symbol = if_else(is.na(Suggested.Symbol), x, Suggested.Symbol)) %>% pull(Suggested.Symbol)
   
   # pull the dataframe
   failed_genes_df <- report %>%
@@ -196,14 +210,13 @@ import_list_off_target_guides <- function(data_dir) {
 
 off_target_classification <- function(library_alignment, pam_distal_single_mismatch, pam_distal_double_mismatch) {
   
-  # find any non-targeting alignment in the alignment data
   library_alignment_non_targeting <- library_alignment %>%
     filter(is.na(n_mismatches)) %>%
     select(sgRNA, n_mismatches) %>%
     mutate(num_alignments = 0,
            alignment = "non-targeting")
   
-  # classify the on-target guides, multi-target guides, and single-mismatch alignment guides
+  
   classification_alignment <- library_alignment %>%
     group_by(sgRNA, n_mismatches, .drop = FALSE) %>%
     summarise(n = n(), .groups = "drop") %>%
@@ -218,17 +231,25 @@ off_target_classification <- function(library_alignment, pam_distal_single_misma
       n_mismatches == 1 ~ "single mismatch",
       TRUE ~ "other"
     )) %>%
+    # make a priority of alignment type
+    mutate(alignment = factor(alignment, levels = c("multi-target guides", "pam-distal double mismatch", "pam-distal single mismatch", "single mismatch", "perfect"))) %>%
+    
+    # sort the data based on the alignment type (factor) and number of alignments (descending, so the highest value is on top of duplicated sgRNA)
+    arrange(sgRNA, alignment, desc(num_alignments)) %>%
     group_by(sgRNA) %>%
-    mutate(alignment = if (any(alignment == "multi-target guides")) "multi-target guides" else alignment) %>%
-    # mutate(alignment = if (any(alignment == "single mismatch")) "single mismatch" else alignment) %>%
-    ungroup() %>%
-    filter(!(alignment == "multi-target guides" & n_mismatches > 0),
-           !(alignment == "single mismatch" & n_mismatches == 0)) %>%
+    distinct(sgRNA, .keep_all = TRUE) %>%
     full_join(library_alignment_non_targeting) %>%
-    arrange(sgRNA)
+    arrange(sgRNA) %>%
+    ungroup()
   
   return(list(classification_alignment, library_alignment_non_targeting))
 }
+
+
+
+
+
+
 
 multi_target_alignment_bin <- function(classification_alignment, alignment_type) {
   
@@ -251,46 +272,26 @@ multi_target_alignment_bin <- function(classification_alignment, alignment_type)
   
 }
 
-
 single_mismatch_off_target_alignment_bin <- function(classification_alignment, alignment_type) {
   
+  # output dataframe for 04_analysis_lfc_off-target-sgrnas.Rmd
   count_single_mismatch <- classification_alignment %>%
     # remove any guides with additional multi-target and pam-distal double mismatches
     filter(alignment %in% alignment_type) %>%
-    mutate(single_mismatch_alignment = ifelse(alignment == "single mismatch", num_alignments, 0))
-  
+    mutate(single_mismatch_alignment = ifelse(alignment %in% c("single mismatch", "pam-distal single mismatch"), num_alignments, 0))
+
   count_single_mismatch$alignment_bin <- cut(count_single_mismatch$single_mismatch_alignment,
                                              breaks = c(-0.5, 0.5:5.5, Inf),  # -0.5 to 5.5 for 0–5, then Inf for >5
                                              labels = c(as.character(0:5), "> 5"),
                                              right = TRUE)
-  
+
+  # TODO: something wrong with this, the alignment_bin count based on the alignment not unique sgRNA
   alignment_bin_df <- count_single_mismatch %>% 
     count(alignment_bin) %>%
     dplyr::rename("num_of_alignments" = "alignment_bin",
                   "number_of_sgrnas" = "n")
   
   return(list(count_single_mismatch, alignment_bin_df))
-}
-
-
-pam_single_mismatch_off_target_alignment_bin <- function(classification_alignment, alignment_type) {
-  
-  count_pam_single_mismatch <- classification_alignment %>%
-    # remove any guides with additional multi-target and pam-distal double mismatches
-    filter(alignment %in% alignment_type) %>%
-    mutate(pam_single_mismatch_alignment = ifelse(alignment == "pam-distal single mismatch", num_alignments, 0))
-  
-  count_pam_single_mismatch$alignment_bin <- cut(count_pam_single_mismatch$pam_single_mismatch_alignment,
-                                             breaks = c(-0.5, 0.5:5.5, Inf),  # -0.5 to 5.5 for 0–5, then Inf for >5
-                                             labels = c(as.character(0:5), "> 5"),
-                                             right = TRUE)
-  
-  alignment_bin_df <- count_pam_single_mismatch %>% 
-    count(alignment_bin) %>%
-    dplyr::rename("num_of_alignments" = "alignment_bin",
-                  "number_of_sgrnas" = "n")
-  
-  return(list(count_pam_single_mismatch, alignment_bin_df))
 }
 
 
@@ -545,20 +546,22 @@ obtain_required_data <- function(library, normalized_lfc_data, stratification_da
     filter(!str_detect(gene, terms_for_filtering)) %>%
     left_join(library_stratification, join_by(sgRNA))
   
+  # TODO: fix this if condition logic, the problem is in selecting single mismatch and single mismatch at pam distal
+  
   if (str_detect(as.character(stratification_data), "multi_target")) {
     selected_data <- "multi-target guides"
   # } else if (str_detect(as.character(stratification_data), "single_mismatch")) {
   #   selected_data <- "single mismatch"
-  } else if (str_detect(as.character(stratification_data), "pam_distal_single_mismatch")) {
+  } else if (str_detect(as.character(stratification_data), "single_mismatch")) {
     selected_data <- "pam-distal single mismatch"
   }
   
   # for the first boxplot: stratify the number of multi-target guides and single mismatch guides based on the number of alignment
   library_lfc_alignment <- library_lfc %>%
     # multi-target guides or single mismatch
-    filter(alignment %in% c("perfect", selected_data))
+    filter(alignment %in% c("perfect", "single mismatch", paste0(selected_data)))
   
-  library_lfc_alignment$alignment <- factor(library_lfc_alignment$alignment, levels = c("perfect", selected_data))
+  library_lfc_alignment$alignment <- factor(library_lfc_alignment$alignment, levels = c("perfect", "single mismatch", paste0(selected_data)))
   
   # for the second boxplot: select guides only targeting multi-target guides or single mismatch
   library_lfc_alignment_bin <- library_lfc %>%
@@ -570,16 +573,65 @@ obtain_required_data <- function(library, normalized_lfc_data, stratification_da
   return(list(library_lfc_alignment, library_lfc_alignment_bin))
 }
 
-calculate_wilcoxon_cliff <- function(input_data, which_guides) {
+# remove duplicated sgRNA after obtain required data
+remove_duplicate_sgrna <- function(library_and_lfc_data) {
   
-  input_data[[1]]$alignment <- factor(input_data[[1]]$alignment, levels = c(which_guides, "perfect"))
+  condition_priority <- c(
+    "perfect" = 1,
+    "single mismatch" = 2,
+    "pam-distal single mismatch" = 3
+  )
+  
+  # Alignment number priority
+  alignment_levels <- c("0", "1", "2", "3", "4", "5", "> 5")
+  alignment_priority <- setNames(seq_along(alignment_levels), alignment_levels)
+  
+  df_selected <- library_and_lfc_data %>%
+    # Add numeric priority columns
+    mutate(
+      cond_priority = condition_priority[alignment],
+      align_priority = alignment_priority[as.character(alignment_bin)]
+    ) %>%
+    
+    # Group by sgRNA (or your key)
+    group_by(sgRNA) %>%
+    
+    # Keep only rows with the highest condition priority
+    filter(cond_priority == max(cond_priority)) %>%
+    
+    # Within those, keep only the row with highest alignment number
+    filter(align_priority == max(align_priority)) %>%
+    
+    ungroup() %>%
+    
+    # Drop temporary columns
+    select(-cond_priority, -align_priority) %>%
+    
+    distinct()
+  
+}
+
+calculate_wilcoxon_cles <- function(input_data, which_guides, which_guides_2) {
+  
+  input_data[[1]]$alignment <- factor(input_data[[1]]$alignment, levels = c(which_guides, which_guides_2))
   wilcox.test(input_data[[1]]$mean ~ input_data[[1]]$alignment, alternative = "less")
-  cliff.delta(mean ~ alignment, data = input_data[[1]])
+  res <- cliff.delta(mean ~ alignment, data = input_data[[1]])
   
+  delta <- res$estimate
+  cles <- (delta + 1) / 2
+  cles
 }
 
 
 visualize_two_group <- function(library_lfc_data, boxplot_output_name, which_guides, label_which_guides) {
+  
+  label_df <- stats %>%
+    transmute(
+      x = x,
+      y = ymax + 0.2,          # add padding
+      label = round(ymax, 2)   # or any custom label
+    )
+
   facet_labels = c("brunello" = "Brunello",
                    "toronto_v3" = "TKOv3",
                    "yusa" = "Yusa (Project Score)",
@@ -592,7 +644,7 @@ visualize_two_group <- function(library_lfc_data, boxplot_output_name, which_gui
                            fill = "alignment",
                            facet.by = "library",
                            outliers = FALSE) +
-    stat_compare_means(comparisons = list(c("pam-distal single mismatch", "perfect")),
+    stat_compare_means(comparisons = list(c("pam-distal single mismatch", "single mismatch"), c("pam-distal single mismatch", "perfect"), c("single mismatch", "perfect")),
                        method = "wilcox.test",
                        method.args = list(alternative = "less"),
                        size = 3.5,
@@ -600,12 +652,13 @@ visualize_two_group <- function(library_lfc_data, boxplot_output_name, which_gui
                        tip.length = 0.01,
                        label = "p.format",
                        label.y = 1) +
-    scale_y_continuous(limits = c(-2, 2), breaks = seq(-2, 2, by = 1)) +
+    scale_y_continuous(limits = c(-3, 3), breaks = seq(-2, 2, by = 1)) +
     scale_fill_manual(
       name = "sgRNA: ",
       values = c("perfect" = "#0072B2", 
+                 "single mismatch" = "mistyrose",
                  "pam-distal single mismatch" = "#E69F00"),
-      labels = c("On-target", label_which_guides)) +
+      labels = c("On-target", "single mismatch", label_which_guides)) +
     labs(title = "", 
          x = "", 
          y = "Averaged median sgRNA Log2FC",
@@ -626,6 +679,20 @@ visualize_two_group <- function(library_lfc_data, boxplot_output_name, which_gui
           legend.text = element_text(size = 12)) +
     facet_wrap(~library, ncol = 5, labeller = labeller(library = facet_labels))
   
+  
+  boxplot_lfc <-  boxplot_lfc +
+                        geom_text(
+                          data = label_df,
+                          aes(x = x, y = y, label = label),
+                          angle = 45,
+                          vjust = 0,
+                          hjust = 0.5
+                        )
+  
+  b <- ggplot_build(boxplot_lfc)
+  stats <- b$data[[1]]
+  
+  
   ggsave(
     path = './',
     width = 10,
@@ -638,6 +705,9 @@ visualize_two_group <- function(library_lfc_data, boxplot_output_name, which_gui
 
 # 2nd boxplot: visualization of strafication (increasing number of alignment tend to reduce cell fitness)
 visualize_stratify_alignment <- function(library_lfc_data, label_x, boxplot_output_name) {
+  
+  annotation_df <- library_lfc_data %>%
+    count(alignment_bin)
   
   boxplot_lfc <- library_lfc_data %>%
     ggplot(aes(alignment_bin, mean, group = alignment_bin)) +
@@ -661,9 +731,23 @@ visualize_stratify_alignment <- function(library_lfc_data, label_x, boxplot_outp
       axis.line.y = element_line(size = 0.5), 
       line = element_line((size = 2), colour = 'black'))
   
+  # find the upper whisker of each boxplot for labelling
+  b <- ggplot_build(boxplot_lfc)
+  boxplot_whisker <- b$data[[1]]$ymax
+  
+  boxplot_lfc <- boxplot_lfc +
+    geom_text(
+      data = annotation_df,
+      aes(x = alignment_bin, y = boxplot_whisker + 0.1, label = paste0("n= ", n)),
+      size = 4,
+      angle = 45,
+      vjust = -0.2,
+      hjust = -0.2
+    )
+  
   ggsave(
     path = './',
-    width = 4,
+    width = 5,
     height = 5,
     dpi = 1000,
     plot = boxplot_lfc,
