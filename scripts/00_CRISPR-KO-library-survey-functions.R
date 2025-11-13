@@ -247,52 +247,45 @@ off_target_classification <- function(library_alignment, pam_distal_single_misma
 
 
 
-
-
-
-
-multi_target_alignment_bin <- function(classification_alignment, alignment_type) {
+count_alignment_bin <- function(classification_alignment, alignment_type) {
   
-  count_on_target_alignments <- classification_alignment %>%
-    # remove any guides with additional single-mismatches and pam-distal double mismatches
-    filter(alignment %in% alignment_type)
+  if("multi-target guides" %in% alignment_type) {
+    
+    count_alignment_type <- classification_alignment %>%
+      # remove any guides with additional single-mismatches and pam-distal double mismatches
+      filter(alignment %in% alignment_type)
+    
+    # bin the number of alignments to see how many guides targeting two until more than 5 different locations in the genome with perfect match
+    count_alignment_type$alignment_bin <- cut(count_alignment_type$num_alignments,
+                                              breaks = c(-0.5, 0.5:5.5, Inf),  # -0.5 to 5.5 for 0–5, then Inf for >5
+                                              labels = c(as.character(0:5), "> 5"),
+                                              right = TRUE)
+    
+  } else if(any(c("single mismatch", "pam-distal single mismatch") %in% alignment_type)) {
+    
+    # output dataframe for 04_analysis_lfc_off-target-sgrnas.Rmd
+    count_alignment_type <- classification_alignment %>%
+      # remove any guides with additional multi-target and pam-distal double mismatches
+      filter(alignment %in% alignment_type) %>%
+      mutate(single_mismatch_alignment = ifelse(alignment %in% c("single mismatch", "pam-distal single mismatch"), num_alignments, 0))
+    
+    # bin the number of alignments to see how many guides targeting two until more than 5 different locations in the genome with perfect match
+    count_alignment_type$alignment_bin <- cut(count_alignment_type$single_mismatch_alignment,
+                                              breaks = c(-0.5, 0.5:5.5, Inf),  # -0.5 to 5.5 for 0–5, then Inf for >5
+                                              labels = c(as.character(0:5), "> 5"),
+                                              right = TRUE)
+    
+  }
   
-  # bin the number of alignments to see how many guides targeting two until more than 5 different locations in the genome with perfect match
-  count_on_target_alignments$alignment_bin <- cut(count_on_target_alignments$num_alignments,
-                                                  breaks = c(-0.5, 0.5:5.5, Inf),  # -0.5 to 5.5 for 0–5, then Inf for >5
-                                                  labels = c(as.character(0:5), "> 5"),
-                                                  right = TRUE)
-  
-  alignment_bin_df <- count_on_target_alignments %>% 
+  alignment_bin_df <- count_alignment_type %>% 
     count(alignment_bin) %>%
     dplyr::rename("num_of_alignments" = "alignment_bin",
                   "number_of_sgrnas" = "n")
   
-  return(list(count_on_target_alignments, alignment_bin_df))
+  return(list(count_alignment_type, alignment_bin_df))
   
 }
 
-single_mismatch_off_target_alignment_bin <- function(classification_alignment, alignment_type) {
-  
-  # output dataframe for 04_analysis_lfc_off-target-sgrnas.Rmd
-  count_single_mismatch <- classification_alignment %>%
-    # remove any guides with additional multi-target and pam-distal double mismatches
-    filter(alignment %in% alignment_type) %>%
-    mutate(single_mismatch_alignment = ifelse(alignment %in% c("single mismatch", "pam-distal single mismatch"), num_alignments, 0))
-
-  count_single_mismatch$alignment_bin <- cut(count_single_mismatch$single_mismatch_alignment,
-                                             breaks = c(-0.5, 0.5:5.5, Inf),  # -0.5 to 5.5 for 0–5, then Inf for >5
-                                             labels = c(as.character(0:5), "> 5"),
-                                             right = TRUE)
-
-  # TODO: something wrong with this, the alignment_bin count based on the alignment not unique sgRNA
-  alignment_bin_df <- count_single_mismatch %>% 
-    count(alignment_bin) %>%
-    dplyr::rename("num_of_alignments" = "alignment_bin",
-                  "number_of_sgrnas" = "n")
-  
-  return(list(count_single_mismatch, alignment_bin_df))
-}
 
 
 visualize_off_target_alignment <- function(alignment_bin_df, xlabel, aln_break_1, aln_break_2) {
