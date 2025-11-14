@@ -277,6 +277,7 @@ count_alignment_bin <- function(classification_alignment, alignment_type) {
     
   }
   
+  
   alignment_bin_df <- count_alignment_type %>% 
     count(alignment_bin) %>%
     dplyr::rename("num_of_alignments" = "alignment_bin",
@@ -511,14 +512,15 @@ find_multi_target_paralog <- function(gene_df, list_query_guides, library_name) 
 
 # A function to obtain and process sgRNA library Log-fold-change data 
 
+# TODO: compare this code with the code inside the backup script
+
 obtain_required_data <- function(library, normalized_lfc_data, stratification_data) {
   
   library <- read_tsv(library, col_names = FALSE)
   colnames(library) <- c("sgRNA", "spacer", "gene")
   
   normalized_lfc_data <- read_csv(normalized_lfc_data)
-  library_stratification <- read_csv(stratification_data, col_types = cols(alignment_bin = col_character()
-  )) %>% select(sgRNA, alignment, alignment_bin)
+  library_stratification <- stratification_data %>% select(sgRNA, alignment, num_alignments)
   
   # left join
   library_lfc_data <- normalized_lfc_data %>%
@@ -539,70 +541,9 @@ obtain_required_data <- function(library, normalized_lfc_data, stratification_da
     filter(!str_detect(gene, terms_for_filtering)) %>%
     left_join(library_stratification, join_by(sgRNA))
   
-  # TODO: fix this if condition logic, the problem is in selecting single mismatch and single mismatch at pam distal
-  
-  if (str_detect(as.character(stratification_data), "multi_target")) {
-    selected_data <- "multi-target guides"
-  # } else if (str_detect(as.character(stratification_data), "single_mismatch")) {
-  #   selected_data <- "single mismatch"
-  } else if (str_detect(as.character(stratification_data), "single_mismatch")) {
-    selected_data <- "pam-distal single mismatch"
-  }
-  
-  # for the first boxplot: stratify the number of multi-target guides and single mismatch guides based on the number of alignment
-  library_lfc_alignment <- library_lfc %>%
-    # multi-target guides or single mismatch
-    filter(alignment %in% c("perfect", "single mismatch", paste0(selected_data)))
-  
-  library_lfc_alignment$alignment <- factor(library_lfc_alignment$alignment, levels = c("perfect", "single mismatch", paste0(selected_data)))
-  
-  # for the second boxplot: select guides only targeting multi-target guides or single mismatch
-  library_lfc_alignment_bin <- library_lfc %>%
-    filter(alignment_bin %in% c(0, 1, 2, 3, 4, 5,"> 5"))
-  
-  library_lfc_alignment_bin$alignment_bin <- factor(library_lfc_alignment_bin$alignment_bin, levels = c(0, 1, 2, 3, 4, 5, "> 5"))
-  # library_lfc_alignment is for comparison of sgRNA Log2FC between two group
-  # library_lfc_alignment_bin is for stratification of multi-target guides (the reason why we put this because we included guides not targeting anywhere)
-  return(list(library_lfc_alignment, library_lfc_alignment_bin))
+  return(library_lfc)
 }
 
-# remove duplicated sgRNA after obtain required data
-remove_duplicate_sgrna <- function(library_and_lfc_data) {
-  
-  condition_priority <- c(
-    "perfect" = 1,
-    "single mismatch" = 2,
-    "pam-distal single mismatch" = 3
-  )
-  
-  # Alignment number priority
-  alignment_levels <- c("0", "1", "2", "3", "4", "5", "> 5")
-  alignment_priority <- setNames(seq_along(alignment_levels), alignment_levels)
-  
-  df_selected <- library_and_lfc_data %>%
-    # Add numeric priority columns
-    mutate(
-      cond_priority = condition_priority[alignment],
-      align_priority = alignment_priority[as.character(alignment_bin)]
-    ) %>%
-    
-    # Group by sgRNA (or your key)
-    group_by(sgRNA) %>%
-    
-    # Keep only rows with the highest condition priority
-    filter(cond_priority == max(cond_priority)) %>%
-    
-    # Within those, keep only the row with highest alignment number
-    filter(align_priority == max(align_priority)) %>%
-    
-    ungroup() %>%
-    
-    # Drop temporary columns
-    select(-cond_priority, -align_priority) %>%
-    
-    distinct()
-  
-}
 
 calculate_wilcoxon_cles <- function(input_data, which_guides, which_guides_2) {
   
@@ -615,15 +556,9 @@ calculate_wilcoxon_cles <- function(input_data, which_guides, which_guides_2) {
   cles
 }
 
+# FIXME: fix the visualize_two_group labelling of the boxplot is mixed up
 
-visualize_two_group <- function(library_lfc_data, boxplot_output_name, which_guides, label_which_guides) {
-  
-  label_df <- stats %>%
-    transmute(
-      x = x,
-      y = ymax + 0.2,          # add padding
-      label = round(ymax, 2)   # or any custom label
-    )
+visualize_two_group <- function(library_lfc_data, boxplot_output_name) {
 
   facet_labels = c("brunello" = "Brunello",
                    "toronto_v3" = "TKOv3",
@@ -637,9 +572,14 @@ visualize_two_group <- function(library_lfc_data, boxplot_output_name, which_gui
                            fill = "alignment",
                            facet.by = "library",
                            outliers = FALSE) +
-    stat_compare_means(comparisons = list(c("pam-distal single mismatch", "single mismatch"), c("pam-distal single mismatch", "perfect"), c("single mismatch", "perfect")),
+    stat_compare_means(comparisons = list(c("pam-distal single mismatch", "single mismatch"), 
+                                          c("pam-distal single mismatch", "perfect"), 
+                                          c("pam-distal single mismatch", "multi-target guides"),
+                                          c("single mismatch", "multi-target guides"),
+                                          c("single mismatch", "perfect"),
+                                          c("multi-target guides", "perfect")),
                        method = "wilcox.test",
-                       method.args = list(alternative = "less"),
+                       method.args = list(alternative = "two-sided"),
                        size = 3.5,
                        step.increase = 0.05,
                        tip.length = 0.01,
@@ -649,9 +589,10 @@ visualize_two_group <- function(library_lfc_data, boxplot_output_name, which_gui
     scale_fill_manual(
       name = "sgRNA: ",
       values = c("perfect" = "#0072B2", 
+                 "multi-target guides" = "powderblue",
                  "single mismatch" = "mistyrose",
                  "pam-distal single mismatch" = "#E69F00"),
-      labels = c("On-target", "single mismatch", label_which_guides)) +
+      labels = c("On-target", "multi-target guides", "single mismatch", "pam-distal single mismatch")) +
     labs(title = "", 
          x = "", 
          y = "Averaged median sgRNA Log2FC",
@@ -672,20 +613,36 @@ visualize_two_group <- function(library_lfc_data, boxplot_output_name, which_gui
           legend.text = element_text(size = 12)) +
     facet_wrap(~library, ncol = 5, labeller = labeller(library = facet_labels))
   
-  
-  boxplot_lfc <-  boxplot_lfc +
-                        geom_text(
-                          data = label_df,
-                          aes(x = x, y = y, label = label),
-                          angle = 45,
-                          vjust = 0,
-                          hjust = 0.5
-                        )
+  # get stats
   
   b <- ggplot_build(boxplot_lfc)
   stats <- b$data[[1]]
   
+  label_df <- stats %>%
+    transmute(
+      x = x,
+      y = ymax + 0.2,          # add padding
+      label = round(ymax, 2)   # or any custom label
+    )
   
+  count <- library_lfc_data %>%
+    select(sgRNA, alignment, library) %>%
+    distinct() %>%
+    group_by(library) %>%
+    count(alignment)
+  
+  count <- count %>% bind_cols(stats %>% select(x, ymin))
+  
+  boxplot_lfc <-  boxplot_lfc +
+                                geom_text(
+                                  data = count,
+                                  aes(x = x, y = ymin - 0.5, label = paste0("n= ", n)),
+                                  angle = 45,
+                                  vjust = 0,
+                                  hjust = 0.5,
+                                  size = 3
+                                )
+                              
   ggsave(
     path = './',
     width = 10,
