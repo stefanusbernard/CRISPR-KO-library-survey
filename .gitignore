@@ -11,4 +11,5 @@
 *.gtf
 old_plot/*
 data/cellecta_data/*
+data/T2T_data/*
 .Rproj.user
