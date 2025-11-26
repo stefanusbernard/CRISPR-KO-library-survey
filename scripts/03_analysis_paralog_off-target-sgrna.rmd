@@ -12,9 +12,6 @@ output:
 
 ```{r setup, include=FALSE}
 library(tidyverse)
-library(VennDiagram)
-library(ggvenn)
-library(ggbreak)
 library(BSgenome)
 library(BSgenome.Hsapiens.UCSC.hg38)
 library(BSgenome.Hsapiens.NCBI.T2TCHM13v2.0)
@@ -76,10 +73,19 @@ paralog_individual <- ensembl_paralog[[2]]
 ```{r}
 
 avana_classification <- off_target_classification(avana_alignment_meyers, disposed_avana["pam_distal_single_mismatch_guides"], disposed_avana["pam_distal_double_mismatch_guides"])
+write_csv(avana_classification[[1]], "../data/sgrna_lfc_data/avana_data/avana_sgrna_alignment_classification.csv")
+
 brunello_classification <- off_target_classification(brunello_alignment, disposed_brunello["pam_distal_single_mismatch_guides"], disposed_avana["pam_distal_double_mismatch_guides"])
+write_csv(brunello_classification[[1]], "../data/sgrna_lfc_data/brunello_data/brunello_sgrna_alignment_classification.csv")
+
 toronto_classification <- off_target_classification(toronto_alignment, disposed_toronto["pam_distal_single_mismatch_guides"], disposed_avana["pam_distal_double_mismatch_guides"])
+write_csv(toronto_classification[[1]], "../data/sgrna_lfc_data/tkov3_data/tkov3_sgrna_alignment_classification.csv")
+
 yusa_classification <- off_target_classification(yusa_alignment, disposed_yusa["pam_distal_single_mismatch_guides"], disposed_avana["pam_distal_double_mismatch_guides"])
+write_csv(yusa_classification[[1]], "../data/sgrna_lfc_data/yusa_data/yusa_sgrna_alignment_classification.csv")
+
 jacquere_classification <- off_target_classification(jacquere_alignment, disposed_jacquere["pam_distal_single_mismatch_guides"], disposed_avana["pam_distal_double_mismatch_guides"])
+write_csv(jacquere_classification[[1]], "../data/sgrna_lfc_data/jacquere_data/jacquere_sgrna_alignment_classification.csv")
 
 ```
 
@@ -89,21 +95,11 @@ to investigate multi-target guides alignment to cell fitness, we exclude any sin
 
 ```{r}
 
-avana_stratify_multi_target <- multi_target_alignment_bin(avana_classification[[1]], c("perfect", "multi-target guides", "non-targeting"))
-write_csv(avana_stratify_multi_target[[1]], "../data/sgrna_lfc_data/avana_data/avana_stratify_multi_target.csv")
-
-brunello_stratify_multi_target <- multi_target_alignment_bin(brunello_classification[[1]], c("perfect", "multi-target guides", "non-targeting"))
-write_csv(brunello_stratify_multi_target[[1]], "../data/sgrna_lfc_data/brunello_data/brunello_stratify_multi_target.csv")
-
-toronto_stratify_multi_target <- multi_target_alignment_bin(toronto_classification[[1]], c("perfect", "multi-target guides", "non-targeting"))
-write_csv(toronto_stratify_multi_target[[1]], "../data/sgrna_lfc_data/tkov3_data/tkov3_stratify_multi_target.csv")
-
-yusa_stratify_multi_target <- multi_target_alignment_bin(yusa_classification[[1]], c("perfect", "multi-target guides", "non-targeting"))
-write_csv(yusa_stratify_multi_target[[1]], "../data/sgrna_lfc_data/yusa_data/yusa_stratify_multi_target.csv")
-
-jacquere_stratify_multi_target <- multi_target_alignment_bin(jacquere_classification[[1]], c("perfect", "multi-target guides", "non-targeting"))
-write_csv(jacquere_stratify_multi_target[[1]], "../data/sgrna_lfc_data/jacquere_data/jacquere_stratify_multi_target.csv")
-
+avana_stratify_multi_target <- count_alignment_bin(avana_classification[[1]], c("perfect", "multi-target guides", "non-targeting"))
+brunello_stratify_multi_target <- count_alignment_bin(brunello_classification[[1]], c("perfect", "multi-target guides", "non-targeting"))
+toronto_stratify_multi_target <- count_alignment_bin(toronto_classification[[1]], c("perfect", "multi-target guides", "non-targeting"))
+yusa_stratify_multi_target <- count_alignment_bin(yusa_classification[[1]], c("perfect", "multi-target guides", "non-targeting"))
+jacquere_stratify_multi_target <- count_alignment_bin(jacquere_classification[[1]], c("perfect", "multi-target guides", "non-targeting"))
 
 ```
 
@@ -113,21 +109,11 @@ to investigate single-mismatch off-target alignment to cell fitness, we exclude 
 
 ```{r}
 
-avana_stratify_pam_distal_single_mismatch <- pam_single_mismatch_off_target_alignment_bin(avana_classification[[1]], c("perfect", "pam-distal single mismatch"))
-write_csv(avana_stratify_pam_distal_single_mismatch[[1]], "../data/sgrna_lfc_data/avana_data/avana_stratify_pam_distal_single_mismatch.csv")
-
-brunello_stratify_pam_distal_single_mismatch <- pam_single_mismatch_off_target_alignment_bin(brunello_classification[[1]], c("perfect", "pam-distal single mismatch"))
-write_csv(brunello_stratify_pam_distal_single_mismatch[[1]], "../data/sgrna_lfc_data/brunello_data/brunello_stratify_pam_distal_single_mismatch.csv")
-
-toronto_stratify_pam_distal_single_mismatch <- pam_single_mismatch_off_target_alignment_bin(toronto_classification[[1]], c("perfect", "pam-distal single mismatch"))
-write_csv(toronto_stratify_pam_distal_single_mismatch[[1]], "../data/sgrna_lfc_data/tkov3_data/tkov3_stratify_pam_distal_single_mismatch.csv")
-
-yusa_stratify_pam_distal_single_mismatch <- pam_single_mismatch_off_target_alignment_bin(yusa_classification[[1]], c("perfect", "pam-distal single mismatch"))
-write_csv(yusa_stratify_pam_distal_single_mismatch[[1]], "../data/sgrna_lfc_data/yusa_data/yusa_stratify_pam_distal_single_mismatch.csv")
-
-jacquere_stratify_pam_distal_single_mismatch <- pam_single_mismatch_off_target_alignment_bin(jacquere_classification[[1]], c("perfect", "pam-distal single mismatch"))
-write_csv(jacquere_stratify_pam_distal_single_mismatch[[1]], "../data/sgrna_lfc_data/jacquere_data/jacquere_stratify_pam_distal_single_mismatch.csv")
-
+avana_stratify_single_mismatch <- count_alignment_bin(avana_classification[[1]], c("perfect", "single mismatch", "pam-distal single mismatch"))
+brunello_stratify_single_mismatch <- count_alignment_bin(brunello_classification[[1]], c("perfect", "single mismatch", "pam-distal single mismatch"))
+toronto_stratify_single_mismatch <- count_alignment_bin(toronto_classification[[1]], c("perfect", "single mismatch", "pam-distal single mismatch"))
+yusa_stratify_single_mismatch <- count_alignment_bin(yusa_classification[[1]], c("perfect", "single mismatch", "pam-distal single mismatch"))
+jacquere_stratify_single_mismatch <- count_alignment_bin(jacquere_classification[[1]], c("perfect", "single mismatch", "pam-distal single mismatch"))
 
 ```
 
@@ -168,6 +154,8 @@ export_images(visualize_off_target_alignment(jacquere_stratify_multi_target[[2]]
               genome_type_version)
 
 # stratification of single mismatch sgRNAs
+
+avana_stratify_single_mismatch[[2]]
 
 export_images(visualize_off_target_alignment(avana_stratify_pam_distal_single_mismatch[[2]], "Number of PAM-distal \nsingle mismatch off-target alignments", aln_break_2 = 1, aln_break_1 = 0),
               "../figure/02_fig_analysis_paralog_off-target-sgrna/avana_stratification_pam_distal_single_mismatch_",

@@ -520,7 +520,8 @@ obtain_required_data <- function(library, normalized_lfc_data, stratification_da
   colnames(library) <- c("sgRNA", "spacer", "gene")
   
   normalized_lfc_data <- read_csv(normalized_lfc_data)
-  library_stratification <- stratification_data %>% select(sgRNA, alignment, num_alignments)
+  
+  library_stratification <- read_csv(stratification_data) %>% select(sgRNA, alignment, num_alignments)
   
   # left join
   library_lfc_data <- normalized_lfc_data %>%
@@ -556,7 +557,7 @@ calculate_wilcoxon_cles <- function(input_data, which_guides, which_guides_2) {
   cles
 }
 
-# FIXME: fix the visualize_two_group labelling of the boxplot is mixed up
+# FIXME: fix the statistics not showing up
 
 visualize_two_group <- function(library_lfc_data, boxplot_output_name) {
 
@@ -589,10 +590,10 @@ visualize_two_group <- function(library_lfc_data, boxplot_output_name) {
     scale_fill_manual(
       name = "sgRNA: ",
       values = c("perfect" = "#0072B2", 
-                 "multi-target guides" = "powderblue",
-                 "single mismatch" = "mistyrose",
-                 "pam-distal single mismatch" = "#E69F00"),
-      labels = c("On-target", "multi-target guides", "single mismatch", "pam-distal single mismatch")) +
+                 "single mismatch" = "powderblue",
+                 "pam-distal single mismatch" = "mistyrose",
+                 "multi-target guides" = "#E69F00"),
+      labels = c("On-target", "single mismatch", "pam-distal single mismatch", "multi-target guides")) +
     labs(title = "", 
          x = "", 
          y = "Averaged median sgRNA Log2FC",
@@ -625,11 +626,13 @@ visualize_two_group <- function(library_lfc_data, boxplot_output_name) {
       label = round(ymax, 2)   # or any custom label
     )
   
-  count <- library_lfc_data %>%
+  count <- combined_data %>%
     select(sgRNA, alignment, library) %>%
+    mutate(alignment = factor(alignment, levels = c("perfect", "single mismatch", "pam-distal single mismatch", "multi-target guides"))) %>%
     distinct() %>%
     group_by(library) %>%
-    count(alignment)
+    count(alignment) %>%
+    ungroup()
   
   count <- count %>% bind_cols(stats %>% select(x, ymin))
   

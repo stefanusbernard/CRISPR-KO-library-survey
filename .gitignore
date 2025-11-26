@@ -10,4 +10,5 @@
 *.out
 *.gtf
 old_plot/*
+data/cellecta_data/*
 .Rproj.user

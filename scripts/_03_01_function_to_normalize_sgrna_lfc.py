@@ -12,22 +12,19 @@ def normalize_column(col):
         return centered
     return centered / mad
 
-def import_common_essential():
-    common_essential = pd.read_csv('../data/sgrna_lfc_data/AchillesCommonEssentialControls_25Q2.csv')
-    common_essential[['gene', 'accession']] = common_essential['Gene'].str.split(' ', n = 1, expand = True)
-    common_essential = common_essential[['gene', 'accession']]
+# def import_common_essential():
+#     common_essential = pd.read_csv('../data/sgrna_lfc_data/AchillesCommonEssentialControls_25Q2.csv')
+#     common_essential[['gene', 'accession']] = common_essential['Gene'].str.split(' ', n = 1, expand = True)
+#     common_essential = common_essential[['gene', 'accession']]
 
-    list_common_essential = list(common_essential['gene'])
-    list_common_essential
-    return list_common_essential
+#     list_common_essential = list(common_essential['gene'])
+#     list_common_essential
+#     return list_common_essential
 
-# function to scaled LFC by the absolute average LFC value across cell lines for guides targeting essential genes (Achilles Common Essential Controls)
+# function to scaled LFC by the absolute average LFC value across cell lines for core essential genes by Traver Hart (2014) https://www.embopress.org/doi/full/10.15252/msb.20145216
 def scale_essential(df):
-    common_essential = pd.read_csv('../data/sgrna_lfc_data/AchillesCommonEssentialControls_25Q2.csv')
-    common_essential[['gene', 'accession']] = common_essential['Gene'].str.split(' ', n = 1, expand = True)
-    common_essential = common_essential[['gene', 'accession']]
-
-    list_common_essential = list(common_essential['gene'])
+    list_common_essential = pd.read_csv("../data/sgrna_lfc_data/constitutive_core_essential_hart_2014.csv", header=None)
+    list_common_essential = list(list_common_essential[0])
     list_common_essential
 
     # subset guides targeting essential genes

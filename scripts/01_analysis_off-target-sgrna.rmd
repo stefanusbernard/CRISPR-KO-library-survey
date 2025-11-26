@@ -20,6 +20,7 @@ library(RColorBrewer)
 library(UpSetR)
 library(gprofiler2)
 library(biomaRt)
+library(HGNChelper)
 source('~/CRISPR-KO-GuideRefine/GuideRefine_functions.R')
 source("00_CRISPR-KO-library-survey-functions.R")
 ```
@@ -239,8 +240,8 @@ main_df_percentage <- data.frame(library = c("brunello", "toronto_v3", "yusa", "
                             )
 
 failed_paralog_percentage <- main_df_percentage %>%
-  select(!c(total_percentage_failed_genes, total_percentage_failed_sgrna)) %>%
-  add_row(library = "overall", paralog = ensembl_paralog[[3]]$percentage[ensembl_paralog[[3]]$has_paralogs == TRUE], singleton = ensembl_paralog[[3]]$percentage[ensembl_paralog[[3]]$has_paralogs == FALSE]) %>%
+  dplyr::select(!c(total_percentage_failed_genes, total_percentage_failed_sgrna)) %>%
+  add_row(library = "overall", paralog = ensembl_paralog[[5]]$percentage[ensembl_paralog[[5]]$has_paralogs == TRUE], singleton = ensembl_paralog[[5]]$percentage[ensembl_paralog[[5]]$has_paralogs == FALSE]) %>%
   mutate(library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana", "jacquere", " ","overall"))) %>%
   pivot_longer(!library, names_to = "not_represented_genes", values_to = "percentage") %>% 
   mutate(not_represented_genes = factor(not_represented_genes, levels = c("singleton", "paralog"), labels = c("Singleton", "Paralog")))
@@ -265,7 +266,7 @@ removed_paralog <- ggplot(failed_paralog_percentage, aes(x = library, y = percen
                                      "jacquere" = "Jacquere",
                                      "overall" = "Overall")) +
         geom_text(aes(label = percentage), position = position_stack(vjust = 0.5), vjust = 0, size = 8) +
-        geom_hline(yintercept = ensembl_paralog[[3]]$percentage[ensembl_paralog[[3]]$has_paralogs == TRUE], linetype = "solid", color = "black", size = 0.5) +
+        geom_hline(yintercept = ensembl_paralog[[5]]$percentage[ensembl_paralog[[5]]$has_paralogs == TRUE], linetype = "solid", color = "black", size = 0.5) +
         theme(axis.text.x = element_text(size = 25, vjust = 0.7, colour = "black"),
               axis.text.y = element_text(size = 25, colour = "black"),
               axis.title.y = element_text(size = 25, vjust = 0.5, margin = margin(r = 20)),

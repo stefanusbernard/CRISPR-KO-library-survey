@@ -12,6 +12,7 @@ output:
 
 ```{r setup, include=FALSE}
 library(tidyverse)
+library(GenomicFeatures)
 library(BSgenome.Hsapiens.NCBI.T2TCHM13v2.0)
 
 source('~/CRISPR-KO-GuideRefine/GuideRefine_functions.R')
@@ -66,12 +67,85 @@ hgnc <- hgnc %>% filter(symbol %in% removed_genes_all_libraries)
 
 ```
 
+## Does the sequences are similar one another ?
+
+```{r}
+# Import the data of sgRNA library report
+
+terms <- c("CONTROL", "Control", "control", "INTRON", "Intron", "intron", "LacZ", "luciferase", "NO_SITE", "ONE_INTERGENIC_SITE")
+# lacZ and luciferase are the control in Toronto V3 library
+
+terms_for_filtering <- paste(terms, collapse = "|")
+
+brunello <- 'broadgpp-brunello-library-contents'
+toronto <- 'tkov3_guide_sequence'
+avana <- 'avana_library'
+yusa <- 'yusa_hcrispr_ko_grnas'
+jacquere <- 'Jacquere_PerGuideAnnotations_Quota4'
+
+import_report_without_control <- function(file_dir, control_terms) {
+  
+  data <- read_excel(paste(file_dir))
+  data <- data %>% filter(!str_detect(gene, terms_for_filtering))
+  return(data)
+  
+}
+
+brunello_report <- import_report_without_control(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', brunello, '_full_report.xlsx'))
+toronto_report <- import_report_without_control(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', toronto, '_full_report.xlsx'))
+avana_report <- import_report_without_control(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', avana, '_full_report.xlsx'))
+yusa_report <- import_report_without_control(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', yusa, '_full_report.xlsx'))
+jacquere_report <- import_report_without_control(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', jacquere, '_full_report.xlsx'))
+
+
+brunello_report <- brunello_report %>% filter(gene %in% removed_genes_all_libraries) %>% mutate(library = "brunello")
+toronto_report <- toronto_report %>% filter(gene %in% removed_genes_all_libraries) %>% mutate(library = "toronto")
+avana_report <- avana_report %>% filter(gene %in% removed_genes_all_libraries) %>% mutate(library = "avana")
+yusa_report <- yusa_report %>% filter(gene %in% removed_genes_all_libraries) %>% mutate(library = "yusa")
+jacquere_report <- jacquere_report %>% filter(gene %in% removed_genes_all_libraries) %>% mutate(library = "jacquere")
+
+combined_report <- rbind(brunello_report, toronto_report, avana_report, yusa_report, jacquere_report) 
+
+
+
+
+```
+
+
 ## Does genes size is small ?
 
 ```{r}
 
-gene_annot_granges <- readRDS(file = "~/CRISPR-KO-GuideRefine/annotation_file/T2T-CHM13v2.0_gene_annot_granges.rds")
+# T2T_txdb <- makeTxDbFromGFF(file = "~/CRISPR-KO-GuideRefine/annotation_file/GCF_009914755.1_T2T-CHM13v2.0_genomic.gff.gz",
+#                             dataSource = "NCBI T2T Assembly GCF_009914755.1_T2T-CHM13v2.0",
+#                             organism = "Homo sapiens")
+
+T2T_txdb <- loadDb("../data/T2T_data/TxDb_CHM13.sqlite")
+columns(T2T_txdb)
+
+# Extract gene coordinates
+genes_gr <- genes(T2T_txdb)
+
+# Filter for your list
+genes_gr <- genes_gr[names(genes_gr) %in% removed_genes_all_libraries]
+
+genes_gr$span_length <- width(genes_gr)
+
+test <- as.data.frame(genes_gr)
 
 ```
 
-## Does genes located in a repeat sequences ?
+
+
+
+
+
+
+
+
+
+
+
+
+
+

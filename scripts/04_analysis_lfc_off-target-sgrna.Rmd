@@ -12,8 +12,6 @@ output:
 
 ```{r setup, include=FALSE}
 library(tidyverse)
-library(VennDiagram)
-library(ggvenn)
 library(ggbreak)
 library(clinfun)
 library(ggsignif)
@@ -25,35 +23,58 @@ source('~/CRISPR-KO-GuideRefine/GuideRefine_functions.R')
 source("./00_CRISPR-KO-library-survey-functions.R")
 ```
 
+# Import alignment classification from each libraries
+
+```{r}
+
+pick_alignment_type <- function(classification_data, alignment_type) {
+  data <- read_csv(classification_data) %>%
+    filter(alignment %in% alignment_type)
+  
+  return(data)
+}
+
+avana_classification <- pick_alignment_type("../data/sgrna_lfc_data/avana_data/avana_sgrna_alignment_classification.csv", c("perfect", "multi-target guides", "single mismatch", "pam-distal single mismatch"))
+
+tkov3_classification <- pick_alignment_type("../data/sgrna_lfc_data/tkov3_data/tkov3_sgrna_alignment_classification.csv", c("perfect", "multi-target guides", "single mismatch", "pam-distal single mismatch"))
+
+yusa_classification <- pick_alignment_type("../data/sgrna_lfc_data/yusa_data/yusa_sgrna_alignment_classification.csv", c("perfect", "multi-target guides", "single mismatch", "pam-distal single mismatch"))
+
+brunello_classification <- pick_alignment_type("../data/sgrna_lfc_data/brunello_data/brunello_sgrna_alignment_classification.csv", c("perfect", "multi-target guides", "single mismatch", "pam-distal single mismatch"))
+
+jacquere_classification <- pick_alignment_type("../data/sgrna_lfc_data/jacquere_data/jacquere_sgrna_alignment_classification.csv", c("perfect", "multi-target guides", "single mismatch", "pam-distal single mismatch"))
+
+```
+
 # Bind every library into one single plot
 
 ```{r}
 
-avana_library_and_lfc_data <- obtain_required_data("../data/library_data/avana_library.tsv", 
+avana_library_and_lfc_data <- obtain_required_data("../data/library_data/avana_library.tsv",
                                                    "../data/sgrna_lfc_data/output_normalized/avana_normalized_lfc.csv", 
-                                                   "../data/sgrna_lfc_data/avana_data/avana_stratify_pam_distal_single_mismatch.csv")
+                                                   avana_classification)
 
 tkov3_library_and_lfc_data <- obtain_required_data("../data/library_data/tkov3_guide_sequence.tsv", 
                                                    "../data/sgrna_lfc_data/output_normalized/tkov3_rpe1_normalized_lfc.csv", 
-                                                   "../data/sgrna_lfc_data/tkov3_data/tkov3_stratify_pam_distal_single_mismatch.csv")
+                                                   tkov3_classification)
 
 yusa_library_and_lfc_data <- obtain_required_data("../data/library_data/yusa_hcrispr_ko_grnas.tsv", 
                                                  "../data/sgrna_lfc_data/output_normalized/yusa_normalized_lfc.csv", 
-                                                 "../data/sgrna_lfc_data/yusa_data/yusa_stratify_pam_distal_single_mismatch.csv")
+                                                 yusa_classification)
 
 brunello_library_and_lfc_data <- obtain_required_data("../data/library_data/broadgpp-brunello-library-contents.tsv", 
                                                      "../data/sgrna_lfc_data/output_normalized/brunello_a375_normalized_lfc.csv", 
-                                                     "../data/sgrna_lfc_data/brunello_data/brunello_stratify_pam_distal_single_mismatch.csv")
+                                                     brunello_classification)
 
 jacquere_library_and_lfc_data <- obtain_required_data("../data/library_data/Jacquere_PerGuideAnnotations_Quota4.tsv", 
                                                      "../data/sgrna_lfc_data/output_normalized/jacquere_normalized_lfc.csv", 
-                                                     "../data/sgrna_lfc_data/jacquere_data/jacquere_stratify_pam_distal_single_mismatch.csv")
+                                                     jacquere_classification)
 
-avana_library_and_lfc_data[[1]] <- avana_library_and_lfc_data[[1]] %>% mutate(library = "avana") 
-tkov3_library_and_lfc_data[[1]] <- tkov3_library_and_lfc_data[[1]] %>% mutate(library = "toronto_v3") 
-yusa_library_and_lfc_data[[1]] <- yusa_library_and_lfc_data[[1]] %>% mutate(library = "yusa") 
-brunello_library_and_lfc_data[[1]] <- brunello_library_and_lfc_data[[1]] %>% mutate(library = "brunello") 
-jacquere_library_and_lfc_data[[1]] <- jacquere_library_and_lfc_data[[1]] %>% mutate(library = "jacquere") 
+avana_library_and_lfc_data <- avana_library_and_lfc_data %>% mutate(library = "avana") %>% drop_na()
+tkov3_library_and_lfc_data <- tkov3_library_and_lfc_data %>% mutate(library = "toronto_v3") %>% drop_na()
+yusa_library_and_lfc_data <- yusa_library_and_lfc_data %>% mutate(library = "yusa") %>% drop_na()
+brunello_library_and_lfc_data <- brunello_library_and_lfc_data %>% mutate(library = "brunello") %>% drop_na()
+jacquere_library_and_lfc_data <- jacquere_library_and_lfc_data %>% mutate(library = "jacquere") %>% drop_na()
 
 ```
 
@@ -61,7 +82,7 @@ jacquere_library_and_lfc_data[[1]] <- jacquere_library_and_lfc_data[[1]] %>% mut
 
 ```{r}
 
-calculate_wilcoxon_cliff(jacquere_library_and_lfc_data, "pam-distal single mismatch")
+calculate_wilcoxon_cles(jacquere_library_and_lfc_data, "single mismatch", "perfect")
 
 ```
 
@@ -70,19 +91,17 @@ calculate_wilcoxon_cliff(jacquere_library_and_lfc_data, "pam-distal single misma
 ```{r}
 source("./00_CRISPR-KO-library-survey-functions.R")
 
-combined_data <- rbind(avana_library_and_lfc_data[[1]], 
-                       tkov3_library_and_lfc_data[[1]], 
-                       yusa_library_and_lfc_data[[1]], 
-                       brunello_library_and_lfc_data[[1]], 
-                       jacquere_library_and_lfc_data[[1]])
+combined_data <- rbind(avana_library_and_lfc_data, 
+                       tkov3_library_and_lfc_data, 
+                       yusa_library_and_lfc_data, 
+                       brunello_library_and_lfc_data, 
+                       jacquere_library_and_lfc_data)
 
 combined_data <- combined_data %>% mutate(library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana", "jacquere")))
 
 
 visualize_two_group(combined_data, 
-                    "../figure/03_fig_analysis_lfc_off-target-sgrna/combined_library_pam_distal_single_mismatch.png",
-                    "pam-distal single mismatch",
-                    "PAM-distal single mismatch guides")
+                    "../figure/03_fig_analysis_lfc_off-target-sgrna/test.png")
 
 ```
 
