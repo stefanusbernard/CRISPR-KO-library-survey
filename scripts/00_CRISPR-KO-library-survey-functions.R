@@ -246,6 +246,8 @@ off_target_classification <- function(library_alignment, pam_distal_single_misma
 }
 
 
+# the reason why we put count_alignment_bin as separate function is because multi-target guides and single mismatch guides
+# are different in terms of alignment bin visualization
 
 count_alignment_bin <- function(classification_alignment, alignment_type) {
   
@@ -521,7 +523,7 @@ obtain_required_data <- function(library, normalized_lfc_data, stratification_da
   
   normalized_lfc_data <- read_csv(normalized_lfc_data)
   
-  library_stratification <- read_csv(stratification_data) %>% select(sgRNA, alignment, num_alignments)
+  library_stratification <- stratification_data %>% select(sgRNA, alignment, num_alignments, alignment_bin)
   
   # left join
   library_lfc_data <- normalized_lfc_data %>%
@@ -540,7 +542,8 @@ obtain_required_data <- function(library, normalized_lfc_data, stratification_da
   
   library_lfc <- library_lfc_data %>%
     filter(!str_detect(gene, terms_for_filtering)) %>%
-    left_join(library_stratification, join_by(sgRNA))
+    left_join(library_stratification, join_by(sgRNA)) %>%
+    drop_na()
   
   return(library_lfc)
 }
@@ -573,15 +576,15 @@ visualize_two_group <- function(library_lfc_data, boxplot_output_name) {
                            fill = "alignment",
                            facet.by = "library",
                            outliers = FALSE) +
-    stat_compare_means(comparisons = list(c("pam-distal single mismatch", "single mismatch"), 
-                                          c("pam-distal single mismatch", "perfect"), 
-                                          c("pam-distal single mismatch", "multi-target guides"),
+    stat_compare_means(comparisons = list(c("perfect", "single mismatch"), 
+                                          c("perfect", "pam-distal single mismatch"), 
+                                          c("perfect", "multi-target guides"),
+                                          c("single mismatch", "pam-distal single mismatch"),
                                           c("single mismatch", "multi-target guides"),
-                                          c("single mismatch", "perfect"),
-                                          c("multi-target guides", "perfect")),
+                                          c("pam-distal single mismatch", "multi-target guides")),
                        method = "wilcox.test",
-                       method.args = list(alternative = "two-sided"),
-                       size = 3.5,
+                       method.args = list(alternative = "two.sided"),
+                       size = 2.5,
                        step.increase = 0.05,
                        tip.length = 0.01,
                        label = "p.format",
@@ -643,7 +646,7 @@ visualize_two_group <- function(library_lfc_data, boxplot_output_name) {
                                   angle = 45,
                                   vjust = 0,
                                   hjust = 0.5,
-                                  size = 3
+                                  size = 2.5
                                 )
                               
   ggsave(
@@ -692,11 +695,12 @@ visualize_stratify_alignment <- function(library_lfc_data, label_x, boxplot_outp
     geom_text(
       data = annotation_df,
       aes(x = alignment_bin, y = boxplot_whisker + 0.1, label = paste0("n= ", n)),
-      size = 4,
+      size = 3.5,
       angle = 45,
       vjust = -0.2,
       hjust = -0.2
-    )
+    ) +
+    coord_cartesian(clip = "off")
   
   ggsave(
     path = './',

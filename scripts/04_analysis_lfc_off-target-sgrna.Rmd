@@ -27,22 +27,27 @@ source("./00_CRISPR-KO-library-survey-functions.R")
 
 ```{r}
 
-pick_alignment_type <- function(classification_data, alignment_type) {
+pick_alignment_type <- function(classification_data, alignment_type, stratification_data) {
   data <- read_csv(classification_data) %>%
     filter(alignment %in% alignment_type)
   
   return(data)
 }
 
-avana_classification <- pick_alignment_type("../data/sgrna_lfc_data/avana_data/avana_sgrna_alignment_classification.csv", c("perfect", "multi-target guides", "single mismatch", "pam-distal single mismatch"))
+avana_classification <- pick_alignment_type("../data/sgrna_lfc_data/avana_data/avana_sgrna_alignment_classification.csv", c("perfect", "multi-target guides", "non-targeting"))
+avana_classification <- count_alignment_bin(avana_classification, c("perfect", "multi-target guides", "non-targeting"))
 
-tkov3_classification <- pick_alignment_type("../data/sgrna_lfc_data/tkov3_data/tkov3_sgrna_alignment_classification.csv", c("perfect", "multi-target guides", "single mismatch", "pam-distal single mismatch"))
+tkov3_classification <- pick_alignment_type("../data/sgrna_lfc_data/tkov3_data/tkov3_sgrna_alignment_classification.csv", c("perfect", "multi-target guides", "non-targeting"))
+tkov3_classification <- count_alignment_bin(tkov3_classification, c("perfect", "multi-target guides", "non-targeting"))
 
-yusa_classification <- pick_alignment_type("../data/sgrna_lfc_data/yusa_data/yusa_sgrna_alignment_classification.csv", c("perfect", "multi-target guides", "single mismatch", "pam-distal single mismatch"))
+yusa_classification <- pick_alignment_type("../data/sgrna_lfc_data/yusa_data/yusa_sgrna_alignment_classification.csv", c("perfect", "multi-target guides", "non-targeting"))
+yusa_classification <- count_alignment_bin(yusa_classification, c("perfect", "multi-target guides", "non-targeting"))
 
-brunello_classification <- pick_alignment_type("../data/sgrna_lfc_data/brunello_data/brunello_sgrna_alignment_classification.csv", c("perfect", "multi-target guides", "single mismatch", "pam-distal single mismatch"))
+brunello_classification <- pick_alignment_type("../data/sgrna_lfc_data/brunello_data/brunello_sgrna_alignment_classification.csv", c("perfect", "multi-target guides", "non-targeting"))
+brunello_classification <- count_alignment_bin(brunello_classification, c("perfect", "multi-target guides", "non-targeting"))
 
-jacquere_classification <- pick_alignment_type("../data/sgrna_lfc_data/jacquere_data/jacquere_sgrna_alignment_classification.csv", c("perfect", "multi-target guides", "single mismatch", "pam-distal single mismatch"))
+jacquere_classification <- pick_alignment_type("../data/sgrna_lfc_data/jacquere_data/jacquere_sgrna_alignment_classification.csv", c("perfect", "multi-target guides", "non-targeting"))
+jacquere_classification <- count_alignment_bin(jacquere_classification, c("perfect", "multi-target guides", "non-targeting"))
 
 ```
 
@@ -52,23 +57,23 @@ jacquere_classification <- pick_alignment_type("../data/sgrna_lfc_data/jacquere_
 
 avana_library_and_lfc_data <- obtain_required_data("../data/library_data/avana_library.tsv",
                                                    "../data/sgrna_lfc_data/output_normalized/avana_normalized_lfc.csv", 
-                                                   avana_classification)
+                                                   avana_classification[[1]])
 
 tkov3_library_and_lfc_data <- obtain_required_data("../data/library_data/tkov3_guide_sequence.tsv", 
                                                    "../data/sgrna_lfc_data/output_normalized/tkov3_rpe1_normalized_lfc.csv", 
-                                                   tkov3_classification)
+                                                   tkov3_classification[[1]])
 
 yusa_library_and_lfc_data <- obtain_required_data("../data/library_data/yusa_hcrispr_ko_grnas.tsv", 
                                                  "../data/sgrna_lfc_data/output_normalized/yusa_normalized_lfc.csv", 
-                                                 yusa_classification)
+                                                 yusa_classification[[1]])
 
 brunello_library_and_lfc_data <- obtain_required_data("../data/library_data/broadgpp-brunello-library-contents.tsv", 
                                                      "../data/sgrna_lfc_data/output_normalized/brunello_a375_normalized_lfc.csv", 
-                                                     brunello_classification)
+                                                     brunello_classification[[1]])
 
 jacquere_library_and_lfc_data <- obtain_required_data("../data/library_data/Jacquere_PerGuideAnnotations_Quota4.tsv", 
                                                      "../data/sgrna_lfc_data/output_normalized/jacquere_normalized_lfc.csv", 
-                                                     jacquere_classification)
+                                                     jacquere_classification[[1]])
 
 avana_library_and_lfc_data <- avana_library_and_lfc_data %>% mutate(library = "avana") %>% drop_na()
 tkov3_library_and_lfc_data <- tkov3_library_and_lfc_data %>% mutate(library = "toronto_v3") %>% drop_na()
@@ -109,11 +114,13 @@ visualize_two_group(combined_data,
 
 ```{r}
 
-visualize_stratify_alignment(avana_library_and_lfc_data[[2]], "number of PAM-distal single mismatch \noff-target alignment", "../figure/03_fig_analysis_lfc_off-target-sgrna/avana_pam_distal_single_mismatch.png")
-visualize_stratify_alignment(tkov3_library_and_lfc_data[[2]], "number of PAM-distal single mismatch \noff-target alignment", "../figure/03_fig_analysis_lfc_off-target-sgrna/tkov3_pam_distal_single_mismatch.png")
-visualize_stratify_alignment(brunello_library_and_lfc_data[[2]], "number of PAM-distal single mismatch \noff-target alignment", "../figure/03_fig_analysis_lfc_off-target-sgrna/brunello_pam_distal_single_mismatch.png")
-visualize_stratify_alignment(yusa_library_and_lfc_data[[2]], "number of PAM-distal single mismatch \noff-target alignment", "../figure/03_fig_analysis_lfc_off-target-sgrna/yusa_pam_distal_single_mismatch.png")
-visualize_stratify_alignment(jacquere_library_and_lfc_data[[2]], "number of PAM-distal single mismatch \noff-target alignment", "../figure/03_fig_analysis_lfc_off-target-sgrna/jacquere_pam_distal_single_mismatch.png")
+source("./00_CRISPR-KO-library-survey-functions.R")
+
+visualize_stratify_alignment(avana_library_and_lfc_data, "number of perfect on-target alignment", "../figure/03_fig_analysis_lfc_off-target-sgrna/avana_multi_target.png")
+visualize_stratify_alignment(tkov3_library_and_lfc_data, "number of perfect on-target alignment", "../figure/03_fig_analysis_lfc_off-target-sgrna/tkov3_multi_target.png")
+visualize_stratify_alignment(brunello_library_and_lfc_data, "number of perfect on-target alignment", "../figure/03_fig_analysis_lfc_off-target-sgrna/brunello_multi_target.png")
+visualize_stratify_alignment(yusa_library_and_lfc_data, "number of perfect on-target alignment", "../figure/03_fig_analysis_lfc_off-target-sgrna/yusa_multi_target.png")
+visualize_stratify_alignment(jacquere_library_and_lfc_data, "number of perfect on-target alignment", "../figure/03_fig_analysis_lfc_off-target-sgrna/jacquere_multi_target.png")
 
 ```
 

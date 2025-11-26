@@ -48,11 +48,11 @@ import_report_without_control <- function(file_dir, control_terms) {
   
 }
 
-brunello_report <- import_report_without_control(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', brunello, '_full_report.xlsx'))
-toronto_report <- import_report_without_control(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', toronto, '_full_report.xlsx'))
-avana_report <- import_report_without_control(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', avana, '_full_report.xlsx'))
-yusa_report <- import_report_without_control(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', yusa, '_full_report.xlsx'))
-jacquere_report <- import_report_without_control(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', jacquere, '_full_report.xlsx'))
+brunello_report <- import_report_without_control(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/old_result_without_single_mismatch/', brunello, '_full_report.xlsx'))
+toronto_report <- import_report_without_control(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/old_result_without_single_mismatch/', toronto, '_full_report.xlsx'))
+avana_report <- import_report_without_control(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/old_result_without_single_mismatch/', avana, '_full_report.xlsx'))
+yusa_report <- import_report_without_control(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/old_result_without_single_mismatch/', yusa, '_full_report.xlsx'))
+jacquere_report <- import_report_without_control(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/old_result_without_single_mismatch/', jacquere, '_full_report.xlsx'))
 
 ```
 
@@ -79,11 +79,11 @@ avana_multi_target <- round(calculate_percentage(avana_report, "multi-target sgR
 yusa_multi_target <- round(calculate_percentage(yusa_report, "multi-target sgRNA", "sgRNA number"), 2)
 jacquere_multi_target <- round(calculate_percentage(jacquere_report, "multi-target sgRNA", "sgRNA number"), 2)
 
-brunello_pam_distal_single <- round(calculate_percentage(brunello_report, "PAM distal single mismatch", "sgRNA number"), 2)
-toronto_pam_distal_single <- round(calculate_percentage(toronto_report, "PAM distal single mismatch", "sgRNA number"), 2)
-avana_pam_distal_single <- round(calculate_percentage(avana_report, "PAM distal single mismatch", "sgRNA number"), 2)
-yusa_pam_distal_single <- round(calculate_percentage(yusa_report, "PAM distal single mismatch", "sgRNA number"), 2)
-jacquere_pam_distal_single <- round(calculate_percentage(jacquere_report, "PAM distal single mismatch", "sgRNA number"), 2)
+brunello_single_mismatch <- round(calculate_percentage(brunello_report, "single mismatch sgRNA", "sgRNA number"), 2)
+toronto_single_mismatch <- round(calculate_percentage(toronto_report, "single mismatch sgRNA", "sgRNA number"), 2)
+avana_single_mismatch <- round(calculate_percentage(avana_report, "single mismatch sgRNA", "sgRNA number"), 2)
+yusa_single_mismatch <- round(calculate_percentage(yusa_report, "single mismatch sgRNA", "sgRNA number"), 2)
+jacquere_single_mismatch <- round(calculate_percentage(jacquere_report, "single mismatch sgRNA", "sgRNA number"), 2)
 
 brunello_pam_distal_double <- round(calculate_percentage(brunello_report, "PAM distal double mismatch", "sgRNA number"), 2)
 toronto_pam_distal_double <- round(calculate_percentage(toronto_report, "PAM distal double mismatch", "sgRNA number"), 2)
@@ -94,20 +94,20 @@ jacquere_pam_distal_double <- round(calculate_percentage(jacquere_report, "PAM d
 # Create dataframe for multi-target, single-mismatch, and pam-distal from all library
 
 multi_target <- c(brunello_multi_target, toronto_multi_target, yusa_multi_target, avana_multi_target, jacquere_multi_target)
-pam_distal_single <- c(brunello_pam_distal_single, toronto_pam_distal_single, yusa_pam_distal_single, avana_pam_distal_single, jacquere_pam_distal_single)
+single_mismatch <- c(brunello_single_mismatch, toronto_single_mismatch, yusa_single_mismatch, avana_single_mismatch, jacquere_single_mismatch)
 pam_distal_double <- c(brunello_pam_distal_double, toronto_pam_distal_double, yusa_pam_distal_double, avana_pam_distal_double, jacquere_pam_distal_double)
 
 library <- c("brunello", "toronto_v3", "yusa", "avana", "jacquere")
 factor <- c(1,2,3,4,5)
 
-sum_dataframe <- data.frame(library, multi_target, pam_distal_single, pam_distal_double)
+sum_dataframe <- data.frame(library, multi_target, single_mismatch, pam_distal_double)
 
 # Reorder the library factor to ensure the bars are ordered as Brunello, Toronto, Yusa, Avana
 sum_dataframe_long <- sum_dataframe %>%
-    pivot_longer(cols = c("multi_target", "pam_distal_single", "pam_distal_double"), 
+    pivot_longer(cols = c("multi_target", "single_mismatch", "pam_distal_double"), 
                  names_to = "category", 
                  values_to = "percentage") %>%
-    mutate(category = factor(category, levels = c("multi_target", "pam_distal_single", "pam_distal_double")),
+    mutate(category = factor(category, levels = c("multi_target", "single_mismatch", "pam_distal_double")),
            library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana", "jacquere")))
 
 
@@ -121,7 +121,7 @@ multi_bar_chart <- ggplot(sum_dataframe_long, aes(x = category, y = percentage, 
     theme_minimal() +
     labs(title = "", x = "", y = "sgRNA (%)") +
     scale_x_discrete(labels = c('multi_target' = 'Multi-target sgRNA',
-                                'pam_distal_single' = 'PAM distal \n single mismatch sgRNA',
+                                'single_mismatch' = 'Single mismatch sgRNA',
                                 'pam_distal_double' = 'PAM distal \n double mismatch sgRNA')) +
     geom_text(aes(label = percentage), position = position_dodge2(width = 0.7), vjust = -0.5, size = 6.5) +
     theme(axis.text.x = element_text(size = 25, vjust = 0.7, colour = "black"),
@@ -303,7 +303,7 @@ ggsave(
 my_palette <- brewer.pal(n = 5, name = "Set2")
 
 failed_genes_percentage <- main_df_percentage %>%
-  select(-c(paralog, singleton)) %>%
+  dplyr::select(-c(paralog, singleton)) %>%
   mutate(library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana", "jacquere")))
 
 percentage_bar_chart <- ggplot(failed_genes_percentage, aes(x = library, y = total_percentage_failed_genes, fill = library)) +
@@ -359,7 +359,7 @@ ggsave(
 my_palette <- brewer.pal(n = 5, name = "Set2")
 
 failed_sgrna_percentage <- main_df_percentage %>%
-  select(-c(paralog, singleton, total_percentage_failed_genes)) %>%
+  dplyr::select(-c(paralog, singleton, total_percentage_failed_genes)) %>%
   mutate(library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana", "jacquere")))
 
 percentage_bar_chart <- ggplot(failed_sgrna_percentage, aes(x = library, y = total_percentage_failed_sgrna, fill = library)) +

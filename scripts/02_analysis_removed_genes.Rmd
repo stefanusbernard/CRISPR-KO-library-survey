@@ -39,16 +39,16 @@ removed_gene_list_combined <- list(
   Jacquere = na.omit(removed_genes[["jacquere_removed_genes_all"]])
 )
 
-# png("../figure/01_fig_analysis_off-target-sgrna/removed_genes_all_libraries.png", width = 12000, height = 7500, res = 1000)
-# 
-# par(mar = c(5, 20, 4, 2)) 
-# upset(fromList(removed_gene_list_combined), 
-#       order.by = "degree",
-#       main.bar.color = "#4B0092",
-#       sets.bar.color = "#1AFF1A",
-#       text.scale = 1.5)
-# 
-# dev.off()
+png("../figure/01_fig_analysis_off-target-sgrna/removed_genes_all_libraries.png", width = 12000, height = 7500, res = 1000)
+
+par(mar = c(5, 20, 4, 2))
+upset(fromList(removed_gene_list_combined),
+      order.by = "degree",
+      main.bar.color = "#4B0092",
+      sets.bar.color = "#1AFF1A",
+      text.scale = 1.5)
+
+dev.off()
 
 ```
 

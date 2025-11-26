@@ -5,56 +5,49 @@ library(BSgenome.Hsapiens.NCBI.T2TCHM13v2.0)
 source("./00_CRISPR-KO-library-survey-functions.R")
 source('~/CRISPR-KO-GuideRefine/GuideRefine_functions.R')
 
-pick_alignment_type <- function(classification_data, alignment_type) {
-  data <- read_csv(classification_data) %>%
-    filter(alignment %in% alignment_type)
+
+dataset_ensembl <- "../data/paralog_data/ensembl_115_human_paralogs.txt"
+dataset_hgnc <- "https://storage.googleapis.com/public-download-files/hgnc/tsv/tsv/hgnc_complete_set.txt"
   
-  return(data)
-}
+# retrieve ensembl_paralog from ENSEMBL 115
 
-avana_classification <- pick_alignment_type("../data/sgrna_lfc_data/avana_data/avana_sgrna_alignment_classification.csv", c("perfect", "multi-target guides", "single mismatch", "pam-distal single mismatch"))
+ensembl_paralog <- read_csv(dataset_ensembl) %>%
+  drop_na() %>%
+  mutate(gene_pair = paste(`Gene name`, "_", `Human paralogue associated gene name`, sep = "")) %>%
+  dplyr::rename(ensembl_gene_id = `Gene stable ID`) %>%
+  dplyr::select(-`Gene stable ID version`) %>%
+  distinct()
 
+gene_pair <- unique(ensembl_paralog$gene_pair)
+gene_list <- unique(ensembl_paralog$`Gene name`)
 
+# HGNC data, select protein-coding gene that has ensembl_gene_id
+# barbara filtered the data by using locus_type == "gene with protein product", our approach is using locus_group
+# if we select locus_group == "protein-coding gene", the locus_type is unique for "gene with protein product"
 
+hgnc <- read_tsv(dataset_hgnc)
 
-obtain_required_data <- function(library, normalized_lfc_data, stratification_data) {
+hgnc_protein_coding <- hgnc %>%
+  filter(locus_group == "protein-coding gene" & !is.na(ensembl_gene_id)) %>%
+  dplyr::select(symbol, locus_group, ensembl_gene_id)
+
+# ENSEMBL gene ID that has paralogs
+
+ensembl_paralog <- ensembl_paralog %>%
+  mutate(has_paralogs = TRUE) %>%
+  dplyr::select(ensembl_gene_id, has_paralogs) %>%
+  distinct()
+
+ensembl_singleton <- hgnc_protein_coding %>%
+  left_join(ensembl_paralog, join_by(ensembl_gene_id)) %>%
+  mutate(has_paralogs = replace_na(has_paralogs, FALSE)) %>%
+  filter(has_paralogs == FALSE)
+
+count_paralog_singleton <- hgnc_protein_coding %>%
+  left_join(ensembl_paralog, join_by(ensembl_gene_id)) %>%
+  mutate(has_paralogs = replace_na(has_paralogs, FALSE)) %>%
+  count(has_paralogs) %>%
+  dplyr::rename("number_of_genes" = "n") %>%
+  mutate(percentage = round(number_of_genes / sum(number_of_genes) * 100, 2))
   
-  library <- read_tsv(library, col_names = FALSE)
-  colnames(library) <- c("sgRNA", "spacer", "gene")
   
-  normalized_lfc_data <- read_csv(normalized_lfc_data)
-  library_stratification <- stratification_data %>% select(sgRNA, alignment, num_alignments)
-  
-  # left join
-  library_lfc_data <- normalized_lfc_data %>%
-    left_join(library, by = c("sgRNA", "spacer", "gene")) %>%
-    relocate(sgRNA, .before = spacer) %>%
-    relocate(gene, .after = spacer) %>%
-    arrange(sgRNA)
-  
-  terms <- c("CONTROL", "Control", "control", "INTRON", "Intron", "intron", "LacZ", "luciferase")
-  # lacZ and luciferase are the control in Toronto V3 library
-  terms_for_filtering <- paste(terms, collapse = "|")
-  
-  # separate control from the library
-  
-  control_lfc_data <- library_lfc_data %>% filter(str_detect(gene, terms_for_filtering))
-  
-  library_lfc <- library_lfc_data %>%
-    filter(!str_detect(gene, terms_for_filtering)) %>%
-    left_join(library_stratification, join_by(sgRNA))
-}
-
-avana_library_and_lfc_data <- obtain_required_data("../data/library_data/avana_library.tsv",
-                                                   "../data/sgrna_lfc_data/output_normalized/avana_normalized_lfc.csv", 
-                                                   avana_classification)
-
-
-
-count <- combined_data %>%
-  select(sgRNA, alignment, library) %>%
-  mutate(alignment = factor(alignment, levels = c("perfect", "single mismatch", "pam-distal single mismatch", "multi-target guides"))) %>%
-  distinct() %>%
-  group_by(library) %>%
-  count(alignment) %>%
-  ungroup()
