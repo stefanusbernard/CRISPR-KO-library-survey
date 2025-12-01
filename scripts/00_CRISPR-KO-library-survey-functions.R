@@ -97,11 +97,41 @@ calculate_percentage <- function(library_report, discarded_sgrna, original_sgrna
   return(percentage_discarded)
 }
 
-import_library <- function(lib_dir){
-  library <- read_tsv(lib_dir, col_names = FALSE)
-  colnames(library) <- c("sgrna", "spacer", "gene")
+import_and_process_report <- function(file_dir, control_terms) {
   
-  return(library)
+  report <- read_excel(paste(file_dir))
+  report <- report %>% filter(!str_detect(gene, terms_for_filtering))
+  
+  # we noted that our pipeline also removed sgRNAs targeting non protein-coding genes like lncRNA and else, but in this study we focus our investigation to the protein-coding genes
+  # protein-coding genes are defined as gene with protein product by HGNC
+  
+  dataset_hgnc <- "https://storage.googleapis.com/public-download-files/hgnc/tsv/tsv/hgnc_complete_set.txt"
+  # to match with paralog investigation later, we obtained protein-coding genes defined by HGNC with established ENSEMBL Gene ID
+  hgnc_protein_coding <- read_tsv(dataset_hgnc) %>%
+    filter(locus_group == "protein-coding gene" & !is.na(ensembl_gene_id)) %>%
+    dplyr::select(symbol, locus_group, ensembl_gene_id)
+  
+  # first we convert the failed and passed genes in the report from all libraries (except not counted/symbol change)
+  # by checkGeneSymbols and update it to a suggested approved symbol
+  report <- report %>%
+    filter(`quality check` %in% c("fail", "pass"))
+  
+  # and then we filtered the failed and passed genes if they are protein-coding genes defined by HGNC database
+  report_check_gene_symbol <- checkGeneSymbols(report$gene) %>% dplyr::rename("gene" = "x")
+  
+  # left join the report_check_gene_symbol with the report hence we get the approved gene symbol name
+  report <- report %>%
+    left_join(report_check_gene_symbol, join_by(gene)) %>%
+    dplyr::rename("gene_hgnc" = "Suggested.Symbol") %>%
+    mutate(gene_hgnc = if_else(is.na(gene_hgnc), gene, gene_hgnc)) %>%
+    relocate(Approved, .after = gene) %>%
+    relocate(gene_hgnc, .after = Approved) %>%
+    distinct() %>%
+    # only select the gene that is defined as protein-coding gene by HGNC data
+    filter(gene_hgnc %in% hgnc_protein_coding$symbol)
+  
+  return(report)
+  
 }
 
 percentages_and_list_genes <- function(report, list_paralog) {
@@ -109,17 +139,11 @@ percentages_and_list_genes <- function(report, list_paralog) {
   # pull only the gene list for failed and passed genes
   failed_genes <- report %>%
     filter(`quality check` == "fail") %>%
-    pull(gene)
-  
-  failed_genes <- checkGeneSymbols(failed_genes)
-  failed_genes <- failed_genes %>%  mutate(Suggested.Symbol = if_else(is.na(Suggested.Symbol), x, Suggested.Symbol)) %>% pull(Suggested.Symbol)
-  
+    pull(gene_hgnc)
+
   passed_genes <- report %>%
     filter(`quality check` == "pass") %>%
-    pull(gene)
-  
-  passed_genes <- checkGeneSymbols(passed_genes)
-  passed_genes <- passed_genes %>%  mutate(Suggested.Symbol = if_else(is.na(Suggested.Symbol), x, Suggested.Symbol)) %>% pull(Suggested.Symbol)
+    pull(gene_hgnc)
   
   # pull the dataframe
   failed_genes_df <- report %>%
@@ -128,14 +152,10 @@ percentages_and_list_genes <- function(report, list_paralog) {
   passed_genes_df <- report %>%
     filter(`quality check` == "pass")
   
-  # exclude not counted (symbol change) for total percentage of failed sgRNAs
-  # cleaned_report <- report %>%
-  #   filter(!`quality check` == "not counted (symbol change)")
-  
-  # total percentage of failed genes
+  # total percentage of failed genes only counted for protein-coding genes defined by HGNC
   percentage_failed_genes <- round(length(unique(failed_genes)) / (length(unique(failed_genes)) + length(unique(passed_genes))), 4) * 100
   
-  # total percentage of failed sgRNAs (check with this again later)
+  # total percentage of failed sgRNAs only counted for protein-coding genes defined by HGNC
   percentage_failed_sgrna <-  round((sum(report$`sgRNA number`) - sum(report$`actual total sgRNA`)) / sum(report$`sgRNA number`), 4) * 100
   
   # percentage of failed genes (paralog and non-paralog protein-coding genes)
@@ -162,7 +182,7 @@ percentages_and_list_genes <- function(report, list_paralog) {
 
 # FUNCTION TO IMPORT LIBRARY, ALIGNMENT, OFF-TARGET GUIDES, ETC
 
-import_sgrna_library <- function(data_dir) {
+import_sgrna_library <- function(data_dir, terms_for_filtering) {
   library <- read_tsv(data_dir, col_names = FALSE)
   colnames(library) <- c('sgRNA', 'spacer', 'gene')
   

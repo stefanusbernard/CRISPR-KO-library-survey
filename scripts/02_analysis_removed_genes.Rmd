@@ -12,7 +12,9 @@ output:
 
 ```{r setup, include=FALSE}
 library(tidyverse)
+library(UpSetR)
 library(GenomicFeatures)
+library(HGNChelper)
 library(BSgenome.Hsapiens.NCBI.T2TCHM13v2.0)
 
 source('~/CRISPR-KO-GuideRefine/GuideRefine_functions.R')
@@ -58,7 +60,7 @@ dev.off()
 
 ```{r}
 
-removed_genes_all_libraries <- Reduce(intersect, removed_gene_list_combined)
+removed_genes_all_libraries <- unique(Reduce(intersect, removed_gene_list_combined))
 # manually replace one gene that is in HGNC as previous symbol
 removed_genes_all_libraries <- replace(removed_genes_all_libraries, 5, "BKGD")
 
@@ -83,19 +85,11 @@ avana <- 'avana_library'
 yusa <- 'yusa_hcrispr_ko_grnas'
 jacquere <- 'Jacquere_PerGuideAnnotations_Quota4'
 
-import_report_without_control <- function(file_dir, control_terms) {
-  
-  data <- read_excel(paste(file_dir))
-  data <- data %>% filter(!str_detect(gene, terms_for_filtering))
-  return(data)
-  
-}
-
-brunello_report <- import_report_without_control(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', brunello, '_full_report.xlsx'))
-toronto_report <- import_report_without_control(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', toronto, '_full_report.xlsx'))
-avana_report <- import_report_without_control(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', avana, '_full_report.xlsx'))
-yusa_report <- import_report_without_control(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', yusa, '_full_report.xlsx'))
-jacquere_report <- import_report_without_control(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', jacquere, '_full_report.xlsx'))
+brunello_report <- import_and_process_report(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', brunello, '_full_report.xlsx'))
+toronto_report <- import_and_process_report(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', toronto, '_full_report.xlsx'))
+avana_report <- import_and_process_report(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', avana, '_full_report.xlsx'))
+yusa_report <- import_and_process_report(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', yusa, '_full_report.xlsx'))
+jacquere_report <- import_and_process_report(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', jacquere, '_full_report.xlsx'))
 
 
 brunello_report <- brunello_report %>% filter(gene %in% removed_genes_all_libraries) %>% mutate(library = "brunello")

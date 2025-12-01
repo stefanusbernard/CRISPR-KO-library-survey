@@ -19,7 +19,6 @@ library(paletteer)
 library(RColorBrewer)
 library(UpSetR)
 library(gprofiler2)
-library(biomaRt)
 library(HGNChelper)
 source('~/CRISPR-KO-GuideRefine/GuideRefine_functions.R')
 source("00_CRISPR-KO-library-survey-functions.R")
@@ -40,19 +39,13 @@ avana <- 'avana_library'
 yusa <- 'yusa_hcrispr_ko_grnas'
 jacquere <- 'Jacquere_PerGuideAnnotations_Quota4'
 
-import_report_without_control <- function(file_dir, control_terms) {
-  
-  data <- read_excel(paste(file_dir))
-  data <- data %>% filter(!str_detect(gene, terms_for_filtering))
-  return(data)
-  
-}
+# import sgRNA refining report
 
-brunello_report <- import_report_without_control(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/old_result_without_single_mismatch/', brunello, '_full_report.xlsx'))
-toronto_report <- import_report_without_control(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/old_result_without_single_mismatch/', toronto, '_full_report.xlsx'))
-avana_report <- import_report_without_control(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/old_result_without_single_mismatch/', avana, '_full_report.xlsx'))
-yusa_report <- import_report_without_control(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/old_result_without_single_mismatch/', yusa, '_full_report.xlsx'))
-jacquere_report <- import_report_without_control(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/old_result_without_single_mismatch/', jacquere, '_full_report.xlsx'))
+avana_report <- import_and_process_report(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/old_result_without_single_mismatch/', avana, '_full_report.xlsx'))
+brunello_report <- import_and_process_report(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/old_result_without_single_mismatch/', brunello, '_full_report.xlsx'))
+toronto_report <- import_and_process_report(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/old_result_without_single_mismatch/', toronto, '_full_report.xlsx'))
+yusa_report <- import_and_process_report(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/old_result_without_single_mismatch/', yusa, '_full_report.xlsx'))
+jacquere_report <- import_and_process_report(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/old_result_without_single_mismatch/', jacquere, '_full_report.xlsx'))
 
 ```
 
@@ -69,7 +62,7 @@ paralog_individual <- ensembl_paralog[[2]]
 
 ```
 
-# Calculate the percentage of multi-target, single-mismatch, and PAM-distal double mismatch sgRNA in each libraries
+# Figure A - Calculate the percentage of multi-target, single-mismatch, and PAM-distal double mismatch sgRNA in each libraries
 
 ```{r}
 
@@ -248,111 +241,7 @@ failed_paralog_percentage <- main_df_percentage %>%
 
 ```
 
-# Plot of genes (paralog) that are not well represented in the refined library
-
-```{r}
-
-removed_paralog <- ggplot(failed_paralog_percentage, aes(x = library, y = percentage, fill = not_represented_genes)) +
-      geom_bar(stat = "identity", position = "stack") +
-      scale_fill_discrete(
-          name = "",
-          labels = c("Singleton", "Paralog")) +
-        theme_minimal() +
-        labs(title = "", x = "", y = "Genes targeted by < 3 sgRNAs (%)") +
-        scale_x_discrete(labels = c("brunello" = "Brunello",
-                                     "toronto_v3" = "TKOv3",
-                                     "yusa" = "Yusa \n(Project Score)",
-                                     "avana" = "Avana",
-                                     "jacquere" = "Jacquere",
-                                     "overall" = "Overall")) +
-        geom_text(aes(label = percentage), position = position_stack(vjust = 0.5), vjust = 0, size = 8) +
-        geom_hline(yintercept = ensembl_paralog[[5]]$percentage[ensembl_paralog[[5]]$has_paralogs == TRUE], linetype = "solid", color = "black", size = 0.5) +
-        theme(axis.text.x = element_text(size = 25, vjust = 0.7, colour = "black"),
-              axis.text.y = element_text(size = 25, colour = "black"),
-              axis.title.y = element_text(size = 25, vjust = 0.5, margin = margin(r = 20)),
-              panel.grid.major = element_blank(),
-              panel.grid.minor = element_blank(),
-              axis.line.x = element_line(size = 0.5),
-              axis.line.y = element_line(size = 0.5),
-              axis.ticks.y = element_line(size = 1.5),
-              axis.ticks.length = unit(0.3, "cm"),
-              legend.title = element_text(size = 25),
-              legend.text = element_text(size = 25),
-              plot.margin = margin(1, 1, 1, 1), 
-              line = element_line((size = 4), colour = "black"),
-              legend.spacing.x = unit(1, 'cm')) +
-      ylim(0, 101)
-
-removed_paralog
-
-ggsave(
-    path = './',
-    width = 17,
-    height = 10,
-    dpi = 300,
-    plot = removed_paralog,
-    filename = paste('../figure/01_fig_analysis_off-target-sgrna/library_genes_removed_paralog_T2T.png', sep = ''))
-
-
-```
-
-# Plot of genes that are not represented in the refined library
-
-```{r}
-
-my_palette <- brewer.pal(n = 5, name = "Set2")
-
-failed_genes_percentage <- main_df_percentage %>%
-  dplyr::select(-c(paralog, singleton)) %>%
-  mutate(library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana", "jacquere")))
-
-percentage_bar_chart <- ggplot(failed_genes_percentage, aes(x = library, y = total_percentage_failed_genes, fill = library)) +
-    geom_bar(stat = "identity", position = "stack") +
-        theme_minimal() +
-        labs(title = "", x = "", y = "Genes targeted by < 3 sgRNAs (%)") +
-        scale_x_discrete(labels = c("brunello" = "Brunello",
-                                     "toronto_v3" = "TKOv3",
-                                     "yusa" = "Yusa \n(Project Score)",
-                                     "avana" = "Avana",
-                                     "jacquere" = "Jacquere")) +
-        geom_text(aes(label = total_percentage_failed_genes), position = position_stack(), vjust = -0.5, size = 7) +
-        theme(axis.text.x = element_text(size = 25, vjust = 0.7, colour = 'black'),
-              axis.text.y = element_text(size = 25, colour = 'black'),
-              axis.title.y = element_text(size = 25, vjust = 0.5, margin = margin(r = 20)),
-              panel.grid.major = element_blank(),
-              panel.grid.minor = element_blank(),
-              axis.line.x = element_line(size = 0.5),
-              axis.line.y = element_line(size = 0.5),
-              axis.ticks.y = element_line(size = 1.5),
-              axis.ticks.length = unit(0.3, "cm"),
-              legend.title = element_text(size = 25),
-              legend.text = element_text(size = 25),
-              plot.margin = margin(1, 1, 1, 1), 
-              line = element_line((size = 4), colour = 'black'),
-              legend.spacing.x = unit(1, 'cm')) +
-    scale_fill_manual(values = my_palette,
-                      name = 'Library',
-                      breaks = c("brunello", "toronto_v3", "yusa", "avana", "jacquere"),
-                      labels = c("brunello" = "Brunello",
-                                 "toronto_v3" = "TKOv3",
-                                 "yusa" = "Yusa (Project Score)",
-                                 "avana" = "Avana",
-                                 "jacquere" = "Jacquere")) +
-      ylim(0, 100)
-
-percentage_bar_chart
-
-ggsave(
-    path = './',
-    width = 16,
-    height = 10,
-    dpi = 300,
-    plot = percentage_bar_chart,
-    filename = paste('../figure/01_fig_analysis_off-target-sgrna/library_genes_bar_chart_T2T.png', sep = ''))
-
-```
-
-# plot of sgRNA that is not represented in the refined library
+# Figure B - plot of sgRNA that is not represented in the refined library
 
 ```{r}
 
@@ -408,6 +297,113 @@ ggsave(
 
 
 ```
+
+# Figure C - Plot of genes that are not represented in the refined library
+
+```{r}
+
+my_palette <- brewer.pal(n = 5, name = "Set2")
+
+failed_genes_percentage <- main_df_percentage %>%
+  dplyr::select(-c(paralog, singleton)) %>%
+  mutate(library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana", "jacquere")))
+
+percentage_bar_chart <- ggplot(failed_genes_percentage, aes(x = library, y = total_percentage_failed_genes, fill = library)) +
+    geom_bar(stat = "identity", position = "stack") +
+        theme_minimal() +
+        labs(title = "", x = "", y = "Protein-coding genes targeted by < 3 sgRNAs (%)") +
+        scale_x_discrete(labels = c("brunello" = "Brunello",
+                                     "toronto_v3" = "TKOv3",
+                                     "yusa" = "Yusa \n(Project Score)",
+                                     "avana" = "Avana",
+                                     "jacquere" = "Jacquere")) +
+        geom_text(aes(label = total_percentage_failed_genes), position = position_stack(), vjust = -0.5, size = 7) +
+        theme(axis.text.x = element_text(size = 25, vjust = 0.7, colour = 'black'),
+              axis.text.y = element_text(size = 25, colour = 'black'),
+              axis.title.y = element_text(size = 25, vjust = 0.5, margin = margin(r = 20)),
+              panel.grid.major = element_blank(),
+              panel.grid.minor = element_blank(),
+              axis.line.x = element_line(size = 0.5),
+              axis.line.y = element_line(size = 0.5),
+              axis.ticks.y = element_line(size = 1.5),
+              axis.ticks.length = unit(0.3, "cm"),
+              legend.title = element_text(size = 25),
+              legend.text = element_text(size = 25),
+              plot.margin = margin(1, 1, 1, 1), 
+              line = element_line((size = 4), colour = 'black'),
+              legend.spacing.x = unit(1, 'cm')) +
+    scale_fill_manual(values = my_palette,
+                      name = 'Library',
+                      breaks = c("brunello", "toronto_v3", "yusa", "avana", "jacquere"),
+                      labels = c("brunello" = "Brunello",
+                                 "toronto_v3" = "TKOv3",
+                                 "yusa" = "Yusa (Project Score)",
+                                 "avana" = "Avana",
+                                 "jacquere" = "Jacquere")) +
+      ylim(0, 100)
+
+percentage_bar_chart
+
+ggsave(
+    path = './',
+    width = 16,
+    height = 10,
+    dpi = 300,
+    plot = percentage_bar_chart,
+    filename = paste('../figure/01_fig_analysis_off-target-sgrna/library_genes_bar_chart_T2T.png', sep = ''))
+
+```
+
+# Figure D - Plot of genes (paralog) that are not well represented in the refined library
+
+```{r}
+
+removed_paralog <- ggplot(failed_paralog_percentage, aes(x = library, y = percentage, fill = not_represented_genes)) +
+      geom_bar(stat = "identity", position = "stack") +
+      scale_fill_discrete(
+          name = "",
+          labels = c("Singleton", "Paralog")) +
+        theme_minimal() +
+        labs(title = "", x = "", y = "Protein-coding genes targeted by < 3 sgRNAs (%)") +
+        scale_x_discrete(labels = c("brunello" = "Brunello",
+                                     "toronto_v3" = "TKOv3",
+                                     "yusa" = "Yusa \n(Project Score)",
+                                     "avana" = "Avana",
+                                     "jacquere" = "Jacquere",
+                                     "overall" = "Overall")) +
+        geom_text(aes(label = percentage), position = position_stack(vjust = 0.5), vjust = 0, size = 8) +
+        geom_hline(yintercept = ensembl_paralog[[5]]$percentage[ensembl_paralog[[5]]$has_paralogs == TRUE], linetype = "solid", color = "black", size = 0.5) +
+        theme(axis.text.x = element_text(size = 25, vjust = 0.7, colour = "black"),
+              axis.text.y = element_text(size = 25, colour = "black"),
+              axis.title.y = element_text(size = 25, vjust = 0.5, margin = margin(r = 20)),
+              panel.grid.major = element_blank(),
+              panel.grid.minor = element_blank(),
+              axis.line.x = element_line(size = 0.5),
+              axis.line.y = element_line(size = 0.5),
+              axis.ticks.y = element_line(size = 1.5),
+              axis.ticks.length = unit(0.3, "cm"),
+              legend.title = element_text(size = 25),
+              legend.text = element_text(size = 25),
+              plot.margin = margin(1, 1, 1, 1), 
+              line = element_line((size = 4), colour = "black"),
+              legend.spacing.x = unit(1, 'cm')) +
+      ylim(0, 101)
+
+removed_paralog
+
+ggsave(
+    path = './',
+    width = 17,
+    height = 10,
+    dpi = 300,
+    plot = removed_paralog,
+    filename = paste('../figure/01_fig_analysis_off-target-sgrna/library_genes_removed_paralog_T2T.png', sep = ''))
+
+
+```
+
+
+
 
 
 
