@@ -137,10 +137,9 @@ import_and_process_report <- function(file_dir, control_terms) {
   check_duplicate <- report %>%
     filter(duplicated(gene) | duplicated(gene, fromLast = TRUE))
   
-  paste0("Warning!, there are: ", length(unique(check_duplicate$gene_hgnc)), " genes with duplicate rows")
+  print(paste0("Warning!, there are: ", length(unique(check_duplicate$gene_hgnc)), " genes with duplicate rows"))
   
   return(report)
-  
 }
 
 percentages_and_list_genes <- function(report, list_paralog) {
@@ -241,13 +240,13 @@ off_target_classification <- function(library_alignment, pam_distal_single_misma
   
   library_alignment_non_targeting <- library_alignment %>%
     filter(is.na(n_mismatches)) %>%
-    select(sgRNA, n_mismatches) %>%
+    select(sgRNA, spacer, gene, n_mismatches) %>%
     mutate(num_alignments = 0,
            alignment = "non-targeting")
   
   
   classification_alignment <- library_alignment %>%
-    group_by(sgRNA, n_mismatches, .drop = FALSE) %>%
+    group_by(sgRNA, spacer, gene, n_mismatches, .drop = FALSE) %>%
     summarise(n = n(), .groups = "drop") %>%
     dplyr::rename("num_alignments" = "n") %>%
     filter(n_mismatches != 2) %>%
