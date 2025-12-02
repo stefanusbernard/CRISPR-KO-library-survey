@@ -1,5 +1,6 @@
 library(ggvenn)
 library(ggbreak)
+library(HGNChelper)
 library(BSgenome)
 library(BSgenome.Hsapiens.UCSC.hg38)
 library(BSgenome.Hsapiens.NCBI.T2T.CHM13v2.0)
@@ -38,15 +39,18 @@ barbara_paralog_gene_pairs <- function(dataset = "../data/paralog_data/barbara_3
 
 # Function to obtain the list of paralog pairs from ENSEMBL 115
 
-ensembl_paralog_gene_pairs <- function(dataset_ensembl = "../data/paralog_data/ensembl_115_human_paralogs.txt", 
+ensembl_paralog_gene_pairs <- function(dataset_ensembl = "../data/paralog_data/ensembl_115_human_paralogs_2_dec.txt", 
                                        dataset_hgnc = "https://storage.googleapis.com/public-download-files/hgnc/tsv/tsv/hgnc_complete_set.txt") {
   
   # retrieve ensembl_paralog from ENSEMBL 115
   
-  ensembl_paralog <- read_csv(dataset_ensembl) %>%
+  ensembl_paralog <- read_tsv(dataset_ensembl) %>%
     drop_na() %>%
     mutate(gene_pair = paste(`Gene name`, "_", `Human paralogue associated gene name`, sep = "")) %>%
-    dplyr::rename(ensembl_gene_id = `Gene stable ID`) %>%
+    dplyr::rename("ensembl_gene_id" = `Gene stable ID`,
+                  "paralog_name" = `Human paralogue associated gene name`,
+                  "percent_identity_human_gene_identical_to_query" = `Paralogue %id. target Human gene identical to query gene`,
+                  "percent_identity_query_gene_identical_to_human" = `Paralogue %id. query gene identical to target Human gene`) %>%
     dplyr::select(-`Gene stable ID version`)
   
   gene_pair <- unique(ensembl_paralog$gene_pair)
@@ -66,7 +70,7 @@ ensembl_paralog_gene_pairs <- function(dataset_ensembl = "../data/paralog_data/e
   
   ensembl_paralog <- ensembl_paralog %>%
     mutate(has_paralogs = TRUE) %>%
-    dplyr::select(ensembl_gene_id, has_paralogs) %>%
+    dplyr::select(ensembl_gene_id, has_paralogs, paralog_name, percent_identity_human_gene_identical_to_query, percent_identity_query_gene_identical_to_human) %>%
     distinct()
   
   ensembl_singleton <- hgnc_protein_coding %>%
@@ -130,7 +134,6 @@ import_and_process_report <- function(file_dir, control_terms) {
     # only select the gene that is defined as protein-coding gene by HGNC data
     filter(gene_hgnc %in% hgnc_protein_coding$symbol)
   
-  # TODO: if there is duplicated gene hgnc:
   # only pick one from duplicate gene original (not gene_hgnc)
   # the reason is the total sgrna from duplicate gene original seems like the total from duplicated data due to small bug in updating gene symbol
   
@@ -184,7 +187,29 @@ percentages_and_list_genes <- function(report, list_paralog) {
     failed_singleton = failed_singleton))
 }
 
-# FUNCTION FOR 02_analysis_paralog_off-target-sgrna.rmd
+
+# FUNCTION FOR 02_analysis_removed_genes.rmd
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------
+
+update_gene_symbol <- function(alignment_data, genes_list) {
+  
+  alignment_data <- alignment_data %>%
+    mutate(checkGeneSymbols(gene)) %>% 
+    dplyr::select(-c(x, Approved)) %>% 
+    dplyr::rename("gene_hgnc" = "Suggested.Symbol") %>%
+    relocate(gene_hgnc, .after = gene) %>%
+    filter(gene_hgnc %in% removed_genes_all_libraries)
+  
+  return(alignment_data)
+}
+
+
+
+
+
+
+# FUNCTION FOR 03_analysis_paralog_off-target-sgrna.rmd
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -234,13 +259,13 @@ import_list_off_target_guides <- function(data_dir) {
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------
 
-# FUNCTION TO STRATIFY MULTI-TARGET SGRNAS
+# FUNCTION TO CLASSIFY ALL OFF-TARGET SGRNAS
 
 off_target_classification <- function(library_alignment, pam_distal_single_mismatch, pam_distal_double_mismatch) {
   
   library_alignment_non_targeting <- library_alignment %>%
     filter(is.na(n_mismatches)) %>%
-    select(sgRNA, spacer, gene, n_mismatches) %>%
+    dplyr::select(sgRNA, spacer, gene, n_mismatches) %>%
     mutate(num_alignments = 0,
            alignment = "non-targeting")
   
