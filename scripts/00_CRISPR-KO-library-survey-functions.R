@@ -130,6 +130,15 @@ import_and_process_report <- function(file_dir, control_terms) {
     # only select the gene that is defined as protein-coding gene by HGNC data
     filter(gene_hgnc %in% hgnc_protein_coding$symbol)
   
+  # TODO: if there is duplicated gene hgnc:
+  # only pick one from duplicate gene original (not gene_hgnc)
+  # the reason is the total sgrna from duplicate gene original seems like the total from duplicated data due to small bug in updating gene symbol
+  
+  check_duplicate <- report %>%
+    filter(duplicated(gene) | duplicated(gene, fromLast = TRUE))
+  
+  paste0("Warning!, there are: ", length(unique(check_duplicate$gene_hgnc)), " genes with duplicate rows")
+  
   return(report)
   
 }
