@@ -51,6 +51,8 @@ ensembl_paralog_gene_pairs <- function(dataset_ensembl = "../data/paralog_data/e
                   "paralog_name" = `Human paralogue associated gene name`,
                   "percent_identity_human_gene_identical_to_query" = `Paralogue %id. target Human gene identical to query gene`,
                   "percent_identity_query_gene_identical_to_human" = `Paralogue %id. query gene identical to target Human gene`) %>%
+    # select paralog with both percent identity of at least 20%
+    filter(percent_identity_human_gene_identical_to_query > 20 & percent_identity_query_gene_identical_to_human > 20) %>%
     dplyr::select(-`Gene stable ID version`)
   
   gene_pair <- unique(ensembl_paralog$gene_pair)
@@ -60,31 +62,34 @@ ensembl_paralog_gene_pairs <- function(dataset_ensembl = "../data/paralog_data/e
   # barbara filtered the data by using locus_type == "gene with protein product", our approach is using locus_group
   # if we select locus_group == "protein-coding gene", the locus_type is unique for "gene with protein product"
   
-  hgnc <- read_tsv(dataset_hgnc)
-  
-  hgnc_protein_coding <- hgnc %>%
+  hgnc_protein_coding <- read_tsv(dataset_hgnc) %>%
     filter(locus_group == "protein-coding gene" & !is.na(ensembl_gene_id)) %>%
-    dplyr::select(symbol, locus_group, ensembl_gene_id)
-  
+    dplyr::rename("gene" = "symbol") %>%
+    dplyr::select(gene, locus_group, ensembl_gene_id)
+    
   # ENSEMBL gene ID that has paralogs
   
   ensembl_paralog <- ensembl_paralog %>%
     mutate(has_paralogs = TRUE) %>%
-    dplyr::select(ensembl_gene_id, has_paralogs, paralog_name, percent_identity_human_gene_identical_to_query, percent_identity_query_gene_identical_to_human) %>%
+    left_join(hgnc_protein_coding, join_by(ensembl_gene_id)) %>%
+    relocate(gene, .before = ensembl_gene_id) %>%
+    relocate(locus_group, .after = gene) %>%
+    dplyr::select(gene, locus_group, ensembl_gene_id, has_paralogs, paralog_name, percent_identity_human_gene_identical_to_query, percent_identity_query_gene_identical_to_human) %>%
     distinct()
   
   ensembl_singleton <- hgnc_protein_coding %>%
-    left_join(ensembl_paralog, join_by(ensembl_gene_id)) %>%
+    left_join(ensembl_paralog, join_by(ensembl_gene_id, gene, locus_group)) %>%
     mutate(has_paralogs = replace_na(has_paralogs, FALSE)) %>%
     filter(has_paralogs == FALSE)
   
   count_paralog_singleton <- hgnc_protein_coding %>%
-    left_join(ensembl_paralog, join_by(ensembl_gene_id)) %>%
+    left_join(ensembl_paralog, join_by(ensembl_gene_id, gene, locus_group)) %>%
     mutate(has_paralogs = replace_na(has_paralogs, FALSE)) %>%
+    select(gene, has_paralogs) %>%
+    distinct() %>%
     count(has_paralogs) %>%
     dplyr::rename("number_of_genes" = "n") %>%
     mutate(percentage = round(number_of_genes / sum(number_of_genes) * 100, 2))
-  
   
   
   return(list(gene_pair, gene_list, ensembl_singleton, ensembl_paralog, count_paralog_singleton))
