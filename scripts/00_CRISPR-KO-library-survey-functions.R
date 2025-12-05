@@ -85,7 +85,7 @@ ensembl_paralog_gene_pairs <- function(dataset_ensembl = "../data/paralog_data/e
   count_paralog_singleton <- hgnc_protein_coding %>%
     left_join(ensembl_paralog, join_by(ensembl_gene_id, gene, locus_group)) %>%
     mutate(has_paralogs = replace_na(has_paralogs, FALSE)) %>%
-    select(gene, has_paralogs) %>%
+    dplyr::select(gene, has_paralogs) %>%
     distinct() %>%
     count(has_paralogs) %>%
     dplyr::rename("number_of_genes" = "n") %>%
@@ -171,8 +171,14 @@ percentages_and_list_genes <- function(report, list_paralog) {
   # total percentage of failed genes only counted for protein-coding genes defined by HGNC
   percentage_failed_genes <- round(length(unique(failed_genes)) / (length(unique(failed_genes)) + length(unique(passed_genes))), 4) * 100
   
+  # TODO: something wrong with the total percentage failed sgRNA, the number != between multi-targeting etc with % removed sgRNAs
+  # FIXME: in TKOv3, the actual total sgRNA is lower than multi-target+single mismatch+pam distal guides, which it is supposed to be the other way around
+  # FIXME: one of the main reason is because 
+  
   # total percentage of failed sgRNAs only counted for protein-coding genes defined by HGNC
-  percentage_failed_sgrna <-  round((sum(report$`sgRNA number`) - sum(report$`actual total sgRNA`)) / sum(report$`sgRNA number`), 4) * 100
+  # because there is additional sgRNA (corrected), hence the formula is:
+  # ((original sgRNA (without symbol change) + additional sgRNA (corrected)) - actual total sgRNA) / original sgRNA number (without symbol change)
+  percentage_failed_sgrna <-  round(((sum(report$`sgRNA number`) + sum(report$`Additional sgRNA (Corrected)`)) - sum(report$`actual total sgRNA`)) / sum(report$`sgRNA number`), 4) * 100
   
   # percentage of failed genes (paralog and non-paralog protein-coding genes)
   failed_paralog <- failed_genes[unlist(failed_genes) %in% unlist(list_paralog)]
