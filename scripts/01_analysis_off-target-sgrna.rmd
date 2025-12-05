@@ -49,12 +49,11 @@ jacquere_report <- import_and_process_report(paste0('~/CRISPR-KO-GuideRefine/out
 
 ```
 
-## Import paralog data from Barbara's paper
+## Import paralog data from ENSEMBL 115
 
 ```{r}
-# import predicted paralog pairs from Barbara's paper
+# import predicted paralog pairs from ENSEMBL 115
 
-# barbara_paralog <- barbara_paralog_gene_pairs()
 ensembl_paralog <- ensembl_paralog_gene_pairs()
 
 paralog_pairs <- ensembl_paralog[[1]]
