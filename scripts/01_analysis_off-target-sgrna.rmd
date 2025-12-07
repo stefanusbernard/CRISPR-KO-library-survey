@@ -65,6 +65,8 @@ paralog_individual <- ensembl_paralog[[2]]
 
 ```{r}
 
+# the import_and_process_report() already update the gene symbol of each guides, hence the multi-target and off-target calculation is already correct
+
 brunello_multi_target <- round(calculate_percentage(brunello_report, "multi-target sgRNA", "sgRNA number"), 2)
 toronto_multi_target <- round(calculate_percentage(toronto_report, "multi-target sgRNA", "sgRNA number"), 2)
 avana_multi_target <- round(calculate_percentage(avana_report, "multi-target sgRNA", "sgRNA number"), 2)
@@ -156,6 +158,8 @@ ggsave(
 
 ```{r}
 
+# in here we pull the failed/passed genes based on protein-coding genes defined by HGNC (gene_hgnc), it was first standardized using import_and_process_report()
+
 avana_result_gene <- percentages_and_list_genes(avana_report, paralog_individual)
 brunello_result_gene <- percentages_and_list_genes(brunello_report, paralog_individual)
 toronto_result_gene <- percentages_and_list_genes(toronto_report, paralog_individual)
@@ -243,6 +247,8 @@ failed_paralog_percentage <- main_df_percentage %>%
 # Figure B - plot of sgRNA that is not represented in the refined library
 
 ```{r}
+
+# in here we pull the failed/passed genes based on protein-coding genes defined by HGNC (gene_hgnc). then the failed_sgrna_percentage came from main_df_percentage, which it was from the percentage_and_list_gene(), a function to standardize gene symbol based on HGNC and select protein-coding genes only
 
 my_palette <- brewer.pal(n = 5, name = "Set2")
 

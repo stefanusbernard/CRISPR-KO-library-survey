@@ -51,8 +51,6 @@ ensembl_paralog_gene_pairs <- function(dataset_ensembl = "../data/paralog_data/e
                   "paralog_name" = `Human paralogue associated gene name`,
                   "percent_identity_human_gene_identical_to_query" = `Paralogue %id. target Human gene identical to query gene`,
                   "percent_identity_query_gene_identical_to_human" = `Paralogue %id. query gene identical to target Human gene`) %>%
-    # select paralog with both percent identity of at least 20%
-    filter(percent_identity_human_gene_identical_to_query > 20 & percent_identity_query_gene_identical_to_human > 20) %>%
     dplyr::select(-`Gene stable ID version`)
   
   gene_pair <- unique(ensembl_paralog$gene_pair)
@@ -171,11 +169,6 @@ percentages_and_list_genes <- function(report, list_paralog) {
   # total percentage of failed genes only counted for protein-coding genes defined by HGNC
   percentage_failed_genes <- round(length(unique(failed_genes)) / (length(unique(failed_genes)) + length(unique(passed_genes))), 4) * 100
   
-  # TODO: something wrong with the total percentage failed sgRNA, the number != between multi-targeting etc with % removed sgRNAs
-  # FIXME: in TKOv3, the actual total sgRNA is lower than multi-target+single mismatch+pam distal guides, which it is supposed to be the other way around
-  # FIXME: one of the main reason is because 
-  
-  # total percentage of failed sgRNAs only counted for protein-coding genes defined by HGNC
   # because there is additional sgRNA (corrected), hence the formula is:
   # ((original sgRNA (without symbol change) + additional sgRNA (corrected)) - actual total sgRNA) / original sgRNA number (without symbol change)
   percentage_failed_sgrna <-  round(((sum(report$`sgRNA number`) + sum(report$`Additional sgRNA (Corrected)`)) - sum(report$`actual total sgRNA`)) / sum(report$`sgRNA number`), 4) * 100
@@ -210,7 +203,7 @@ update_gene_symbol <- function(alignment_data, genes_list) {
     dplyr::select(-c(x, Approved)) %>% 
     dplyr::rename("gene_hgnc" = "Suggested.Symbol") %>%
     relocate(gene_hgnc, .after = gene) %>%
-    filter(gene_hgnc %in% removed_genes_all_libraries)
+    filter(gene_hgnc %in% genes_list)
   
   return(alignment_data)
 }

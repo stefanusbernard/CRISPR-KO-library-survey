@@ -1,53 +1,51 @@
 library(tidyverse)
 library(ggpubr)
 library(BSgenome.Hsapiens.NCBI.T2TCHM13v2.0)
+library(HGNChelper)
 
-source("./00_CRISPR-KO-library-survey-functions.R")
-source('~/CRISPR-KO-GuideRefine/GuideRefine_functions.R')
+source('~/CRISPR-KO-library-survey/scripts/00_CRISPR-KO-library-survey-functions.R')
 
 
-dataset_ensembl <- "../data/paralog_data/ensembl_115_human_paralogs.txt"
-dataset_hgnc <- "https://storage.googleapis.com/public-download-files/hgnc/tsv/tsv/hgnc_complete_set.txt"
-  
-# retrieve ensembl_paralog from ENSEMBL 115
+terms <- c("CONTROL", "Control", "control", "INTRON", "Intron", "intron", "LacZ", "luciferase", "NO_SITE", "ONE_INTERGENIC_SITE")
+# lacZ and luciferase are the control in Toronto V3 library
 
-ensembl_paralog <- read_csv(dataset_ensembl) %>%
-  drop_na() %>%
-  mutate(gene_pair = paste(`Gene name`, "_", `Human paralogue associated gene name`, sep = "")) %>%
-  dplyr::rename(ensembl_gene_id = `Gene stable ID`) %>%
-  dplyr::select(-`Gene stable ID version`) %>%
-  distinct()
+terms_for_filtering <- paste(terms, collapse = "|")
 
-gene_pair <- unique(ensembl_paralog$gene_pair)
-gene_list <- unique(ensembl_paralog$`Gene name`)
+brunello <- 'broadgpp-brunello-library-contents'
+toronto <- 'tkov3_guide_sequence'
+avana <- 'avana_library'
+yusa <- 'yusa_hcrispr_ko_grnas'
+jacquere <- 'Jacquere_PerGuideAnnotations_Quota4'
 
-# HGNC data, select protein-coding gene that has ensembl_gene_id
-# barbara filtered the data by using locus_type == "gene with protein product", our approach is using locus_group
-# if we select locus_group == "protein-coding gene", the locus_type is unique for "gene with protein product"
+# import sgRNA refining report
 
-hgnc <- read_tsv(dataset_hgnc)
+avana_report <- import_and_process_report(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', avana, '_full_report.xlsx'))
+brunello_report <- import_and_process_report(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', brunello, '_full_report.xlsx'))
+toronto_report <- import_and_process_report(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', toronto, '_full_report.xlsx'))
+yusa_report <- import_and_process_report(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', yusa, '_full_report.xlsx'))
+jacquere_report <- import_and_process_report(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', jacquere, '_full_report.xlsx'))
 
-hgnc_protein_coding <- hgnc %>%
-  filter(locus_group == "protein-coding gene" & !is.na(ensembl_gene_id)) %>%
-  dplyr::select(symbol, locus_group, ensembl_gene_id)
 
-# ENSEMBL gene ID that has paralogs
 
-ensembl_paralog <- ensembl_paralog %>%
-  mutate(has_paralogs = TRUE) %>%
-  dplyr::select(ensembl_gene_id, has_paralogs) %>%
-  distinct()
+sum(toronto_report$`sgRNA number`)
+sum(toronto_report$`Additional sgRNA (Corrected)`)
+sum(toronto_report$`actual total sgRNA`)
 
-ensembl_singleton <- hgnc_protein_coding %>%
-  left_join(ensembl_paralog, join_by(ensembl_gene_id)) %>%
-  mutate(has_paralogs = replace_na(has_paralogs, FALSE)) %>%
-  filter(has_paralogs == FALSE)
 
-count_paralog_singleton <- hgnc_protein_coding %>%
-  left_join(ensembl_paralog, join_by(ensembl_gene_id)) %>%
-  mutate(has_paralogs = replace_na(has_paralogs, FALSE)) %>%
-  count(has_paralogs) %>%
-  dplyr::rename("number_of_genes" = "n") %>%
-  mutate(percentage = round(number_of_genes / sum(number_of_genes) * 100, 2))
-  
-  
+sum(toronto_report$`multi-target sgRNA`)
+sum(toronto_report$`single mismatch sgRNA`)
+sum(toronto_report$`PAM distal double mismatch`)
+
+round(calculate_percentage(toronto_report, "single mismatch sgRNA", "sgRNA number"), 2)
+
+
+
+
+
+
+
+
+
+
+
+

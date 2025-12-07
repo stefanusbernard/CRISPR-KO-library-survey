@@ -1,5 +1,5 @@
 ---
-title: "Analysis of multi-target and off-target sgRNAs across libraries"
+title: "Analysis of commonly removed genes across libraries"
 author: "Author: Stefanus Bernard"
 date: "Date: `r format(Sys.time(), '%d %B %Y')`"
 output: 
@@ -17,21 +17,14 @@ library(GenomicFeatures)
 library(HGNChelper)
 library(BSgenome.Hsapiens.NCBI.T2TCHM13v2.0)
 
-source('~/CRISPR-KO-GuideRefine/GuideRefine_functions.R')
 source("./00_CRISPR-KO-library-survey-functions.R")
 ```
 
-# Import data containing removed genes from each library
+## Import data containing removed genes from each library
 
 ```{r}
 
 removed_genes <- read_csv("../data/biogrid_crispr_ko_data/important_data/removed_genes_all_library.csv")
-
-```
-
-# UpSet plot for commonality of removed genes between 5 libraries
-
-```{r}
 
 removed_gene_list_combined <- list(
   Avana = na.omit(removed_genes[["avana_removed_genes_all"]]),
@@ -40,6 +33,15 @@ removed_gene_list_combined <- list(
   Yusa = na.omit(removed_genes[["yusa_removed_genes_all"]]),
   Jacquere = na.omit(removed_genes[["jacquere_removed_genes_all"]])
 )
+
+# List of 520 protein-coding genes are removed across CRISPR-KO libraries, what are these genes?
+removed_genes_all_libraries <- unique(Reduce(intersect, removed_gene_list_combined))
+
+```
+
+## UpSet plot for commonality of removed genes between 5 libraries
+
+```{r}
 
 png("../figure/01_fig_analysis_off-target-sgrna/removed_genes_all_libraries.png", width = 12000, height = 7500, res = 1000)
 
@@ -54,56 +56,273 @@ dev.off()
 
 ```
 
-# 200 Genes removed across all libraries
-
-## What are these genes?
+## Import more relevant data
 
 ```{r}
 
-removed_genes_all_libraries <- unique(Reduce(intersect, removed_gene_list_combined))
-# manually replace one gene that is in HGNC as previous symbol
-removed_genes_all_libraries <- replace(removed_genes_all_libraries, 5, "BKGD")
+# Import HGNC dataset
 
-hgnc <- read_tsv(url("https://storage.googleapis.com/public-download-files/hgnc/tsv/tsv/hgnc_complete_set.txt"))
-hgnc <- hgnc %>% filter(symbol %in% removed_genes_all_libraries)
+hgnc <- read_tsv(url("https://storage.googleapis.com/public-download-files/hgnc/tsv/tsv/hgnc_complete_set.txt")) %>%
+  filter(symbol %in% removed_genes_all_libraries) %>%
+  dplyr::select(symbol, name, locus_group, ensembl_gene_id) %>%
+  dplyr::rename("gene" = "symbol")
 
-```
+# Import paralog data
+ensembl_paralog <- ensembl_paralog_gene_pairs()
 
-## Does the sequences are similar one another ?
+paralog_pairs <- ensembl_paralog[[1]]
+paralog_individual <- ensembl_paralog[[2]]
 
-```{r}
-# Import the data of sgRNA library report
+# Import the data of sgRNA library report (looking on how many guides actually multi-targeting, etc)
 
 terms <- c("CONTROL", "Control", "control", "INTRON", "Intron", "intron", "LacZ", "luciferase", "NO_SITE", "ONE_INTERGENIC_SITE")
 # lacZ and luciferase are the control in Toronto V3 library
 
 terms_for_filtering <- paste(terms, collapse = "|")
 
+avana <- 'avana_library'
 brunello <- 'broadgpp-brunello-library-contents'
 toronto <- 'tkov3_guide_sequence'
-avana <- 'avana_library'
 yusa <- 'yusa_hcrispr_ko_grnas'
 jacquere <- 'Jacquere_PerGuideAnnotations_Quota4'
 
-brunello_report <- import_and_process_report(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', brunello, '_full_report.xlsx'))
-toronto_report <- import_and_process_report(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', toronto, '_full_report.xlsx'))
-avana_report <- import_and_process_report(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', avana, '_full_report.xlsx'))
-yusa_report <- import_and_process_report(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', yusa, '_full_report.xlsx'))
-jacquere_report <- import_and_process_report(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', jacquere, '_full_report.xlsx'))
+
+avana_report <- import_and_process_report(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', avana, '_full_report.xlsx')) %>% filter(gene_hgnc %in% removed_genes_all_libraries) %>% mutate(library = "avana")
+
+brunello_report <- import_and_process_report(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', brunello, '_full_report.xlsx')) %>% filter(gene_hgnc %in% removed_genes_all_libraries) %>% mutate(library = "brunello")
+
+toronto_report <- import_and_process_report(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', toronto, '_full_report.xlsx')) %>% filter(gene_hgnc %in% removed_genes_all_libraries) %>% mutate(library = "toronto")
+
+yusa_report <- import_and_process_report(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', yusa, '_full_report.xlsx')) %>% filter(gene_hgnc %in% removed_genes_all_libraries) %>% mutate(library = "yusa")
+
+jacquere_report <- import_and_process_report(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', jacquere, '_full_report.xlsx')) %>% filter(gene_hgnc %in% removed_genes_all_libraries) %>% mutate(library = "jacquere")
+
+combined_report <- rbind(avana_report, brunello_report, toronto_report, yusa_report, jacquere_report) %>% arrange(gene_hgnc)
+
+rm(avana_report, brunello_report, toronto_report, yusa_report, jacquere_report)
+
+# Import the alignment classification data
+
+avana_alignment <- read_csv("../data/sgrna_lfc_data/avana_data/avana_sgrna_alignment_classification.csv") %>% update_gene_symbol(., removed_genes_all_libraries) %>% mutate(library = "avana")
+
+brunello_alignment <- read_csv("../data/sgrna_lfc_data/brunello_data/brunello_sgrna_alignment_classification.csv") %>% update_gene_symbol(., removed_genes_all_libraries) %>% mutate(library = "brunello")
+
+toronto_alignment <- read_csv("../data/sgrna_lfc_data/tkov3_data/tkov3_sgrna_alignment_classification.csv") %>% update_gene_symbol(., removed_genes_all_libraries) %>% mutate(library = "toronto")
+
+yusa_alignment <- read_csv("../data/sgrna_lfc_data/yusa_data/yusa_sgrna_alignment_classification.csv") %>% update_gene_symbol(., removed_genes_all_libraries) %>% mutate(library = "yusa")
+
+jacquere_alignment <- read_csv("../data/sgrna_lfc_data/jacquere_data/jacquere_sgrna_alignment_classification.csv") %>% update_gene_symbol(., removed_genes_all_libraries) %>% mutate(library = "jacquere")
+
+combined_alignment <- rbind(avana_alignment, brunello_alignment, toronto_alignment, yusa_alignment, jacquere_alignment) %>% 
+  arrange(gene_hgnc) %>%
+  # remove perfect guides because we dont need it
+  filter(!alignment == "perfect")
+
+rm(avana_alignment, brunello_alignment, toronto_alignment, yusa_alignment, jacquere_alignment)
+
+```
+
+## There are 520 genes removed across libraries
+we asked why there are 520 genes failed/represented by fewer than 3 guides across libraries
+
+1. Our first hypothesis is maybe the same sgRNA design were used across libraries for some genes. Which led to the failure of on-target activity 
+
+```{r}
+
+duplicated_sequence <- combined_alignment %>%
+  # filter(duplicated(spacer) | duplicated(spacer, fromLast = TRUE)) %>%
+  dplyr::select(spacer, library) %>%
+  group_by(library) %>%
+  summarise(seqs = list(unique(spacer))) %>%
+  deframe()
+  
+upset(fromList(duplicated_sequence),
+      order.by = "degree",
+      main.bar.color = "#4B0092",
+      sets.bar.color = "#1AFF1A",
+      text.scale = 1.5)
+
+```
+
+However, only 30 sgRNA sequences, that failed and shared among the libraries (except Yusa Project Score). Therefore, sgRNA sequences is not a contributing factor for multi-targeting-/off-targeting sgRNAs.
+
+We asked whether paralogs are the major contributing factor in causing multi-target-/off-targeting activity in sgRNAs. 
+
+```{r}
+
+# count how many 520 genes has paralogs
+df <- hgnc %>%
+  left_join(ensembl_paralog[[4]], join_by(gene, locus_group, ensembl_gene_id)) %>%
+  mutate(has_paralogs = replace_na(has_paralogs, FALSE))
+  
+# count percentage of paralogs
+df_percent_paralogs <- df %>%
+  dplyr::select(gene, has_paralogs) %>%
+  distinct() %>%
+  count(has_paralogs) %>%
+  dplyr::rename("count" = "n") %>%
+  mutate(percent = count / sum(count) * 100)
+
+# 377 genes out of 520 that were removed across libraries are paralogs (72.5%), indicating significant number of enrichment
 
 
-brunello_report <- brunello_report %>% filter(gene %in% removed_genes_all_libraries) %>% mutate(library = "brunello")
-toronto_report <- toronto_report %>% filter(gene %in% removed_genes_all_libraries) %>% mutate(library = "toronto")
-avana_report <- avana_report %>% filter(gene %in% removed_genes_all_libraries) %>% mutate(library = "avana")
-yusa_report <- yusa_report %>% filter(gene %in% removed_genes_all_libraries) %>% mutate(library = "yusa")
-jacquere_report <- jacquere_report %>% filter(gene %in% removed_genes_all_libraries) %>% mutate(library = "jacquere")
+# we focused our attention to the 377 paralog genes that were removed across libraries. Furthermore, we discussed the 177 singleton genes separately
 
-combined_report <- rbind(brunello_report, toronto_report, avana_report, yusa_report, jacquere_report) 
+removed_paralog <- df %>% 
+  dplyr::select(gene, has_paralogs) %>%
+  group_by(gene) %>%
+  summarise(count_paralog = if_else(has_paralogs == TRUE, n(), 0)) %>%
+  arrange(count_paralog) %>%
+  ungroup() %>%
+  distinct()
 
+removed_paralog$paralogs_bin <- cut(removed_paralog$count_paralog,
+                                    breaks = c(-0.5, 0.5:5.5, Inf),  # -0.5 to 5.5 for 0–5, then Inf for >5
+                                    labels = c(as.character(0:5), "> 5"),
+                                    right = TRUE)
+
+removed_paralog %>% count(paralogs_bin)
+
+# 0	143			
+# 1	67			
+# 2	38			
+# 3	25			
+# 4	11			
+# 5	11			
+# > 5	225	
+
+removed_paralog_bin <- removed_paralog %>% 
+  count(paralogs_bin) %>% 
+  dplyr::rename("count_paralog" = "n")
+
+boxplot_paralog <- ggplot(removed_paralog_bin, aes(x = paralogs_bin, y = count_paralog)) +
+    geom_col(fill = "#1E88E5") +
+    theme_minimal() +
+  labs(x = "Number of paralogs", y = "Removed genes across 5 libraries") +
+  geom_text(aes(label = paste("n=", count_paralog, sep="")),
+            nudge_y = 10,
+            nudge_x = 0,
+            size = 5) +
+  theme(axis.text.x = element_text(size = 15, vjust = 0.7, colour = 'black'),
+        axis.text.y = element_text(size = 15, colour = "black"),
+        axis.title.x = element_text(size = 15, vjust = 0.5, margin = margin(t = 10), colour = "black"),
+        axis.title.y = element_text(size = 15, vjust = 0.5, margin = margin(r = 10), colour = "black"),
+        axis.ticks.y = element_line(size = 1.5),
+        axis.ticks.length = unit(0.15, "cm"),
+        axis.line.y.right = element_blank(),
+        axis.ticks.y.right = element_blank(), 
+        axis.text.y.right = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line.x = element_line(size = 0.5, colour = "black"),
+        axis.line.y = element_line(size = 0.5, colour = "black"),
+        legend.position = "none",
+        plot.margin = margin(1, 1, 1, 1),
+        legend.spacing.x = unit(1, 'cm'))
+
+ggsave(
+  path = '../figure/01_fig_analysis_off-target-sgrna/',
+  width = 6.5,
+  height = 5,
+  dpi = 1000,
+  plot = boxplot_paralog,
+  filename = "removed_genes_paralogs.png")
+
+
+# we found most removed genes are containing paralogs family, with more than >1 paralogs
+
+# since paralogs came from gene duplication event, we asked whether the genes with more paralogs have their sequences more identical with the original genes
+
+removed_paralog_max <- df %>% 
+  dplyr::select(gene, has_paralogs, percent_identity_human_gene_identical_to_query) %>%
+  group_by(gene) %>%
+  # count paralog NA because they dont have paralog gene
+  summarise(count_paralog = if_else(has_paralogs == TRUE, n(), NA),
+            max_percent_identity = max(percent_identity_human_gene_identical_to_query, na.rm = TRUE)) %>%
+  arrange(count_paralog) %>%
+  ungroup() %>%
+  distinct() %>%
+  # drop NA/removed genes without paralogs
+  drop_na()
+
+removed_paralog_max$paralogs_bin <- cut(removed_paralog_max$count_paralog,
+                                    breaks = c(-0.5, 0.5:5.5, Inf),  # -0.5 to 5.5 for 0–5, then Inf for >5
+                                    labels = c(as.character(0:5), "> 5"),
+                                    right = TRUE)
+
+
+annotation_df <- removed_paralog_max %>%
+    count(paralogs_bin)
+
+boxplot_percent_identity_paralog <- removed_paralog_max %>%
+    ggplot(aes(paralogs_bin, max_percent_identity, group = paralogs_bin)) +
+    geom_boxplot(outlier.shape = NA, size = 0.5) +
+    theme_minimal() +
+    labs(title = "", 
+         x = "Number of paralogs for a single gene", 
+         y = "% of protein sequences \nmatched in closest paralog") +
+    theme(
+      axis.text.x = element_text(size = 15, vjust = 0.7, colour = "black"),
+      axis.text.y = element_text(size = 15, colour = "black"),
+      axis.title.x = element_text(size = 15, margin = margin(t = 10)),
+      axis.title.y = element_text(size = 15, margin = margin(r = 10)),
+      axis.ticks = element_line(size = 1.5),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      axis.line.x = element_line(size = 0.5),
+      axis.line.y = element_line(size = 0.5))
+
+  b <- ggplot_build(boxplot_percent_identity_paralog)
+  boxplot_whisker <- b$data[[1]]$ymax
+  
+  boxplot_percent_identity_paralog <- boxplot_percent_identity_paralog +
+    geom_text(
+      data = annotation_df,
+      aes(x = paralogs_bin, y = boxplot_whisker + 0.1, label = paste0("n= ", n)),
+      size = 3.5,
+      angle = 45,
+      vjust = -0.2,
+      hjust = -0.2
+    ) +
+    coord_cartesian(clip = "off")
+
+
+ggsave(
+  path = '../figure/01_fig_analysis_off-target-sgrna/',
+  width = 5,
+  height = 6,
+  dpi = 1000,
+  plot = boxplot_percent_identity_paralog,
+  filename = "removed_genes_paralogs_percent_identity.png")
 
 
 
 ```
+
+
+We asked whether multi-targeting-/off-targeting sgRNAs tend to target specific paralogs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ## Does genes size is small ?
