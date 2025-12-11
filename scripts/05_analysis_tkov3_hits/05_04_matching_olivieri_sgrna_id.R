@@ -76,7 +76,9 @@ olivieri_screen_data <- data.frame(screen_sample = colnames(olivieri_screen)) %>
          drug = str_replace(drug, "Illudin", "IlludinS")) %>%
   mutate(across(where(is.character), ~ replace_na(.x, "initial"))) %>%
   left_join(screen_info, join_by(drug)) %>%
-  filter(!sample %in% c(screen_info |> pull(drug), "NT", "T0")) %>%
+  # remove the !drug == T0 if you would like to see the T0 count
+  filter(!sample %in% c(screen_info |> pull(drug), "NT"),
+         !drug == "T0") %>%
   mutate(Library = replace_na(Library, "TKOv3"),
          Nlib = replace_na(Nlib, 3))
 
@@ -86,14 +88,16 @@ olivieri_screen_data <- split(olivieri_screen_data, olivieri_screen_data$sample)
 olivieri_screen_original <- olivieri_screen %>%
   left_join(toronto_library, join_by(sgRNA_ID)) %>%
   relocate(sgRNA, spacer, gene, .after = sgRNA_ID) %>%
-  drop_na()
+  drop_na() %>%
+  select(-c(sgRNA_ID, spacer))
 
 write_tsv(olivieri_screen_original, "./data/read_count_data/Dataset_S2_readcounts_original.txt")
 
 olivieri_screen_refined <- olivieri_screen %>%
   left_join(refined_library, join_by(sgRNA_ID)) %>%
   relocate(sgRNA, spacer, gene, .after = sgRNA_ID) %>%
-  drop_na()
+  drop_na() %>%
+  select(-c(sgRNA_ID, spacer))
 
 write_tsv(olivieri_screen_refined, "./data/read_count_data/Dataset_S2_readcounts_refined.txt")
 
