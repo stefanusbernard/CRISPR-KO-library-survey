@@ -580,7 +580,7 @@ obtain_required_data <- function(library, normalized_lfc_data, stratification_da
   
   normalized_lfc_data <- read_csv(normalized_lfc_data)
   
-  library_stratification <- stratification_data %>% select(sgRNA, alignment, num_alignments, alignment_bin)
+  library_stratification <- stratification_data %>% dplyr::select(sgRNA, alignment, num_alignments, alignment_bin)
   
   # left join
   library_lfc_data <- normalized_lfc_data %>%
@@ -617,7 +617,7 @@ calculate_wilcoxon_cles <- function(input_data, which_guides, which_guides_2) {
   cles
 }
 
-# FIXME: fix the statistics not showing up
+
 
 visualize_two_group <- function(library_lfc_data, boxplot_output_name) {
 
@@ -635,10 +635,14 @@ visualize_two_group <- function(library_lfc_data, boxplot_output_name) {
                            outliers = FALSE) +
     stat_compare_means(comparisons = list(c("perfect", "single mismatch"), 
                                           c("perfect", "pam-distal single mismatch"), 
+                                          c("perfect", "pam-distal double mismatch"),
                                           c("perfect", "multi-target guides"),
                                           c("single mismatch", "pam-distal single mismatch"),
+                                          c("single mismatch", "pam-distal double mismatch"),
                                           c("single mismatch", "multi-target guides"),
-                                          c("pam-distal single mismatch", "multi-target guides")),
+                                          c("pam-distal single mismatch", "pam-distal double mismatch"),
+                                          c("pam-distal single mismatch", "multi-target guides"),
+                                          c("pam-distal double mismatch", "multi-target guides")),
                        method = "wilcox.test",
                        method.args = list(alternative = "two.sided"),
                        size = 2.5,
@@ -646,14 +650,15 @@ visualize_two_group <- function(library_lfc_data, boxplot_output_name) {
                        tip.length = 0.01,
                        label = "p.format",
                        label.y = 1) +
-    scale_y_continuous(limits = c(-3, 3), breaks = seq(-2, 2, by = 1)) +
+    scale_y_continuous(limits = c(-3, 4), breaks = seq(-2, 2, by = 1)) +
     scale_fill_manual(
       name = "sgRNA: ",
       values = c("perfect" = "#0072B2", 
                  "single mismatch" = "powderblue",
                  "pam-distal single mismatch" = "mistyrose",
+                 "pam-distal double mismatch" = "#E7F7D5",
                  "multi-target guides" = "#E69F00"),
-      labels = c("On-target", "single mismatch", "pam-distal single mismatch", "multi-target guides")) +
+      labels = c("On-target", "Single mm", "PAM-distal single mm", "PAM-distal double mm", "Multi-target")) +
     labs(title = "", 
          x = "", 
          y = "Averaged median sgRNA Log2FC",
@@ -688,7 +693,7 @@ visualize_two_group <- function(library_lfc_data, boxplot_output_name) {
   
   count <- combined_data %>%
     select(sgRNA, alignment, library) %>%
-    mutate(alignment = factor(alignment, levels = c("perfect", "single mismatch", "pam-distal single mismatch", "multi-target guides"))) %>%
+    mutate(alignment = factor(alignment, levels = c("perfect", "single mismatch", "pam-distal single mismatch", "pam-distal double mismatch", "multi-target guides"))) %>%
     distinct() %>%
     group_by(library) %>%
     count(alignment) %>%

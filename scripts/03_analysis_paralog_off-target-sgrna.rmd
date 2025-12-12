@@ -48,11 +48,11 @@ yusa_alignment <- import_sgrna_library_alignment("~/CRISPR-KO-GuideRefine/object
 jacquere_alignment <- import_sgrna_library_alignment("~/CRISPR-KO-GuideRefine/object_intermediate/T2T-CHM13_bsgenome/Jacquere_PerGuideAnnotations_Quota4_aln.csv", "T2T-CHM13")
 
 # list_removed_sgrna sgRNAs
-disposed_avana <- import_list_off_target_guides("~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/avana_library_disposed_sgRNAs.tsv")
-disposed_brunello <- import_list_off_target_guides("~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/broadgpp-brunello-library-contents_disposed_sgRNAs.tsv")
-disposed_toronto <- import_list_off_target_guides("~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/tkov3_guide_sequence_disposed_sgRNAs.tsv")
-disposed_yusa <- import_list_off_target_guides("~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/yusa_hcrispr_ko_grnas_disposed_sgRNAs.tsv")
-disposed_jacquere <- import_list_off_target_guides("~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/Jacquere_PerGuideAnnotations_Quota4_disposed_sgRNAs.tsv")
+disposed_avana <- import_list_off_target_guides("~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/old_result_pam_distal_mismatch_only/avana_library_disposed_sgRNAs.tsv")
+disposed_brunello <- import_list_off_target_guides("~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/old_result_pam_distal_mismatch_only/broadgpp-brunello-library-contents_disposed_sgRNAs.tsv")
+disposed_toronto <- import_list_off_target_guides("~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/old_result_pam_distal_mismatch_only/tkov3_guide_sequence_disposed_sgRNAs.tsv")
+disposed_yusa <- import_list_off_target_guides("~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/old_result_pam_distal_mismatch_only/yusa_hcrispr_ko_grnas_disposed_sgRNAs.tsv")
+disposed_jacquere <- import_list_off_target_guides("~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/old_result_pam_distal_mismatch_only/Jacquere_PerGuideAnnotations_Quota4_disposed_sgRNAs.tsv")
 
 ```
 
@@ -71,6 +71,8 @@ paralog_individual <- ensembl_paralog[[2]]
 # Classify the sgRNAs in each libraries
 
 ```{r}
+
+# TO COVER THE PAM-DISTAL SINGLE MISMATCH GUIDES, USE THE OLD FILE (inside the old_result_pam_distal_mismatch_only) and let the single mismatch decided by the number of mismatch (1 mismatch) only
 
 avana_classification <- off_target_classification(avana_alignment_meyers, disposed_avana["pam_distal_single_mismatch_guides"], disposed_avana["pam_distal_double_mismatch_guides"])
 write_csv(avana_classification[[1]], "../data/sgrna_lfc_data/avana_data/avana_sgrna_alignment_classification.csv")

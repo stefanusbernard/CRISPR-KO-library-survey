@@ -18,6 +18,7 @@ library(ggsignif)
 library(ggpubr)
 library(rstatix)
 library(effsize)
+library(dplyr)
 
 source('~/CRISPR-KO-GuideRefine/GuideRefine_functions.R')
 source("./00_CRISPR-KO-library-survey-functions.R")
@@ -34,20 +35,20 @@ pick_alignment_type <- function(classification_data, alignment_type, stratificat
   return(data)
 }
 
-avana_classification <- pick_alignment_type("../data/sgrna_lfc_data/avana_data/avana_sgrna_alignment_classification.csv", c("perfect", "single mismatch"))
-avana_classification <- count_alignment_bin(avana_classification, c("perfect", "single mismatch"))
+avana_classification <- pick_alignment_type("../data/sgrna_lfc_data/avana_data/avana_sgrna_alignment_classification.csv", c("perfect", "single mismatch", "pam-distal single mismatch", "pam-distal double mismatch", "multi-target guides"))
+avana_classification <- count_alignment_bin(avana_classification, c("perfect", "single mismatch", "pam-distal single mismatch", "pam-distal double mismatch", "multi-target guides"))
 
-tkov3_classification <- pick_alignment_type("../data/sgrna_lfc_data/tkov3_data/tkov3_sgrna_alignment_classification.csv", c("perfect", "single mismatch"))
-tkov3_classification <- count_alignment_bin(tkov3_classification, c("perfect", "single mismatch"))
+tkov3_classification <- pick_alignment_type("../data/sgrna_lfc_data/tkov3_data/tkov3_sgrna_alignment_classification.csv", c("perfect", "single mismatch", "pam-distal single mismatch", "pam-distal double mismatch", "multi-target guides"))
+tkov3_classification <- count_alignment_bin(tkov3_classification, c("perfect", "single mismatch", "pam-distal single mismatch", "pam-distal double mismatch", "multi-target guides"))
 
-yusa_classification <- pick_alignment_type("../data/sgrna_lfc_data/yusa_data/yusa_sgrna_alignment_classification.csv", c("perfect", "single mismatch"))
-yusa_classification <- count_alignment_bin(yusa_classification, c("perfect", "single mismatch"))
+yusa_classification <- pick_alignment_type("../data/sgrna_lfc_data/yusa_data/yusa_sgrna_alignment_classification.csv", c("perfect", "single mismatch", "pam-distal single mismatch", "pam-distal double mismatch", "multi-target guides"))
+yusa_classification <- count_alignment_bin(yusa_classification, c("perfect", "single mismatch", "pam-distal single mismatch", "pam-distal double mismatch", "multi-target guides"))
 
-brunello_classification <- pick_alignment_type("../data/sgrna_lfc_data/brunello_data/brunello_sgrna_alignment_classification.csv", c("perfect", "single mismatch"))
-brunello_classification <- count_alignment_bin(brunello_classification, c("perfect", "single mismatch"))
+brunello_classification <- pick_alignment_type("../data/sgrna_lfc_data/brunello_data/brunello_sgrna_alignment_classification.csv", c("perfect", "single mismatch", "pam-distal single mismatch", "pam-distal double mismatch", "multi-target guides"))
+brunello_classification <- count_alignment_bin(brunello_classification, c("perfect", "single mismatch", "pam-distal single mismatch", "pam-distal double mismatch", "multi-target guides"))
 
-jacquere_classification <- pick_alignment_type("../data/sgrna_lfc_data/jacquere_data/jacquere_sgrna_alignment_classification.csv", c("perfect", "single mismatch"))
-jacquere_classification <- count_alignment_bin(jacquere_classification, c("perfect", "single mismatch"))
+jacquere_classification <- pick_alignment_type("../data/sgrna_lfc_data/jacquere_data/jacquere_sgrna_alignment_classification.csv", c("perfect", "single mismatch", "pam-distal single mismatch", "pam-distal double mismatch", "multi-target guides"))
+jacquere_classification <- count_alignment_bin(jacquere_classification, c("perfect", "single mismatch", "pam-distal single mismatch", "pam-distal double mismatch", "multi-target guides"))
 
 ```
 
@@ -55,23 +56,23 @@ jacquere_classification <- count_alignment_bin(jacquere_classification, c("perfe
 
 ```{r}
 
-avana_library_and_lfc_data <- obtain_required_data("../data/library_data/avana_library.tsv",
+avana_library_and_lfc_data <- obtain_required_data("../data/library_data/original_library/avana_library.tsv",
                                                    "../data/sgrna_lfc_data/output_normalized/avana_normalized_lfc.csv", 
                                                    avana_classification[[1]])
 
-tkov3_library_and_lfc_data <- obtain_required_data("../data/library_data/tkov3_guide_sequence.tsv", 
+tkov3_library_and_lfc_data <- obtain_required_data("../data/library_data/original_library/tkov3_guide_sequence.tsv", 
                                                    "../data/sgrna_lfc_data/output_normalized/tkov3_rpe1_normalized_lfc.csv", 
                                                    tkov3_classification[[1]])
 
-yusa_library_and_lfc_data <- obtain_required_data("../data/library_data/yusa_hcrispr_ko_grnas.tsv", 
+yusa_library_and_lfc_data <- obtain_required_data("../data/library_data/original_library/yusa_hcrispr_ko_grnas.tsv", 
                                                  "../data/sgrna_lfc_data/output_normalized/yusa_normalized_lfc.csv", 
                                                  yusa_classification[[1]])
 
-brunello_library_and_lfc_data <- obtain_required_data("../data/library_data/broadgpp-brunello-library-contents.tsv", 
+brunello_library_and_lfc_data <- obtain_required_data("../data/library_data/original_library/broadgpp-brunello-library-contents.tsv", 
                                                      "../data/sgrna_lfc_data/output_normalized/brunello_a375_normalized_lfc.csv", 
                                                      brunello_classification[[1]])
 
-jacquere_library_and_lfc_data <- obtain_required_data("../data/library_data/Jacquere_PerGuideAnnotations_Quota4.tsv", 
+jacquere_library_and_lfc_data <- obtain_required_data("../data/library_data/original_library/Jacquere_PerGuideAnnotations_Quota4.tsv", 
                                                      "../data/sgrna_lfc_data/output_normalized/jacquere_normalized_lfc.csv", 
                                                      jacquere_classification[[1]])
 
@@ -102,11 +103,12 @@ combined_data <- rbind(avana_library_and_lfc_data,
                        brunello_library_and_lfc_data, 
                        jacquere_library_and_lfc_data)
 
-combined_data <- combined_data %>% mutate(library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana", "jacquere")))
+combined_data <- combined_data %>% mutate(library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana", "jacquere")),
+                                          alignment = factor(alignment, levels = c("perfect", "single mismatch", "pam-distal single mismatch", "pam-distal double mismatch", "multi-target guides")))
 
 
 visualize_two_group(combined_data, 
-                    "../figure/03_fig_analysis_lfc_off-target-sgrna/test.png")
+                    "../figure/03_fig_analysis_lfc_off-target-sgrna/combined_library_all_off_target_sgrna.png")
 
 ```
 
