@@ -135,7 +135,7 @@ cds_gr <- keepSeqlevels(
 
 ```
 
-# obtain possible protospacer sites from exonic data
+## obtain possible protospacer sites from CDS data
 
 ```{r}
 # flatten cds granges (that contain ~500 genes), with identity attached
@@ -177,7 +177,7 @@ df_all_spacers <- data.frame(
   stringsAsFactors = FALSE
 )
 
-final_df <- df_all_spacers %>%
+all_spacers_exon_data <- df_all_spacers %>%
   left_join(df_cds_flat, join_by(gene_id, cds_id)) %>%
   dplyr::select(-c(seqnames, strand)) %>%
   dplyr::rename("start_cds" = "start",
@@ -189,10 +189,72 @@ final_df <- df_all_spacers %>%
 
 ```
 
+## Does each genes have limited number of protospacer site ?
+
+```{r}
+
+count_protospacer_per_gene <- all_spacers_exon_data %>%
+  dplyr::select(gene_id, pam_site) %>%
+  distinct() %>%
+  group_by(gene_id) %>%
+  summarise(num_pam_site = n()) %>%
+  ungroup()
+
+count_protospacer_per_gene$count_bin <- cut(count_protospacer_per_gene$num_pam_site,
+                                            breaks = c(0, 20, 40, 60, 80, 100, Inf),
+                                            labels = c(
+                                              "0–20",
+                                              "20–40",
+                                              "40–60",
+                                              "60–80",
+                                              "80–100",
+                                              ">100"
+                                            ),
+                                            right = TRUE,
+                                            include.lowest = TRUE
+                                          )
+
+df_barplot <- count_protospacer_per_gene %>%
+  dplyr::select(count_bin) %>%
+  count(count_bin) %>%
+  dplyr::rename("num_genes" = "n")
+
+
+ggplot(df_barplot, aes(x = count_bin, y = num_genes)) +
+    geom_col(fill = "#1E88E5") +
+    theme_minimal() +
+    labs(x = "Number of PAM-site at CDS", y = "Number of genes") +
+    geom_text(aes(label = paste("n=", num_genes, sep="")),
+              nudge_y = 5,
+              nudge_x = 0,
+              size = 5) +
+    theme(axis.text.x = element_text(size = 12, vjust = 0.7, colour = 'black'),
+          axis.text.y = element_text(size = 12, colour = "black"),
+          axis.title.x = element_text(size = 12, vjust = 0.5, margin = margin(r = 20), colour = "black"),
+          axis.title.y = element_text(size = 12, vjust = 0.5, margin = margin(r = 20), colour = "black"),
+          axis.ticks.y = element_line(size = 1.5),
+          axis.ticks.length = unit(0.3, "cm"),
+          axis.line.y.right = element_blank(),
+          axis.ticks.y.right = element_blank(), 
+          axis.text.y.right = element_blank(), 
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          axis.line.x = element_line(size = 0.5, colour = "black"),
+          axis.line.y = element_line(size = 0.5, colour = "black"),
+          legend.position = "none",
+          plot.margin = margin(1, 1, 1, 1),
+          legend.spacing.x = unit(1, 'cm'))
+
+
+```
+
+
+
+
+
 
 ```{r}
 # Another code to get the summary of exon length from all removed genes
-
 
 # Extract gene coordinates
 genes_gr <- genes(T2T_txdb)
