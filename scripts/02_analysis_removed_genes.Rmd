@@ -60,76 +60,10 @@ dev.off()
 
 ```
 
-## Import more relevant data
-
-```{r}
-
-# Import HGNC dataset
-
-hgnc <- read_tsv(url("https://storage.googleapis.com/public-download-files/hgnc/tsv/tsv/hgnc_complete_set.txt")) %>%
-  filter(symbol %in% removed_genes_all_libraries) %>%
-  dplyr::select(symbol, name, locus_group, ensembl_gene_id) %>%
-  dplyr::rename("gene" = "symbol")
-
-# Import paralog data
-ensembl_paralog <- ensembl_paralog_gene_pairs()
-
-paralog_pairs <- ensembl_paralog[[1]]
-paralog_individual <- ensembl_paralog[[2]]
-
-# Import the data of sgRNA library report (looking on how many guides actually multi-targeting, etc)
-
-terms <- c("CONTROL", "Control", "control", "INTRON", "Intron", "intron", "LacZ", "luciferase", "NO_SITE", "ONE_INTERGENIC_SITE")
-# lacZ and luciferase are the control in Toronto V3 library
-
-terms_for_filtering <- paste(terms, collapse = "|")
-
-avana <- 'avana_library'
-brunello <- 'broadgpp-brunello-library-contents'
-toronto <- 'tkov3_guide_sequence'
-yusa <- 'yusa_hcrispr_ko_grnas'
-jacquere <- 'Jacquere_PerGuideAnnotations_Quota4'
-
-
-avana_report <- import_and_process_report(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', avana, '_full_report.xlsx')) %>% filter(gene_hgnc %in% removed_genes_all_libraries) %>% mutate(library = "avana")
-
-brunello_report <- import_and_process_report(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', brunello, '_full_report.xlsx')) %>% filter(gene_hgnc %in% removed_genes_all_libraries) %>% mutate(library = "brunello")
-
-toronto_report <- import_and_process_report(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', toronto, '_full_report.xlsx')) %>% filter(gene_hgnc %in% removed_genes_all_libraries) %>% mutate(library = "toronto")
-
-yusa_report <- import_and_process_report(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', yusa, '_full_report.xlsx')) %>% filter(gene_hgnc %in% removed_genes_all_libraries) %>% mutate(library = "yusa")
-
-jacquere_report <- import_and_process_report(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', jacquere, '_full_report.xlsx')) %>% filter(gene_hgnc %in% removed_genes_all_libraries) %>% mutate(library = "jacquere")
-
-combined_report <- rbind(avana_report, brunello_report, toronto_report, yusa_report, jacquere_report) %>% arrange(gene_hgnc)
-
-rm(avana_report, brunello_report, toronto_report, yusa_report, jacquere_report)
-
-# Import the alignment classification data
-
-avana_alignment <- read_csv("../data/sgrna_lfc_data/avana_data/avana_sgrna_alignment_classification.csv") %>% update_gene_symbol(., removed_genes_all_libraries) %>% mutate(library = "avana")
-
-brunello_alignment <- read_csv("../data/sgrna_lfc_data/brunello_data/brunello_sgrna_alignment_classification.csv") %>% update_gene_symbol(., removed_genes_all_libraries) %>% mutate(library = "brunello")
-
-toronto_alignment <- read_csv("../data/sgrna_lfc_data/tkov3_data/tkov3_sgrna_alignment_classification.csv") %>% update_gene_symbol(., removed_genes_all_libraries) %>% mutate(library = "toronto")
-
-yusa_alignment <- read_csv("../data/sgrna_lfc_data/yusa_data/yusa_sgrna_alignment_classification.csv") %>% update_gene_symbol(., removed_genes_all_libraries) %>% mutate(library = "yusa")
-
-jacquere_alignment <- read_csv("../data/sgrna_lfc_data/jacquere_data/jacquere_sgrna_alignment_classification.csv") %>% update_gene_symbol(., removed_genes_all_libraries) %>% mutate(library = "jacquere")
-
-combined_alignment <- rbind(avana_alignment, brunello_alignment, toronto_alignment, yusa_alignment, jacquere_alignment) %>% 
-  arrange(gene_hgnc) %>%
-  # remove perfect guides because we dont need it
-  filter(!alignment == "perfect")
-
-rm(avana_alignment, brunello_alignment, toronto_alignment, yusa_alignment, jacquere_alignment)
-
-```
-
 ## There are 520 genes removed across libraries
 we asked why there are 520 genes failed/represented by fewer than 3 guides across libraries
 
-## We asked whether the size of genes and limited number of protospacer site contributes to the off-target activity of sgRNAs ?
+First, we prepare the T2T-CHM13 txdb file
 
 ```{r}
 # create txdb sqlite file for T2T-CHM13
@@ -141,6 +75,7 @@ saveDb(T2T_txdb, "../data/T2T_data/TxDb_T2T-CHM13v2.sqlite")
 
 ```
 
+## We asked whether the size of genes and limited number of protospacer site contributes to the off-target activity of sgRNAs ?
 
 ```{r}
 # Load TXdb file
@@ -150,10 +85,114 @@ columns(T2T_txdb)
 
 T2T_txdb
 
-# list of columns you can fetch
-#[1] "CDSCHROM"   "CDSEND"     "CDSID"      "CDSNAME"    "CDSPHASE"   "CDSSTART"   "CDSSTRAND"  "EXONCHROM" 
-#  [9] "EXONEND"    "EXONID"     "EXONNAME"   "EXONRANK"   "EXONSTART"  "EXONSTRAND" "GENEID"     "TXCHROM"   
-# [17] "TXEND"      "TXID"       "TXNAME"     "TXSTART"    "TXSTRAND"   "TXTYPE" 
+refseq_to_chr <- c(
+  "NC_060925.1" = "1",
+  "NC_060926.1" = "2",
+  "NC_060927.1" = "3",
+  "NC_060928.1" = "4",
+  "NC_060929.1" = "5",
+  "NC_060930.1" = "6",
+  "NC_060931.1" = "7",
+  "NC_060932.1" = "8",
+  "NC_060933.1" = "9",
+  "NC_060934.1" = "10",
+  "NC_060935.1" = "11",
+  "NC_060936.1" = "12",
+  "NC_060937.1" = "13",
+  "NC_060938.1" = "14",
+  "NC_060939.1" = "15",
+  "NC_060940.1" = "16",
+  "NC_060941.1" = "17",
+  "NC_060942.1" = "18",
+  "NC_060943.1" = "19",
+  "NC_060944.1" = "20",
+  "NC_060945.1" = "21",
+  "NC_060946.1" = "22",
+  "NC_060947.1" = "X",
+  "NC_060948.1" = "Y"
+)
+
+
+
+# exons per gene
+cds_by_gene <- cdsBy(T2T_txdb, by = "gene")
+cds_gr <- cds_by_gene[names(cds_by_gene) %in% removed_genes_all_libraries]
+
+# only filter canonical cds (not predicted XM or else)
+cds_gr <- endoapply(cds_gr, function(gr) {
+  gr[str_detect(gr$cds_name, "NP")]
+})
+
+# rename seqlevels
+seqlevels(cds_gr) <- refseq_to_chr[seqlevels(cds_gr)]
+
+# drop anything not in the genome
+cds_gr <- keepSeqlevels(
+  cds_gr,
+  seqlevels(BSgenome.Hsapiens.NCBI.T2TCHM13v2.0),
+  pruning.mode = "coarse"
+)
+
+```
+
+# obtain possible protospacer sites from exonic data
+
+```{r}
+# flatten cds granges (that contain ~500 genes), with identity attached
+cds_flat <- unlist(cds_gr, use.names = FALSE)
+cds_flat
+
+cds_flat$gene_id <- rep(
+  names(cds_gr),
+  elementNROWS(cds_gr)
+)
+
+# put the flat data as a dataframe to join later
+df_cds_flat <- as.data.frame(cds_flat)
+
+
+# reduced cds within each gene, the function of reduced cds is to filtered out the duplicate from canonical and isoform transcript that has the same start-end exonic region
+cds_reduced <- reduce(
+  split(cds_flat, cds_flat$gene_id)
+)
+
+cds_reduced <- unlist(cds_reduced, use.names = FALSE)
+
+# find all possible spacers site from the cds of ~500 removed genes
+data(SpCas9, package="crisprBase")
+cds_find_spacer <- findSpacers(cds_reduced, bsgenome = BSgenome.Hsapiens.NCBI.T2TCHM13v2.0, crisprNuclease = SpCas9)
+
+hits <- findOverlaps(cds_find_spacer, cds_flat, type = "within")
+hits
+
+df_all_spacers <- data.frame(
+  gene_id = cds_flat$gene_id[subjectHits(hits)],
+  cds_id = cds_flat$cds_id[subjectHits(hits)],
+  spacer_chr = as.character(seqnames(cds_find_spacer)[queryHits(hits)]),
+  spacer_strand = as.character(strand(cds_find_spacer)[queryHits(hits)]),
+  pam = cds_find_spacer$pam[queryHits(hits)],
+  pam_site = cds_find_spacer$pam_site[queryHits(hits)],
+  cut_site = cds_find_spacer$cut_site[queryHits(hits)],
+  spacer_seq = cds_find_spacer$protospacer[queryHits(hits)],
+  stringsAsFactors = FALSE
+)
+
+final_df <- df_all_spacers %>%
+  left_join(df_cds_flat, join_by(gene_id, cds_id)) %>%
+  dplyr::select(-c(seqnames, strand)) %>%
+  dplyr::rename("start_cds" = "start",
+                "end_cds" = "end",
+                "chromosome" = "spacer_chr",
+                "strand" = "spacer_strand") %>%
+  relocate(cds_name, .before = start_cds)
+
+
+```
+
+
+```{r}
+# Another code to get the summary of exon length from all removed genes
+
 
 # Extract gene coordinates
 genes_gr <- genes(T2T_txdb)
@@ -161,12 +200,6 @@ genes_gr <- genes(T2T_txdb)
 # Filter for your list
 genes_gr <- genes_gr[names(genes_gr) %in% removed_genes_all_libraries]
 genes_gr$span_length <- width(genes_gr)
-test <- as.data.frame(genes_gr)
-
-
-# exons per gene
-exons_by_gene <- exonsBy(T2T_txdb, by = "gene")
-exons_gr <- exons_by_gene[names(exons_by_gene) %in% removed_genes_all_libraries]
 
 exon_lengths <- lapply(exons_gr, width)
 exon_lengths_df <- stack(exons_gr)
@@ -176,7 +209,6 @@ data_exons_all_removed_genes <- as.data.frame(exon_lengths_df) %>%
   filter(str_detect(exon_name, "NM")) %>%
   mutate(exon_nm_accession = str_extract(exon_name, "^[^.]+"))
 
-
 # dataframe of total exon length in basepairs (of only 500 genes)
 total_exon_length <- data_exons_all_removed_genes %>%
   dplyr::select(name, exon_nm_accession, exon_length) %>%
@@ -185,20 +217,6 @@ total_exon_length <- data_exons_all_removed_genes %>%
   summarise(total_exon_length = sum(exon_length))
 
 ```
-
-# obtain possible protospacer sites from exonic data
-
-```{r}
-
-unlist_exons_gr <- unlist(exons_gr, use.names = FALSE)
-
-data(SpCas9, package="crisprBase")
-spacer_site <- findSpacers(unlist_exons_gr, bsgenome = BSgenome.Hsapiens.NCBI.T2TCHM13v2.0, crisprNuclease = SpCas9)
-
-```
-
-
-
 
 
 
