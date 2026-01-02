@@ -20,7 +20,7 @@ library(RColorBrewer)
 library(UpSetR)
 library(gprofiler2)
 library(HGNChelper)
-source('~/CRISPR-KO-GuideRefine/GuideRefine_functions.R')
+source('../../GuideRefine/GuideRefine_functions.R')
 source("00_CRISPR-KO-library-survey-functions.R")
 ```
 
@@ -41,11 +41,11 @@ jacquere <- 'Jacquere_PerGuideAnnotations_Quota4'
 
 # import sgRNA refining report
 
-avana_report <- import_and_process_report(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', avana, '_full_report.xlsx'))
-brunello_report <- import_and_process_report(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', brunello, '_full_report.xlsx'))
-toronto_report <- import_and_process_report(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', toronto, '_full_report.xlsx'))
-yusa_report <- import_and_process_report(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', yusa, '_full_report.xlsx'))
-jacquere_report <- import_and_process_report(paste0('~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/', jacquere, '_full_report.xlsx'))
+avana_report <- import_and_process_report(paste0('../../GuideRefine/output_cleaning/T2T-CHM13/', avana, '_full_report.xlsx'))
+brunello_report <- import_and_process_report(paste0('../../GuideRefine/output_cleaning/T2T-CHM13/', brunello, '_full_report.xlsx'))
+toronto_report <- import_and_process_report(paste0('../../GuideRefine/output_cleaning/T2T-CHM13/', toronto, '_full_report.xlsx'))
+yusa_report <- import_and_process_report(paste0('../../GuideRefine/output_cleaning/T2T-CHM13/', yusa, '_full_report.xlsx'))
+jacquere_report <- import_and_process_report(paste0('../../GuideRefine/output_cleaning/T2T-CHM13/', jacquere, '_full_report.xlsx'))
 
 ```
 
@@ -64,59 +64,49 @@ paralog_individual <- ensembl_paralog[[2]]
 # Figure A - Calculate the percentage of multi-target, single-mismatch, and PAM-distal double mismatch sgRNA in each libraries
 
 ```{r}
+pick_alignment_type_and_process_data <- function(classification_data, alignment_type, stratification_data, library_name) {
+  data <- read_csv(classification_data) %>%
+    filter(alignment %in% alignment_type)
+  
+  data <- data %>%
+    mutate(library = library_name) %>%
+    group_by(library, alignment) %>%
+    select(library, alignment) %>%
+    summarise(num_sgrna = n()) %>%
+    mutate(percentage = round(num_sgrna/sum(num_sgrna) * 100, 2))
+  
+  
+  return(data)
+}
 
-# the import_and_process_report() already update the gene symbol of each guides, hence the multi-target and off-target calculation is already correct
+avana_classification <- pick_alignment_type_and_process_data("../data/sgrna_lfc_data/avana_data/avana_sgrna_alignment_classification.csv", c("perfect", "single mismatch", "pam-distal single mismatch", "pam-distal double mismatch", "multi-target guides"), library_name = "avana")
+  
+tkov3_classification <- pick_alignment_type_and_process_data("../data/sgrna_lfc_data/tkov3_data/tkov3_sgrna_alignment_classification.csv", c("perfect", "single mismatch", "pam-distal single mismatch", "pam-distal double mismatch", "multi-target guides"), library_name = "tkov3")
 
-brunello_multi_target <- round(calculate_percentage(brunello_report, "multi-target sgRNA", "sgRNA number"), 2)
-toronto_multi_target <- round(calculate_percentage(toronto_report, "multi-target sgRNA", "sgRNA number"), 2)
-avana_multi_target <- round(calculate_percentage(avana_report, "multi-target sgRNA", "sgRNA number"), 2)
-yusa_multi_target <- round(calculate_percentage(yusa_report, "multi-target sgRNA", "sgRNA number"), 2)
-jacquere_multi_target <- round(calculate_percentage(jacquere_report, "multi-target sgRNA", "sgRNA number"), 2)
+yusa_classification <- pick_alignment_type_and_process_data("../data/sgrna_lfc_data/yusa_data/yusa_sgrna_alignment_classification.csv", c("perfect", "single mismatch", "pam-distal single mismatch", "pam-distal double mismatch", "multi-target guides"), library_name = "yusa")
 
-brunello_single_mismatch <- round(calculate_percentage(brunello_report, "single mismatch sgRNA", "sgRNA number"), 2)
-toronto_single_mismatch <- round(calculate_percentage(toronto_report, "single mismatch sgRNA", "sgRNA number"), 2)
-avana_single_mismatch <- round(calculate_percentage(avana_report, "single mismatch sgRNA", "sgRNA number"), 2)
-yusa_single_mismatch <- round(calculate_percentage(yusa_report, "single mismatch sgRNA", "sgRNA number"), 2)
-jacquere_single_mismatch <- round(calculate_percentage(jacquere_report, "single mismatch sgRNA", "sgRNA number"), 2)
+brunello_classification <- pick_alignment_type_and_process_data("../data/sgrna_lfc_data/brunello_data/brunello_sgrna_alignment_classification.csv", c("perfect", "single mismatch", "pam-distal single mismatch", "pam-distal double mismatch", "multi-target guides"), library_name = "brunello")
 
-brunello_pam_distal_double <- round(calculate_percentage(brunello_report, "PAM distal double mismatch", "sgRNA number"), 2)
-toronto_pam_distal_double <- round(calculate_percentage(toronto_report, "PAM distal double mismatch", "sgRNA number"), 2)
-avana_pam_distal_double <- round(calculate_percentage(avana_report, "PAM distal double mismatch", "sgRNA number"), 2)
-yusa_pam_distal_double <- round(calculate_percentage(yusa_report, "PAM distal double mismatch", "sgRNA number"), 2)
-jacquere_pam_distal_double <- round(calculate_percentage(jacquere_report, "PAM distal double mismatch", "sgRNA number"), 2)
+jacquere_classification <- pick_alignment_type_and_process_data("../data/sgrna_lfc_data/jacquere_data/jacquere_sgrna_alignment_classification.csv", c("perfect", "single mismatch", "pam-distal single mismatch", "pam-distal double mismatch", "multi-target guides"), library_name = "jacquere")
 
-# Create dataframe for multi-target, single-mismatch, and pam-distal from all library
-
-multi_target <- c(brunello_multi_target, toronto_multi_target, yusa_multi_target, avana_multi_target, jacquere_multi_target)
-single_mismatch <- c(brunello_single_mismatch, toronto_single_mismatch, yusa_single_mismatch, avana_single_mismatch, jacquere_single_mismatch)
-pam_distal_double <- c(brunello_pam_distal_double, toronto_pam_distal_double, yusa_pam_distal_double, avana_pam_distal_double, jacquere_pam_distal_double)
-
-library <- c("brunello", "toronto_v3", "yusa", "avana", "jacquere")
-factor <- c(1,2,3,4,5)
-
-sum_dataframe <- data.frame(library, multi_target, single_mismatch, pam_distal_double)
-
-# Reorder the library factor to ensure the bars are ordered as Brunello, Toronto, Yusa, Avana
-sum_dataframe_long <- sum_dataframe %>%
-    pivot_longer(cols = c("multi_target", "single_mismatch", "pam_distal_double"), 
-                 names_to = "category", 
-                 values_to = "percentage") %>%
-    mutate(category = factor(category, levels = c("multi_target", "single_mismatch", "pam_distal_double")),
-           library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana", "jacquere")))
-
+sum_dataframe_long <- rbind(avana_classification, tkov3_classification, yusa_classification, brunello_classification, jacquere_classification) %>%
+  filter(!alignment == "perfect") %>%
+  mutate(alignment = factor(alignment, levels = c("multi-target guides", "single mismatch", "pam-distal single mismatch", "pam-distal double mismatch")),
+         library = factor(library, levels = c("brunello", "tkov3", "yusa", "avana", "jacquere")))
 
 # Define custom colors for the libraries
 my_palette <- brewer.pal(n = 5, name = "Set2")
 
 
 # Create the grouped multibar chart for each sgRNA libraries
-multi_bar_chart <- ggplot(sum_dataframe_long, aes(x = category, y = percentage, fill = library)) +
+multi_bar_chart <- ggplot(sum_dataframe_long, aes(x = alignment, y = percentage, fill = library)) +
     geom_bar(stat = "identity", position = position_dodge2(padding = 0.2), width = 0.7) +
     theme_minimal() +
     labs(title = "", x = "", y = "sgRNA (%)") +
-    scale_x_discrete(labels = c('multi_target' = 'Multi-target sgRNA',
-                                'single_mismatch' = 'Single mismatch sgRNA',
-                                'pam_distal_double' = 'PAM distal \n double mismatch sgRNA')) +
+    scale_x_discrete(labels = c('multi-target guides' = 'Multi-target sgRNA',
+                                'single mismatch' = 'Single mismatch sgRNA',
+                                'pam-distal single mismatch' = 'PAM distal \n single mismatch sgRNA',
+                                'pam-distal double mismatch' = 'PAM distal \n double mismatch sgRNA')) +
     geom_text(aes(label = percentage), position = position_dodge2(width = 0.7), vjust = -0.5, size = 6.5) +
     theme(axis.text.x = element_text(size = 25, vjust = 0.7, colour = "black"),
           axis.text.y = element_text(size = 25, colour = "black"),
@@ -134,9 +124,9 @@ multi_bar_chart <- ggplot(sum_dataframe_long, aes(x = category, y = percentage, 
           legend.spacing.x = unit(1, 'cm')) +
     scale_fill_manual(values = my_palette,
                       name = 'Library',
-                      breaks = c("brunello", "toronto_v3", "yusa", "avana", "jacquere"),
+                      breaks = c("brunello", "tkov3", "yusa", "avana", "jacquere"),
                       labels = c("brunello" = "Brunello",
-                                 "toronto_v3" = "TKOv3",
+                                 "tkov3" = "TKOv3",
                                  "yusa" = "Yusa (Project Score)",
                                  "avana" = "Avana",
                                  "jacquere" = "Jacquere")) + 
@@ -146,11 +136,12 @@ multi_bar_chart
 
 ggsave(
     path = './',
-    width = 20,
+    width = 22,
     height = 10,
     dpi = 300,
     plot = multi_bar_chart,
     filename = paste('../figure/01_fig_analysis_off-target-sgrna/percentage_off_target_T2T.png', sep = ''))
+
 ```
 
 # Percentage of sgRNAs not represented after library refinement
