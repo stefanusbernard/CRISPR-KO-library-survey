@@ -1144,4 +1144,291 @@ obtain_required_data <- function(library, normalized_lfc_data, stratification_da
 
 ```
 
+# Backup code for analysis of removed genes (negative result)
+
+1. Our first hypothesis is maybe the same sgRNA design were used across libraries for some genes. Which led to the failure of on-target activity 
+
+```{r}
+
+duplicated_sequence <- combined_alignment %>%
+  # filter(duplicated(spacer) | duplicated(spacer, fromLast = TRUE)) %>%
+  dplyr::select(spacer, library) %>%
+  group_by(library) %>%
+  summarise(seqs = list(unique(spacer))) %>%
+  deframe()
+  
+upset(fromList(duplicated_sequence),
+      order.by = "degree",
+      main.bar.color = "#4B0092",
+      sets.bar.color = "#1AFF1A",
+      text.scale = 1.5)
+
+```
+
+However, only 30 sgRNA sequences, that failed and shared among the libraries (except Yusa Project Score). Therefore, sgRNA sequences is not a contributing factor for multi-targeting-/off-targeting sgRNAs.
+
+We asked whether paralogs are the major contributing factor in causing multi-target-/off-targeting activity in sgRNAs. 
+
+```{r}
+
+# count how many 520 genes has paralogs
+df <- hgnc %>%
+  left_join(ensembl_paralog[[4]], join_by(gene, locus_group, ensembl_gene_id)) %>%
+  mutate(has_paralogs = replace_na(has_paralogs, FALSE))
+  
+# count percentage of paralogs
+df_percent_paralogs <- df %>%
+  dplyr::select(gene, has_paralogs) %>%
+  distinct() %>%
+  count(has_paralogs) %>%
+  dplyr::rename("count" = "n") %>%
+  mutate(percent = count / sum(count) * 100)
+
+# 377 genes out of 520 that were removed across libraries are paralogs (72.5%), indicating significant number of enrichment
+
+
+# we focused our attention to the 377 paralog genes that were removed across libraries. Furthermore, we discussed the 177 singleton genes separately
+
+removed_paralog <- df %>% 
+  dplyr::select(gene, has_paralogs) %>%
+  group_by(gene) %>%
+  summarise(count_paralog = if_else(has_paralogs == TRUE, n(), 0)) %>%
+  arrange(count_paralog) %>%
+  ungroup() %>%
+  distinct()
+
+removed_paralog$paralogs_bin <- cut(removed_paralog$count_paralog,
+                                    breaks = c(-0.5, 0.5:5.5, Inf),  # -0.5 to 5.5 for 0–5, then Inf for >5
+                                    labels = c(as.character(0:5), "> 5"),
+                                    right = TRUE)
+
+removed_paralog %>% count(paralogs_bin)
+
+# 0	143			
+# 1	67			
+# 2	38			
+# 3	25			
+# 4	11			
+# 5	11			
+# > 5	225	
+
+removed_paralog_bin <- removed_paralog %>% 
+  count(paralogs_bin) %>% 
+  dplyr::rename("count_paralog" = "n")
+
+boxplot_paralog <- ggplot(removed_paralog_bin, aes(x = paralogs_bin, y = count_paralog)) +
+    geom_col(fill = "#1E88E5") +
+    theme_minimal() +
+  labs(x = "Number of paralogs", y = "Removed genes across 5 libraries") +
+  geom_text(aes(label = paste("n=", count_paralog, sep="")),
+            nudge_y = 10,
+            nudge_x = 0,
+            size = 5) +
+  theme(axis.text.x = element_text(size = 15, vjust = 0.7, colour = 'black'),
+        axis.text.y = element_text(size = 15, colour = "black"),
+        axis.title.x = element_text(size = 15, vjust = 0.5, margin = margin(t = 10), colour = "black"),
+        axis.title.y = element_text(size = 15, vjust = 0.5, margin = margin(r = 10), colour = "black"),
+        axis.ticks.y = element_line(size = 1.5),
+        axis.ticks.length = unit(0.15, "cm"),
+        axis.line.y.right = element_blank(),
+        axis.ticks.y.right = element_blank(), 
+        axis.text.y.right = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line.x = element_line(size = 0.5, colour = "black"),
+        axis.line.y = element_line(size = 0.5, colour = "black"),
+        legend.position = "none",
+        plot.margin = margin(1, 1, 1, 1),
+        legend.spacing.x = unit(1, 'cm'))
+
+ggsave(
+  path = '../figure/01_fig_analysis_off-target-sgrna/',
+  width = 6.5,
+  height = 5,
+  dpi = 1000,
+  plot = boxplot_paralog,
+  filename = "removed_genes_paralogs.png")
+
+
+# we found most removed genes are containing paralogs family, with more than >1 paralogs
+
+# since paralogs came from gene duplication event, we asked whether the genes with more paralogs have their sequences more identical with the original genes
+
+removed_paralog_max <- df %>% 
+  dplyr::select(gene, has_paralogs, percent_identity_human_gene_identical_to_query) %>%
+  group_by(gene) %>%
+  # count paralog NA because they dont have paralog gene
+  summarise(count_paralog = if_else(has_paralogs == TRUE, n(), NA),
+            max_percent_identity = max(percent_identity_human_gene_identical_to_query, na.rm = TRUE)) %>%
+  arrange(count_paralog) %>%
+  ungroup() %>%
+  distinct() %>%
+  # drop NA/removed genes without paralogs
+  drop_na()
+
+removed_paralog_max$paralogs_bin <- cut(removed_paralog_max$count_paralog,
+                                    breaks = c(-0.5, 0.5:5.5, Inf),  # -0.5 to 5.5 for 0–5, then Inf for >5
+                                    labels = c(as.character(0:5), "> 5"),
+                                    right = TRUE)
+
+
+annotation_df <- removed_paralog_max %>%
+    count(paralogs_bin)
+
+boxplot_percent_identity_paralog <- removed_paralog_max %>%
+    ggplot(aes(paralogs_bin, max_percent_identity, group = paralogs_bin)) +
+    geom_boxplot(outlier.shape = NA, size = 0.5) +
+    theme_minimal() +
+    labs(title = "", 
+         x = "Number of paralogs for a single gene", 
+         y = "% of protein sequences \nmatched in closest paralog") +
+    theme(
+      axis.text.x = element_text(size = 15, vjust = 0.7, colour = "black"),
+      axis.text.y = element_text(size = 15, colour = "black"),
+      axis.title.x = element_text(size = 15, margin = margin(t = 10)),
+      axis.title.y = element_text(size = 15, margin = margin(r = 10)),
+      axis.ticks = element_line(size = 1.5),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      axis.line.x = element_line(size = 0.5),
+      axis.line.y = element_line(size = 0.5))
+
+  b <- ggplot_build(boxplot_percent_identity_paralog)
+  boxplot_whisker <- b$data[[1]]$ymax
+  
+  boxplot_percent_identity_paralog <- boxplot_percent_identity_paralog +
+    geom_text(
+      data = annotation_df,
+      aes(x = paralogs_bin, y = boxplot_whisker + 0.1, label = paste0("n= ", n)),
+      size = 3.5,
+      angle = 45,
+      vjust = -0.2,
+      hjust = -0.2
+    ) +
+    coord_cartesian(clip = "off")
+
+
+ggsave(
+  path = '../figure/01_fig_analysis_off-target-sgrna/',
+  width = 5,
+  height = 6,
+  dpi = 1000,
+  plot = boxplot_percent_identity_paralog,
+  filename = "removed_genes_paralogs_percent_identity.png")
+
+
+
+```
+
+## Backup code for percentage off-target sgRNA T2T-CHM13
+
+```{r}
+
+# the import_and_process_report() already update the gene symbol of each guides, hence the multi-target and off-target calculation is already correct
+
+brunello_multi_target <- round(calculate_percentage(brunello_report, "multi-target sgRNA", "sgRNA number"), 2)
+toronto_multi_target <- round(calculate_percentage(toronto_report, "multi-target sgRNA", "sgRNA number"), 2)
+avana_multi_target <- round(calculate_percentage(avana_report, "multi-target sgRNA", "sgRNA number"), 2)
+yusa_multi_target <- round(calculate_percentage(yusa_report, "multi-target sgRNA", "sgRNA number"), 2)
+jacquere_multi_target <- round(calculate_percentage(jacquere_report, "multi-target sgRNA", "sgRNA number"), 2)
+
+brunello_single_mismatch <- round(calculate_percentage(brunello_report, "single mismatch sgRNA", "sgRNA number"), 2)
+toronto_single_mismatch <- round(calculate_percentage(toronto_report, "single mismatch sgRNA", "sgRNA number"), 2)
+avana_single_mismatch <- round(calculate_percentage(avana_report, "single mismatch sgRNA", "sgRNA number"), 2)
+yusa_single_mismatch <- round(calculate_percentage(yusa_report, "single mismatch sgRNA", "sgRNA number"), 2)
+jacquere_single_mismatch <- round(calculate_percentage(jacquere_report, "single mismatch sgRNA", "sgRNA number"), 2)
+
+brunello_pam_distal_double <- round(calculate_percentage(brunello_report, "PAM distal double mismatch", "sgRNA number"), 2)
+toronto_pam_distal_double <- round(calculate_percentage(toronto_report, "PAM distal double mismatch", "sgRNA number"), 2)
+avana_pam_distal_double <- round(calculate_percentage(avana_report, "PAM distal double mismatch", "sgRNA number"), 2)
+yusa_pam_distal_double <- round(calculate_percentage(yusa_report, "PAM distal double mismatch", "sgRNA number"), 2)
+jacquere_pam_distal_double <- round(calculate_percentage(jacquere_report, "PAM distal double mismatch", "sgRNA number"), 2)
+
+# Create dataframe for multi-target, single-mismatch, and pam-distal from all library
+
+multi_target <- c(brunello_multi_target, toronto_multi_target, yusa_multi_target, avana_multi_target, jacquere_multi_target)
+single_mismatch <- c(brunello_single_mismatch, toronto_single_mismatch, yusa_single_mismatch, avana_single_mismatch, jacquere_single_mismatch)
+pam_distal_double <- c(brunello_pam_distal_double, toronto_pam_distal_double, yusa_pam_distal_double, avana_pam_distal_double, jacquere_pam_distal_double)
+
+library <- c("brunello", "toronto_v3", "yusa", "avana", "jacquere")
+factor <- c(1,2,3,4,5)
+
+sum_dataframe <- data.frame(library, multi_target, single_mismatch, pam_distal_double)
+
+# Reorder the library factor to ensure the bars are ordered as Brunello, Toronto, Yusa, Avana
+sum_dataframe_long <- sum_dataframe %>%
+    pivot_longer(cols = c("multi_target", "single_mismatch", "pam_distal_double"), 
+                 names_to = "category", 
+                 values_to = "percentage") %>%
+    mutate(category = factor(category, levels = c("multi_target", "single_mismatch", "pam_distal_double")),
+           library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana", "jacquere")))
+
+
+# Define custom colors for the libraries
+my_palette <- brewer.pal(n = 5, name = "Set2")
+
+
+# Create the grouped multibar chart for each sgRNA libraries
+multi_bar_chart <- ggplot(sum_dataframe_long, aes(x = category, y = percentage, fill = library)) +
+    geom_bar(stat = "identity", position = position_dodge2(padding = 0.2), width = 0.7) +
+    theme_minimal() +
+    labs(title = "", x = "", y = "sgRNA (%)") +
+    scale_x_discrete(labels = c('multi_target' = 'Multi-target sgRNA',
+                                'single_mismatch' = 'Single mismatch sgRNA',
+                                'pam_distal_double' = 'PAM distal \n double mismatch sgRNA')) +
+    geom_text(aes(label = percentage), position = position_dodge2(width = 0.7), vjust = -0.5, size = 6.5) +
+    theme(axis.text.x = element_text(size = 25, vjust = 0.7, colour = "black"),
+          axis.text.y = element_text(size = 25, colour = "black"),
+          axis.title.y = element_text(size = 25, vjust = 0.5, margin = margin(r = 20)),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          axis.line.x = element_line(size = 0.5),
+          axis.line.y = element_line(size = 0.5),
+          axis.ticks.y = element_line(size = 1.5),
+          axis.ticks.length = unit(0.3, "cm"),
+          legend.title = element_text(size = 25),
+          legend.text = element_text(size = 25),
+          plot.margin = margin(1, 1, 1, 1), 
+          line = element_line((size = 4), colour = 'black'),
+          legend.spacing.x = unit(1, 'cm')) +
+    scale_fill_manual(values = my_palette,
+                      name = 'Library',
+                      breaks = c("brunello", "toronto_v3", "yusa", "avana", "jacquere"),
+                      labels = c("brunello" = "Brunello",
+                                 "toronto_v3" = "TKOv3",
+                                 "yusa" = "Yusa (Project Score)",
+                                 "avana" = "Avana",
+                                 "jacquere" = "Jacquere")) + 
+  scale_y_continuous(breaks=seq(0, 10, 2), limits=c(0, 10))
+
+multi_bar_chart
+
+ggsave(
+    path = './',
+    width = 20,
+    height = 10,
+    dpi = 300,
+    plot = multi_bar_chart,
+    filename = paste('../figure/01_fig_analysis_off-target-sgrna/percentage_off_target_T2T.png', sep = ''))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
