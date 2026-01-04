@@ -64,9 +64,11 @@ for (drug in drug_names) {
   # make a table list of differences between hits
   results[[length(results) + 1]] <- data.frame(
     drug = drug,
+    total_original_hits = length(set_original),
+    total_refined_hits = length(set_refined),
+    overlap_hits = length(overlap),
     original_only_hits = length(original),
-    refined_only_hits  = length(refined),
-    overlap_hits       = length(overlap)
+    refined_only_hits  = length(refined)
   )
   
   # make a table composed a list of genes and output it as excel
