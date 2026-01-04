@@ -22,15 +22,15 @@ Take an example of one of the hits MLN4924
 
 ```{r}
 
-MLN4924_original_only_hits <- read_excel("../../data/result_gene_hits_change/olivieri_hits_original_refined_approved_symbol.xlsx") %>%
-  select(MLN4924_original_only_hits) %>%
+AZD6738_original_only_hits <- read_excel("../../data/result_gene_hits_change/olivieri_hits_original_refined_approved_symbol.xlsx") %>%
+  select(AZD6738_original_only_hits) %>%
   drop_na() %>%
-  pull(MLN4924_original_only_hits)
+  pull(AZD6738_original_only_hits)
 
-MLN4924_refined_only_hits <- read_excel("../../data/result_gene_hits_change/olivieri_hits_original_refined_approved_symbol.xlsx") %>%
-  select(MLN4924_refined_only_hits) %>%
+AZD6738_refined_only_hits <- read_excel("../../data/result_gene_hits_change/olivieri_hits_original_refined_approved_symbol.xlsx") %>%
+  select(AZD6738_refined_only_hits) %>%
   drop_na() %>%
-  pull(MLN4924_refined_only_hits)
+  pull(AZD6738_refined_only_hits)
 
 ```
 
@@ -52,7 +52,6 @@ gostres_refined <- gost(query = MLN4924_refined_only_hits,
                         organism = "hsapiens")
 
 gostplot(gostres_refined, capped = TRUE, interactive = TRUE)
-
 
 ```
 
