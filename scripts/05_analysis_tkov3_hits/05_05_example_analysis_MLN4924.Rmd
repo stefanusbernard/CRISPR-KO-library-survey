@@ -1,0 +1,62 @@
+---
+title: "Analysis of gene hits change in Olivieri CRISPR-KO screen"
+author: "Author: Stefanus Bernard"
+date: "Date: `r format(Sys.time(), '%d %B %Y')`"
+output: 
+  html_document :
+    theme : cerulean
+    toc : true
+    toc_float : true
+    number_section : true
+---
+
+Import relevant library
+
+```{r}
+library(tidyverse)
+library(readxl)
+library(gprofiler2)
+```
+
+Take an example of one of the hits MLN4924
+
+```{r}
+
+MLN4924_original_only_hits <- read_excel("../../data/result_gene_hits_change/olivieri_hits_original_refined_approved_symbol.xlsx") %>%
+  select(MLN4924_original_only_hits) %>%
+  drop_na() %>%
+  pull(MLN4924_original_only_hits)
+
+MLN4924_refined_only_hits <- read_excel("../../data/result_gene_hits_change/olivieri_hits_original_refined_approved_symbol.xlsx") %>%
+  select(MLN4924_refined_only_hits) %>%
+  drop_na() %>%
+  pull(MLN4924_refined_only_hits)
+
+```
+
+Perform gene ontology analysis
+
+```{r}
+# TODO: need to add custom background genes
+gostres_original <- gost(query = MLN4924_original_only_hits, 
+                        organism = "hsapiens")
+
+gostplot(gostres_original, capped = TRUE, interactive = TRUE)
+
+```
+
+
+```{r}
+
+gostres_refined <- gost(query = MLN4924_refined_only_hits, 
+                        organism = "hsapiens")
+
+gostplot(gostres_refined, capped = TRUE, interactive = TRUE)
+
+
+```
+
+
+
+
+
