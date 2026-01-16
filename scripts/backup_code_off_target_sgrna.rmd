@@ -1413,6 +1413,82 @@ ggsave(
 ```
 
 
+# Backup code for Gene Ontology Olivieri Screens
+
+Perform gene ontology enrichment analysis
+
+```{r}
+hits_before_refining <- c(AZD6738_original_only_hits, AZD6738_overlap_hits)
+
+GOBP_hits_before_refining <- enrichGO(gene = hits_before_refining,
+                                     OrgDb = org.Hs.eg.db,
+                                     ont = "BP",
+                                     pAdjustMethod = "BH",
+                                     qvalueCutoff = 0.05,
+                                     keyType = "SYMBOL",
+                                     minGSSize = 10,
+                                     universe = original_library)
+GOBP_hits_before_refining_simplified <- simplify(
+  GOBP_hits_before_refining,
+  cutoff = 0.7,          # similarity threshold
+  by = "p.adjust",       # which column defines "best"
+  select_fun = min,
+  measure = "Wang"       # GO semantic similarity
+)
+
+dotplot(GOBP_hits_before_refining_simplified, showCategory = 10) +
+  ggtitle("AZD6738 original hits")
+
+```
+
+
+```{r}
+hits_after_refining <- c(AZD6738_refined_only_hits, AZD6738_overlap_hits)
+
+GOBP_hits_after_refining <- enrichGO(gene = hits_after_refining,
+                                     OrgDb = org.Hs.eg.db,
+                                     ont = "BP",
+                                     pAdjustMethod = "BH",
+                                     qvalueCutoff = 0.05,
+                                     keyType = "SYMBOL",
+                                     minGSSize = 10,
+                                     universe = refined_library)
+GOBP_hits_after_refining_simplified <- simplify(
+  GOBP_hits_after_refining,
+  cutoff = 0.7,          # similarity threshold
+  by = "p.adjust",       # which column defines "best"
+  select_fun = min,
+  measure = "Wang"       # GO semantic similarity
+)
+
+dotplot(GOBP_hits_after_refining_simplified, showCategory = 10) +
+  ggtitle("AZD6738 hits after refining")
+
+```
+
+```{r}
+GOBP_original_only_hits <- enrichGO(gene = AZD6738_original_only_hits,
+                                     OrgDb = org.Hs.eg.db,
+                                     ont = "BP",
+                                     pAdjustMethod = "BH",
+                                     qvalueCutoff = 0.05,
+                                     keyType = "SYMBOL",
+                                     minGSSize = 10,
+                                     universe = original_library)
+
+GOBP_original_only_hits_simplified <- simplify(
+  GOBP_original_only_hits,
+  cutoff = 0.7,          # similarity threshold
+  by = "p.adjust",       # which column defines "best"
+  select_fun = min,
+  measure = "Wang"       # GO semantic similarity
+)
+
+dotplot(GOBP_original_only_hits_simplified, showCategory = 10) +
+  ggtitle("AZD6738 original only gene hits")
+
+```
+
 
 
 
