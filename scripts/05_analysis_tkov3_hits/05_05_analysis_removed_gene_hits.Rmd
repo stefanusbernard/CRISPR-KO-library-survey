@@ -1,0 +1,143 @@
+---
+title: "Analysis of gene hits change in Olivieri CRISPR-KO screen"
+author: "Author: Stefanus Bernard"
+date: "Date: `r format(Sys.time(), '%d %B %Y')`"
+output: 
+  html_document :
+    theme : cerulean
+    toc : true
+    toc_float : true
+    number_section : true
+---
+
+Import relevant library
+
+```{r}
+library(tidyverse)
+library(dplyr)
+library(readxl)
+library(clusterProfiler)
+library(enrichplot)
+library(org.Hs.eg.db)
+source("../00_CRISPR-KO-library-survey-functions.R")
+```
+
+Import TKOV3 sgRNA cleaning report and background genes
+
+```{r}
+
+TKOV3_report <- read_excel("../../../GuideRefine/output_cleaning/T2T-CHM13/tkov3_guide_sequence_full_report.xlsx")
+
+original_library <- read_delim("../../data/library_data/original_library/tkov3_guide_sequence.tsv", col_names = c("sgRNA", "spacer", "gene")) %>% filter(!gene %in% c("LacZ", "luciferase", "EGFR")) %>% pull(gene) %>% unique()
+
+refined_library <- read_delim("../../data/library_data/refined_library/tkov3_guide_sequence_61K_refined.tsv", col_names = c("sgRNA", "spacer", "gene")) %>% filter(!gene %in% c("LacZ", "luciferase", "EGFR")) %>% pull(gene) %>% unique()
+
+
+
+# obtain alignment type data
+
+pick_alignment_type <- function(classification_data, alignment_type, stratification_data) {
+  data <- read_csv(classification_data) %>%
+    filter(alignment %in% alignment_type)
+  
+  return(data)
+}
+
+selected_guides <- c("perfect", "single mismatch", "pam-distal single mismatch", "pam-distal double mismatch", "multi-target guides", "non-targeting")
+
+tkov3_classification <- pick_alignment_type("../../data/sgrna_lfc_data/tkov3_data/tkov3_sgrna_alignment_classification.csv", selected_guides)
+tkov3_classification <- count_alignment_bin(tkov3_classification, selected_guides)
+
+```
+
+Check rank of gene hits before and after
+
+```{r}
+hits_original <- read_tsv("../../data/result_gene_hits_change/tkov3_olivieri_paper/AZD6738_output_original.txt")
+hits_refined <- read_tsv("../../data/result_gene_hits_change/tkov3_olivieri_paper/AZD6738_output_refined.txt")
+```
+
+Take an example of one of the hits MNNG
+
+```{r}
+
+AZD6738_original_only_hits <- read_excel("../../data/result_gene_hits_change/olivieri_hits_original_refined_approved_symbol.xlsx") %>%
+  dplyr::select(AZD6738_original_only_hits) %>%
+  drop_na() %>%
+  pull(AZD6738_original_only_hits)
+
+AZD6738_refined_only_hits <- read_excel("../../data/result_gene_hits_change/olivieri_hits_original_refined_approved_symbol.xlsx") %>%
+  dplyr::select(AZD6738_refined_only_hits) %>%
+  drop_na() %>%
+  pull(AZD6738_refined_only_hits)
+
+AZD6738_overlap_hits <- read_excel("../../data/result_gene_hits_change/olivieri_hits_original_refined_approved_symbol.xlsx") %>%
+  dplyr::select(AZD6738_overlap_hits) %>%
+  drop_na() %>%
+  pull(AZD6738_overlap_hits)
+
+```
+
+Does the genes only represented in the original library removed because multi-target-/off-target or because of rank changes
+
+```{r}
+# check HGNC data
+
+hgnc_protein_coding <- read_tsv("https://storage.googleapis.com/public-download-files/hgnc/tsv/tsv/hgnc_complete_set.txt") %>%
+    filter(locus_group == "protein-coding gene" & !is.na(ensembl_gene_id)) %>%
+    dplyr::rename("gene" = "symbol") %>%
+    dplyr::select(gene, name, locus_group, ensembl_gene_id)
+
+selected_gene <- hgnc_protein_coding %>%
+  filter(gene %in% AZD6738_original_only_hits) %>%
+  mutate(notes = case_when(gene %in% hits_refined$GENE ~ "rank change",
+                           TRUE ~ "removed due to multi-target-/off-target sgrnas")) %>%
+  dplyr::rename("GENE" = "gene") %>%
+  left_join(hits_original, join_by(GENE))
+
+
+```
+
+# What are the genes removed because of multi-target-/off-target
+
+```{r}
+
+selected_gene_removed_multi_target <- selected_gene %>% filter(!notes == "rank change")
+
+guides_observation <- tkov3_classification[[1]] %>% filter(gene %in% selected_gene_removed_multi_target$GENE)
+
+guides_observation %>% 
+  dplyr::select(gene, alignment) %>%
+  group_by(gene) %>%
+  count(alignment) %>%
+  dplyr::rename("num_guides" = "n") %>%
+  filter(!alignment == "perfect") %>%
+  mutate(percentage = round((num_guides/4)*100, 2),
+         alignment = factor(alignment, levels = c("pam-distal single mismatch", "single mismatch", "multi-target guides"))) %>%
+  ggplot(aes(gene, percentage, fill = alignment)) +
+    geom_bar(stat = "identity", position = "stack") +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45)) +
+    ylim(0, 100)
+
+```
+
+Does all the genes represented in original library actually driven by multi-target-/off-target effect
+
+```{r}
+# obtain all gene hits represented only in the original library
+data_hits <- read_excel("../../data/result_gene_hits_change/olivieri_hits_original_refined_approved_symbol.xlsx") %>%
+  dplyr::select(matches("_original_only_hits")) %>%
+  pivot_longer(
+    cols = matches("_original_only_hits"),
+    names_to = "screens",
+    values_to = "gene_hits"
+  ) %>%
+  drop_na()
+
+```
+
+
+
+
+
