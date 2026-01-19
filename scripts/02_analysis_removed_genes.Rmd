@@ -201,15 +201,19 @@ count_protospacer_per_gene <- all_spacers_exon_data %>%
   ungroup()
 
 count_protospacer_per_gene$count_bin <- cut(count_protospacer_per_gene$num_pam_site,
-                                            breaks = c(0, 20, 40, 60, 80, 100, Inf),
+                                            breaks = c(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, Inf),
                                             labels = c(
-                                              "0–20",
-                                              "20–40",
-                                              "40–60",
-                                              "60–80",
-                                              "80–100",
-                                              ">100"
-                                            ),
+                                              "0–10",
+                                              "10–20",
+                                              "20–30",
+                                              "30–40",
+                                              "40–50",
+                                              "50-60",
+                                              "60–70",
+                                              "70–80",
+                                              "80–90",
+                                              "90-100",
+                                              ">100"),
                                             right = TRUE,
                                             include.lowest = TRUE
                                           )
@@ -223,17 +227,17 @@ df_barplot <- count_protospacer_per_gene %>%
 ggplot(df_barplot, aes(x = count_bin, y = num_genes)) +
     geom_col(fill = "#1E88E5") +
     theme_minimal() +
-    labs(x = "Number of PAM-site at CDS", y = "Number of genes") +
+    labs(x = "Number of NGG PAM-site at CDS", y = "Number of genes") +
     geom_text(aes(label = paste("n=", num_genes, sep="")),
               nudge_y = 5,
               nudge_x = 0,
               size = 5) +
-    theme(axis.text.x = element_text(size = 12, vjust = 0.7, colour = 'black'),
+    theme(axis.text.x = element_text(size = 12, vjust = 0.7, angle = 45, colour = 'black'),
           axis.text.y = element_text(size = 12, colour = "black"),
           axis.title.x = element_text(size = 12, vjust = 0.5, margin = margin(r = 20), colour = "black"),
           axis.title.y = element_text(size = 12, vjust = 0.5, margin = margin(r = 20), colour = "black"),
-          axis.ticks.y = element_line(size = 1.5),
-          axis.ticks.length = unit(0.3, "cm"),
+          axis.ticks.y = element_line(size = 1),
+          axis.ticks.length = unit(0.15, "cm"),
           axis.line.y.right = element_blank(),
           axis.ticks.y.right = element_blank(), 
           axis.text.y.right = element_blank(), 
@@ -247,11 +251,6 @@ ggplot(df_barplot, aes(x = count_bin, y = num_genes)) +
 
 
 ```
-
-
-
-
-
 
 ```{r}
 # Another code to get the summary of exon length from all removed genes

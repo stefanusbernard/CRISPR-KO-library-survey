@@ -1,6 +1,7 @@
 library(tidyverse)
 library(HGNChelper)
 library(openxlsx)
+library(MAGeCKFlute)
 
 path = "data/result_gene_hits_change/tkov3_olivieri_paper/"
 
@@ -34,8 +35,17 @@ for (drug in drug_names) {
   # filter FDR < 0.15 and normZ < -3 or > 6
   
   filter_and_process_data <- function(data) {
-    data <- read_tsv(data) %>%
-      filter((fdr_synth < 0.15 & normZ < -3) | (fdr_supp < 0.15 & normZ > 6)) %>%
+    
+    data <- read_tsv(data)
+    lower_outlier_limit <- -CutoffCalling(data$normZ, scale = 3)
+    upper_outlier_limit <- CutoffCalling(data$normZ, scale = 3)
+    
+    data <- data %>%
+      # Olivieri Screen threshold
+      # filter((fdr_synth < 0.15 & normZ < -3) | (fdr_supp < 0.15 & normZ > 6)) %>%
+      
+      # MAGeCK cutoff threshold
+      filter((fdr_synth < 0.15 & normZ < lower_outlier_limit) | (fdr_supp < 0.15 & normZ > upper_outlier_limit)) %>%
       pull(GENE)
     
     # pick this if we dont update the gene symbol
@@ -67,8 +77,8 @@ for (drug in drug_names) {
     total_original_hits = length(set_original),
     total_refined_hits = length(set_refined),
     overlap_hits = length(overlap),
-    original_only_hits = length(original),
-    refined_only_hits  = length(refined)
+    hits_only_in_original = length(original),
+    hits_only_in_refined  = length(refined)
   )
   
   # make a table composed a list of genes and output it as excel
