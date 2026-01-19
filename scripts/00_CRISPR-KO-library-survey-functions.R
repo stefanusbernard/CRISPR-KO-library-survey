@@ -12,7 +12,8 @@ library(paletteer)
 library(RColorBrewer)
 
 
-source('~/CRISPR-KO-GuideRefine/GuideRefine_functions.R')
+# source('~/CRISPR-KO-GuideRefine/GuideRefine_functions.R')
+source("D:/GitHub/GuideRefine/GuideRefine_functions.R")
 
 # FUNCTION to import paralog data
 
@@ -608,13 +609,13 @@ obtain_required_data <- function(library, normalized_lfc_data, stratification_da
 
 calculate_wilcoxon_cles <- function(input_data, which_guides, which_guides_2) {
   
-  input_data[[1]]$alignment <- factor(input_data[[1]]$alignment, levels = c(which_guides, which_guides_2))
-  wilcox.test(input_data[[1]]$mean ~ input_data[[1]]$alignment, alternative = "less")
-  res <- cliff.delta(mean ~ alignment, data = input_data[[1]])
-  
+  input_data$alignment <- factor(input_data$alignment, levels = c(which_guides, which_guides_2))
+  wilcox.test(input_data$mean ~ input_data$alignment, alternative = "less")
+  res <- cliff.delta(mean ~ alignment, data = input_data)
   delta <- res$estimate
-  cles <- (delta + 1) / 2
-  cles
+  delta
+  # cles <- (delta + 1) / 2
+  # cles
 }
 
 
@@ -623,7 +624,7 @@ visualize_two_group <- function(library_lfc_data, boxplot_output_name) {
 
   facet_labels = c("brunello" = "Brunello",
                    "toronto_v3" = "TKOv3",
-                   "yusa" = "Yusa (Project Score)",
+                   "yusa" = "Yusa",
                    "avana" = "Avana",
                    "jacquere" = "Jacquere")
   
@@ -633,24 +634,25 @@ visualize_two_group <- function(library_lfc_data, boxplot_output_name) {
                            fill = "alignment",
                            facet.by = "library",
                            outliers = FALSE) +
-    stat_compare_means(comparisons = list(c("perfect", "single mismatch"), 
-                                          c("perfect", "pam-distal single mismatch"), 
-                                          c("perfect", "pam-distal double mismatch"),
-                                          c("perfect", "multi-target guides"),
-                                          c("single mismatch", "pam-distal single mismatch"),
-                                          c("single mismatch", "pam-distal double mismatch"),
-                                          c("single mismatch", "multi-target guides"),
-                                          c("pam-distal single mismatch", "pam-distal double mismatch"),
-                                          c("pam-distal single mismatch", "multi-target guides"),
-                                          c("pam-distal double mismatch", "multi-target guides")),
+    stat_compare_means(comparisons = list(
+                                          c("perfect", "single mismatch")),
+                                          # c("perfect", "pam-distal single mismatch"), 
+                                          # c("perfect", "pam-distal double mismatch"),
+                                          # c("perfect", "multi-target guides"),
+                                          # c("single mismatch", "pam-distal single mismatch"),
+                                          # c("single mismatch", "pam-distal double mismatch"),
+                                          # c("single mismatch", "multi-target guides"),
+                                          # c("pam-distal single mismatch", "pam-distal double mismatch"),
+                                          # c("pam-distal single mismatch", "multi-target guides"),
+                                          # c("pam-distal double mismatch", "multi-target guides")),
                        method = "wilcox.test",
                        method.args = list(alternative = "two.sided"),
                        size = 2.5,
                        step.increase = 0.05,
                        tip.length = 0.01,
-                       label = "p.format",
+                       label = "p.signif",
                        label.y = 1) +
-    scale_y_continuous(limits = c(-3, 4), breaks = seq(-2, 2, by = 1)) +
+    scale_y_continuous(limits = c(-3, 2), breaks = seq(-2, 2, by = 1)) +
     scale_fill_manual(
       name = "sgRNA: ",
       values = c("perfect" = "#0072B2", 
@@ -658,15 +660,16 @@ visualize_two_group <- function(library_lfc_data, boxplot_output_name) {
                  "pam-distal single mismatch" = "mistyrose",
                  "pam-distal double mismatch" = "#E7F7D5",
                  "multi-target guides" = "#E69F00"),
-      labels = c("On-target", "Single mm", "PAM-distal single mm", "PAM-distal double mm", "Multi-target")) +
+      labels = c("On-target", "Single mismatch")) +
+      # labels = c("On-target", "Single mismatch", "PAM-distal single mismatch", "PAM-distal double mismatch", "Multi-target")) +
     labs(title = "", 
          x = "", 
          y = "Averaged median sgRNA Log2FC",
          fill = "Alignment:") +
     theme(plot.margin = margin(10, 10, 25, 10),
-          strip.text.x = element_text(size = 12),
+          strip.text.x = element_text(size = 14),
           axis.text.x = element_blank(),
-          axis.text.y = element_text(size = 12, colour = "black"),
+          axis.text.y = element_text(size = 14, colour = "black"),
           axis.ticks.y = element_line(size = 1.5),
           axis.ticks.x = element_blank(), 
           axis.ticks.length = unit(0.1, "cm"),
@@ -676,6 +679,7 @@ visualize_two_group <- function(library_lfc_data, boxplot_output_name) {
           axis.line.x = element_line(size = 0.5),
           axis.line.y = element_line(size = 0.5), 
           line = element_line((size = 2), colour = 'black'),
+          legend.position = "right",
           legend.text = element_text(size = 12)) +
     facet_wrap(~library, ncol = 5, labeller = labeller(library = facet_labels))
   
@@ -708,12 +712,12 @@ visualize_two_group <- function(library_lfc_data, boxplot_output_name) {
                                   angle = 45,
                                   vjust = 0,
                                   hjust = 0.5,
-                                  size = 2.5
+                                  size = 3.5
                                 )
                               
   ggsave(
     path = './',
-    width = 10,
+    width = 9,
     height = 5,
     dpi = 1000,
     plot = boxplot_lfc,
@@ -738,10 +742,10 @@ visualize_stratify_alignment <- function(library_lfc_data, label_x, boxplot_outp
          x = label_x, 
          y = "Averaged median sgRNA Log2FC") +
     theme(
-      axis.text.x = element_text(size = 12, vjust = 0.7, colour = "black"),
-      axis.text.y = element_text(size = 12, colour = "black"),
-      axis.title.x = element_text(size = 12, margin = margin(t = 10)),
-      axis.title.y = element_text(size = 12, margin = margin(r = 10)),
+      axis.text.x = element_text(size = 17, vjust = 0.7, colour = "black"),
+      axis.text.y = element_text(size = 17, colour = "black"),
+      axis.title.x = element_text(size = 17, margin = margin(t = 10)),
+      axis.title.y = element_text(size = 17, margin = margin(r = 10)),
       axis.ticks = element_line(size = 1.5),
       panel.grid.major = element_blank(),
       panel.grid.minor = element_blank(),
@@ -757,12 +761,13 @@ visualize_stratify_alignment <- function(library_lfc_data, label_x, boxplot_outp
     geom_text(
       data = annotation_df,
       aes(x = alignment_bin, y = boxplot_whisker + 0.1, label = paste0("n= ", n)),
-      size = 3.5,
+      size = 5,
       angle = 45,
       vjust = -0.2,
       hjust = -0.2
     ) +
-    coord_cartesian(clip = "off")
+    coord_cartesian(clip = "off") +
+    theme(plot.margin = margin(10, 20, 10, 10))
   
   ggsave(
     path = './',

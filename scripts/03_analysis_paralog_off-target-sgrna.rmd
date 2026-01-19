@@ -16,7 +16,7 @@ library(BSgenome)
 library(BSgenome.Hsapiens.UCSC.hg38)
 library(BSgenome.Hsapiens.NCBI.T2TCHM13v2.0)
 
-source('~/CRISPR-KO-GuideRefine/GuideRefine_functions.R')
+source('../../GuideRefine/GuideRefine_functions.R')
 source("./00_CRISPR-KO-library-survey-functions.R")
 ```
 
