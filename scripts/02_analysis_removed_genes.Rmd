@@ -20,6 +20,7 @@ library(BSgenome.Hsapiens.NCBI.T2TCHM13v2.0)
 library(GenomeInfoDbData)
 library(txdbmaker)
 library(crisprVerse)
+library(pheatmap)
 
 source("./00_CRISPR-KO-library-survey-functions.R")
 ```
@@ -40,6 +41,9 @@ removed_gene_list_combined <- list(
 
 # List of 520 protein-coding genes are removed across CRISPR-KO libraries, what are these genes?
 removed_genes_all_libraries <- unique(Reduce(intersect, removed_gene_list_combined))
+all_genes_but_not_removed <- read_tsv("https://storage.googleapis.com/public-download-files/hgnc/tsv/tsv/hgnc_complete_set.txt") %>%
+  filter(locus_group == "protein-coding gene" & !symbol %in% removed_genes_all_libraries) %>%
+  pull(symbol)
 
 ```
 
@@ -62,6 +66,99 @@ dev.off()
 
 ## There are 520 genes removed across libraries
 we asked why there are 520 genes failed/represented by fewer than 3 guides across libraries
+
+## First we survey for each genes, what are the percentage of genes removed by specific multi-target-/off-target guides
+
+```{r}
+
+terms <- c("CONTROL", "Control", "control", "INTRON", "Intron", "intron", "LacZ", "luciferase", "NO_SITE", "ONE_INTERGENIC_SITE")
+# lacZ and luciferase are the control in Toronto V3 library
+
+terms_for_filtering <- paste(terms, collapse = "|")
+
+brunello <- 'broadgpp-brunello-library-contents'
+toronto <- 'tkov3_guide_sequence'
+avana <- 'avana_library'
+yusa <- 'yusa_hcrispr_ko_grnas'
+jacquere <- 'Jacquere_PerGuideAnnotations_Quota4'
+
+# import sgRNA refining report
+
+avana_report <- import_and_process_report(paste0('../../GuideRefine/output_cleaning/T2T-CHM13/', avana, '_full_report.xlsx')) %>% filter(gene_hgnc %in% removed_genes_all_libraries)
+brunello_report <- import_and_process_report(paste0('../../GuideRefine/output_cleaning/T2T-CHM13/', brunello, '_full_report.xlsx')) %>% filter(gene_hgnc %in% removed_genes_all_libraries)
+toronto_report <- import_and_process_report(paste0('../../GuideRefine/output_cleaning/T2T-CHM13/', toronto, '_full_report.xlsx')) %>% filter(gene_hgnc %in% removed_genes_all_libraries) %>% dplyr::select(-`PAM distal single mismatch`)
+yusa_report <- import_and_process_report(paste0('../../GuideRefine/output_cleaning/T2T-CHM13/', yusa, '_full_report.xlsx')) %>% filter(gene_hgnc %in% removed_genes_all_libraries)
+jacquere_report <- import_and_process_report(paste0('../../GuideRefine/output_cleaning/T2T-CHM13/', jacquere, '_full_report.xlsx')) %>% filter(gene_hgnc %in% removed_genes_all_libraries)
+
+combined_report <- rbind(avana_report, brunello_report, toronto_report, yusa_report, jacquere_report) %>%
+  arrange(gene_hgnc) %>%
+  dplyr::select(-c(`Additional sgRNA (Corrected)`, `counted total sgRNA`, `actual total sgRNA`, `number match`, `symbol change`, `protein-coding gene`, `quality check`))
+
+
+total_col <- "sgRNA number"
+part_cols  <- c("multi-target sgRNA", "single mismatch sgRNA", "sgRNA not target exon")
+median_cols <- c("median_rate_multi-target sgRNA", "median_rate_single mismatch sgRNA", "median_rate_sgRNA not target exon")
+
+# normalize sgrna
+normalize_sgrna <- combined_report %>%
+  dplyr::select(-c(gene, Approved)) %>%
+  group_by(gene_hgnc) %>%
+  mutate(
+    across(
+      all_of(part_cols),
+      ~ ifelse(`sgRNA number` > 0, .x / `sgRNA number`, NA_real_),
+      .names = "rate_{.col}"
+    )
+  )
+
+# dataset sanity check
+normalize_sgrna %>%
+  summarise(
+    across(
+      starts_with("rate_"),
+      ~ median(.x, na.rm = TRUE)
+    )
+  )
+
+
+# Combine dataset at gene level by median
+gene_summary <- normalize_sgrna %>%
+  group_by(gene_hgnc) %>%
+  summarise(
+    across(
+      starts_with("rate_"),
+      ~ median(.x, na.rm = TRUE),
+      .names = "median_{.col}"
+    ),
+    n_datasets_present = sum(`sgRNA number` > 0, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  # filter only genes where original number of sgRNA intact in the original library
+  filter(n_datasets_present > 4)
+
+mat <- as.matrix(gene_summary[, median_cols])
+rownames(mat) <- gene_summary$gene_hgnc
+
+png("../figure/01_fig_analysis_off-target-sgrna/heatmap_cluster_removed_genes.png", width = 500, height = 1000, res = 150)
+pheatmap(
+  mat,
+  cluster_rows = TRUE,
+  cluster_cols = TRUE,
+  angle_col = 45,
+  show_rownames = FALSE,
+  color = colorRampPalette(c("blue", "white", "red"))(100),
+  labels_col = c("Median rate \nmulti-target sgRNA", "Median rate \nsingle mismatch sgRNA", "Median rate \nsgRNA not target exon")
+)
+
+dev.off()
+
+```
+
+
+
+
+
+## Hypothesis 1: maybe those genes are hard to target
 
 First, we prepare the T2T-CHM13 txdb file
 
@@ -116,7 +213,7 @@ refseq_to_chr <- c(
 
 # exons per gene
 cds_by_gene <- cdsBy(T2T_txdb, by = "gene")
-cds_gr <- cds_by_gene[names(cds_by_gene) %in% removed_genes_all_libraries]
+cds_gr <- cds_by_gene[names(cds_by_gene) %in% all_genes_but_not_removed]
 
 # only filter canonical cds (not predicted XM or else)
 cds_gr <- endoapply(cds_gr, function(gr) {
@@ -186,6 +283,7 @@ all_spacers_exon_data <- df_all_spacers %>%
                 "strand" = "spacer_strand") %>%
   relocate(cds_name, .before = start_cds)
 
+write_csv("all_spacers_exon_data_all_genes.csv")
 
 ```
 
