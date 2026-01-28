@@ -1,0 +1,283 @@
+---
+title: "Analysis of Brunello and Jacquere A375 cells hits"
+author: "Author: Stefanus Bernard"
+date: "Date: `r format(Sys.time(), '%d %B %Y')`"
+output: 
+  html_document :
+    theme : cerulean
+    toc : true
+    toc_float : true
+    number_section : true
+---
+
+# Import packages
+
+```{r}
+library(MAGeCKFlute)
+library(tidyverse)
+library(ggrepel)
+library(ggExtra)
+library(hgnc)
+library(HGNChelper)
+library(purrr)
+library(xlsx)
+library(readxl)
+library(pheatmap)
+source("../00_CRISPR-KO-library-survey-functions.R")
+```
+
+# Important function
+
+```{r}
+
+CallMAGeCKHits <- function(gene_summary, scale = 2, beta_colnames) {
+
+  # 1. Mean beta across replicates
+  gene_summary$Diff <- rowMeans(
+    gene_summary[, beta_colnames]
+  )
+
+  # 2. SD-based cutoff
+  cc <- CutoffCalling(gene_summary$Diff, scale = scale)
+
+  # 3. Initial classification
+  gene_summary$hits_classification <- "Neutral"
+  gene_summary$hits_classification[gene_summary$Diff <= -cc] <- "Essential genes"
+  gene_summary$hits_classification[gene_summary$Diff >= cc] <- "Growth suppressor genes"
+
+  # 4. Enforce replicate consistency
+  gene_summary$hits_classification[
+    gene_summary$hits_classification == "Essential genes" &
+      !(gene_summary$repA < 0 & gene_summary$repB < 0)
+  ] <- "Neutral"
+
+  gene_summary$hits_classification[
+    gene_summary$hits_classification == "Growth suppressor genes" &
+      !(gene_summary$repA > 0 & gene_summary$repB > 0)
+  ] <- "Neutral"
+
+  return(gene_summary)
+}
+
+
+```
+
+# Import MAGeCK MLE gene summary result
+
+```{r}
+
+brunello_original <- read_tsv("../../data/read_count_data/A375_brunello_original/A375_brunello_original.gene_summary.txt")
+brunello_refined <- read_tsv("../../data/read_count_data/A375_brunello_refined/A375_brunello_refined.gene_summary.txt")
+
+jacquere_original <- read_tsv("../../data/read_count_data/A375_jacquere_original/A375_jacquere_original.gene_summary.txt")
+jacquere_refined <- read_tsv("../../data/read_count_data/A375_jacquere_refined/A375_jacquere_63K_refined.gene_summary.txt")
+
+```
+
+# Find hits
+
+```{r}
+brunello_original_hits <- CallMAGeCKHits(brunello_original, scale = 2, beta_colnames = c("RepA|beta", "RepB|beta", "RepC|beta"))
+brunello_original_hits <- brunello_original_hits %>%
+  filter(`RepA|wald-fdr` <= 0.05 & `RepB|wald-fdr` <= 0.05 & `RepC|wald-fdr` <= 0.05)
+
+brunello_refined_hits <- CallMAGeCKHits(brunello_refined, scale = 2, beta_colnames = c("RepA|beta", "RepB|beta", "RepC|beta"))
+brunello_refined_hits <- brunello_refined_hits %>%
+  filter(`RepA|wald-fdr` <= 0.05 & `RepB|wald-fdr` <= 0.05 & `RepC|wald-fdr` <= 0.05)
+
+jacquere_original_hits <- CallMAGeCKHits(jacquere_original, scale = 2, beta_colnames = c("A375_CP0082_repA|beta", "A375_CP0082_repB|beta"))
+jacquere_original_hits <- jacquere_original_hits %>%
+  filter(`A375_CP0082_repA|wald-fdr` <= 0.05 & `A375_CP0082_repB|wald-fdr` <= 0.05)
+
+jacquere_refined_hits <- CallMAGeCKHits(jacquere_refined, scale = 2, beta_colnames = c("A375_CP0082_repA|beta", "A375_CP0082_repB|beta"))
+jacquere_refined_hits <- jacquere_refined_hits %>%
+  filter(`A375_CP0082_repA|wald-fdr` <= 0.05 & `A375_CP0082_repB|wald-fdr` <= 0.05)
+
+```
+
+# Pull hits
+
+```{r}
+
+brunello_original_hits_list <- fix_gene_symbols(brunello_original_hits$Gene) %>% pull(Suggested.Symbol) %>% unique()
+brunello_refined_hits_list <- brunello_refined_hits %>% pull(Gene)
+
+brunello_original_only_hits <- setdiff(brunello_original_hits_list, brunello_refined_hits_list)
+
+
+jacquere_original_hits_list <- fix_gene_symbols(jacquere_original_hits$Gene) %>% pull(Suggested.Symbol) %>% unique()
+jacquere_refined_hits_list <- jacquere_refined_hits %>% pull(Gene)
+
+combined_vecs <- list(brunello_original_hits = brunello_original_hits_list,
+                         brunello_refined_hits = brunello_refined_hits_list,
+                         jacquere_original_hits = jacquere_original_hits_list,
+                         jacquere_refined_hits = jacquere_refined_hits_list)
+
+max_len <- max(lengths(combined_vecs))
+
+
+final_df <- as.data.frame(
+lapply(combined_vecs, function(x) {
+length(x) <- max_len
+x
+})
+)
+
+write_csv(final_df, "../../data/result_gene_hits_change/brunello_jacquere_A375_hits_change.tsv")
+
+```
+
+## First we survey for each genes, what are the percentage of genes removed by specific multi-target-/off-target guides
+
+```{r}
+
+terms <- c("CONTROL", "Control", "control", "INTRON", "Intron", "intron", "LacZ", "luciferase", "NO_SITE", "ONE_INTERGENIC_SITE")
+# lacZ and luciferase are the control in Toronto V3 library
+
+terms_for_filtering <- paste(terms, collapse = "|")
+
+brunello <- 'broadgpp-brunello-library-contents'
+
+# import sgRNA refining report
+
+selected_report <- import_and_process_report(paste0('../../../GuideRefine/output_cleaning/T2T-CHM13/', brunello, '_full_report.xlsx')) %>% filter(gene_hgnc %in% brunello_original_only_hits) %>%
+  arrange(gene_hgnc) %>%
+  dplyr::select(-c(`Additional sgRNA (Corrected)`, `counted total sgRNA`, `actual total sgRNA`, `number match`, `symbol change`, `protein-coding gene`, `quality check`))
+
+
+total_col <- "sgRNA number"
+part_cols  <- c("multi-target sgRNA", "single mismatch sgRNA", "PAM distal double mismatch")
+median_cols <- c("median_rate_multi-target sgRNA", "median_rate_single mismatch sgRNA", "median_rate_PAM distal double mismatch")
+
+# normalize sgrna
+normalize_sgrna <- selected_report %>%
+  dplyr::select(-c(gene, Approved)) %>%
+  group_by(gene_hgnc) %>%
+  mutate(
+    across(
+      all_of(part_cols),
+      ~ ifelse(`sgRNA number` > 0, .x / `sgRNA number`, NA_real_),
+      .names = "rate_{.col}"
+    )
+  )
+
+# dataset sanity check
+normalize_sgrna %>%
+  summarise(
+    across(
+      starts_with("rate_"),
+      ~ median(.x, na.rm = TRUE)
+    )
+  )
+
+
+# Combine dataset at gene level by median
+gene_summary <- normalize_sgrna %>%
+  group_by(gene_hgnc) %>%
+  summarise(
+    across(
+      starts_with("rate_"),
+      ~ median(.x, na.rm = TRUE),
+      .names = "median_{.col}"
+    ),
+    n_datasets_present = sum(`sgRNA number` > 0, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  drop_na()
+
+mat <- as.matrix(gene_summary[, median_cols])
+rownames(mat) <- gene_summary$gene_hgnc
+
+png("../../figure/04_fig_analysis_hits_change/brunello_only_hits.png", width = 500, height = 1000, res = 150)
+pheatmap(
+  mat,
+  cluster_rows = TRUE,
+  cluster_cols = TRUE,
+  angle_col = 45,
+  show_rownames = FALSE,
+  color = colorRampPalette(c("blue", "white", "red"))(100),
+  labels_col = c("multi-target sgRNA", "single mismatch sgRNA", "PAM-distal double mismatch sgRNA")
+)
+
+dev.off()
+
+```
+
+## Survey of multi-targeting and off-targeting guides in Brunello and Jacquere
+
+```{r}
+pick_alignment_type <- function(classification_data, alignment_type, stratification_data) {
+  data <- read_csv(classification_data) %>%
+    filter(alignment %in% alignment_type)
+  
+  return(data)
+}
+
+selected_guides <- c("perfect", "single mismatch", "pam-distal single mismatch", "pam-distal double mismatch", "multi-target guides", "non-targeting")
+
+brunello_classification <- pick_alignment_type("../../data/sgrna_lfc_data/brunello_data/brunello_sgrna_alignment_classification.csv", selected_guides)
+brunello_classification <- count_alignment_bin(brunello_classification, selected_guides)
+
+depmap_common_essential <- read_csv("../../data/CRISPRInferredCommonEssentials.csv") %>%
+  mutate(Essentials = str_remove(Essentials, "\\s*\\(.*\\)")) %>%
+  pull(Essentials)
+
+brunello_essentiality_profiles <- brunello_original_hits %>%
+  select(Gene, Diff, hits_classification) %>%
+  dplyr::rename("gene" = "Gene")
+
+brunello_original_only_hits_analysis <- brunello_classification[[1]] %>%
+  filter(gene %in% brunello_original_only_hits) %>%
+  left_join(brunello_essentiality_profiles, join_by(gene)) %>%
+  mutate(is_depmap_essential = ifelse(gene %in% depmap_common_essential, TRUE, FALSE))
+
+survey <- brunello_original_only_hits_analysis %>%
+  select(gene, alignment, alignment_bin, Diff) %>%
+  group_by(gene) %>%
+  count(alignment, alignment_bin) %>%
+  dplyr::rename("num_guides" = "n")  %>%
+  mutate(is_depmap_essential = ifelse(gene %in% depmap_common_essential, TRUE, FALSE)) %>%
+  ungroup(gene)
+
+
+survey %>%
+  select(gene, is_depmap_essential) %>%
+  distinct() %>%
+  count(is_depmap_essential) %>%
+  dplyr::rename("num_genes" = "n") %>%
+  ggplot(aes(is_depmap_essential, num_genes)) +
+     geom_col(fill = "#1E88E5") +
+     theme_minimal() +
+     labs(x = "DepMap common essential genes", y = "Number of genes") +
+     geom_text(aes(label = paste("n= ", num_genes, sep="")),
+                nudge_y = 10,
+                nudge_x = 0,
+                size = 8) +
+  theme(axis.text.x = element_text(size = 25, vjust = 0.7, colour = 'black'),
+          axis.text.y = element_text(size = 25, colour = "black"),
+          axis.title.x = element_text(size = 25, vjust = 0.5, margin = margin(t = 20), colour = "black"),
+          axis.title.y = element_text(size = 25, vjust = 0.5, margin = margin(r = 20), colour = "black"),
+          axis.ticks.y = element_line(size = 1.5),
+          axis.ticks.length = unit(0.3, "cm"),
+          axis.line.y.right = element_blank(),
+          axis.ticks.y.right = element_blank(), 
+          axis.text.y.right = element_blank(), 
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          axis.line.x = element_line(size = 0.5, colour = "black"),
+          axis.line.y = element_line(size = 0.5, colour = "black"),
+          legend.position = "none",
+          plot.margin = margin(1, 1, 1, 1),
+          legend.spacing.x = unit(1, 'cm'))
+
+```
+
+
+
+
+
+
+
+
+
+
