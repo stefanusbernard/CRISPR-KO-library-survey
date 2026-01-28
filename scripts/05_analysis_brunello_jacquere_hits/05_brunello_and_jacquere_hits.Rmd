@@ -108,6 +108,8 @@ brunello_original_only_hits <- setdiff(brunello_original_hits_list, brunello_ref
 jacquere_original_hits_list <- fix_gene_symbols(jacquere_original_hits$Gene) %>% pull(Suggested.Symbol) %>% unique()
 jacquere_refined_hits_list <- jacquere_refined_hits %>% pull(Gene)
 
+jacquere_original_only_hits <- setdiff(jacquere_original_hits_list, jacquere_refined_hits_list)
+
 combined_vecs <- list(brunello_original_hits = brunello_original_hits_list,
                          brunello_refined_hits = brunello_refined_hits_list,
                          jacquere_original_hits = jacquere_original_hits_list,
@@ -213,7 +215,7 @@ pick_alignment_type <- function(classification_data, alignment_type, stratificat
   return(data)
 }
 
-selected_guides <- c("perfect", "single mismatch", "pam-distal single mismatch", "pam-distal double mismatch", "multi-target guides", "non-targeting")
+selected_guides <- c("perfect", "single mismatch", "pam-distal double mismatch", "multi-target guides", "non-targeting")
 
 brunello_classification <- pick_alignment_type("../../data/sgrna_lfc_data/brunello_data/brunello_sgrna_alignment_classification.csv", selected_guides)
 brunello_classification <- count_alignment_bin(brunello_classification, selected_guides)
@@ -239,7 +241,6 @@ survey <- brunello_original_only_hits_analysis %>%
   mutate(is_depmap_essential = ifelse(gene %in% depmap_common_essential, TRUE, FALSE)) %>%
   ungroup(gene)
 
-
 survey %>%
   select(gene, is_depmap_essential) %>%
   distinct() %>%
@@ -248,7 +249,7 @@ survey %>%
   ggplot(aes(is_depmap_essential, num_genes)) +
      geom_col(fill = "#1E88E5") +
      theme_minimal() +
-     labs(x = "DepMap common essential genes", y = "Number of genes") +
+     labs(x = "DepMap common essential genes", y = "Number of gene hits") +
      geom_text(aes(label = paste("n= ", num_genes, sep="")),
                 nudge_y = 10,
                 nudge_x = 0,
@@ -272,6 +273,61 @@ survey %>%
 
 ```
 
+```{r}
+jacquere_classification <- pick_alignment_type("../../data/sgrna_lfc_data/jacquere_data/jacquere_sgrna_alignment_classification.csv", selected_guides)
+jacquere_classification <- count_alignment_bin(jacquere_classification, selected_guides)
+
+depmap_common_essential <- read_csv("../../data/CRISPRInferredCommonEssentials.csv") %>%
+  mutate(Essentials = str_remove(Essentials, "\\s*\\(.*\\)")) %>%
+  pull(Essentials)
+
+jacquere_essentiality_profiles <- jacquere_original_hits %>%
+  select(Gene, Diff, hits_classification) %>%
+  dplyr::rename("gene" = "Gene")
+
+jacquere_original_only_hits_analysis <- jacquere_classification[[1]] %>%
+  filter(gene %in% jacquere_original_only_hits) %>%
+  left_join(jacquere_essentiality_profiles, join_by(gene)) %>%
+  mutate(is_depmap_essential = ifelse(gene %in% depmap_common_essential, TRUE, FALSE))
+
+survey <- jacquere_original_only_hits_analysis %>%
+  select(gene, alignment, alignment_bin, Diff) %>%
+  group_by(gene) %>%
+  count(alignment, alignment_bin) %>%
+  dplyr::rename("num_guides" = "n")  %>%
+  mutate(is_depmap_essential = ifelse(gene %in% depmap_common_essential, TRUE, FALSE)) %>%
+  ungroup(gene)
+
+survey %>%
+  select(gene, is_depmap_essential) %>%
+  distinct() %>%
+  count(is_depmap_essential) %>%
+  dplyr::rename("num_genes" = "n") %>%
+  ggplot(aes(is_depmap_essential, num_genes)) +
+     geom_col(fill = "#1E88E5") +
+     theme_minimal() +
+     labs(x = "DepMap common essential genes", y = "Number of gene hits") +
+     geom_text(aes(label = paste("n= ", num_genes, sep="")),
+                nudge_y = 10,
+                nudge_x = 0,
+                size = 8) +
+  theme(axis.text.x = element_text(size = 25, vjust = 0.7, colour = 'black'),
+          axis.text.y = element_text(size = 25, colour = "black"),
+          axis.title.x = element_text(size = 25, vjust = 0.5, margin = margin(t = 20), colour = "black"),
+          axis.title.y = element_text(size = 25, vjust = 0.5, margin = margin(r = 20), colour = "black"),
+          axis.ticks.y = element_line(size = 1.5),
+          axis.ticks.length = unit(0.3, "cm"),
+          axis.line.y.right = element_blank(),
+          axis.ticks.y.right = element_blank(), 
+          axis.text.y.right = element_blank(), 
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          axis.line.x = element_line(size = 0.5, colour = "black"),
+          axis.line.y = element_line(size = 0.5, colour = "black"),
+          legend.position = "none",
+          plot.margin = margin(1, 1, 1, 1),
+          legend.spacing.x = unit(1, 'cm'))
+```
 
 
 
