@@ -1489,8 +1489,157 @@ dotplot(GOBP_original_only_hits_simplified, showCategory = 10) +
 
 ```
 
+# Backup code analysis Brunello and Jacquere
+
+## First we survey for each genes, what are the percentage of genes removed by specific multi-target-/off-target guides
+
+```{r}
+
+terms <- c("CONTROL", "Control", "control", "INTRON", "Intron", "intron", "LacZ", "luciferase", "NO_SITE", "ONE_INTERGENIC_SITE")
+# lacZ and luciferase are the control in Toronto V3 library
+
+terms_for_filtering <- paste(terms, collapse = "|")
+
+brunello <- 'broadgpp-brunello-library-contents'
+toronto <- 'tkov3_guide_sequence'
+avana <- 'avana_library'
+yusa <- 'yusa_hcrispr_ko_grnas'
+jacquere <- 'Jacquere_PerGuideAnnotations_Quota4'
+
+# import sgRNA refining report
+
+avana_report <- import_and_process_report(paste0('../../GuideRefine/output_cleaning/T2T-CHM13/', avana, '_full_report.xlsx')) %>% filter(gene_hgnc %in% removed_genes_all_libraries) %>% mutate(library = "avana")
+brunello_report <- import_and_process_report(paste0('../../GuideRefine/output_cleaning/T2T-CHM13/', brunello, '_full_report.xlsx')) %>% filter(gene_hgnc %in% removed_genes_all_libraries) %>% mutate(library = "brunello")
+toronto_report <- import_and_process_report(paste0('../../GuideRefine/output_cleaning/T2T-CHM13/', toronto, '_full_report.xlsx')) %>% filter(gene_hgnc %in% removed_genes_all_libraries) %>% dplyr::select(-`PAM distal single mismatch`) %>% mutate(library = "tkov3")
+yusa_report <- import_and_process_report(paste0('../../GuideRefine/output_cleaning/T2T-CHM13/', yusa, '_full_report.xlsx')) %>% filter(gene_hgnc %in% removed_genes_all_libraries) %>% mutate(library = "yusa")
+jacquere_report <- import_and_process_report(paste0('../../GuideRefine/output_cleaning/T2T-CHM13/', jacquere, '_full_report.xlsx')) %>% filter(gene_hgnc %in% removed_genes_all_libraries) %>% mutate(library = "jacquere")
+
+combined_report <- rbind(avana_report, brunello_report, toronto_report, yusa_report, jacquere_report) %>%
+  arrange(gene_hgnc) %>%
+  dplyr::select(-c(`actual total sgRNA`, `number match`, `symbol change`, `protein-coding gene`, `quality check`))
+  # dplyr::select(-c(`Additional sgRNA (Corrected)`, `counted total sgRNA`, `actual total sgRNA`, `number match`, `symbol change`, `protein-coding gene`, `quality check`))
 
 
+total_col <- "sgRNA number"
+part_cols  <- c("multi-target sgRNA", "single mismatch sgRNA", "PAM distal double mismatch")
+median_cols <- c("median_rate_multi-target sgRNA", "median_rate_single mismatch sgRNA", "median_rate_PAM distal double mismatch")
+
+# normalize sgrna
+normalize_sgrna <- combined_report %>%
+  dplyr::select(-c(gene, Approved)) %>%
+  group_by(gene_hgnc) %>%
+  mutate(
+    across(
+      all_of(part_cols),
+      ~ ifelse(`sgRNA number` > 0, .x / `sgRNA number`, NA_real_),
+      .names = "rate_{.col}"
+    )
+  )
+
+# dataset sanity check
+normalize_sgrna %>%
+  summarise(
+    across(
+      starts_with("rate_"),
+      ~ median(.x, na.rm = TRUE)
+    )
+  )
+
+
+# Combine dataset at gene level by median
+gene_summary <- normalize_sgrna %>%
+  group_by(gene_hgnc) %>%
+  summarise(
+    across(
+      starts_with("rate_"),
+      ~ median(.x, na.rm = TRUE),
+      .names = "median_{.col}"
+    ),
+    n_datasets_present = sum(`sgRNA number` > 0, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  # filter only genes where original number of sgRNA intact in the original library
+  filter(n_datasets_present > 4)
+
+mat <- as.matrix(gene_summary[, median_cols])
+rownames(mat) <- gene_summary$gene_hgnc
+
+png("../figure/01_fig_analysis_off-target-sgrna/heatmap_cluster_removed_genes.png", width = 500, height = 1000, res = 150)
+pheatmap(
+  mat,
+  cluster_rows = TRUE,
+  cluster_cols = TRUE,
+  angle_col = 45,
+  show_rownames = FALSE,
+  color = colorRampPalette(c("blue", "white", "red"))(100),
+  labels_col = c("multi-target sgRNA", "single mismatch sgRNA", "PAM-distal double mismatch sgRNA")
+)
+
+dev.off()
+
+```
+
+## We asked whether the exon size is small as it may contributes to the off-target activity of sgRNAs ?
+
+```{r}
+# Another code to get the summary of exon length from all removed genes
+
+T2T_txdb <- loadDb("../data/T2T_data/TxDb_T2T-CHM13v2.sqlite")
+columns(T2T_txdb)
+
+T2T_txdb
+
+refseq_to_chr <- c(
+  "NC_060925.1" = "1",
+  "NC_060926.1" = "2",
+  "NC_060927.1" = "3",
+  "NC_060928.1" = "4",
+  "NC_060929.1" = "5",
+  "NC_060930.1" = "6",
+  "NC_060931.1" = "7",
+  "NC_060932.1" = "8",
+  "NC_060933.1" = "9",
+  "NC_060934.1" = "10",
+  "NC_060935.1" = "11",
+  "NC_060936.1" = "12",
+  "NC_060937.1" = "13",
+  "NC_060938.1" = "14",
+  "NC_060939.1" = "15",
+  "NC_060940.1" = "16",
+  "NC_060941.1" = "17",
+  "NC_060942.1" = "18",
+  "NC_060943.1" = "19",
+  "NC_060944.1" = "20",
+  "NC_060945.1" = "21",
+  "NC_060946.1" = "22",
+  "NC_060947.1" = "X",
+  "NC_060948.1" = "Y"
+)
+
+
+# Extract gene coordinates
+genes_gr <- genes(T2T_txdb)
+
+# Filter for your list
+genes_gr <- genes_gr[names(genes_gr) %in% removed_genes_all_libraries]
+genes_gr$span_length <- width(genes_gr)
+
+exon_lengths <- lapply(exons_gr, width)
+exon_lengths_df <- stack(exons_gr)
+exon_lengths_df$exon_length <- width(exon_lengths_df)
+
+data_exons_all_removed_genes <- as.data.frame(exon_lengths_df) %>%
+  filter(str_detect(exon_name, "NM")) %>%
+  mutate(exon_nm_accession = str_extract(exon_name, "^[^.]+"))
+
+# dataframe of total exon length in basepairs (of only 500 genes)
+total_exon_length <- data_exons_all_removed_genes %>%
+  dplyr::select(name, exon_nm_accession, exon_length) %>%
+  arrange(name) %>%
+  group_by(name, exon_nm_accession) %>%
+  summarise(total_exon_length = sum(exon_length))
+
+```
 
 
 
