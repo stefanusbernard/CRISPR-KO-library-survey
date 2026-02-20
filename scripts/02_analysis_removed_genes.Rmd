@@ -303,7 +303,8 @@ refseq_to_chr <- c(
 genes_gr <- genes(T2T_txdb)
 
 # Subset the genes data only for the removed genes across libraries (520 genes)
-genes_gr_subset <- genes_gr[mcols(genes_gr)$gene_id %in% removed_genes_all_libraries]
+# or select all the rest of the genes (18776 genes)
+genes_gr_subset <- genes_gr[mcols(genes_gr)$gene_id %in% all_genes_but_not_removed]
 
 # Compute span per gene
 gene_span_per_gene <- width(genes_gr_subset)
@@ -321,7 +322,7 @@ gene_span_df <- data.frame(
 exons_by_gene <- exonsBy(T2T_txdb, by = "gene")
 
 # Subset exons by genes removed across libraries (520 genes)
-exons_gr <- exons_by_gene[names(exons_by_gene) %in% removed_genes_all_libraries]
+exons_gr <- exons_by_gene[names(exons_by_gene) %in% all_genes_but_not_removed]
 
 # Reduce overlapping exons within each gene
 reduced_exons <- reduce(exons_gr)
@@ -363,37 +364,43 @@ total_exon_length_df$exon_length_bin <- cut(total_exon_length_df$total_exon_leng
 df_barplot <- total_exon_length_df %>%
   dplyr::select(exon_length_bin) %>%
   count(exon_length_bin) %>%
-  dplyr::rename("num_genes" = "n")
+  dplyr::rename("num_genes" = "n") %>%
+  mutate(percentage = round((num_genes/sum(num_genes)*100), 2))
 
 
-ggplot(df_barplot, aes(x = exon_length_bin, y = num_genes)) +
-    geom_col(fill = "#1E88E5") +
-    theme_minimal() +
-    labs(x = "Total exon length (bp)", y = "Number of genes") +
-    geom_text(aes(label = paste("n=", num_genes, sep="")),
-              nudge_y = 10,
-              nudge_x = 0,
-              size = 5) +
-    theme(axis.text.x = element_text(size = 12, vjust = 0.7, angle = 45, colour = 'black'),
-          axis.text.y = element_text(size = 12, colour = "black"),
-          axis.title.x = element_text(size = 12, vjust = 0.5, margin = margin(r = 20), colour = "black"),
-          axis.title.y = element_text(size = 12, vjust = 0.5, margin = margin(r = 20), colour = "black"),
-          axis.ticks.y = element_line(size = 1),
-          axis.ticks.length = unit(0.15, "cm"),
-          axis.line.y.right = element_blank(),
-          axis.ticks.y.right = element_blank(), 
-          axis.text.y.right = element_blank(), 
-          panel.grid.major = element_blank(),
-          panel.grid.minor = element_blank(),
-          axis.line.x = element_line(size = 0.5, colour = "black"),
-          axis.line.y = element_line(size = 0.5, colour = "black"),
-          legend.position = "none",
-          plot.margin = margin(1, 1, 1, 1),
-          legend.spacing.x = unit(1, 'cm'))
+barplot_exon_length <- ggplot(df_barplot, aes(x = exon_length_bin, y = percentage)) +
+                          geom_col(fill = "#1E88E5") +
+                          theme_minimal() +
+                          labs(x = "Total exon length (bp)", y = "Percentage of genes") +
+                          geom_text(aes(label = paste0(percentage, " %")),
+                                    nudge_y = 2,
+                                    nudge_x = 0,
+                                    size = 5) +
+                          theme(axis.text.x = element_text(size = 15, vjust = 0.7, angle = 0, colour = 'black'),
+                                axis.text.y = element_text(size = 15, colour = "black"),
+                                axis.title.x = element_text(size = 15, vjust = 0.5, margin = margin(t = 20), colour = "black"),
+                                axis.title.y = element_text(size = 15, vjust = 0.5, margin = margin(r = 20), colour = "black"),
+                                axis.ticks.x = element_line(size = 1),
+                                axis.ticks.y = element_line(size = 1),
+                                axis.ticks.length = unit(0.15, "cm"),
+                                axis.line.y.right = element_blank(),
+                                axis.ticks.y.right = element_blank(), 
+                                axis.text.y.right = element_blank(), 
+                                panel.grid.major = element_blank(),
+                                panel.grid.minor = element_blank(),
+                                axis.line.x = element_line(size = 0.5, colour = "black"),
+                                axis.line.y = element_line(size = 0.5, colour = "black"),
+                                legend.position = "none",
+                                plot.margin = margin(1, 1, 1, 1),
+                                legend.spacing.x = unit(1, 'cm'))
 
-
-
-
+ggsave(
+    path = './',
+    width = 9,
+    height = 5,
+    dpi = 1000,
+    plot = barplot_exon_length,
+    filename = "../figure/01_fig_analysis_off-target-sgrna/exon_length_18776_other_genes.png")
 
 ```
 
