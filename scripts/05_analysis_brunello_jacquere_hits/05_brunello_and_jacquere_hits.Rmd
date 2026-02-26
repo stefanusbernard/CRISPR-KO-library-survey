@@ -467,42 +467,51 @@ combined_brunello %>%
 
 
 # Comparison of Brunello only gene hits Log2FC with the Log2FC of avana library A375 cells
+## 1st visualization: sgRNA Log2FC of gene hits identified in Brunello projected to Avana library
 
 ```{r}
 
 # obtain alignment data
 
-pick_alignment_type <- function(classification_data, alignment_type, stratification_data) {
-  data <- read_csv(classification_data) %>%
-    filter(alignment %in% alignment_type)
-  
-  return(data)
-}
-
 selected_guides <- c("perfect", "single mismatch", "pam-distal double mismatch", "multi-target guides", "non-targeting")
-
 avana_classification <- pick_alignment_type("../../data/sgrna_lfc_data/avana_data/avana_sgrna_alignment_classification.csv", selected_guides)
 avana_classification <- count_alignment_bin(avana_classification, selected_guides)
-
 avana_classification[[1]] <- avana_classification[[1]] %>% select(-gene)
-
 
 # obtain Log2FC data
 
+# 11 genes from brunello only hits are missing in the avana A375 cells
 avana_A375 <- read_csv("../../data/sgrna_lfc_data/output_normalized/avana_A375_normalized_lfc.csv") 
 
 obtain_depmap_essential_brunello <- combined_brunello %>%
   select(gene, is_depmap_essential) %>%
   distinct()
 
-boxplot_lfc <- avana_A375 %>%
+avana_A375 <- avana_A375 %>%
   left_join(obtain_depmap_essential_brunello, join_by("gene")) %>%
   # we shouldnt do this but you can check back again later
   drop_na() %>%
-  left_join(avana_classification[[1]], join_by(sgRNA)) %>%
+  left_join(avana_classification[[1]], join_by(sgRNA, spacer)) %>%
+  arrange(sgRNA)
+
+avana_non_essential_genes_control <- avana_A375 %>% filter(is_depmap_essential == "A375_not_essential_control") %>% distinct() %>% pull(gene) %>% unique()
+avana_not_essential_but_hits_brunello <- avana_A375 %>% filter(is_depmap_essential == "A375_not_essential_hits_only_in_brunello") %>% distinct() %>% pull(gene) %>% unique()
+avana_essential_and_hits_brunello <- avana_A375 %>% filter(is_depmap_essential == "A375_essential_hits_only_in_brunello") %>% distinct() %>% pull(gene) %>% unique()
+
+
+boxplot_lfc_avana <- avana_A375 %>%
   ggboxplot(x = "is_depmap_essential",
             y = "mean",
             outliers = FALSE) +
+    stat_compare_means(comparisons = list(c("A375_not_essential_control", "A375_not_essential_hits_only_in_brunello"),
+                                          c("A375_not_essential_control", "A375_essential_hits_only_in_brunello")),
+                       method = "wilcox.test",
+                       method.args = list(alternative = "two.sided"),
+                       size = 2.5,
+                       step.increase = 0.05,
+                       tip.length = 0.01,
+                       label = "p.signif",
+                       label.y = 1) +
   labs(title = "", 
          x = "Gene hits", 
          y = "Median sgRNA Log2FC") +
@@ -521,14 +530,12 @@ boxplot_lfc <- avana_A375 %>%
           line = element_line((size = 2), colour = 'black'),
           legend.position = "right",
           legend.text = element_text(size = 12)) +
-  scale_x_discrete(labels = c("The rest of genes\n(A375 not essential)", "64 gene hits \n(A375 not essential)", "238 gene hits \n(A375 essential)"))
-
-
+          scale_x_discrete(labels = c(paste0(length(unique(avana_non_essential_genes_control))," genes\n(A375 not essential)"), 
+                                      paste0(length(unique(avana_not_essential_but_hits_brunello))," gene hits \n(A375 not essential)"), 
+                                      paste0(length(unique(avana_essential_and_hits_brunello))," gene hits \n(A375 essential)")))
 # get stats
-  
-  b <- ggplot_build(boxplot_lfc)
+  b <- ggplot_build(boxplot_lfc_avana)
   stats <- b$data[[1]]
-  
   label_df <- stats %>%
     transmute(
       x = x,
@@ -537,16 +544,12 @@ boxplot_lfc <- avana_A375 %>%
     )
   
   count <- avana_A375 %>%
-    left_join(obtain_depmap_essential_brunello, join_by("gene")) %>%
-    # we shouldnt do this but you can check back again later
-    drop_na() %>%
-    left_join(avana_classification[[1]], join_by(sgRNA)) %>%
     select(is_depmap_essential) %>%
     count(is_depmap_essential)
   
   count <- count %>% bind_cols(stats %>% select(x, ymin))
   
-  boxplot_lfc <-  boxplot_lfc +
+  boxplot_lfc_avana <-  boxplot_lfc_avana +
                                 geom_text(
                                   data = count,
                                   aes(x = x, y = ymin - 0.5, label = paste0("n = ", n)),
@@ -556,20 +559,78 @@ boxplot_lfc <- avana_A375 %>%
                                   size = 5
                                 )
   
-boxplot_lfc
+boxplot_lfc_avana
 
-
-# test <- avana_A375 %>%
-#   left_join(obtain_depmap_essential_brunello, join_by("gene")) %>%
-#   # we shouldnt do this but you can check back again later
-#   drop_na() %>%
-#   left_join(avana_classification[[1]], join_by(sgRNA)) %>%
-#   filter(is_depmap_essential == "A375_not_essential_hits_only_in_brunello")
+ggsave(
+    path = './',
+    width = 6,
+    height = 5,
+    dpi = 1000,
+    plot = boxplot_lfc_avana,
+    filename = "../../figure/04_fig_analysis_gene_hits_change/avana_brunello_not_essential_hits_lfc.png")
 
 
 ```
 
+## 2nd Visualization: Multi bar chart of percentage of sgRNA type between essential gene hits and non essential but hits in Avana library
 
+```{r}
+
+percentage_data <- avana_A375 %>%
+  filter(is_depmap_essential %in% c("A375_not_essential_hits_only_in_brunello", "A375_essential_hits_only_in_brunello")) %>%
+  group_by(is_depmap_essential) %>%
+  count(alignment) %>%
+  dplyr::rename("num_of_guides" = "n") %>%
+  mutate(percentage = round(num_of_guides/sum(num_of_guides) * 100, 2)) %>%
+  ungroup() %>%
+  mutate(alignment = factor(alignment, levels = c("perfect", "multi-target guides", "single mismatch", "pam-distal double mismatch")))
+
+# Define custom colors for the libraries
+my_palette <- brewer.pal(n = 5, name = "Set2")
+
+# Create the grouped multibar chart for each sgRNA libraries
+multi_bar_chart <- ggplot(percentage_data, aes(x = is_depmap_essential, y = percentage, fill = alignment)) +
+    geom_bar(stat = "identity", position = position_dodge2(padding = 0.2), width = 0.7) +
+    theme_minimal() +
+    labs(title = "", x = "", y = "sgRNA (%)") +
+    scale_x_discrete(labels = c('A375_not_essential_hits_only_in_brunello' = 'A375 not essential \n gene hits',
+                                  'A375_essential_hits_only_in_brunello' = 'A375 essential \n gene hits')) +
+    geom_text(aes(label = percentage), position = position_dodge2(width = 0.7), vjust = -0.5, size = 6.5) +
+    theme(axis.text.x = element_text(size = 25, vjust = 0.7, colour = "black"),
+          axis.text.y = element_text(size = 25, colour = "black"),
+          axis.title.y = element_text(size = 25, vjust = 0.5, margin = margin(r = 20)),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          axis.line.x = element_line(size = 0.5),
+          axis.line.y = element_line(size = 0.5),
+          axis.ticks.y = element_line(size = 1.5),
+          axis.ticks.length = unit(0.3, "cm"),
+          legend.title = element_text(size = 25),
+          legend.text = element_text(size = 25),
+          plot.margin = margin(1, 1, 1, 1), 
+          line = element_line((size = 4), colour = 'black'),
+          legend.spacing.x = unit(1, 'cm')) +
+    scale_fill_manual(values = my_palette,
+                      name = 'sgRNA type',
+                      labels = c('perfect' = 'On-target',
+                                'multi-target guides' = 'Multi-target',
+                                'single mismatch' = 'Single mismatch',
+                                'pam-distal single mismatch' = 'PAM distal single mismatch',
+                                'pam-distal double mismatch' = 'PAM distal double mismatch')) +
+  scale_x_discrete(labels = c(paste0(length(unique(avana_not_essential_but_hits_brunello))," gene hits \n(A375 not essential)"), 
+                              paste0(length(unique(avana_essential_and_hits_brunello))," gene hits \n(A375 essential)")))
+
+multi_bar_chart
+
+ggsave(
+    path = './',
+    width = 15,
+    height = 8,
+    dpi = 1000,
+    plot = multi_bar_chart,
+    filename = "../../figure/04_fig_analysis_gene_hits_change/avana_multi_barchart_percentage_sgrna.png")
+  
+```
 
 
 
