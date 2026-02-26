@@ -21,6 +21,7 @@ library(GenomeInfoDbData)
 library(txdbmaker)
 library(crisprVerse)
 library(pheatmap)
+library(ggpubr)
 
 source("./00_CRISPR-KO-library-survey-functions.R")
 ```
@@ -120,9 +121,9 @@ refseq_to_chr <- c(
 
 
 
-# exons per gene
+# cds per gene
 cds_by_gene <- cdsBy(T2T_txdb, by = "gene")
-cds_gr <- cds_by_gene[names(cds_by_gene) %in% all_genes_but_not_removed]
+cds_gr <- cds_by_gene[names(cds_by_gene) %in% removed_genes_cds_gene_list]
 
 # only filter canonical cds (not predicted XM or else)
 cds_gr <- endoapply(cds_gr, function(gr) {
@@ -192,7 +193,7 @@ all_spacers_exon_data <- df_all_spacers %>%
                 "strand" = "spacer_strand") %>%
   relocate(cds_name, .before = start_cds)
 
-write_csv("all_spacers_exon_data_all_genes.csv")
+write_csv(all_spacers_exon_data, "../data/removed_genes_survey/all_spacers_exon_data_499_removed_genes.csv")
 
 ```
 
@@ -259,7 +260,6 @@ ggplot(df_barplot, aes(x = count_bin, y = num_genes)) +
 
 ```
 
-
 ## We asked whether the exon size is small as it may contributes to the off-target activity of sgRNAs ?
 
 ```{r}
@@ -297,56 +297,138 @@ refseq_to_chr <- c(
   "NC_060948.1" = "Y"
 )
 
-# ---------------------------------------------- Gene span data -------------------------------------------------------
+calculate_exon_length_and_gene_span <- function(txdb_files, list_of_genes) {
+  
+  # ---------------------------------------------- Gene span data -------------------------------------------------------
 
-# Get gene ranges
-genes_gr <- genes(T2T_txdb)
+  # Get gene ranges
+  genes_gr <- genes(T2T_txdb)
+  
+  # Subset the genes data only for the removed genes across libraries (520 genes)
+  # or select all the rest of the genes (18776 genes)
+  genes_gr_subset <- genes_gr[mcols(genes_gr)$gene_id %in% list_of_genes]
+  
+  # Compute span per gene
+  gene_span_per_gene <- width(genes_gr_subset)
+  
+  # Convert to dataframe
+  gene_span_df <- data.frame(
+    gene = mcols(genes_gr_subset)$gene_id,
+    total_gene_length_bp = gene_span_per_gene
+  )
+  
+  # "KRTAP5-1"  "KRTAP5-10" "PLA2G10"   "TAS2R43"   "UPK3BL1" is not mapped to the T2T-CHM13 gene ranges data, annotation issues
+    
+  # ---------------------------------------------- Exon data per gene -------------------------------------------------------
 
-# Subset the genes data only for the removed genes across libraries (520 genes)
-# or select all the rest of the genes (18776 genes)
-genes_gr_subset <- genes_gr[mcols(genes_gr)$gene_id %in% all_genes_but_not_removed]
+  # Obtain exons per gene
+  exons_by_gene <- exonsBy(T2T_txdb, by = "gene")
+  
+  # Subset exons by genes removed across libraries (520 genes)
+  exons_gr <- exons_by_gene[names(exons_by_gene) %in% list_of_genes]
+  
+  # Reduce overlapping exons within each gene
+  reduced_exons <- reduce(exons_gr)
+  
+  # Compute non-redundant exon length per gene and gene span
+  total_exon_length_per_gene <- sum(width(reduced_exons))
+  
+  # Convert the total exon length per gene to dataframe
+  total_exon_length_df <- data.frame(
+    gene = names(total_exon_length_per_gene),
+    total_exon_length_bp = total_exon_length_per_gene
+  )
+  
+  rownames(total_exon_length_df) <- NULL
+  
+  # ------------------------------------------ Left join exon data and gene span ---------------------------------------------
+  
+  total_exon_length_df <- total_exon_length_df %>%
+    left_join(gene_span_df, join_by("gene"))
+  
+  return(total_exon_length_df)
+  
+}
 
-# Compute span per gene
-gene_span_per_gene <- width(genes_gr_subset)
-
-# Convert to dataframe
-gene_span_df <- data.frame(
-  gene = mcols(genes_gr_subset)$gene_id,
-  total_gene_length_bp = gene_span_per_gene
-)
 
 
-# ---------------------------------------------- Exon data per gene -------------------------------------------------------
+calculate_cds_length_and_gene_span <- function(txdb_files, list_of_genes) {
+  
+  # ---------------------------------------------- Gene span data -------------------------------------------------------
 
-# Obtain exons per gene
-exons_by_gene <- exonsBy(T2T_txdb, by = "gene")
+  # Get gene ranges
+  genes_gr <- genes(T2T_txdb)
+  
+  # Subset the genes data only for the removed genes across libraries (520 genes)
+  # or select all the rest of the genes (18776 genes)
+  genes_gr_subset <- genes_gr[mcols(genes_gr)$gene_id %in% list_of_genes]
+  
+  # Compute span per gene
+  gene_span_per_gene <- width(genes_gr_subset)
+  
+  # Convert to dataframe
+  gene_span_df <- data.frame(
+    gene = mcols(genes_gr_subset)$gene_id,
+    total_gene_length_bp = gene_span_per_gene
+  )
+  
+  # "KRTAP5-1"  "KRTAP5-10" "PLA2G10"   "TAS2R43"   "UPK3BL1" is not mapped to the T2T-CHM13 gene ranges data, annotation issues
+    
+  # ---------------------------------------------- Exon data per gene -------------------------------------------------------
 
-# Subset exons by genes removed across libraries (520 genes)
-exons_gr <- exons_by_gene[names(exons_by_gene) %in% all_genes_but_not_removed]
+  # Obtain exons per gene
+  cds_by_gene <- cdsBy(T2T_txdb, by = "gene")
+  
+  # Subset exons by genes removed across libraries (520 genes)
+  cds_gr <- cds_by_gene[names(cds_by_gene) %in% list_of_genes]
+  
+  # Reduce overlapping CDS regions within each gene
+  reduced_cds <- reduce(cds_gr)
+  
+  # Compute non-redundant exon length per gene and gene span
+  total_cds_length_per_gene <- sum(width(reduced_cds))
+  
+  # Convert the total exon length per gene to dataframe
+  total_cds_length_df <- data.frame(
+    gene = names(total_cds_length_per_gene),
+    total_cds_length_bp = total_cds_length_per_gene
+  )
+  
+  rownames(total_cds_length_df) <- NULL
+  
+  # ------------------------------------------ Left join exon data and gene span ---------------------------------------------
+  
+  total_cds_length_df <- total_cds_length_df %>%
+    left_join(gene_span_df, join_by("gene"))
+  
+  return(total_cds_length_df)
+  
+}
 
-# Reduce overlapping exons within each gene
-reduced_exons <- reduce(exons_gr)
+# 515 genes out of 520 genes mapped into the T2T_txdb file
+removed_genes_exons <- calculate_exon_length_and_gene_span(T2T_txdb, removed_genes_all_libraries)
+removed_genes_cds <- calculate_cds_length_and_gene_span(T2T_txdb, removed_genes_all_libraries)
+removed_genes_cds_gene_list <- removed_genes_cds %>% pull(gene) %>% unique()
 
-# Compute non-redundant exon length per gene and gene span
-total_exon_length_per_gene <- sum(width(reduced_exons))
 
-# Convert the total exon length per gene to dataframe
-total_exon_length_df <- data.frame(
-  gene = names(total_exon_length_per_gene),
-  total_exon_length_bp = total_exon_length_per_gene
-)
+# 18,632 genes out of 18,776 genes mapped into the T2T_txdb file
+control_genes_exons <- calculate_exon_length_and_gene_span(T2T_txdb, all_genes_but_not_removed)
+control_genes_cds <- calculate_cds_length_and_gene_span(T2T_txdb, all_genes_but_not_removed)
+control_genes_cds_gene_list <- control_genes_cds %>% pull(gene) %>% unique()
 
-rownames(total_exon_length_df) <- NULL
+```
 
-# ------------------------------------------ Left join exon data and gene span ---------------------------------------------
+from 520 removed genes across libraries, there are 5 genes that were not mapped to T2T-CHM13 data: KRTAP5-1, KRTAP5-10, PLA2G10, TAS2R43, UPK3BL1 , Most likely due to annotation issues or symbol naming
 
-total_exon_length_df <- total_exon_length_df %>%
-  left_join(gene_span_df, join_by("gene"))
+### Visualization 1: Barplot of exon length of removed genes or control genes
 
+```{r}
+
+# Select either removed genes or control genes
 
 # ------------------------------------------ Bin exon length by 2000 bp ---------------------------------------------
 
-total_exon_length_df$exon_length_bin <- cut(total_exon_length_df$total_exon_length_bp,
+control_genes_cds$cds_length_bin <- cut(control_genes_cds$total_cds_length_bp,
                                             breaks = c(0, 2000, 4000, 6000, 8000, 10000, Inf),
                                             labels = c(
                                               "0–2000",
@@ -361,17 +443,17 @@ total_exon_length_df$exon_length_bin <- cut(total_exon_length_df$total_exon_leng
 
 # --------------------------------------- Plot the total exon length bin ----------------------------------------------------
 
-df_barplot <- total_exon_length_df %>%
-  dplyr::select(exon_length_bin) %>%
-  count(exon_length_bin) %>%
+df_barplot <- control_genes_cds %>%
+  dplyr::select(cds_length_bin) %>%
+  count(cds_length_bin) %>%
   dplyr::rename("num_genes" = "n") %>%
   mutate(percentage = round((num_genes/sum(num_genes)*100), 2))
 
 
-barplot_exon_length <- ggplot(df_barplot, aes(x = exon_length_bin, y = percentage)) +
+barplot_cds_length <- ggplot(df_barplot, aes(x = cds_length_bin, y = percentage)) +
                           geom_col(fill = "#1E88E5") +
                           theme_minimal() +
-                          labs(x = "Total exon length (bp)", y = "Percentage of genes") +
+                          labs(x = "Total CDS length (bp)", y = "Percentage of genes") +
                           geom_text(aes(label = paste0(percentage, " %")),
                                     nudge_y = 2,
                                     nudge_x = 0,
@@ -399,16 +481,98 @@ ggsave(
     width = 9,
     height = 5,
     dpi = 1000,
-    plot = barplot_exon_length,
-    filename = "../figure/01_fig_analysis_off-target-sgrna/exon_length_18776_other_genes.png")
+    plot = barplot_cds_length,
+    filename = "../figure/01_fig_analysis_off-target-sgrna/cds_length_18586_control_genes.png")
 
 ```
 
+### Visualization 2: Boxplot of exon length of removed genes or control genes
 
+```{r}
 
+removed_genes_cds <- removed_genes_cds %>% mutate(gene_status = "removed genes",
+                                          log_transform_cds_length = log10(total_cds_length_bp))
+control_genes_cds <- control_genes_cds %>% mutate(gene_status = "control genes",
+                                          log_transform_cds_length = log10(total_cds_length_bp))
 
+combined_df_cds_length <- rbind(removed_genes_cds, control_genes_cds) %>% mutate(gene_status = factor(gene_status, levels = c("control genes", "removed genes")))
 
+cds_length_boxplot <- ggboxplot(combined_df_cds_length, 
+                         x = "gene_status", 
+                         y = "log_transform_cds_length",
+                         fill = "gene_status",
+                         outliers = FALSE) +
+                    stat_compare_means(comparisons = list(c("removed genes", "control genes")),
+                                       method = "wilcox.test",
+                                       method.args = list(alternative = "two.sided"),
+                                       size = 2.5,
+                                       step.increase = 0.05,
+                                       tip.length = 0.01,
+                                       label = "p.signif",
+                                       label.y = 4.5) +
+  scale_fill_manual(
+      name = "",
+      values = c("control genes" = "powderblue",
+                 "removed genes" = "mistyrose"),
+      labels = c("Control Genes", "Removed Genes")) +
+  labs(title = "", 
+       x = "",
+       y = "log10(Total CDS length in all transcripts [bp])") +
+    theme(plot.margin = margin(10, 10, 25, 10),
+          strip.text.x = element_text(size = 14),
+          axis.text.x = element_blank(),
+          axis.text.y = element_text(size = 14, colour = "black"),
+          axis.ticks.y = element_line(size = 1.5),
+          axis.ticks.x = element_blank(), 
+          axis.ticks.length = unit(0.1, "cm"),
+          axis.title.y = element_text(size = 14, vjust = 0.5, margin = margin(r = 20)),
+          panel.grid.major = element_line(size = 0.5),
+          panel.grid.minor = element_blank(),
+          axis.line.x = element_line(size = 0.5),
+          axis.line.y = element_line(size = 0.5), 
+          line = element_line((size = 2), colour = 'black'),
+          legend.position = "right",
+          legend.text = element_text(size = 12)) +
+  ylim(0, 5)
 
+# get stats
+
+b <- ggplot_build(cds_length_boxplot)
+stats <- b$data[[1]]
+
+label_df <- stats %>%
+  transmute(
+    x = x,
+    y = ymax + 0.2,          # add padding
+    label = round(ymax, 2)   # or any custom label
+  )
+
+count <- combined_df_cds_length %>%
+  distinct() %>%
+  count(gene_status)
+
+count <- count %>% bind_cols(stats %>% dplyr::select(x, ymin))
+
+cds_length_boxplot <-  cds_length_boxplot +
+                              geom_text(
+                                data = count,
+                                aes(x = x, y = ymin - 0.5, label = paste0("n= ", n)),
+                                angle = 45,
+                                vjust = 0,
+                                hjust = 0.5,
+                                size = 3.5
+                              )
+cds_length_boxplot
+
+ggsave(
+    path = '../figure/01_fig_analysis_off-target-sgrna/',
+    width = 5,
+    height = 5,
+    dpi = 1000,
+    plot = cds_length_boxplot,
+    filename = "log10_cds_length_removed_genes.png")
+
+```
 
 
 
