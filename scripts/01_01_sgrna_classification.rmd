@@ -56,37 +56,38 @@ disposed_jacquere <- import_list_off_target_guides("../../GuideRefine/output_cle
 
 ```
 
-## Import paralog data from ENSEMBL 115
-
-```{r}
-
-# import predicted paralog pairs from ENSEMBL 115
-ensembl_paralog <- ensembl_paralog_gene_pairs()
-
-paralog_pairs <- ensembl_paralog[[1]]
-paralog_individual <- ensembl_paralog[[2]]
-
-```
-
 # Classify the sgRNAs in each libraries
 
 ```{r}
 
-# TO COVER THE PAM-DISTAL SINGLE MISMATCH GUIDES, USE THE OLD FILE (inside the old_result_pam_distal_mismatch_only) and let the single mismatch decided by the number of mismatch (1 mismatch) only
+# off_target_classification() has three arguments, the second one is looking for PAM-distal single mismatch, you can turn this off by put it as NA. Therefore the PAM-distal single mismatch will be considered as single mismatch sgRNA
 
-avana_classification <- off_target_classification(avana_alignment_meyers, disposed_avana["pam_distal_single_mismatch_guides"], disposed_avana["pam_distal_double_mismatch_guides"])
+avana_classification <- off_target_classification(avana_alignment_meyers, 
+                                                  NA, 
+                                                  disposed_avana["pam_distal_double_mismatch_guides"])
 write_csv(avana_classification[[1]], "../data/sgrna_lfc_data/avana_data/avana_sgrna_alignment_classification.csv")
 
-brunello_classification <- off_target_classification(brunello_alignment, disposed_brunello["pam_distal_single_mismatch_guides"], disposed_brunello["pam_distal_double_mismatch_guides"])
+brunello_classification <- off_target_classification(brunello_alignment, 
+                                                     NA,
+                                                     disposed_brunello["pam_distal_double_mismatch_guides"])
 write_csv(brunello_classification[[1]], "../data/sgrna_lfc_data/brunello_data/brunello_sgrna_alignment_classification.csv")
 
-toronto_classification <- off_target_classification(toronto_alignment, disposed_toronto["pam_distal_single_mismatch_guides"], disposed_toronto["pam_distal_double_mismatch_guides"])
+toronto_classification <- off_target_classification(toronto_alignment, 
+                                                    NA, 
+                                                    disposed_toronto["pam_distal_double_mismatch_guides"])
+
 write_csv(toronto_classification[[1]], "../data/sgrna_lfc_data/tkov3_data/tkov3_sgrna_alignment_classification.csv")
 
-yusa_classification <- off_target_classification(yusa_alignment, disposed_yusa["pam_distal_single_mismatch_guides"], disposed_yusa["pam_distal_double_mismatch_guides"])
+yusa_classification <- off_target_classification(yusa_alignment, 
+                                                 NA, 
+                                                 disposed_yusa["pam_distal_double_mismatch_guides"])
+
 write_csv(yusa_classification[[1]], "../data/sgrna_lfc_data/yusa_data/yusa_sgrna_alignment_classification.csv")
 
-jacquere_classification <- off_target_classification(jacquere_alignment, disposed_jacquere["pam_distal_single_mismatch_guides"], disposed_jacquere["pam_distal_double_mismatch_guides"])
+jacquere_classification <- off_target_classification(jacquere_alignment, 
+                                                     NA, 
+                                                     disposed_jacquere["pam_distal_double_mismatch_guides"])
+
 write_csv(jacquere_classification[[1]], "../data/sgrna_lfc_data/jacquere_data/jacquere_sgrna_alignment_classification.csv")
 
 ```
