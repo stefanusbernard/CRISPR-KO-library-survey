@@ -429,14 +429,14 @@ from 520 removed genes across libraries, there are 5 genes that were not mapped 
 # ------------------------------------------ Bin exon length by 2000 bp ---------------------------------------------
 
 control_genes_cds$cds_length_bin <- cut(control_genes_cds$total_cds_length_bp,
-                                            breaks = c(0, 2000, 4000, 6000, 8000, 10000, Inf),
+                                            breaks = c(0, 500, 1000, 1500, 2000, 2500, Inf),
                                             labels = c(
-                                              "0–2000",
-                                              "2000–4000",
-                                              "4000–6000",
-                                              "6000–8000",
-                                              "8000–10000",
-                                              ">10000"),
+                                              "0–500",
+                                              "500–1000",
+                                              "1000–1500",
+                                              "1500–2000",
+                                              "2000–2500",
+                                              ">2500"),
                                             right = TRUE,
                                             include.lowest = TRUE
                                           )
@@ -474,7 +474,8 @@ barplot_cds_length <- ggplot(df_barplot, aes(x = cds_length_bin, y = percentage)
                                 axis.line.y = element_line(size = 0.5, colour = "black"),
                                 legend.position = "none",
                                 plot.margin = margin(1, 1, 1, 1),
-                                legend.spacing.x = unit(1, 'cm'))
+                                legend.spacing.x = unit(1, 'cm')) +
+                          ylim(0, 50)
 
 ggsave(
     path = './',
@@ -482,7 +483,7 @@ ggsave(
     height = 5,
     dpi = 1000,
     plot = barplot_cds_length,
-    filename = "../figure/01_fig_analysis_off-target-sgrna/cds_length_18586_control_genes.png")
+    filename = "../figure/01_fig_analysis_off-target-sgrna/cds_length_18584_control_genes.png")
 
 ```
 
