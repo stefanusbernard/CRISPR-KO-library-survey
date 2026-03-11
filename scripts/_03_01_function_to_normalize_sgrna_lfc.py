@@ -22,8 +22,8 @@ def normalize_column(col):
 #     return list_common_essential
 
 # function to scaled LFC by the absolute average LFC value across cell lines for core essential genes by Traver Hart (2014) https://www.embopress.org/doi/full/10.15252/msb.20145216
-def scale_essential(df):
-    list_common_essential = pd.read_csv("../data/sgrna_lfc_data/constitutive_core_essential_hart_2014.csv", header=None)
+def scale_essential(df, hart_data_dir):
+    list_common_essential = pd.read_csv(hart_data_dir, header=None)
     list_common_essential = list(list_common_essential[0])
     list_common_essential
 

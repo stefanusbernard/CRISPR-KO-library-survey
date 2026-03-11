@@ -30,29 +30,29 @@ terms <- c("CONTROL", "Control", "control", "INTRON", "Intron", "intron", "LacZ"
 # lacZ and luciferase are the control in Toronto V3 library
 terms_for_filtering <- paste(terms, collapse = "|")
 
-avana_library_meyers <- import_sgrna_library("~/CRISPR-KO-GuideRefine/public_crispr_library/avana_library.tsv", terms_for_filtering)
-brunello_library <- import_sgrna_library("~/CRISPR-KO-GuideRefine/public_crispr_library/broadgpp-brunello-library-contents.tsv", terms_for_filtering)
-toronto_library <- import_sgrna_library("~/CRISPR-KO-GuideRefine/public_crispr_library/tkov3_guide_sequence.tsv", terms_for_filtering)
-yusa_library <- import_sgrna_library("~/CRISPR-KO-GuideRefine/public_crispr_library/yusa_hcrispr_ko_grnas.tsv", terms_for_filtering)
-jacquere_library <- import_sgrna_library("~/CRISPR-KO-GuideRefine/public_crispr_library/Jacquere_PerGuideAnnotations_Quota4.tsv", terms_for_filtering)
+avana_library_meyers <- import_sgrna_library("../../GuideRefine/public_crispr_library/avana_library.tsv", terms_for_filtering)
+brunello_library <- import_sgrna_library("../../GuideRefine/public_crispr_library/broadgpp-brunello-library-contents.tsv", terms_for_filtering)
+toronto_library <- import_sgrna_library("../../GuideRefine/public_crispr_library/tkov3_guide_sequence.tsv", terms_for_filtering)
+yusa_library <- import_sgrna_library("../../GuideRefine/public_crispr_library/yusa_hcrispr_ko_grnas.tsv", terms_for_filtering)
+jacquere_library <- import_sgrna_library("../../GuideRefine/public_crispr_library/Jacquere_PerGuideAnnotations_Quota4.tsv", terms_for_filtering)
 
-annotation <- "~/CRISPR-KO-GuideRefine/annotation_file/T2T-CHM13v2.0_gene_annot_granges.rds"
+annotation <- "../../GuideRefine/annotation_file/T2T-CHM13v2.0_gene_annot_granges.rds"
 genome_type_version <- "T2T-CHM13"
 bsgenome <- BSgenome.Hsapiens.NCBI.T2TCHM13v2.0
 
 # T2T-CHM13
-avana_alignment_meyers <- import_sgrna_library_alignment("~/CRISPR-KO-GuideRefine/object_intermediate/T2T-CHM13_bsgenome/avana_library_aln.csv", "T2T-CHM13")
-brunello_alignment <- import_sgrna_library_alignment("~/CRISPR-KO-GuideRefine/object_intermediate/T2T-CHM13_bsgenome/broadgpp-brunello-library-contents_aln.csv", "T2T-CHM13")
-toronto_alignment <- import_sgrna_library_alignment("~/CRISPR-KO-GuideRefine/object_intermediate/T2T-CHM13_bsgenome/tkov3_guide_sequence_aln.csv", "T2T-CHM13")
-yusa_alignment <- import_sgrna_library_alignment("~/CRISPR-KO-GuideRefine/object_intermediate/T2T-CHM13_bsgenome/yusa_hcrispr_ko_grnas_aln.csv", "T2T-CHM13")
-jacquere_alignment <- import_sgrna_library_alignment("~/CRISPR-KO-GuideRefine/object_intermediate/T2T-CHM13_bsgenome/Jacquere_PerGuideAnnotations_Quota4_aln.csv", "T2T-CHM13")
+avana_alignment_meyers <- import_sgrna_library_alignment("../../GuideRefine/object_intermediate/T2T-CHM13_bsgenome/avana_library_aln.csv", "T2T-CHM13")
+brunello_alignment <- import_sgrna_library_alignment("../../GuideRefine/object_intermediate/T2T-CHM13_bsgenome/broadgpp-brunello-library-contents_aln.csv", "T2T-CHM13")
+toronto_alignment <- import_sgrna_library_alignment("../../GuideRefine/object_intermediate/T2T-CHM13_bsgenome/tkov3_guide_sequence_aln.csv", "T2T-CHM13")
+yusa_alignment <- import_sgrna_library_alignment("../../GuideRefine/object_intermediate/T2T-CHM13_bsgenome/yusa_hcrispr_ko_grnas_aln.csv", "T2T-CHM13")
+jacquere_alignment <- import_sgrna_library_alignment("../../GuideRefine/object_intermediate/T2T-CHM13_bsgenome/Jacquere_PerGuideAnnotations_Quota4_aln.csv", "T2T-CHM13")
 
 # list_removed_sgrna sgRNAs
-disposed_avana <- import_list_off_target_guides("~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/old_result_pam_distal_mismatch_only/avana_library_disposed_sgRNAs.tsv")
-disposed_brunello <- import_list_off_target_guides("~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/old_result_pam_distal_mismatch_only/broadgpp-brunello-library-contents_disposed_sgRNAs.tsv")
-disposed_toronto <- import_list_off_target_guides("~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/old_result_pam_distal_mismatch_only/tkov3_guide_sequence_disposed_sgRNAs.tsv")
-disposed_yusa <- import_list_off_target_guides("~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/old_result_pam_distal_mismatch_only/yusa_hcrispr_ko_grnas_disposed_sgRNAs.tsv")
-disposed_jacquere <- import_list_off_target_guides("~/CRISPR-KO-GuideRefine/output_cleaning/T2T-CHM13/old_result_pam_distal_mismatch_only/Jacquere_PerGuideAnnotations_Quota4_disposed_sgRNAs.tsv")
+disposed_avana <- import_list_off_target_guides("../../GuideRefine/output_cleaning/T2T-CHM13/old_result_pam_distal_mismatch_only/avana_library_disposed_sgRNAs.tsv")
+disposed_brunello <- import_list_off_target_guides("../../GuideRefine/output_cleaning/T2T-CHM13/old_result_pam_distal_mismatch_only/broadgpp-brunello-library-contents_disposed_sgRNAs.tsv")
+disposed_toronto <- import_list_off_target_guides("../../GuideRefine/output_cleaning/T2T-CHM13/old_result_pam_distal_mismatch_only/tkov3_guide_sequence_disposed_sgRNAs.tsv")
+disposed_yusa <- import_list_off_target_guides("../../GuideRefine/output_cleaning/T2T-CHM13/old_result_pam_distal_mismatch_only/yusa_hcrispr_ko_grnas_disposed_sgRNAs.tsv")
+disposed_jacquere <- import_list_off_target_guides("../../GuideRefine/output_cleaning/T2T-CHM13/old_result_pam_distal_mismatch_only/Jacquere_PerGuideAnnotations_Quota4_disposed_sgRNAs.tsv")
 
 ```
 

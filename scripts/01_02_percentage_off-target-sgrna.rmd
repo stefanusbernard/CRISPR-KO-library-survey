@@ -68,6 +68,8 @@ pick_alignment_type_and_process_data <- function(classification_data, alignment_
   data <- read_csv(classification_data) %>%
     filter(alignment %in% alignment_type)
   
+  # TODO: need a function to convert single mismatch PAM-distal sgRNA to single mismatch sgRNA
+  
   data <- data %>%
     mutate(library = library_name) %>%
     group_by(library, alignment) %>%
@@ -97,6 +99,7 @@ sum_dataframe_long <- rbind(avana_classification, tkov3_classification, yusa_cla
 # Define custom colors for the libraries
 my_palette <- brewer.pal(n = 5, name = "Set2")
 
+# TODO: reproduce the figures for GRCh38 and T2T-CHM13
 
 # Create the grouped multibar chart for each sgRNA libraries
 multi_bar_chart <- ggplot(sum_dataframe_long, aes(x = alignment, y = percentage, fill = library)) +
@@ -397,11 +400,6 @@ ggsave(
 
 
 ```
-
-
-
-
-
 
 
 

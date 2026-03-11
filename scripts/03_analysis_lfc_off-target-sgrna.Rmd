@@ -35,7 +35,7 @@ pick_alignment_type <- function(classification_data, alignment_type, stratificat
   return(data)
 }
 
-selected_guides <- c("perfect", "single mismatch")
+selected_guides <- c("perfect", "multi-target guides", "non-targeting")
 
 avana_classification <- pick_alignment_type("../data/sgrna_lfc_data/avana_data/avana_sgrna_alignment_classification.csv", selected_guides)
 avana_classification <- count_alignment_bin(avana_classification, selected_guides)
@@ -123,11 +123,15 @@ visualize_two_group(combined_data,
 
 source("./00_CRISPR-KO-library-survey-functions.R")
 
-visualize_stratify_alignment(avana_library_and_lfc_data, "number of single mismatch \noff-target alignment", "../figure/03_fig_analysis_lfc_off-target-sgrna/avana_single_mismatch.png")
-visualize_stratify_alignment(tkov3_library_and_lfc_data, "number of single mismatch \noff-target alignment", "../figure/03_fig_analysis_lfc_off-target-sgrna/tkov3_single_mismatch.png")
-visualize_stratify_alignment(brunello_library_and_lfc_data, "number of single mismatch \noff-target alignment", "../figure/03_fig_analysis_lfc_off-target-sgrna/brunello_single_mismatch.png")
-visualize_stratify_alignment(yusa_library_and_lfc_data, "number of single mismatch \noff-target alignment", "../figure/03_fig_analysis_lfc_off-target-sgrna/yusa_single_mismatch.png")
-visualize_stratify_alignment(jacquere_library_and_lfc_data, "number of single mismatch \noff-target alignment", "../figure/03_fig_analysis_lfc_off-target-sgrna/jacquere_single_mismatch.png")
+# visualize_stratify_alignment(avana_library_and_lfc_data, "number of single mismatch \noff-target alignment", "../figure/03_fig_analysis_lfc_off-target-sgrna/avana_single_mismatch.png")
+# 
+# visualize_stratify_alignment(tkov3_library_and_lfc_data, "number of single mismatch \noff-target alignment", "../figure/03_fig_analysis_lfc_off-target-sgrna/tkov3_single_mismatch.png")
+
+# visualize_stratify_alignment(brunello_library_and_lfc_data, "number of single mismatch \noff-target alignment", "../figure/03_fig_analysis_lfc_off-target-sgrna/brunello_single_mismatch.png")
+
+# visualize_stratify_alignment(yusa_library_and_lfc_data, "number of single mismatch \noff-target alignment", "../figure/03_fig_analysis_lfc_off-target-sgrna/yusa_single_mismatch.png")
+# 
+# visualize_stratify_alignment(jacquere_library_and_lfc_data, "number of single mismatch \noff-target alignment", "../figure/03_fig_analysis_lfc_off-target-sgrna/jacquere_single_mismatch.png")
 
 ```
 

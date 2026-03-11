@@ -569,7 +569,6 @@ ggsave(
     plot = boxplot_lfc_avana,
     filename = "../../figure/04_fig_analysis_gene_hits_change/avana_brunello_not_essential_hits_lfc.png")
 
-
 ```
 
 ## 2nd Visualization: Multi bar chart of percentage of sgRNA type between essential gene hits and non essential but hits in Avana library

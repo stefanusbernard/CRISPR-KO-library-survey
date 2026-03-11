@@ -568,9 +568,11 @@ find_multi_target_paralog <- function(gene_df, list_query_guides, library_name) 
   return(summary_df)
 }
 
+
+
 # ----------------------------------------------------------------------------------------------------------------------------------------------
 
-# A function to obtain and process sgRNA library Log-fold-change data 
+# FUNCTION FOR 04_analysis_lfc_off-target-sgrna.rmd
 
 # TODO: compare this code with the code inside the backup script
 
@@ -638,7 +640,7 @@ visualize_two_group <- function(library_lfc_data, boxplot_output_name) {
                                           c("perfect", "single mismatch")),
                                           # c("perfect", "pam-distal single mismatch"), 
                                           # c("perfect", "pam-distal double mismatch"),
-                                          # c("perfect", "multi-target guides"),
+                                          # c("perfect", "multi-target guides")),
                                           # c("single mismatch", "pam-distal single mismatch"),
                                           # c("single mismatch", "pam-distal double mismatch"),
                                           # c("single mismatch", "multi-target guides"),
@@ -779,9 +781,30 @@ visualize_stratify_alignment <- function(library_lfc_data, label_x, boxplot_outp
   
 }
 
+# ----------------------------------------------------------------------------------------------------------------------------------------------
 
+# FUNCTION FOR 05_analysis_brunello_jacquere_hits.rmd
 
+fix_gene_symbols <- function(genes) {
   
+  checkGeneSymbols(genes) %>%
+    as_tibble() %>%
+    
+    # Use Suggested.Symbol if present, otherwise fall back to original
+    mutate(
+      Suggested.Symbol = if_else(is.na(Suggested.Symbol),x,Suggested.Symbol)) %>%
+    
+    # Split ambiguous symbols like "ABCD /// DEFG" into separate rows
+    separate_rows(
+      Suggested.Symbol,
+      sep = "\\s*///\\s*"
+    ) %>%
+    
+    # Optional: clean whitespace just in case
+    mutate(
+      Suggested.Symbol = str_trim(Suggested.Symbol)
+    )
+}
   
   
   
