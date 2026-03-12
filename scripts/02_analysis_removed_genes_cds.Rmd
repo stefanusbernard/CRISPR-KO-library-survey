@@ -123,7 +123,7 @@ refseq_to_chr <- c(
 
 # cds per gene
 cds_by_gene <- cdsBy(T2T_txdb, by = "gene")
-cds_gr <- cds_by_gene[names(cds_by_gene) %in% removed_genes_cds_gene_list]
+cds_gr <- cds_by_gene[names(cds_by_gene) %in% removed_genes_all_libraries]
 
 # only filter canonical cds (not predicted XM or else)
 cds_gr <- endoapply(cds_gr, function(gr) {
@@ -411,7 +411,7 @@ removed_genes_cds <- calculate_cds_length_and_gene_span(T2T_txdb, removed_genes_
 removed_genes_cds_gene_list <- removed_genes_cds %>% pull(gene) %>% unique()
 
 
-# 18,632 genes out of 18,776 genes mapped into the T2T_txdb file
+# 18,582 genes out of 18,776 genes mapped into the T2T_txdb file
 control_genes_exons <- calculate_exon_length_and_gene_span(T2T_txdb, all_genes_but_not_removed)
 control_genes_cds <- calculate_cds_length_and_gene_span(T2T_txdb, all_genes_but_not_removed)
 control_genes_cds_gene_list <- control_genes_cds %>% pull(gene) %>% unique()
@@ -428,7 +428,7 @@ from 520 removed genes across libraries, there are 5 genes that were not mapped 
 
 # ------------------------------------------ Bin exon length by 2000 bp ---------------------------------------------
 
-control_genes_cds$cds_length_bin <- cut(control_genes_cds$total_cds_length_bp,
+removed_genes_cds$cds_length_bin <- cut(removed_genes_cds$total_cds_length_bp,
                                             breaks = c(0, 500, 1000, 1500, 2000, 2500, Inf),
                                             labels = c(
                                               "0–500",
@@ -443,7 +443,7 @@ control_genes_cds$cds_length_bin <- cut(control_genes_cds$total_cds_length_bp,
 
 # --------------------------------------- Plot the total exon length bin ----------------------------------------------------
 
-df_barplot <- control_genes_cds %>%
+df_barplot <- removed_genes_cds %>%
   dplyr::select(cds_length_bin) %>%
   count(cds_length_bin) %>%
   dplyr::rename("num_genes" = "n") %>%
@@ -453,8 +453,8 @@ df_barplot <- control_genes_cds %>%
 barplot_cds_length <- ggplot(df_barplot, aes(x = cds_length_bin, y = percentage)) +
                           geom_col(fill = "#1E88E5") +
                           theme_minimal() +
-                          labs(x = "Total CDS length (bp)", y = "Percentage of genes") +
-                          geom_text(aes(label = paste0(percentage, " %")),
+                          labs(x = "Total CDS length (bp)", y = "Percentage of genes (%)") +
+                          geom_text(aes(label = percentage),
                                     nudge_y = 2,
                                     nudge_x = 0,
                                     size = 5) +
@@ -483,7 +483,7 @@ ggsave(
     height = 5,
     dpi = 1000,
     plot = barplot_cds_length,
-    filename = "../figure/01_fig_analysis_off-target-sgrna/cds_length_18584_control_genes.png")
+    filename = "../figure/02_fig_analysis_removed_genes/cds_length_505_removed_genes.png")
 
 ```
 
@@ -566,7 +566,7 @@ cds_length_boxplot <-  cds_length_boxplot +
 cds_length_boxplot
 
 ggsave(
-    path = '../figure/01_fig_analysis_off-target-sgrna/',
+    path = '../figure/02_fig_analysis_removed_genes/',
     width = 5,
     height = 5,
     dpi = 1000,
