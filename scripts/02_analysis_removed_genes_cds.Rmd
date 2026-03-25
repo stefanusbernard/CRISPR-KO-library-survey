@@ -184,7 +184,7 @@ df_all_spacers <- data.frame(
   stringsAsFactors = FALSE
 )
 
-all_spacers_exon_data <- df_all_spacers %>%
+all_spacers_cds_data <- df_all_spacers %>%
   left_join(df_cds_flat, join_by(gene_id, cds_id)) %>%
   dplyr::select(-c(seqnames, strand)) %>%
   dplyr::rename("start_cds" = "start",
@@ -193,72 +193,12 @@ all_spacers_exon_data <- df_all_spacers %>%
                 "strand" = "spacer_strand") %>%
   relocate(cds_name, .before = start_cds)
 
-write_csv(all_spacers_exon_data, "../data/removed_genes_survey/all_spacers_exon_data_499_removed_genes.csv")
+write_csv(all_spacers_exon_data, "../data/removed_genes_survey/all_spacers_cds_data_499_removed_genes.csv")
 
 ```
 
-## Does each genes have limited number of protospacer site ?
-
-```{r}
-
-count_protospacer_per_gene <- all_spacers_exon_data %>%
-  dplyr::select(gene_id, pam_site) %>%
-  distinct() %>%
-  group_by(gene_id) %>%
-  summarise(num_pam_site = n()) %>%
-  ungroup()
-
-count_protospacer_per_gene$count_bin <- cut(count_protospacer_per_gene$num_pam_site,
-                                            breaks = c(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, Inf),
-                                            labels = c(
-                                              "0–10",
-                                              "10–20",
-                                              "20–30",
-                                              "30–40",
-                                              "40–50",
-                                              "50-60",
-                                              "60–70",
-                                              "70–80",
-                                              "80–90",
-                                              "90-100",
-                                              ">100"),
-                                            right = TRUE,
-                                            include.lowest = TRUE
-                                          )
-
-df_barplot <- count_protospacer_per_gene %>%
-  dplyr::select(count_bin) %>%
-  count(count_bin) %>%
-  dplyr::rename("num_genes" = "n")
 
 
-ggplot(df_barplot, aes(x = count_bin, y = num_genes)) +
-    geom_col(fill = "#1E88E5") +
-    theme_minimal() +
-    labs(x = "Number of NGG PAM-site at CDS", y = "Number of genes") +
-    geom_text(aes(label = paste("n=", num_genes, sep="")),
-              nudge_y = 5,
-              nudge_x = 0,
-              size = 5) +
-    theme(axis.text.x = element_text(size = 12, vjust = 0.7, angle = 45, colour = 'black'),
-          axis.text.y = element_text(size = 12, colour = "black"),
-          axis.title.x = element_text(size = 12, vjust = 0.5, margin = margin(r = 20), colour = "black"),
-          axis.title.y = element_text(size = 12, vjust = 0.5, margin = margin(r = 20), colour = "black"),
-          axis.ticks.y = element_line(size = 1),
-          axis.ticks.length = unit(0.15, "cm"),
-          axis.line.y.right = element_blank(),
-          axis.ticks.y.right = element_blank(), 
-          axis.text.y.right = element_blank(), 
-          panel.grid.major = element_blank(),
-          panel.grid.minor = element_blank(),
-          axis.line.x = element_line(size = 0.5, colour = "black"),
-          axis.line.y = element_line(size = 0.5, colour = "black"),
-          legend.position = "none",
-          plot.margin = margin(1, 1, 1, 1),
-          legend.spacing.x = unit(1, 'cm'))
-
-
-```
 
 ## We asked whether the exon size is small as it may contributes to the off-target activity of sgRNAs ?
 
@@ -412,6 +352,8 @@ removed_genes_cds_gene_list <- removed_genes_cds %>% pull(gene) %>% unique()
 
 
 # 18,582 genes out of 18,776 genes mapped into the T2T_txdb file
+# 18,575 genes out of 18,777 genes mapped into the T2T_txdb file
+# TODO: the number keep changing, find out what happen
 control_genes_exons <- calculate_exon_length_and_gene_span(T2T_txdb, all_genes_but_not_removed)
 control_genes_cds <- calculate_cds_length_and_gene_span(T2T_txdb, all_genes_but_not_removed)
 control_genes_cds_gene_list <- control_genes_cds %>% pull(gene) %>% unique()
@@ -561,7 +503,7 @@ cds_length_boxplot <-  cds_length_boxplot +
                                 angle = 45,
                                 vjust = 0,
                                 hjust = 0.5,
-                                size = 3.5
+                                size = 4
                               )
 cds_length_boxplot
 
@@ -576,6 +518,191 @@ ggsave(
 ```
 
 
+## We asked whether each removed genes have limited number of protospacer site with valid NGG ?
+### Visualization 1: Barplot of exon length of removed genes or control genes
+
+```{r}
+
+all_spacers_cds_removed_genes <- read_csv("../data/removed_genes_survey/all_spacers_cds_data_499_removed_genes.csv")
+all_spacers_cds_control_genes <- read_csv("../data/removed_genes_survey/all_spacers_cds_data_18777_genes.csv")
+
+count_protospacer_per_gene <- all_spacers_cds_removed_genes %>%
+  dplyr::select(gene_id, pam_site) %>%
+  distinct() %>%
+  group_by(gene_id) %>%
+  summarise(num_pam_site = n()) %>%
+  ungroup()
+
+count_protospacer_per_gene$count_bin <- cut(count_protospacer_per_gene$num_pam_site,
+                                            breaks = c(0, 50, 100, 150, 200, 250, Inf),
+                                            labels = c(
+                                              "0–50",
+                                              "50–100",
+                                              "100–150",
+                                              "150–200",
+                                              "200–250",
+                                              ">250"),
+                                            right = TRUE,
+                                            include.lowest = TRUE
+                                          )
+
+df_barplot <- count_protospacer_per_gene %>%
+  dplyr::select(count_bin) %>%
+  count(count_bin) %>%
+  dplyr::rename("num_genes" = "n") %>%
+  mutate(percentage = round((num_genes/sum(num_genes)*100), 2))
+
+
+barplot_spacer_pam <- ggplot(df_barplot, aes(x = count_bin, y = percentage)) +
+    geom_col(fill = "#1E88E5") +
+    theme_minimal() +
+    labs(x = "Number of NGG PAM-site at CDS", y = "Percentage of genes (%)") +
+    geom_text(aes(label = paste(percentage, sep="")),
+              nudge_y = 2,
+              nudge_x = 0,
+              size = 5) +
+              theme(axis.text.x = element_text(size = 15, vjust = 0.7, angle = 0, colour = 'black'),
+                    axis.text.y = element_text(size = 15, colour = "black"),
+                    axis.title.x = element_text(size = 15, vjust = 0.5, margin = margin(t = 20), colour = "black"),
+                    axis.title.y = element_text(size = 15, vjust = 0.5, margin = margin(r = 20), colour = "black"),
+                    axis.ticks.x = element_line(size = 1),
+                    axis.ticks.y = element_line(size = 1),
+                    axis.ticks.length = unit(0.15, "cm"),
+                    axis.line.y.right = element_blank(),
+                    axis.ticks.y.right = element_blank(), 
+                    axis.text.y.right = element_blank(), 
+                    panel.grid.major = element_blank(),
+                    panel.grid.minor = element_blank(),
+                    axis.line.x = element_line(size = 0.5, colour = "black"),
+                    axis.line.y = element_line(size = 0.5, colour = "black"),
+                    legend.position = "none",
+                    plot.margin = margin(1, 1, 1, 1),
+                    legend.spacing.x = unit(1, 'cm')) +
+              ylim(0, 50)
+
+ggsave(
+    path = './',
+    width = 9,
+    height = 5,
+    dpi = 1000,
+    plot = barplot_spacer_pam,
+    filename = "../figure/02_fig_analysis_removed_genes/spacer_pam_499_removed_genes.png")
+
+
+```
+
+### Visualization 2: Boxplot of exon length of removed genes or control genes
+
+```{r}
+
+df_all_spacers_cds_removed_genes <- all_spacers_cds_removed_genes %>%
+  dplyr::select(gene_id, pam_site) %>%
+  distinct() %>%
+  group_by(gene_id) %>%
+  summarise(num_pam_site = n()) %>%
+  ungroup()
+
+df_all_spacers_cds_control_genes <- all_spacers_cds_control_genes %>%
+  dplyr::select(gene_id, pam_site) %>%
+  distinct() %>%
+  group_by(gene_id) %>%
+  summarise(num_pam_site = n()) %>%
+  ungroup()
+
+removed_genes_pam <- df_all_spacers_cds_removed_genes %>% mutate(gene_status = "removed genes",
+                                                          log_transform_num_pam_site = log10(num_pam_site))
+
+control_genes_pam <- df_all_spacers_cds_control_genes %>% mutate(gene_status = "control genes",
+                                                          log_transform_num_pam_site = log10(num_pam_site))
+
+
+combined_df_pam <- rbind(removed_genes_pam, control_genes_pam) %>% mutate(gene_status = factor(gene_status, levels = c("control genes", "removed genes")))
+
+pam_boxplot <- ggboxplot(combined_df_pam, 
+                         x = "gene_status", 
+                         y = "log_transform_num_pam_site",
+                         fill = "gene_status",
+                         outliers = FALSE) +
+                    stat_compare_means(comparisons = list(c("removed genes", "control genes")),
+                                       method = "wilcox.test",
+                                       method.args = list(alternative = "two.sided"),
+                                       size = 2.5,
+                                       step.increase = 0.05,
+                                       tip.length = 0.01,
+                                       label = "p.signif",
+                                       label.y = 3) +
+  scale_fill_manual(
+      name = "",
+      values = c("control genes" = "powderblue",
+                 "removed genes" = "mistyrose"),
+      labels = c("Control Genes", "Removed Genes")) +
+  labs(title = "", 
+       x = "",
+       y = "log10(Total number of NGG PAM-site at CDS)") +
+    theme(plot.margin = margin(10, 10, 25, 10),
+          strip.text.x = element_text(size = 14),
+          axis.text.x = element_blank(),
+          axis.text.y = element_text(size = 14, colour = "black"),
+          axis.ticks.y = element_line(size = 1.5),
+          axis.ticks.x = element_blank(), 
+          axis.ticks.length = unit(0.1, "cm"),
+          axis.title.y = element_text(size = 14, vjust = 0.5, margin = margin(r = 20)),
+          panel.grid.major = element_line(size = 0.5),
+          panel.grid.minor = element_blank(),
+          axis.line.x = element_line(size = 0.5),
+          axis.line.y = element_line(size = 0.5), 
+          line = element_line((size = 2), colour = 'black'),
+          legend.position = "right",
+          legend.text = element_text(size = 12)) +
+  ylim(0, 3.25)
+
+# get stats
+
+b <- ggplot_build(pam_boxplot)
+stats <- b$data[[1]]
+
+label_df <- stats %>%
+  transmute(
+    x = x,
+    y = ymax + 0.2,          # add padding
+    label = round(ymax, 2)   # or any custom label
+  )
+
+count <- combined_df_pam %>%
+  distinct() %>%
+  count(gene_status)
+
+count <- count %>% bind_cols(stats %>% dplyr::select(x, ymin))
+
+pam_boxplot <-  pam_boxplot +
+                              geom_text(
+                                data = count,
+                                aes(x = x, y = ymin - 0.5, label = paste0("n= ", n)),
+                                angle = 45,
+                                vjust = 0,
+                                hjust = 0.5,
+                                size = 4
+                              )
+pam_boxplot
+
+ggsave(
+    path = '../figure/02_fig_analysis_removed_genes/',
+    width = 5,
+    height = 5,
+    dpi = 1000,
+    plot = pam_boxplot,
+    filename = "log10_pam_removed_genes.png")
+
+```
+
+### Why the number of control genes are different ?
+
+```{r}
+
+setdiff(control_genes_exons$gene, all_spacers_cds_control_genes$gene_id)
+
+
+```
 
 
 
