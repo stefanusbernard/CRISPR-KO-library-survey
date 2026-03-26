@@ -46,6 +46,11 @@ all_genes_but_not_removed <- read_tsv("https://storage.googleapis.com/public-dow
   filter(locus_group == "protein-coding gene" & !symbol %in% removed_genes_all_libraries) %>%
   pull(symbol)
 
+
+# Import spacer CDS PAM-site data
+all_spacers_cds_removed_genes <- read_csv("../data/removed_genes_survey/all_spacers_cds_data_499_removed_genes.csv")
+all_spacers_cds_control_genes <- read_csv("../data/removed_genes_survey/all_spacers_cds_data_18777_genes.csv")
+
 ```
 
 ## UpSet plot for commonality of removed genes between 5 libraries
@@ -198,8 +203,6 @@ write_csv(all_spacers_exon_data, "../data/removed_genes_survey/all_spacers_cds_d
 ```
 
 
-
-
 ## We asked whether the exon size is small as it may contributes to the off-target activity of sgRNAs ?
 
 ```{r}
@@ -257,8 +260,7 @@ calculate_exon_length_and_gene_span <- function(txdb_files, list_of_genes) {
     total_gene_length_bp = gene_span_per_gene
   )
   
-  # "KRTAP5-1"  "KRTAP5-10" "PLA2G10"   "TAS2R43"   "UPK3BL1" is not mapped to the T2T-CHM13 gene ranges data, annotation issues
-    
+  
   # ---------------------------------------------- Exon data per gene -------------------------------------------------------
 
   # Obtain exons per gene
@@ -345,17 +347,15 @@ calculate_cds_length_and_gene_span <- function(txdb_files, list_of_genes) {
   
 }
 
-# 515 genes out of 520 genes mapped into the T2T_txdb file
-removed_genes_exons <- calculate_exon_length_and_gene_span(T2T_txdb, removed_genes_all_libraries)
-removed_genes_cds <- calculate_cds_length_and_gene_span(T2T_txdb, removed_genes_all_libraries)
+# 505 genes out of 520 genes mapped into the T2T_txdb file
+# we only take 499 genes to match CDS with spacer PAM-site data
+removed_genes_cds <- calculate_cds_length_and_gene_span(T2T_txdb, unique(all_spacers_cds_removed_genes$gene_id))
 removed_genes_cds_gene_list <- removed_genes_cds %>% pull(gene) %>% unique()
 
 
-# 18,582 genes out of 18,776 genes mapped into the T2T_txdb file
 # 18,575 genes out of 18,777 genes mapped into the T2T_txdb file
-# TODO: the number keep changing, find out what happen
-control_genes_exons <- calculate_exon_length_and_gene_span(T2T_txdb, all_genes_but_not_removed)
-control_genes_cds <- calculate_cds_length_and_gene_span(T2T_txdb, all_genes_but_not_removed)
+# we only take 18,562 genes to match the CDS with spacer PAM-site data
+control_genes_cds <- calculate_cds_length_and_gene_span(T2T_txdb, unique(all_spacers_cds_control_genes$gene_id))
 control_genes_cds_gene_list <- control_genes_cds %>% pull(gene) %>% unique()
 
 ```
@@ -370,7 +370,7 @@ from 520 removed genes across libraries, there are 5 genes that were not mapped 
 
 # ------------------------------------------ Bin exon length by 2000 bp ---------------------------------------------
 
-removed_genes_cds$cds_length_bin <- cut(removed_genes_cds$total_cds_length_bp,
+control_genes_cds$cds_length_bin <- cut(control_genes_cds$total_cds_length_bp,
                                             breaks = c(0, 500, 1000, 1500, 2000, 2500, Inf),
                                             labels = c(
                                               "0–500",
@@ -385,7 +385,7 @@ removed_genes_cds$cds_length_bin <- cut(removed_genes_cds$total_cds_length_bp,
 
 # --------------------------------------- Plot the total exon length bin ----------------------------------------------------
 
-df_barplot <- removed_genes_cds %>%
+df_barplot <- control_genes_cds %>%
   dplyr::select(cds_length_bin) %>%
   count(cds_length_bin) %>%
   dplyr::rename("num_genes" = "n") %>%
@@ -425,7 +425,7 @@ ggsave(
     height = 5,
     dpi = 1000,
     plot = barplot_cds_length,
-    filename = "../figure/02_fig_analysis_removed_genes/cds_length_505_removed_genes.png")
+    filename = "../figure/02_fig_analysis_removed_genes/cds_length_18562_control_genes.png")
 
 ```
 
@@ -434,11 +434,13 @@ ggsave(
 ```{r}
 
 removed_genes_cds <- removed_genes_cds %>% mutate(gene_status = "removed genes",
-                                          log_transform_cds_length = log10(total_cds_length_bp))
+                                          log_transform_cds_length = log10(total_cds_length_bp)) 
+# %>% dplyr::select(-cds_length_bin)
 control_genes_cds <- control_genes_cds %>% mutate(gene_status = "control genes",
                                           log_transform_cds_length = log10(total_cds_length_bp))
 
-combined_df_cds_length <- rbind(removed_genes_cds, control_genes_cds) %>% mutate(gene_status = factor(gene_status, levels = c("control genes", "removed genes")))
+combined_df_cds_length <- rbind(removed_genes_cds, control_genes_cds) %>% 
+  mutate(gene_status = factor(gene_status, levels = c("control genes", "removed genes")))
 
 cds_length_boxplot <- ggboxplot(combined_df_cds_length, 
                          x = "gene_status", 
@@ -452,12 +454,12 @@ cds_length_boxplot <- ggboxplot(combined_df_cds_length,
                                        step.increase = 0.05,
                                        tip.length = 0.01,
                                        label = "p.signif",
-                                       label.y = 4.5) +
+                                       label.y = 4) +
   scale_fill_manual(
       name = "",
       values = c("control genes" = "powderblue",
                  "removed genes" = "mistyrose"),
-      labels = c("Control Genes", "Removed Genes")) +
+      labels = c("Other protein-coding genes", "Common genes with < 3 sgRNAs")) +
   labs(title = "", 
        x = "",
        y = "log10(Total CDS length in all transcripts [bp])") +
@@ -474,7 +476,8 @@ cds_length_boxplot <- ggboxplot(combined_df_cds_length,
           axis.line.x = element_line(size = 0.5),
           axis.line.y = element_line(size = 0.5), 
           line = element_line((size = 2), colour = 'black'),
-          legend.position = "right",
+          legend.position = "top",
+          legend.direction = "vertical",
           legend.text = element_text(size = 12)) +
   ylim(0, 5)
 
@@ -509,8 +512,8 @@ cds_length_boxplot
 
 ggsave(
     path = '../figure/02_fig_analysis_removed_genes/',
-    width = 5,
-    height = 5,
+    width = 4,
+    height = 6,
     dpi = 1000,
     plot = cds_length_boxplot,
     filename = "log10_cds_length_removed_genes.png")
@@ -522,9 +525,6 @@ ggsave(
 ### Visualization 1: Barplot of exon length of removed genes or control genes
 
 ```{r}
-
-all_spacers_cds_removed_genes <- read_csv("../data/removed_genes_survey/all_spacers_cds_data_499_removed_genes.csv")
-all_spacers_cds_control_genes <- read_csv("../data/removed_genes_survey/all_spacers_cds_data_18777_genes.csv")
 
 count_protospacer_per_gene <- all_spacers_cds_removed_genes %>%
   dplyr::select(gene_id, pam_site) %>%
@@ -556,7 +556,7 @@ df_barplot <- count_protospacer_per_gene %>%
 barplot_spacer_pam <- ggplot(df_barplot, aes(x = count_bin, y = percentage)) +
     geom_col(fill = "#1E88E5") +
     theme_minimal() +
-    labs(x = "Number of NGG PAM-site at CDS", y = "Percentage of genes (%)") +
+    labs(x = "Number of spacer sequences with NGG PAM-site at CDS", y = "Percentage of genes (%)") +
     geom_text(aes(label = paste(percentage, sep="")),
               nudge_y = 2,
               nudge_x = 0,
@@ -591,7 +591,7 @@ ggsave(
 
 ```
 
-### Visualization 2: Boxplot of exon length of removed genes or control genes
+### Visualization 2: Boxplot of spacer sequence with NGG for removed genes and control genes
 
 ```{r}
 
@@ -635,10 +635,10 @@ pam_boxplot <- ggboxplot(combined_df_pam,
       name = "",
       values = c("control genes" = "powderblue",
                  "removed genes" = "mistyrose"),
-      labels = c("Control Genes", "Removed Genes")) +
+      labels = c("Other protein-coding genes", "Common genes with < 3 sgRNAs")) +
   labs(title = "", 
        x = "",
-       y = "log10(Total number of NGG PAM-site at CDS)") +
+       y = "log10(Total number of spacer in CDS (NGG PAM-site))") +
     theme(plot.margin = margin(10, 10, 25, 10),
           strip.text.x = element_text(size = 14),
           axis.text.x = element_blank(),
@@ -652,9 +652,10 @@ pam_boxplot <- ggboxplot(combined_df_pam,
           axis.line.x = element_line(size = 0.5),
           axis.line.y = element_line(size = 0.5), 
           line = element_line((size = 2), colour = 'black'),
-          legend.position = "right",
+          legend.position = "top",
+          legend.direction = "vertical",
           legend.text = element_text(size = 12)) +
-  ylim(0, 3.25)
+  ylim(0, 5)
 
 # get stats
 
@@ -687,19 +688,29 @@ pam_boxplot
 
 ggsave(
     path = '../figure/02_fig_analysis_removed_genes/',
-    width = 5,
-    height = 5,
+    width = 4,
+    height = 6,
     dpi = 1000,
     plot = pam_boxplot,
     filename = "log10_pam_removed_genes.png")
 
 ```
 
-### Why the number of control genes are different ?
+### From 520 genes, there are 21 genes that cant be mapped
 
 ```{r}
 
-setdiff(control_genes_exons$gene, all_spacers_cds_control_genes$gene_id)
+hgnc <- read_tsv("https://storage.googleapis.com/public-download-files/hgnc/tsv/tsv/hgnc_complete_set.txt") %>%
+  filter(locus_group == "protein-coding gene" & symbol %in% removed_genes_all_libraries)
+
+genes_not_in_removed_cds <- setdiff(removed_genes_all_libraries, removed_genes_cds$gene)
+# [1] "CD200R1L"  "CLN3"      "CYP4B1"    "EFCAB13"   "KRT24"     "KRT81"     "KRTAP5-1"  "KRTAP5-10" "LEO1"      "MS4A14"   
+# [11] "PLA2G10"   "PRSS48"    "TAS2R43"   "UPK3BL1"   "ZNF681"
+
+genes_not_in_removed_pam <- setdiff(removed_genes_all_libraries, removed_genes_pam$gene_id)
+#  [1] "CD200R1L"  "CLN3"      "CYP4B1"    "EFCAB13"   "GSTM2"     "KCTD16"    "KRT24"     "KRT81"     "KRTAP5-1"  "KRTAP5-10"
+# [11] "KRTAP9-7"  "LEO1"      "MS4A14"    "PLA2G10"   "PRSS48"    "SIGLEC5"   "SPRR3"     "TAS2R43"   "TBCD"      "UPK3BL1"  
+# [21] "ZNF681" 
 
 
 ```
