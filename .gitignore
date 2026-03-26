@@ -12,5 +12,6 @@
 old_plot/*
 data/cellecta_data/*
 data/T2T_data/*
+data/removed_genes_survey/
 results/
 .Rproj.user
