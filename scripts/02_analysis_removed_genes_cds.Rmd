@@ -19,8 +19,8 @@ library(BSgenome.Hsapiens.NCBI.T2TCHM13v2.0)
 library(GenomeInfoDbData)
 library(txdbmaker)
 library(crisprVerse)
-library(pheatmap)
 library(ggpubr)
+library(readxl)
 
 source("./00_CRISPR-KO-library-survey-functions.R")
 ```
@@ -221,7 +221,7 @@ removed_pam_count <- count_pam_per_gene(all_spacers_cds_removed_genes)
 control_pam_count <- count_pam_per_gene(all_spacers_cds_control_genes)
 ```
 
-## UpSet plot: commonality of removed genes between 5 libraries
+## Figure 3B : UpSet plot commonality of removed genes between 5 libraries
 
 ```{r upset-plot}
 
@@ -261,6 +261,7 @@ T2T_txdb <- txdbmaker::makeTxDbFromGFF(
   organism   = "Homo sapiens"
 )
 saveDb(T2T_txdb, "../data/T2T_data/TxDb_T2T-CHM13v2.sqlite")
+
 ```
 
 ## Compute CDS lengths and gene spans for removed and control genes
@@ -275,6 +276,7 @@ removed_genes_cds <- calculate_feature_length(T2T_txdb, unique(all_spacers_cds_r
 
 # 18,562 control genes (out of 18,777) mapped to T2T-CHM13
 control_genes_cds <- calculate_feature_length(T2T_txdb, unique(all_spacers_cds_control_genes$gene_id), feature = "cds")
+
 ```
 
 ## Obtain possible protospacer sites from CDS of removed genes
@@ -335,7 +337,7 @@ write_csv(all_spacers_cds_data, "../data/removed_genes_survey/all_spacers_cds_da
 
 From 520 removed genes, 5 are not mapped to T2T-CHM13 (KRTAP5-1, KRTAP5-10, PLA2G10, TAS2R43, UPK3BL1) — likely annotation or symbol issues.
 
-### Barplot: distribution of total CDS length
+### Supp Figure 3A and 3B: Barplot distribution of total CDS length
 
 ```{r cds-length-barplot}
 
@@ -364,7 +366,7 @@ ggsave("../figure/02_fig_analysis_removed_genes/cds_length_18562_control_genes.p
        plot = barplot_cds_control, width = 11, height = 5, dpi = 1000)
 ```
 
-### Boxplot: log10 CDS length — removed vs control
+### Figure 3C: Boxplot log10 CDS length — removed vs control
 
 ```{r cds-length-boxplot}
 
@@ -389,7 +391,7 @@ ggsave("../figure/02_fig_analysis_removed_genes/log10_cds_length_removed_genes_c
 
 ## Protospacer / NGG PAM-site analysis: removed vs control genes
 
-### Barplot: distribution of protospacer count per gene
+### Supp Figure 3C and 3D : Barplot distribution of protospacer count per gene
 
 ```{r pam-count-barplot}
 
@@ -420,7 +422,7 @@ ggsave("../figure/02_fig_analysis_removed_genes/spacer_pam_18562_control_genes.p
        plot = barplot_pam_control, width = 9, height = 5, dpi = 1000)
 ```
 
-### Boxplot: log10 PAM count — removed vs control
+### Figure 3D: Boxplot log10 PAM count — removed vs control
 
 ```{r pam-count-boxplot}
 
@@ -441,20 +443,6 @@ pam_boxplot
 
 ggsave("../figure/02_fig_analysis_removed_genes/log10_pam_removed_genes_claude.png",
        plot = pam_boxplot, width = 4, height = 6, dpi = 1000)
-```
-
-### Genes not mapped to T2T-CHM13 CDS or PAM data
-
-```{r unmapped-genes}
-
-genes_not_in_removed_cds <- setdiff(removed_genes_all_libraries, removed_genes_cds$gene)
-# [1] "CD200R1L"  "CLN3"  "CYP4B1"  "EFCAB13"  "KRT24"  "KRT81"  "KRTAP5-1"  "KRTAP5-10"
-# [9] "LEO1"  "MS4A14"  "PLA2G10"  "PRSS48"  "TAS2R43"  "UPK3BL1"  "ZNF681"
-
-genes_not_in_removed_pam <- setdiff(removed_genes_all_libraries, removed_pam_count$gene_id)
-#  [1] "CD200R1L"  "CLN3"  "CYP4B1"  "EFCAB13"  "GSTM2"  "KCTD16"  "KRT24"  "KRT81"
-#  [9] "KRTAP5-1"  "KRTAP5-10"  "KRTAP9-7"  "LEO1"  "MS4A14"  "PLA2G10"  "PRSS48"
-# [17] "SIGLEC5"  "SPRR3"  "TAS2R43"  "TBCD"  "UPK3BL1"  "ZNF681"
 ```
 
 ## PAM-site density relative to CDS length
@@ -482,7 +470,7 @@ pam_density_df <- bind_rows(
   mutate(gene_status = factor(gene_status, levels = c("control genes", "removed genes")))
 ```
 
-### Density distribution: PAM sites per kb of CDS
+### Figure 3E: Density distribution of PAM sites per kb of CDS
 
 ```{r pam-density-plot}
 
@@ -516,4 +504,22 @@ pam_density_distribution <- ggplot(pam_density_df,
 
 ggsave("../figure/02_fig_analysis_removed_genes/pam_density_distribution_claude.png",
        plot = pam_density_distribution, width = 6.5, height = 4, dpi = 1000)
+```
+
+### Supplementary Table 3: List of removed genes, the CDS, and gene length
+
+```{r unmapped-genes}
+
+supplementary_table_3 <- read_tsv("https://storage.googleapis.com/public-download-files/hgnc/tsv/tsv/hgnc_complete_set.txt") %>% 
+  dplyr::select(symbol, name) %>%
+  filter(symbol %in% removed_genes_all_libraries) %>%
+  dplyr::rename("gene_id" = "symbol") %>%
+  left_join(removed_genes_density, join_by(gene_id)) %>%
+  dplyr::select(-pam_density)
+
+write_excel()
+
+genes_not_in_removed_cds <- setdiff(removed_genes_all_libraries, removed_genes_cds$gene)
+genes_not_in_removed_pam <- setdiff(removed_genes_all_libraries, removed_pam_count$gene_id)
+
 ```
