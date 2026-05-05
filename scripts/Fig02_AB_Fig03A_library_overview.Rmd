@@ -1,4 +1,4 @@
----
+﻿---
 title: "Percentage off-target sgRNAs and removed genes across CRISPR-KO libraries"
 author: "Author: Stefanus Bernard"
 date: "Date: `r format(Sys.time(), '%d %B %Y')`"
@@ -41,11 +41,11 @@ jacquere <- 'Jacquere_PerGuideAnnotations_Quota4'
 
 # import sgRNA refining report
 
-avana_report <- import_and_process_report(paste0('../../GuideRefine/output_cleaning/T2T-CHM13/', avana, '_full_report.xlsx'))
-brunello_report <- import_and_process_report(paste0('../../GuideRefine/output_cleaning/T2T-CHM13/', brunello, '_full_report.xlsx'))
-toronto_report <- import_and_process_report(paste0('../../GuideRefine/output_cleaning/T2T-CHM13/', toronto, '_full_report.xlsx'))
-yusa_report <- import_and_process_report(paste0('../../GuideRefine/output_cleaning/T2T-CHM13/', yusa, '_full_report.xlsx'))
-jacquere_report <- import_and_process_report(paste0('../../GuideRefine/output_cleaning/T2T-CHM13/', jacquere, '_full_report.xlsx'))
+avana_report <- import_and_process_report(paste0('../data/guiderefine_output/T2T-CHM13/', avana, '_full_report.xlsx'))
+brunello_report <- import_and_process_report(paste0('../data/guiderefine_output/T2T-CHM13/', brunello, '_full_report.xlsx'))
+toronto_report <- import_and_process_report(paste0('../data/guiderefine_output/T2T-CHM13/', toronto, '_full_report.xlsx'))
+yusa_report <- import_and_process_report(paste0('../data/guiderefine_output/T2T-CHM13/', yusa, '_full_report.xlsx'))
+jacquere_report <- import_and_process_report(paste0('../data/guiderefine_output/T2T-CHM13/', jacquere, '_full_report.xlsx'))
 
 ```
 
