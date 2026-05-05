@@ -1,0 +1,135 @@
+---
+title: "Analysis of multi-target and off-target sgRNAs across libraries"
+author: "Author: Stefanus Bernard"
+date: "Date: `r format(Sys.time(), '%d %B %Y')`"
+output: 
+  html_document :
+    theme : cerulean
+    toc : true
+    toc_float : true
+    number_section : true
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(ggbreak)
+library(clinfun)
+library(ggsignif)
+library(ggpubr)
+library(rstatix)
+library(effsize)
+library(dplyr)
+
+source('../../GuideRefine/GuideRefine_functions.R')
+source("./00_CRISPR-KO-library-survey-functions.R")
+```
+
+# Import alignment classification from each libraries
+
+```{r}
+
+pick_alignment_type <- function(classification_data, alignment_type, stratification_data) {
+  data <- read_csv(classification_data) %>%
+    filter(alignment %in% alignment_type)
+  
+  return(data)
+}
+
+selected_guides <- c("perfect", "multi-target guides")
+
+avana_classification <- pick_alignment_type("../data/sgrna_lfc_data/avana_data/avana_sgrna_alignment_classification_T2T.csv", selected_guides)
+avana_classification <- count_alignment_bin(avana_classification, selected_guides)
+
+tkov3_classification <- pick_alignment_type("../data/sgrna_lfc_data/tkov3_data/tkov3_sgrna_alignment_classification_T2T.csv", selected_guides)
+tkov3_classification <- count_alignment_bin(tkov3_classification, selected_guides)
+
+yusa_classification <- pick_alignment_type("../data/sgrna_lfc_data/yusa_data/yusa_sgrna_alignment_classification_T2T.csv", selected_guides)
+yusa_classification <- count_alignment_bin(yusa_classification, selected_guides)
+
+brunello_classification <- pick_alignment_type("../data/sgrna_lfc_data/brunello_data/brunello_sgrna_alignment_classification_T2T.csv", selected_guides)
+brunello_classification <- count_alignment_bin(brunello_classification, selected_guides)
+
+jacquere_classification <- pick_alignment_type("../data/sgrna_lfc_data/jacquere_data/jacquere_sgrna_alignment_classification_T2T.csv", selected_guides)
+jacquere_classification <- count_alignment_bin(jacquere_classification, selected_guides)
+
+# c("perfect", "single mismatch", "pam-distal single mismatch", "pam-distal double mismatch", "multi-target guides", "non-targeting")
+
+```
+
+# Bind every library into one single plot
+
+```{r}
+
+avana_library_and_lfc_data <- obtain_required_data("../data/library_data/original_library/avana_library.tsv",
+                                                   "../data/sgrna_lfc_data/output_normalized/avana_normalized_lfc.csv", 
+                                                   avana_classification[[1]])
+
+tkov3_library_and_lfc_data <- obtain_required_data("../data/library_data/original_library/tkov3_guide_sequence.tsv", 
+                                                   "../data/sgrna_lfc_data/output_normalized/tkov3_rpe1_normalized_lfc.csv", 
+                                                   tkov3_classification[[1]])
+
+yusa_library_and_lfc_data <- obtain_required_data("../data/library_data/original_library/yusa_hcrispr_ko_grnas.tsv", 
+                                                 "../data/sgrna_lfc_data/output_normalized/yusa_normalized_lfc.csv", 
+                                                 yusa_classification[[1]])
+
+brunello_library_and_lfc_data <- obtain_required_data("../data/library_data/original_library/broadgpp-brunello-library-contents.tsv", 
+                                                     "../data/sgrna_lfc_data/output_normalized/brunello_a375_normalized_lfc.csv", 
+                                                     brunello_classification[[1]])
+
+# Jacquere sgRNA Log2FC data only available for ~60,000 sgRNAs
+jacquere_library_and_lfc_data <- obtain_required_data("../data/library_data/original_library/Jacquere_PerGuideAnnotations_Quota4.tsv", 
+                                                     "../data/sgrna_lfc_data/output_normalized/jacquere_normalized_lfc.csv", 
+                                                     jacquere_classification[[1]])
+
+avana_library_and_lfc_data <- avana_library_and_lfc_data %>% mutate(library = "avana") %>% drop_na()
+tkov3_library_and_lfc_data <- tkov3_library_and_lfc_data %>% mutate(library = "toronto_v3") %>% drop_na()
+yusa_library_and_lfc_data <- yusa_library_and_lfc_data %>% mutate(library = "yusa") %>% drop_na()
+brunello_library_and_lfc_data <- brunello_library_and_lfc_data %>% mutate(library = "brunello") %>% drop_na()
+jacquere_library_and_lfc_data <- jacquere_library_and_lfc_data %>% mutate(library = "jacquere") %>% drop_na()
+
+```
+
+# Calculate effect size of multi-target/single-mismatch sgRNA
+
+```{r}
+
+calculate_wilcoxon_cles(jacquere_library_and_lfc_data, "single mismatch", "perfect")
+
+```
+
+# Bind every library into one single plot of sgRNA Log2FC
+
+```{r}
+source("./00_CRISPR-KO-library-survey-functions.R")
+
+combined_data <- rbind(avana_library_and_lfc_data, 
+                       tkov3_library_and_lfc_data, 
+                       yusa_library_and_lfc_data, 
+                       brunello_library_and_lfc_data, 
+                       jacquere_library_and_lfc_data)
+
+combined_data <- combined_data %>% mutate(library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana", "jacquere")),
+                                          alignment = factor(alignment, levels = c("perfect", "single mismatch", "pam-distal single mismatch", "pam-distal double mismatch", "multi-target guides")))
+
+
+visualize_two_group(combined_data,
+                    "../figure/Fig02_analysis_off-target-sgrna/Fig2C_combined_library_multi_target.png")
+
+```
+
+# Generate plot of stratification multi-target sgRNAs
+
+```{r}
+
+source("./00_CRISPR-KO-library-survey-functions.R")
+
+visualize_stratify_alignment(avana_library_and_lfc_data, "number of perfect on-target alignment", "../figure/Fig02_analysis_off-target-sgrna/SuppFig2D_avana_multi_target.png")
+visualize_stratify_alignment(tkov3_library_and_lfc_data, "number of perfect on-target alignment", "../figure/Fig02_analysis_off-target-sgrna/SuppFig2B_tkov3_multi_target.png")
+visualize_stratify_alignment(brunello_library_and_lfc_data, "number of perfect on-target alignment", "../figure/Fig02_analysis_off-target-sgrna/SuppFig2A_brunello_multi_target.png")
+visualize_stratify_alignment(yusa_library_and_lfc_data, "number of perfect on-target alignment", "../figure/Fig02_analysis_off-target-sgrna/SuppFig2C_yusa_multi_target.png")
+visualize_stratify_alignment(jacquere_library_and_lfc_data, "number of perfect on-target alignment", "../figure/Fig02_analysis_off-target-sgrna/SuppFig2E_jacquere_multi_target.png")
+
+```
+
+
+

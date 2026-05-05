@@ -574,38 +574,40 @@ find_multi_target_paralog <- function(gene_df, list_query_guides, library_name) 
 
 # FUNCTION FOR 04_analysis_lfc_off-target-sgrna.rmd
 
-# TODO: compare this code with the code inside the backup script
+# Reads library TSV + LFC CSV, joins them, and removes control sgRNAs.
+# Returns the raw joined data without any alignment stratification applied.
+load_library_lfc_raw <- function(library_path, lfc_path) {
+  library_df <- read_tsv(library_path, col_names = FALSE)
+  colnames(library_df) <- c("sgRNA", "spacer", "gene")
 
-obtain_required_data <- function(library, normalized_lfc_data, stratification_data) {
-  
-  library <- read_tsv(library, col_names = FALSE)
-  colnames(library) <- c("sgRNA", "spacer", "gene")
-  
-  normalized_lfc_data <- read_csv(normalized_lfc_data)
-  
-  library_stratification <- stratification_data %>% dplyr::select(sgRNA, alignment, num_alignments, alignment_bin)
-  
-  # left join
-  library_lfc_data <- normalized_lfc_data %>%
-    left_join(library, by = c("sgRNA", "spacer", "gene")) %>%
-    relocate(sgRNA, .before = spacer) %>%
-    relocate(gene, .after = spacer) %>%
-    arrange(sgRNA)
-  
+  normalized_lfc_data <- read_csv(lfc_path)
+
   terms <- c("CONTROL", "Control", "control", "INTRON", "Intron", "intron", "LacZ", "luciferase")
-  # lacZ and luciferase are the control in Toronto V3 library
   terms_for_filtering <- paste(terms, collapse = "|")
-  
-  # separate control from the library
-  
-  control_lfc_data <- library_lfc_data %>% filter(str_detect(gene, terms_for_filtering))
-  
-  library_lfc <- library_lfc_data %>%
-    filter(!str_detect(gene, terms_for_filtering)) %>%
+
+  normalized_lfc_data %>%
+    left_join(library_df, by = c("sgRNA", "spacer", "gene")) %>%
+    relocate(sgRNA, .before = spacer) %>%
+    relocate(gene,  .after  = spacer) %>%
+    arrange(sgRNA) %>%
+    filter(!str_detect(gene, terms_for_filtering))
+}
+
+# Joins pre-loaded library/LFC data with alignment stratification output from
+# count_alignment_bin()[[1]], then drops rows with missing alignment info.
+apply_stratification <- function(library_lfc_raw, stratification_data) {
+  library_stratification <- stratification_data %>%
+    dplyr::select(sgRNA, alignment, num_alignments, alignment_bin)
+
+  library_lfc_raw %>%
     left_join(library_stratification, join_by(sgRNA)) %>%
     drop_na()
-  
-  return(library_lfc)
+}
+
+# Convenience wrapper kept for backwards compatibility with other scripts.
+obtain_required_data <- function(library, normalized_lfc_data, stratification_data) {
+  raw <- load_library_lfc_raw(library, normalized_lfc_data)
+  apply_stratification(raw, stratification_data)
 }
 
 
@@ -622,109 +624,92 @@ calculate_wilcoxon_cles <- function(input_data, which_guides, which_guides_2) {
 
 
 
-visualize_two_group <- function(library_lfc_data, boxplot_output_name) {
+visualize_two_group <- function(library_lfc_data, boxplot_output_name,
+                                comparison_group = "multi-target guides",
+                                comparison_label = "Multi-target") {
 
-  facet_labels = c("brunello" = "Brunello",
-                   "toronto_v3" = "TKOv3",
-                   "yusa" = "Yusa",
-                   "avana" = "Avana",
-                   "jacquere" = "Jacquere")
-  
-  boxplot_lfc <- ggboxplot(library_lfc_data, 
-                           x = "alignment", 
-                           y = "mean",
-                           fill = "alignment",
-                           facet.by = "library",
-                           outliers = FALSE) +
-    stat_compare_means(comparisons = list(
-                                          # c("perfect", "single mismatch")),
-                                          c("perfect", "multi-target guides")),
-                                          # c("perfect", "pam-distal single mismatch"), 
-                                          # c("perfect", "pam-distal double mismatch"),
-                                          # c("single mismatch", "pam-distal single mismatch"),
-                                          # c("single mismatch", "pam-distal double mismatch"),
-                                          # c("single mismatch", "multi-target guides"),
-                                          # c("pam-distal single mismatch", "pam-distal double mismatch"),
-                                          # c("pam-distal single mismatch", "multi-target guides"),
-                                          # c("pam-distal double mismatch", "multi-target guides")),
-                       method = "wilcox.test",
-                       method.args = list(alternative = "two.sided"),
-                       size = 5,
+  facet_labels <- c("brunello"   = "Brunello",
+                    "toronto_v3" = "TKOv3",
+                    "yusa"       = "Yusa",
+                    "avana"      = "Avana",
+                    "jacquere"   = "Jacquere")
+
+  label_map <- c("perfect" = "On-target")
+  label_map[comparison_group] <- comparison_label
+
+  boxplot_lfc <- ggboxplot(library_lfc_data,
+                           x         = "alignment",
+                           y         = "mean",
+                           fill      = "alignment",
+                           facet.by  = "library",
+                           outliers  = FALSE) +
+    stat_compare_means(comparisons  = list(c("perfect", comparison_group)),
+                       method       = "wilcox.test",
+                       method.args  = list(alternative = "two.sided"),
+                       size         = 5,
                        step.increase = 0.05,
-                       tip.length = 0.01,
-                       label = "p.signif",
-                       label.y = 1) +
+                       tip.length   = 0.01,
+                       label        = "p.signif",
+                       label.y      = 1) +
     scale_y_continuous(limits = c(-3, 2.5), breaks = seq(-2, 2, by = 1)) +
     scale_fill_manual(
-      name = "sgRNA: ",
-      values = c("perfect" = "#0072B2", 
-                 "single mismatch" = "powderblue",
+      name   = "sgRNA: ",
+      values = c("perfect"                    = "#0072B2",
+                 "single mismatch"            = "powderblue",
                  "pam-distal single mismatch" = "mistyrose",
                  "pam-distal double mismatch" = "#E7F7D5",
-                 "multi-target guides" = "#E69F00"),
-      labels = c("On-target", "Multi-target")) +
-      # labels = c("On-target", "Single mismatch", "PAM-distal single mismatch", "PAM-distal double mismatch", "Multi-target")) +
-    labs(title = "", 
-         x = "", 
-         y = "Averaged median sgRNA Log2FC",
-         fill = "Alignment:") +
-    theme(plot.margin = margin(10, 10, 25, 10),
-          strip.text.x = element_text(size = 14),
-          axis.text.x = element_blank(),
-          axis.text.y = element_text(size = 14, colour = "black"),
-          axis.ticks.y = element_line(size = 1.5),
-          axis.ticks.x = element_blank(), 
+                 "multi-target guides"        = "#E69F00"),
+      labels = label_map) +
+    labs(title = "",
+         x     = "",
+         y     = "Averaged median sgRNA Log2FC",
+         fill  = "Alignment:") +
+    theme(plot.margin      = margin(10, 10, 25, 10),
+          strip.text.x     = element_text(size = 14),
+          axis.text.x      = element_blank(),
+          axis.text.y      = element_text(size = 14, colour = "black"),
+          axis.ticks.y     = element_line(size = 1.5),
+          axis.ticks.x     = element_blank(),
           axis.ticks.length = unit(0.1, "cm"),
-          axis.title.y = element_text(size = 14, vjust = 0.5, margin = margin(r = 20)),
+          axis.title.y     = element_text(size = 14, vjust = 0.5, margin = margin(r = 20)),
           panel.grid.major = element_line(size = 0.5),
           panel.grid.minor = element_blank(),
-          axis.line.x = element_line(size = 0.5),
-          axis.line.y = element_line(size = 0.5), 
-          line = element_line((size = 2), colour = 'black'),
-          legend.position = "top",
-          legend.text = element_text(size = 12)) +
+          axis.line.x      = element_line(size = 0.5),
+          axis.line.y      = element_line(size = 0.5),
+          line             = element_line((size = 2), colour = "black"),
+          legend.position  = "top",
+          legend.text      = element_text(size = 12)) +
     facet_wrap(~library, ncol = 5, labeller = labeller(library = facet_labels))
-  
-  # get stats
-  
-  b <- ggplot_build(boxplot_lfc)
+
+  b     <- ggplot_build(boxplot_lfc)
   stats <- b$data[[1]]
-  
-  label_df <- stats %>%
-    transmute(
-      x = x,
-      y = ymax + 0.2,          # add padding
-      label = round(ymax, 2)   # or any custom label
-    )
-  
-  count <- combined_data %>%
+
+  count <- library_lfc_data %>%
     select(sgRNA, alignment, library) %>%
-    mutate(alignment = factor(alignment, levels = c("perfect", "single mismatch", "pam-distal single mismatch", "pam-distal double mismatch", "multi-target guides"))) %>%
+    mutate(alignment = factor(alignment, levels = c("perfect", comparison_group))) %>%
     distinct() %>%
     group_by(library) %>%
     count(alignment) %>%
-    ungroup()
-  
-  count <- count %>% bind_cols(stats %>% select(x, ymin))
-  
-  boxplot_lfc <-  boxplot_lfc +
-                                geom_text(
-                                  data = count,
-                                  aes(x = x, y = ymin - 0.5, label = paste0("n= ", n)),
-                                  angle = 45,
-                                  vjust = 0,
-                                  hjust = 0.5,
-                                  size = 4.25
-                                )
-                              
+    ungroup() %>%
+    bind_cols(stats %>% select(x, ymin))
+
+  boxplot_lfc <- boxplot_lfc +
+    geom_text(
+      data  = count,
+      aes(x = x, y = ymin - 0.5, label = paste0("n= ", n)),
+      angle = 45,
+      vjust = 0,
+      hjust = 0.5,
+      size  = 4.25
+    )
+
   ggsave(
-    path = './',
-    width = 7.5,
-    height = 5,
-    dpi = 1000,
-    plot = boxplot_lfc,
+    path     = './',
+    width    = 7.5,
+    height   = 5,
+    dpi      = 1000,
+    plot     = boxplot_lfc,
     filename = boxplot_output_name)
-  
 }
 
 # 2nd boxplot: visualization of strafication (increasing number of alignment tend to reduce cell fitness)

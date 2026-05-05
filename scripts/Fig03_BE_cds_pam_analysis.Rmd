@@ -225,7 +225,7 @@ control_pam_count <- count_pam_per_gene(all_spacers_cds_control_genes)
 
 ```{r upset-plot}
 
-png("../figure/02_fig_analysis_removed_genes/removed_genes_all_libraries.png",
+png("../figure/Fig03_analysis_removed_genes/Fig3B_removed_genes_all_libraries.png",
     width = 14000, height = 7500, res = 1000)
 
 par(mar = c(5, 30, 4, 4),
@@ -359,10 +359,10 @@ barplot_cds_control <- make_bin_barplot(
   control_genes_cds, "cds_length_bin", "Total CDS length (bp)"
 )
 
-ggsave("../figure/02_fig_analysis_removed_genes/cds_length_499_removed_genes.png",
+ggsave("../figure/Fig03_analysis_removed_genes/SuppFig3A_cds_length_499_removed_genes.png",
        plot = barplot_cds_removed, width = 11, height = 5, dpi = 1000)
 
-ggsave("../figure/02_fig_analysis_removed_genes/cds_length_18562_control_genes.png",
+ggsave("../figure/Fig03_analysis_removed_genes/SuppFig3B_cds_length_18562_control_genes.png",
        plot = barplot_cds_control, width = 11, height = 5, dpi = 1000)
 ```
 
@@ -385,7 +385,7 @@ cds_length_boxplot <- make_log10_boxplot(
 )
 cds_length_boxplot
 
-ggsave("../figure/02_fig_analysis_removed_genes/log10_cds_length_removed_genes_claude.png",
+ggsave("../figure/Fig03_analysis_removed_genes/Fig3C_log10_cds_length_removed_genes.png",
        plot = cds_length_boxplot, width = 4, height = 6, dpi = 1000)
 ```
 
@@ -415,10 +415,10 @@ barplot_pam_control <- make_bin_barplot(
   "Number of spacer sequences with NGG PAM-site at CDS"
 )
 
-ggsave("../figure/02_fig_analysis_removed_genes/spacer_pam_499_removed_genes.png",
+ggsave("../figure/Fig03_analysis_removed_genes/SuppFig3C_spacer_pam_499_removed_genes.png",
        plot = barplot_pam_removed, width = 9, height = 5, dpi = 1000)
 
-ggsave("../figure/02_fig_analysis_removed_genes/spacer_pam_18562_control_genes.png",
+ggsave("../figure/Fig03_analysis_removed_genes/SuppFig3D_spacer_pam_18562_control_genes.png",
        plot = barplot_pam_control, width = 9, height = 5, dpi = 1000)
 ```
 
@@ -441,7 +441,7 @@ pam_boxplot <- make_log10_boxplot(
 )
 pam_boxplot
 
-ggsave("../figure/02_fig_analysis_removed_genes/log10_pam_removed_genes_claude.png",
+ggsave("../figure/Fig03_analysis_removed_genes/Fig3D_log10_pam_removed_genes.png",
        plot = pam_boxplot, width = 4, height = 6, dpi = 1000)
 ```
 
@@ -502,7 +502,7 @@ pam_density_distribution <- ggplot(pam_density_df,
   ) +
   xlim(0, 210)
 
-ggsave("../figure/02_fig_analysis_removed_genes/pam_density_distribution_claude.png",
+ggsave("../figure/Fig03_analysis_removed_genes/Fig3E_pam_density_distribution.png",
        plot = pam_density_distribution, width = 6.5, height = 4, dpi = 1000)
 ```
 

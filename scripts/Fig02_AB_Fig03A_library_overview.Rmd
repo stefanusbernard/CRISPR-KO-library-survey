@@ -128,7 +128,7 @@ ggsave(
     height = 10,
     dpi = 300,
     plot = multi_bar_chart,
-    filename = paste('../figure/01_fig_analysis_off-target-sgrna/percentage_off_target_T2T_claude.png', sep = ''))
+    filename = paste('../figure/Fig02_analysis_off-target-sgrna/Fig2A_percentage_off_target_T2T.png', sep = ''))
 
 ```
 
@@ -243,7 +243,7 @@ ggsave(
     height = 10,
     dpi = 300,
     plot = percentage_bar_chart,
-    filename = paste('../figure/01_fig_analysis_off-target-sgrna/library_sgrna_bar_chart_T2T_claude.png', sep = ''))
+    filename = paste('../figure/Fig02_analysis_off-target-sgrna/Fig2B_percentage_removed_sgrna_T2T.png', sep = ''))
 
 
 ```
@@ -295,7 +295,7 @@ ggsave(
     height = 10,
     dpi = 300,
     plot = percentage_bar_chart,
-    filename = paste('../figure/01_fig_analysis_off-target-sgrna/library_genes_bar_chart_T2T_claude.png', sep = ''))
+    filename = paste('../figure/Fig03_analysis_removed_genes/Fig3A_library_genes_bar_chart_T2T.png', sep = ''))
 
 ```
 
