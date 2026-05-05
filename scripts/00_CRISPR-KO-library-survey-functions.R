@@ -637,10 +637,10 @@ visualize_two_group <- function(library_lfc_data, boxplot_output_name) {
                            facet.by = "library",
                            outliers = FALSE) +
     stat_compare_means(comparisons = list(
-                                          c("perfect", "single mismatch")),
+                                          # c("perfect", "single mismatch")),
+                                          c("perfect", "multi-target guides")),
                                           # c("perfect", "pam-distal single mismatch"), 
                                           # c("perfect", "pam-distal double mismatch"),
-                                          # c("perfect", "multi-target guides")),
                                           # c("single mismatch", "pam-distal single mismatch"),
                                           # c("single mismatch", "pam-distal double mismatch"),
                                           # c("single mismatch", "multi-target guides"),
@@ -649,12 +649,12 @@ visualize_two_group <- function(library_lfc_data, boxplot_output_name) {
                                           # c("pam-distal double mismatch", "multi-target guides")),
                        method = "wilcox.test",
                        method.args = list(alternative = "two.sided"),
-                       size = 2.5,
+                       size = 5,
                        step.increase = 0.05,
                        tip.length = 0.01,
                        label = "p.signif",
                        label.y = 1) +
-    scale_y_continuous(limits = c(-3, 2), breaks = seq(-2, 2, by = 1)) +
+    scale_y_continuous(limits = c(-3, 2.5), breaks = seq(-2, 2, by = 1)) +
     scale_fill_manual(
       name = "sgRNA: ",
       values = c("perfect" = "#0072B2", 
@@ -662,7 +662,7 @@ visualize_two_group <- function(library_lfc_data, boxplot_output_name) {
                  "pam-distal single mismatch" = "mistyrose",
                  "pam-distal double mismatch" = "#E7F7D5",
                  "multi-target guides" = "#E69F00"),
-      labels = c("On-target", "Single mismatch")) +
+      labels = c("On-target", "Multi-target")) +
       # labels = c("On-target", "Single mismatch", "PAM-distal single mismatch", "PAM-distal double mismatch", "Multi-target")) +
     labs(title = "", 
          x = "", 
@@ -681,7 +681,7 @@ visualize_two_group <- function(library_lfc_data, boxplot_output_name) {
           axis.line.x = element_line(size = 0.5),
           axis.line.y = element_line(size = 0.5), 
           line = element_line((size = 2), colour = 'black'),
-          legend.position = "right",
+          legend.position = "top",
           legend.text = element_text(size = 12)) +
     facet_wrap(~library, ncol = 5, labeller = labeller(library = facet_labels))
   
@@ -714,12 +714,12 @@ visualize_two_group <- function(library_lfc_data, boxplot_output_name) {
                                   angle = 45,
                                   vjust = 0,
                                   hjust = 0.5,
-                                  size = 3.5
+                                  size = 4.25
                                 )
                               
   ggsave(
     path = './',
-    width = 9,
+    width = 7.5,
     height = 5,
     dpi = 1000,
     plot = boxplot_lfc,
@@ -766,7 +766,7 @@ visualize_stratify_alignment <- function(library_lfc_data, label_x, boxplot_outp
       size = 5,
       angle = 45,
       vjust = -0.2,
-      hjust = -0.2
+      hjust = -0.1
     ) +
     coord_cartesian(clip = "off") +
     theme(plot.margin = margin(10, 20, 10, 10))

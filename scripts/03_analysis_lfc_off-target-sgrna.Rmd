@@ -35,21 +35,21 @@ pick_alignment_type <- function(classification_data, alignment_type, stratificat
   return(data)
 }
 
-selected_guides <- c("perfect", "multi-target guides", "non-targeting")
+selected_guides <- c("perfect", "multi-target guides")
 
-avana_classification <- pick_alignment_type("../data/sgrna_lfc_data/avana_data/avana_sgrna_alignment_classification.csv", selected_guides)
+avana_classification <- pick_alignment_type("../data/sgrna_lfc_data/avana_data/avana_sgrna_alignment_classification_T2T.csv", selected_guides)
 avana_classification <- count_alignment_bin(avana_classification, selected_guides)
 
-tkov3_classification <- pick_alignment_type("../data/sgrna_lfc_data/tkov3_data/tkov3_sgrna_alignment_classification.csv", selected_guides)
+tkov3_classification <- pick_alignment_type("../data/sgrna_lfc_data/tkov3_data/tkov3_sgrna_alignment_classification_T2T.csv", selected_guides)
 tkov3_classification <- count_alignment_bin(tkov3_classification, selected_guides)
 
-yusa_classification <- pick_alignment_type("../data/sgrna_lfc_data/yusa_data/yusa_sgrna_alignment_classification.csv", selected_guides)
+yusa_classification <- pick_alignment_type("../data/sgrna_lfc_data/yusa_data/yusa_sgrna_alignment_classification_T2T.csv", selected_guides)
 yusa_classification <- count_alignment_bin(yusa_classification, selected_guides)
 
-brunello_classification <- pick_alignment_type("../data/sgrna_lfc_data/brunello_data/brunello_sgrna_alignment_classification.csv", selected_guides)
+brunello_classification <- pick_alignment_type("../data/sgrna_lfc_data/brunello_data/brunello_sgrna_alignment_classification_T2T.csv", selected_guides)
 brunello_classification <- count_alignment_bin(brunello_classification, selected_guides)
 
-jacquere_classification <- pick_alignment_type("../data/sgrna_lfc_data/jacquere_data/jacquere_sgrna_alignment_classification.csv", selected_guides)
+jacquere_classification <- pick_alignment_type("../data/sgrna_lfc_data/jacquere_data/jacquere_sgrna_alignment_classification_T2T.csv", selected_guides)
 jacquere_classification <- count_alignment_bin(jacquere_classification, selected_guides)
 
 # c("perfect", "single mismatch", "pam-distal single mismatch", "pam-distal double mismatch", "multi-target guides", "non-targeting")
@@ -113,7 +113,7 @@ combined_data <- combined_data %>% mutate(library = factor(library, levels = c("
 
 
 visualize_two_group(combined_data, 
-                    "../figure/03_fig_analysis_lfc_off-target-sgrna/combined_library_single_mismatch.png")
+                    "../figure/03_fig_analysis_lfc_off-target-sgrna/combined_library_multi_target.png")
 
 ```
 
@@ -123,15 +123,15 @@ visualize_two_group(combined_data,
 
 source("./00_CRISPR-KO-library-survey-functions.R")
 
-# visualize_stratify_alignment(avana_library_and_lfc_data, "number of single mismatch \noff-target alignment", "../figure/03_fig_analysis_lfc_off-target-sgrna/avana_single_mismatch.png")
-# 
-# visualize_stratify_alignment(tkov3_library_and_lfc_data, "number of single mismatch \noff-target alignment", "../figure/03_fig_analysis_lfc_off-target-sgrna/tkov3_single_mismatch.png")
+visualize_stratify_alignment(avana_library_and_lfc_data, "number of perfect on-target alignment", "../figure/03_fig_analysis_lfc_off-target-sgrna/avana_multi_target.png")
 
-# visualize_stratify_alignment(brunello_library_and_lfc_data, "number of single mismatch \noff-target alignment", "../figure/03_fig_analysis_lfc_off-target-sgrna/brunello_single_mismatch.png")
+visualize_stratify_alignment(tkov3_library_and_lfc_data, "number of perfect on-target alignment", "../figure/03_fig_analysis_lfc_off-target-sgrna/tkov3_multi_target.png")
 
-# visualize_stratify_alignment(yusa_library_and_lfc_data, "number of single mismatch \noff-target alignment", "../figure/03_fig_analysis_lfc_off-target-sgrna/yusa_single_mismatch.png")
-# 
-# visualize_stratify_alignment(jacquere_library_and_lfc_data, "number of single mismatch \noff-target alignment", "../figure/03_fig_analysis_lfc_off-target-sgrna/jacquere_single_mismatch.png")
+visualize_stratify_alignment(brunello_library_and_lfc_data, "number of perfect on-target alignment", "../figure/03_fig_analysis_lfc_off-target-sgrna/brunello_multi_target.png")
+
+visualize_stratify_alignment(yusa_library_and_lfc_data, "number of perfect on-target alignment", "../figure/03_fig_analysis_lfc_off-target-sgrna/yusa_multi_target.png")
+
+visualize_stratify_alignment(jacquere_library_and_lfc_data, "number of perfect on-target alignment", "../figure/03_fig_analysis_lfc_off-target-sgrna/jacquere_multi_target.png")
 
 ```
 

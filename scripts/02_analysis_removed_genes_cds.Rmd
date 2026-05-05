@@ -20,7 +20,7 @@ library(GenomeInfoDbData)
 library(txdbmaker)
 library(crisprVerse)
 library(ggpubr)
-library(readxl)
+library(openxlsx)
 
 source("./00_CRISPR-KO-library-survey-functions.R")
 ```
@@ -517,7 +517,7 @@ supplementary_table_3 <- read_tsv("https://storage.googleapis.com/public-downloa
   left_join(removed_genes_density, join_by(gene_id)) %>%
   dplyr::select(-pam_density)
 
-write_excel()
+write.xlsx(supplementary_table_3, "../results/supplementary_table_3_520_genes.xlsx")
 
 genes_not_in_removed_cds <- setdiff(removed_genes_all_libraries, removed_genes_cds$gene)
 genes_not_in_removed_pam <- setdiff(removed_genes_all_libraries, removed_pam_count$gene_id)
