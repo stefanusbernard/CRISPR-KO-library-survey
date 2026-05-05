@@ -15,3 +15,5 @@ data/T2T_data/*
 data/removed_genes_survey/
 results/
 .Rproj.user
+.RData
+.Rhistory
