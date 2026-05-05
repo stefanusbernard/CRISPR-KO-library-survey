@@ -1,4 +1,4 @@
----
+﻿---
 title: "Analysis of commonly removed genes across libraries"
 author: "Author: Stefanus Bernard"
 date: "Date: `r format(Sys.time(), '%d %B %Y')`"
@@ -256,7 +256,7 @@ First, build the T2T-CHM13 TxDb file (one-time setup — skip if already done).
 ```{r create-txdb, eval=FALSE}
 
 T2T_txdb <- txdbmaker::makeTxDbFromGFF(
-  file       = "../../GuideRefine/annotation_file/GCF_009914755.1_T2T-CHM13v2.0_genomic.gff.gz",
+  file       = "../data/annotation/GCF_009914755.1_T2T-CHM13v2.0_genomic.gff.gz",
   dataSource = "NCBI T2T Assembly GCF_009914755.1_T2T-CHM13v2.0",
   organism   = "Homo sapiens"
 )
