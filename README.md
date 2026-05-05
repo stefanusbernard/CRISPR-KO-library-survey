@@ -1,4 +1,4 @@
-# A survey of multi-targeting and off-targeting sgRNAs across CRISPR-KO libraries
+# A survey of multi-targeting and off-targeting sgRNAs across five genome-wide CRISPR-Cas9 knockout screen’s sgRNA libraries 
 
 Analysis of sgRNA alignment quality and gene coverage across five human genome-wide CRISPR-KO libraries (Avana, Brunello, TKOv3, Yusa/Project Score, and Jacquere), aligned against the T2T-CHM13v2.0 genome assembly.
 
