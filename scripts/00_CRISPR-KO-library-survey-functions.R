@@ -76,14 +76,14 @@ ensembl_paralog_gene_pairs <- function(dataset_ensembl = "../data/paralog_data/e
     dplyr::select(gene, locus_group, ensembl_gene_id, has_paralogs, paralog_name, percent_identity_human_gene_identical_to_query, percent_identity_query_gene_identical_to_human) %>%
     distinct()
   
-  ensembl_singleton <- hgnc_protein_coding %>%
+  hgnc_with_paralogs <- hgnc_protein_coding %>%
     left_join(ensembl_paralog, join_by(ensembl_gene_id, gene, locus_group)) %>%
-    mutate(has_paralogs = replace_na(has_paralogs, FALSE)) %>%
+    mutate(has_paralogs = replace_na(has_paralogs, FALSE))
+
+  ensembl_singleton <- hgnc_with_paralogs %>%
     filter(has_paralogs == FALSE)
-  
-  count_paralog_singleton <- hgnc_protein_coding %>%
-    left_join(ensembl_paralog, join_by(ensembl_gene_id, gene, locus_group)) %>%
-    mutate(has_paralogs = replace_na(has_paralogs, FALSE)) %>%
+
+  count_paralog_singleton <- hgnc_with_paralogs %>%
     dplyr::select(gene, has_paralogs) %>%
     distinct() %>%
     count(has_paralogs) %>%
@@ -105,9 +105,12 @@ calculate_percentage <- function(library_report, discarded_sgrna, original_sgrna
   return(percentage_discarded)
 }
 
-import_and_process_report <- function(file_dir, control_terms) {
-  
-  report <- read_excel(paste(file_dir))
+import_and_process_report <- function(file_dir) {
+
+  terms <- c("CONTROL", "Control", "control", "INTRON", "Intron", "intron", "LacZ", "luciferase")
+  terms_for_filtering <- paste(terms, collapse = "|")
+
+  report <- read_excel(file_dir)
   report <- report %>% filter(!str_detect(gene, terms_for_filtering))
   
   # we noted that our pipeline also removed sgRNAs targeting non protein-coding genes like lncRNA and else, but in this study we focus our investigation to the protein-coding genes
@@ -159,13 +162,6 @@ percentages_and_list_genes <- function(report, list_paralog) {
   passed_genes <- report %>%
     filter(`quality check` == "pass") %>%
     pull(gene_hgnc)
-  
-  # pull the dataframe
-  failed_genes_df <- report %>%
-    filter(`quality check` == "fail")
-  
-  passed_genes_df <- report %>%
-    filter(`quality check` == "pass")
   
   # total percentage of failed genes only counted for protein-coding genes defined by HGNC
   percentage_failed_genes <- round(length(unique(failed_genes)) / (length(unique(failed_genes)) + length(unique(passed_genes))), 4) * 100
@@ -234,19 +230,22 @@ import_sgrna_library <- function(data_dir, terms_for_filtering) {
 
 # import alignment data and keep alignment for normal chromosome only
 import_sgrna_library_alignment <- function(data_dir, genome_type) {
-  
-  if (str_detect("T2T-CHM13", genome_type)) {
+
+  terms <- c("CONTROL", "Control", "control", "INTRON", "Intron", "intron", "LacZ", "luciferase")
+  terms_for_filtering <- paste(terms, collapse = "|")
+
+  if (str_detect(genome_type, "T2T-CHM13")) {
     alignment <- read_csv(data_dir) %>% distinct()
     alignment <- alignment %>% filter(!str_detect(gene, terms_for_filtering))
     return(alignment)
-    
-  } else if (str_detect("hg38", genome_type)) {
+
+  } else if (str_detect(genome_type, "hg38")) {
     alignment <- read_csv(data_dir) %>% distinct()
     alignment <- alignment %>% filter(!str_detect(gene, terms_for_filtering))
-    
+
     aln_normal_chr <- alignment_normal_chr(alignment)
     return(aln_normal_chr)
-    
+
   }
 }
 
@@ -322,22 +321,24 @@ count_alignment_bin <- function(classification_alignment, alignment_type) {
                                               right = TRUE)
     
   } else if(any(c("single mismatch", "pam-distal single mismatch") %in% alignment_type)) {
-    
+
     # output dataframe for 04_analysis_lfc_off-target-sgrnas.Rmd
     count_alignment_type <- classification_alignment %>%
       # remove any guides with additional multi-target and pam-distal double mismatches
       filter(alignment %in% alignment_type) %>%
       mutate(single_mismatch_alignment = ifelse(alignment %in% c("single mismatch", "pam-distal single mismatch"), num_alignments, 0))
-    
+
     # bin the number of alignments to see how many guides targeting two until more than 5 different locations in the genome with perfect match
     count_alignment_type$alignment_bin <- cut(count_alignment_type$single_mismatch_alignment,
                                               breaks = c(-0.5, 0.5:5.5, Inf),  # -0.5 to 5.5 for 0–5, then Inf for >5
                                               labels = c(as.character(0:5), "> 5"),
                                               right = TRUE)
-    
+
+  } else {
+    stop(paste("Unsupported alignment_type:", paste(alignment_type, collapse = ", ")))
   }
-  
-  
+
+
   alignment_bin_df <- count_alignment_type %>% 
     count(alignment_bin) %>%
     dplyr::rename("num_of_alignments" = "alignment_bin",
@@ -545,13 +546,12 @@ find_multi_target_paralog <- function(gene_df, list_query_guides, library_name) 
   list_rest_of_guides <- setdiff(setdiff(unique(aln_paralog_clean$sgrna), list_paralog_guides), list_non_coding_guides)
   
   # calculate the percentage
-  percentage_excluded <- round((length(list_excluded_guides) / sum(length(list_excluded_guides), length(list_paralog_guides), length(list_non_coding_guides), length(list_rest_of_guides)) * 100), 2)
-  
-  percentage_paralog <- round((length(list_paralog_guides) / sum(length(list_excluded_guides), length(list_paralog_guides), length(list_non_coding_guides), length(list_rest_of_guides)) * 100), 2)
-
-  percentage_non_coding <- round((length(list_non_coding_guides) / sum(length(list_excluded_guides), length(list_paralog_guides), length(list_non_coding_guides), length(list_rest_of_guides)) * 100), 2)
-  
-  percentage_rest_of_guides <- round((length(list_rest_of_guides) / sum(length(list_excluded_guides), length(list_paralog_guides), length(list_non_coding_guides), length(list_rest_of_guides)) * 100), 2)
+  total <- sum(length(list_excluded_guides), length(list_paralog_guides),
+               length(list_non_coding_guides), length(list_rest_of_guides))
+  percentage_excluded      <- round(length(list_excluded_guides)   / total * 100, 2)
+  percentage_paralog       <- round(length(list_paralog_guides)    / total * 100, 2)
+  percentage_non_coding    <- round(length(list_non_coding_guides) / total * 100, 2)
+  percentage_rest_of_guides <- round(length(list_rest_of_guides)   / total * 100, 2)
   
   summary_df <- data.frame(library_name = library_name,
                            total_dbl_target_sgrna = length(list_query_guides),
@@ -614,7 +614,6 @@ obtain_required_data <- function(library, normalized_lfc_data, stratification_da
 calculate_wilcoxon_cles <- function(input_data, which_guides, which_guides_2) {
   
   input_data$alignment <- factor(input_data$alignment, levels = c(which_guides, which_guides_2))
-  wilcox.test(input_data$mean ~ input_data$alignment, alternative = "less")
   res <- cliff.delta(mean ~ alignment, data = input_data)
   delta <- res$estimate
   delta
@@ -704,7 +703,6 @@ visualize_two_group <- function(library_lfc_data, boxplot_output_name,
     )
 
   ggsave(
-    path     = './',
     width    = 7.5,
     height   = 5,
     dpi      = 1000,
@@ -757,7 +755,6 @@ visualize_stratify_alignment <- function(library_lfc_data, label_x, boxplot_outp
     theme(plot.margin = margin(10, 20, 10, 10))
   
   ggsave(
-    path = './',
     width = 5,
     height = 5,
     dpi = 1000,
@@ -790,14 +787,6 @@ fix_gene_symbols <- function(genes) {
       Suggested.Symbol = str_trim(Suggested.Symbol)
     )
 }
-  
-  
-  
-  
-  
-  
-  
-
 
 
 
