@@ -170,6 +170,7 @@ df_removed_genes <- data.frame(
   stringsAsFactors = FALSE
 )
 
+# TODO: missing directory — run dir.create("../data/biogrid_crispr_ko_data/important_data", recursive = TRUE) before writing
 write_csv(df_removed_genes, "../data/biogrid_crispr_ko_data/important_data/removed_genes_all_library.csv")
 ```
 

@@ -199,6 +199,7 @@ make_log10_boxplot <- function(combined_df, y_col, ylabel, sig_label_y = 4, ylim
 
 ```{r import-data}
 
+# TODO: missing file — regenerate by running the "Export the removed genes" chunk in Fig02_AB_Fig03A_library_overview.Rmd
 removed_genes <- read_csv("../data/biogrid_crispr_ko_data/important_data/removed_genes_all_library.csv")
 
 removed_gene_list_combined <- list(

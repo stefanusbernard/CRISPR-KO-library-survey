@@ -13,6 +13,7 @@ library(RColorBrewer)
 
 
 # source('~/CRISPR-KO-GuideRefine/GuideRefine_functions.R')
+# TODO: missing file — Windows-only path below; update to local GuideRefine path (e.g. '../../GuideRefine/GuideRefine_functions.R')
 source("D:/GitHub/GuideRefine/GuideRefine_functions.R")
 
 # FUNCTION to import paralog data
