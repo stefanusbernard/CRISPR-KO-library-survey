@@ -162,11 +162,11 @@ pad <- function(x, n) {
 }
 
 df_removed_genes <- data.frame(
-  avana_removed_genes = pad(avana_result_gene[["failed_genes"]], max_len),
-  brunello_removed_genes = pad(brunello_result_gene[["failed_genes"]], max_len),
-  toronto_removed_genes = pad(toronto_result_gene[["failed_genes"]], max_len),
-  yusa_removed_genes = pad(yusa_result_gene[["failed_genes"]], max_len),
-  jacquere_removed_genes = pad(jacquere_result_gene[["failed_genes"]], max_len),
+  avana_removed_genes_all = pad(avana_result_gene[["failed_genes"]], max_len),
+  brunello_removed_genes_all = pad(brunello_result_gene[["failed_genes"]], max_len),
+  toronto_removed_genes_all = pad(toronto_result_gene[["failed_genes"]], max_len),
+  yusa_removed_genes_all = pad(yusa_result_gene[["failed_genes"]], max_len),
+  jacquere_removed_genes_all = pad(jacquere_result_gene[["failed_genes"]], max_len),
   stringsAsFactors = FALSE
 )
 
