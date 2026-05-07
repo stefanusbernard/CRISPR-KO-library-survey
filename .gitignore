@@ -18,3 +18,7 @@ results/
 .Rproj.user
 .RData
 .Rhistory
+
+# macOS metadata files (created on exFAT drives when switching between machines)
+._*
+.DS_Store
