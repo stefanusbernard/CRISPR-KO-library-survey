@@ -11,6 +11,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
+library(here)
 library(tidyverse)
 library(UpSetR)
 library(GenomicFeatures)
@@ -22,7 +23,7 @@ library(crisprVerse)
 library(ggpubr)
 library(openxlsx)
 
-source("./00_CRISPR-KO-library-survey-functions.R")
+source(here::here("scripts", "00_CRISPR-KO-library-survey-functions.R"))
 ```
 
 ## Constants and helper functions
@@ -199,8 +200,7 @@ make_log10_boxplot <- function(combined_df, y_col, ylabel, sig_label_y = 4, ylim
 
 ```{r import-data}
 
-# TODO: missing file — regenerate by running the "Export the removed genes" chunk in Fig02_AB_Fig03A_library_overview.Rmd
-removed_genes <- read_csv("../data/biogrid_crispr_ko_data/important_data/removed_genes_all_library.csv")
+removed_genes <- read_csv(here::here("data", "biogrid_crispr_ko_data", "important_data", "removed_genes_all_library.csv"))
 
 removed_gene_list_combined <- list(
   Avana    = na.omit(removed_genes[["avana_removed_genes_all"]]),
@@ -214,8 +214,8 @@ removed_gene_list_combined <- list(
 removed_genes_all_libraries <- unique(Reduce(intersect, removed_gene_list_combined))
 
 # Import pre-computed spacer/CDS/PAM-site data for removed and control genes
-all_spacers_cds_removed_genes <- read_csv("../data/removed_genes_survey/all_spacers_cds_data_499_removed_genes.csv")
-all_spacers_cds_control_genes <- read_csv("../data/removed_genes_survey/all_spacers_cds_data_18777_genes.csv")
+all_spacers_cds_removed_genes <- read_csv(here::here("data", "removed_genes_survey", "all_spacers_cds_data_499_removed_genes.csv"))
+all_spacers_cds_control_genes <- read_csv(here::here("data", "removed_genes_survey", "all_spacers_cds_data_18777_genes.csv"))
 
 # Pre-compute PAM counts (reused in barplots, boxplots, and density sections)
 removed_pam_count <- count_pam_per_gene(all_spacers_cds_removed_genes)
@@ -226,7 +226,7 @@ control_pam_count <- count_pam_per_gene(all_spacers_cds_control_genes)
 
 ```{r upset-plot}
 
-png("../figure/Fig03_analysis_removed_genes/Fig3B_removed_genes_all_libraries.png",
+png(here::here("figure", "Fig03_analysis_removed_genes", "Fig3B_removed_genes_all_libraries.png"),
     width = 14000, height = 7500, res = 1000)
 
 par(mar = c(5, 30, 4, 4),
@@ -257,11 +257,11 @@ First, build the T2T-CHM13 TxDb file (one-time setup — skip if already done).
 ```{r create-txdb, eval=FALSE}
 
 T2T_txdb <- txdbmaker::makeTxDbFromGFF(
-  file       = "../data/annotation/GCF_009914755.1_T2T-CHM13v2.0_genomic.gff.gz",
+  file       = here::here("data", "annotation", "GCF_009914755.1_T2T-CHM13v2.0_genomic.gff.gz"),
   dataSource = "NCBI T2T Assembly GCF_009914755.1_T2T-CHM13v2.0",
   organism   = "Homo sapiens"
 )
-saveDb(T2T_txdb, "../data/T2T_data/TxDb_T2T-CHM13v2.sqlite")
+saveDb(T2T_txdb, here::here("data", "T2T_data", "TxDb_T2T-CHM13v2.sqlite"))
 
 ```
 
@@ -269,7 +269,7 @@ saveDb(T2T_txdb, "../data/T2T_data/TxDb_T2T-CHM13v2.sqlite")
 
 ```{r compute-cds-lengths}
 
-T2T_txdb <- loadDb("../data/T2T_data/TxDb_T2T-CHM13v2.sqlite")
+T2T_txdb <- loadDb(here::here("data", "T2T_data", "TxDb_T2T-CHM13v2.sqlite"))
 
 # 499 removed genes (out of 520) mapped to T2T-CHM13; 5 genes lost due to annotation issues
 # (KRTAP5-1, KRTAP5-10, PLA2G10, TAS2R43, UPK3BL1)
@@ -331,7 +331,7 @@ all_spacers_cds_data <- data.frame(
                 strand     = spacer_strand) %>%
   relocate(cds_name, .before = start_cds)
 
-write_csv(all_spacers_cds_data, "../data/removed_genes_survey/all_spacers_cds_data_499_removed_genes.csv")
+write_csv(all_spacers_cds_data, here::here("data", "removed_genes_survey", "all_spacers_cds_data_499_removed_genes.csv"))
 ```
 
 ## CDS length analysis: removed vs control genes
@@ -360,10 +360,10 @@ barplot_cds_control <- make_bin_barplot(
   control_genes_cds, "cds_length_bin", "Total CDS length (bp)"
 )
 
-ggsave("../figure/Fig03_analysis_removed_genes/SuppFig3A_cds_length_499_removed_genes.png",
+ggsave(here::here("figure", "Fig03_analysis_removed_genes", "SuppFig3A_cds_length_499_removed_genes.png"),
        plot = barplot_cds_removed, width = 11, height = 5, dpi = 1000)
 
-ggsave("../figure/Fig03_analysis_removed_genes/SuppFig3B_cds_length_18562_control_genes.png",
+ggsave(here::here("figure", "Fig03_analysis_removed_genes", "SuppFig3B_cds_length_18562_control_genes.png"),
        plot = barplot_cds_control, width = 11, height = 5, dpi = 1000)
 ```
 
@@ -386,7 +386,7 @@ cds_length_boxplot <- make_log10_boxplot(
 )
 cds_length_boxplot
 
-ggsave("../figure/Fig03_analysis_removed_genes/Fig3C_log10_cds_length_removed_genes.png",
+ggsave(here::here("figure", "Fig03_analysis_removed_genes", "Fig3C_log10_cds_length_removed_genes.png"),
        plot = cds_length_boxplot, width = 4, height = 6, dpi = 1000)
 ```
 
@@ -416,10 +416,10 @@ barplot_pam_control <- make_bin_barplot(
   "Number of spacer sequences with NGG PAM-site at CDS"
 )
 
-ggsave("../figure/Fig03_analysis_removed_genes/SuppFig3C_spacer_pam_499_removed_genes.png",
+ggsave(here::here("figure", "Fig03_analysis_removed_genes", "SuppFig3C_spacer_pam_499_removed_genes.png"),
        plot = barplot_pam_removed, width = 9, height = 5, dpi = 1000)
 
-ggsave("../figure/Fig03_analysis_removed_genes/SuppFig3D_spacer_pam_18562_control_genes.png",
+ggsave(here::here("figure", "Fig03_analysis_removed_genes", "SuppFig3D_spacer_pam_18562_control_genes.png"),
        plot = barplot_pam_control, width = 9, height = 5, dpi = 1000)
 ```
 
@@ -442,7 +442,7 @@ pam_boxplot <- make_log10_boxplot(
 )
 pam_boxplot
 
-ggsave("../figure/Fig03_analysis_removed_genes/Fig3D_log10_pam_removed_genes.png",
+ggsave(here::here("figure", "Fig03_analysis_removed_genes", "Fig3D_log10_pam_removed_genes.png"),
        plot = pam_boxplot, width = 4, height = 6, dpi = 1000)
 ```
 
@@ -503,7 +503,7 @@ pam_density_distribution <- ggplot(pam_density_df,
   ) +
   xlim(0, 210)
 
-ggsave("../figure/Fig03_analysis_removed_genes/Fig3E_pam_density_distribution.png",
+ggsave(here::here("figure", "Fig03_analysis_removed_genes", "Fig3E_pam_density_distribution.png"),
        plot = pam_density_distribution, width = 6.5, height = 4, dpi = 1000)
 ```
 
@@ -518,7 +518,7 @@ supplementary_table_3 <- read_tsv("https://storage.googleapis.com/public-downloa
   left_join(removed_genes_density, join_by(gene_id)) %>%
   dplyr::select(-pam_density)
 
-write.xlsx(supplementary_table_3, "../results/supplementary_table_3_520_genes.xlsx")
+write.xlsx(supplementary_table_3, here::here("results", "supplementary_table_3_520_genes.xlsx"))
 
 genes_not_in_removed_cds <- setdiff(removed_genes_all_libraries, removed_genes_cds$gene)
 genes_not_in_removed_pam <- setdiff(removed_genes_all_libraries, removed_pam_count$gene_id)

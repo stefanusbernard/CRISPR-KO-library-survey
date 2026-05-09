@@ -12,6 +12,7 @@ output:
 ---
 
 ```{r}
+library(here)
 library(tidyverse)
 library(readxl)
 library(grid)
@@ -20,8 +21,8 @@ library(RColorBrewer)
 library(UpSetR)
 library(gprofiler2)
 library(HGNChelper)
-source('../../GuideRefine/GuideRefine_functions.R')
-source("00_CRISPR-KO-library-survey-functions.R")
+source(file.path(dirname(here::here()), "GuideRefine", "GuideRefine_functions.R"))
+source(here::here("scripts", "00_CRISPR-KO-library-survey-functions.R"))
 ```
 
 # Import the data of sgRNA library report
@@ -41,11 +42,11 @@ jacquere <- 'Jacquere_PerGuideAnnotations_Quota4'
 
 # import sgRNA refining report
 
-avana_report <- import_and_process_report(paste0('../data/guiderefine_output/T2T-CHM13/', avana, '_full_report.xlsx'))
-brunello_report <- import_and_process_report(paste0('../data/guiderefine_output/T2T-CHM13/', brunello, '_full_report.xlsx'))
-toronto_report <- import_and_process_report(paste0('../data/guiderefine_output/T2T-CHM13/', toronto, '_full_report.xlsx'))
-yusa_report <- import_and_process_report(paste0('../data/guiderefine_output/T2T-CHM13/', yusa, '_full_report.xlsx'))
-jacquere_report <- import_and_process_report(paste0('../data/guiderefine_output/T2T-CHM13/', jacquere, '_full_report.xlsx'))
+avana_report <- import_and_process_report(here::here("data", "guiderefine_output", "May2026_T2T-CHM13", paste0(avana, "_full_report.xlsx")))
+brunello_report <- import_and_process_report(here::here("data", "guiderefine_output", "May2026_T2T-CHM13", paste0(brunello, "_full_report.xlsx")))
+toronto_report <- import_and_process_report(here::here("data", "guiderefine_output", "May2026_T2T-CHM13", paste0(toronto, "_full_report.xlsx")))
+yusa_report <- import_and_process_report(here::here("data", "guiderefine_output", "May2026_T2T-CHM13", paste0(yusa, "_full_report.xlsx")))
+jacquere_report <- import_and_process_report(here::here("data", "guiderefine_output", "May2026_T2T-CHM13", paste0(jacquere, "_full_report.xlsx")))
 
 ```
 
@@ -67,15 +68,15 @@ pick_alignment_type_and_process_data <- function(classification_data, alignment_
   return(data)
 }
 
-avana_classification <- pick_alignment_type_and_process_data("../data/sgrna_lfc_data/avana_data/avana_sgrna_alignment_classification_T2T.csv", c("perfect", "single mismatch", "pam-distal single mismatch", "pam-distal double mismatch", "multi-target guides"), library_name = "avana")
-  
-tkov3_classification <- pick_alignment_type_and_process_data("../data/sgrna_lfc_data/tkov3_data/tkov3_sgrna_alignment_classification_T2T.csv", c("perfect", "single mismatch", "pam-distal single mismatch", "pam-distal double mismatch", "multi-target guides"), library_name = "tkov3")
+avana_classification <- pick_alignment_type_and_process_data(here::here("data", "sgrna_lfc_data", "avana_data", "avana_sgrna_alignment_classification_T2T.csv"), c("perfect", "single mismatch", "pam-distal single mismatch", "pam-distal double mismatch", "multi-target guides"), library_name = "avana")
 
-yusa_classification <- pick_alignment_type_and_process_data("../data/sgrna_lfc_data/yusa_data/yusa_sgrna_alignment_classification_T2T.csv", c("perfect", "single mismatch", "pam-distal single mismatch", "pam-distal double mismatch", "multi-target guides"), library_name = "yusa")
+tkov3_classification <- pick_alignment_type_and_process_data(here::here("data", "sgrna_lfc_data", "tkov3_data", "tkov3_sgrna_alignment_classification_T2T.csv"), c("perfect", "single mismatch", "pam-distal single mismatch", "pam-distal double mismatch", "multi-target guides"), library_name = "tkov3")
 
-brunello_classification <- pick_alignment_type_and_process_data("../data/sgrna_lfc_data/brunello_data/brunello_sgrna_alignment_classification_T2T.csv", c("perfect", "single mismatch", "pam-distal single mismatch", "pam-distal double mismatch", "multi-target guides"), library_name = "brunello")
+yusa_classification <- pick_alignment_type_and_process_data(here::here("data", "sgrna_lfc_data", "yusa_data", "yusa_sgrna_alignment_classification_T2T.csv"), c("perfect", "single mismatch", "pam-distal single mismatch", "pam-distal double mismatch", "multi-target guides"), library_name = "yusa")
 
-jacquere_classification <- pick_alignment_type_and_process_data("../data/sgrna_lfc_data/jacquere_data/jacquere_sgrna_alignment_classification_T2T.csv", c("perfect", "single mismatch", "pam-distal single mismatch", "pam-distal double mismatch", "multi-target guides"), library_name = "jacquere")
+brunello_classification <- pick_alignment_type_and_process_data(here::here("data", "sgrna_lfc_data", "brunello_data", "brunello_sgrna_alignment_classification_T2T.csv"), c("perfect", "single mismatch", "pam-distal single mismatch", "pam-distal double mismatch", "multi-target guides"), library_name = "brunello")
+
+jacquere_classification <- pick_alignment_type_and_process_data(here::here("data", "sgrna_lfc_data", "jacquere_data", "jacquere_sgrna_alignment_classification_T2T.csv"), c("perfect", "single mismatch", "pam-distal single mismatch", "pam-distal double mismatch", "multi-target guides"), library_name = "jacquere")
 
 sum_dataframe_long <- rbind(avana_classification, tkov3_classification, yusa_classification, brunello_classification, jacquere_classification) %>%
   filter(!alignment == "perfect") %>%
@@ -108,7 +109,7 @@ multi_bar_chart <- ggplot(sum_dataframe_long, aes(x = alignment, y = percentage,
           legend.title = element_text(size = 25),
           legend.text = element_text(size = 25),
           plot.margin = margin(1, 1, 1, 1), 
-          line = element_line((size = 4), colour = 'black'),
+          line = element_line(size = 4, colour = 'black'),
           legend.spacing.x = unit(1, 'cm')) +
     scale_fill_manual(values = my_palette,
                       name = 'Library',
@@ -123,12 +124,11 @@ multi_bar_chart <- ggplot(sum_dataframe_long, aes(x = alignment, y = percentage,
 multi_bar_chart
 
 ggsave(
-    path = './',
     width = 22,
     height = 10,
     dpi = 300,
     plot = multi_bar_chart,
-    filename = paste('../figure/Fig02_analysis_off-target-sgrna/Fig2A_percentage_off_target_T2T.png', sep = ''))
+    filename = here::here("figure", "Fig2A_percentage_off_target_T2T.png"))
 
 ```
 
@@ -170,8 +170,7 @@ df_removed_genes <- data.frame(
   stringsAsFactors = FALSE
 )
 
-# TODO: missing directory — run dir.create("../data/biogrid_crispr_ko_data/important_data", recursive = TRUE) before writing
-write_csv(df_removed_genes, "../data/biogrid_crispr_ko_data/important_data/removed_genes_all_library.csv")
+write_csv(df_removed_genes, here::here("data", "removed_genes_survey", "removed_genes_all_library.csv"))
 ```
 
 ### Total percentages removed sgRNAs and unrepresented genes across libraries
@@ -239,13 +238,11 @@ percentage_bar_chart <- ggplot(failed_sgrna_percentage, aes(x = library, y = tot
 percentage_bar_chart
 
 ggsave(
-    path = './',
     width = 13.5,
     height = 10,
     dpi = 300,
     plot = percentage_bar_chart,
-    filename = paste('../figure/Fig02_analysis_off-target-sgrna/Fig2B_percentage_removed_sgrna_T2T.png', sep = ''))
-
+    filename = here::here("figure", "Fig2B_percentage_removed_sgrna_T2T.png"))
 
 ```
 
@@ -291,12 +288,11 @@ percentage_bar_chart <- ggplot(failed_genes_percentage, aes(x = library, y = tot
 percentage_bar_chart
 
 ggsave(
-    path = './',
     width = 13,
     height = 10,
     dpi = 300,
     plot = percentage_bar_chart,
-    filename = paste('../figure/Fig03_analysis_removed_genes/Fig3A_library_genes_bar_chart_T2T.png', sep = ''))
+    filename = here::here("figure", "Fig3A_library_genes_bar_chart_T2T.png"))
 
 ```
 

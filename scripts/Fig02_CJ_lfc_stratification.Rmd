@@ -11,6 +11,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
+library(here)
 library(tidyverse)
 library(ggbreak)
 library(clinfun)
@@ -20,46 +21,46 @@ library(rstatix)
 library(effsize)
 library(dplyr)
 
-source('../../GuideRefine/GuideRefine_functions.R')
-source("./00_CRISPR-KO-library-survey-functions.R")
+source(file.path(dirname(here::here()), "GuideRefine", "GuideRefine_functions.R"))
+source(here::here("scripts", "00_CRISPR-KO-library-survey-functions.R"))
 ```
 
 # Load data (once)
 
 ```{r load-classification}
 
-avana_raw    <- read_csv("../data/sgrna_lfc_data/avana_data/avana_sgrna_alignment_classification_T2T.csv")
-tkov3_raw    <- read_csv("../data/sgrna_lfc_data/tkov3_data/tkov3_sgrna_alignment_classification_T2T.csv")
-yusa_raw     <- read_csv("../data/sgrna_lfc_data/yusa_data/yusa_sgrna_alignment_classification_T2T.csv")
-brunello_raw <- read_csv("../data/sgrna_lfc_data/brunello_data/brunello_sgrna_alignment_classification_T2T.csv")
-jacquere_raw <- read_csv("../data/sgrna_lfc_data/jacquere_data/jacquere_sgrna_alignment_classification_T2T.csv")
+avana_raw    <- read_csv(here::here("data", "sgrna_lfc_data", "avana_data", "avana_sgrna_alignment_classification_T2T.csv"))
+tkov3_raw    <- read_csv(here::here("data", "sgrna_lfc_data", "tkov3_data", "tkov3_sgrna_alignment_classification_T2T.csv"))
+yusa_raw     <- read_csv(here::here("data", "sgrna_lfc_data", "yusa_data", "yusa_sgrna_alignment_classification_T2T.csv"))
+brunello_raw <- read_csv(here::here("data", "sgrna_lfc_data", "brunello_data", "brunello_sgrna_alignment_classification_T2T.csv"))
+jacquere_raw <- read_csv(here::here("data", "sgrna_lfc_data", "jacquere_data", "jacquere_sgrna_alignment_classification_T2T.csv"))
 
 ```
 
 ```{r load-library-lfc}
 
-avana_lfc_raw    <- load_library_lfc_raw("../data/library_data/original_library/avana_library.tsv",
-                                          "../data/sgrna_lfc_data/output_normalized/avana_normalized_lfc.csv")
+avana_lfc_raw    <- load_library_lfc_raw(here::here("data", "library_data", "original_library", "avana_library.tsv"),
+                                          here::here("data", "sgrna_lfc_data", "output_normalized", "avana_normalized_lfc.csv"))
 
-tkov3_lfc_raw    <- load_library_lfc_raw("../data/library_data/original_library/tkov3_guide_sequence.tsv",
-                                          "../data/sgrna_lfc_data/output_normalized/tkov3_rpe1_normalized_lfc.csv")
+tkov3_lfc_raw    <- load_library_lfc_raw(here::here("data", "library_data", "original_library", "tkov3_guide_sequence.tsv"),
+                                          here::here("data", "sgrna_lfc_data", "output_normalized", "tkov3_rpe1_normalized_lfc.csv"))
 
-yusa_lfc_raw     <- load_library_lfc_raw("../data/library_data/original_library/yusa_hcrispr_ko_grnas.tsv",
-                                          "../data/sgrna_lfc_data/output_normalized/yusa_normalized_lfc.csv")
+yusa_lfc_raw     <- load_library_lfc_raw(here::here("data", "library_data", "original_library", "yusa_hcrispr_ko_grnas.tsv"),
+                                          here::here("data", "sgrna_lfc_data", "output_normalized", "yusa_normalized_lfc.csv"))
 
-brunello_lfc_raw <- load_library_lfc_raw("../data/library_data/original_library/broadgpp-brunello-library-contents.tsv",
-                                          "../data/sgrna_lfc_data/output_normalized/brunello_a375_normalized_lfc.csv")
+brunello_lfc_raw <- load_library_lfc_raw(here::here("data", "library_data", "original_library", "broadgpp-brunello-library-contents.tsv"),
+                                          here::here("data", "sgrna_lfc_data", "output_normalized", "brunello_a375_normalized_lfc.csv"))
 
 # Jacquere sgRNA Log2FC data only available for ~60,000 sgRNAs
-jacquere_lfc_raw <- load_library_lfc_raw("../data/library_data/original_library/Jacquere_PerGuideAnnotations_Quota4.tsv",
-                                          "../data/sgrna_lfc_data/output_normalized/jacquere_normalized_lfc.csv")
+jacquere_lfc_raw <- load_library_lfc_raw(here::here("data", "library_data", "original_library", "Jacquere_PerGuideAnnotations_Quota4.tsv"),
+                                          here::here("data", "sgrna_lfc_data", "output_normalized", "jacquere_normalized_lfc.csv"))
 
 ```
 
 # Multi-target sgRNA analysis — Fig2C, SuppFig2A–E
 
 ```{r multi-target-stratify}
-source("./00_CRISPR-KO-library-survey-functions.R")
+source(here::here("scripts", "00_CRISPR-KO-library-survey-functions.R"))
 
 multi_guides <- c("perfect", "multi-target guides")
 
@@ -86,20 +87,20 @@ combined_multi <- rbind(avana_lfc_multi, tkov3_lfc_multi, yusa_lfc_multi, brunel
 ```{r multi-target-export}
 
 visualize_two_group(combined_multi,
-                    "../figure/Fig02_analysis_off-target-sgrna/Fig2C_combined_library_multi_target.png")
+                    here::here("figure", "Fig2C_combined_library_multi_target.png"))
 
-visualize_stratify_alignment(brunello_lfc_multi, "number of perfect on-target alignment", "../figure/Fig02_analysis_off-target-sgrna/SuppFig2A_brunello_multi_target.png")
-visualize_stratify_alignment(tkov3_lfc_multi,    "number of perfect on-target alignment", "../figure/Fig02_analysis_off-target-sgrna/SuppFig2B_tkov3_multi_target.png")
-visualize_stratify_alignment(yusa_lfc_multi,     "number of perfect on-target alignment", "../figure/Fig02_analysis_off-target-sgrna/SuppFig2C_yusa_multi_target.png")
-visualize_stratify_alignment(avana_lfc_multi,    "number of perfect on-target alignment", "../figure/Fig02_analysis_off-target-sgrna/SuppFig2D_avana_multi_target.png")
-visualize_stratify_alignment(jacquere_lfc_multi, "number of perfect on-target alignment", "../figure/Fig02_analysis_off-target-sgrna/SuppFig2E_jacquere_multi_target.png")
+visualize_stratify_alignment(brunello_lfc_multi, "number of perfect on-target alignment", here::here("figure", "SuppFig2A_brunello_multi_target.png"))
+visualize_stratify_alignment(tkov3_lfc_multi,    "number of perfect on-target alignment", here::here("figure", "SuppFig2B_tkov3_multi_target.png"))
+visualize_stratify_alignment(yusa_lfc_multi,     "number of perfect on-target alignment", here::here("figure", "SuppFig2C_yusa_multi_target.png"))
+visualize_stratify_alignment(avana_lfc_multi,    "number of perfect on-target alignment", here::here("figure", "SuppFig2D_avana_multi_target.png"))
+visualize_stratify_alignment(jacquere_lfc_multi, "number of perfect on-target alignment", here::here("figure", "SuppFig2E_jacquere_multi_target.png"))
 
 ```
 
 # Single mismatch sgRNA analysis — Fig2D, SuppFig2F–J
 
 ```{r single-mismatch-stratify}
-source("./00_CRISPR-KO-library-survey-functions.R")
+source(here::here("scripts", "00_CRISPR-KO-library-survey-functions.R"))
 
 single_guides <- c("perfect", "single mismatch")
 
@@ -126,15 +127,15 @@ combined_single <- rbind(avana_lfc_single, tkov3_lfc_single, yusa_lfc_single, br
 ```{r single-mismatch-export}
 
 visualize_two_group(combined_single,
-                    "../figure/Fig02_analysis_off-target-sgrna/Fig2D_combined_library_single_mismatch.png",
+                    here::here("figure", "Fig2D_combined_library_single_mismatch.png"),
                     comparison_group = "single mismatch",
                     comparison_label = "Single mismatch")
 
-visualize_stratify_alignment(brunello_lfc_single, "number of single mismatch \noff-target alignment", "../figure/Fig02_analysis_off-target-sgrna/SuppFig2F_brunello_single_mismatch.png")
-visualize_stratify_alignment(yusa_lfc_single,     "number of single mismatch \noff-target alignment", "../figure/Fig02_analysis_off-target-sgrna/SuppFig2G_yusa_single_mismatch.png")
-visualize_stratify_alignment(tkov3_lfc_single,    "number of single mismatch \noff-target alignment", "../figure/Fig02_analysis_off-target-sgrna/SuppFig2H_tkov3_single_mismatch.png")
-visualize_stratify_alignment(avana_lfc_single,    "number of single mismatch \noff-target alignment", "../figure/Fig02_analysis_off-target-sgrna/SuppFig2I_avana_single_mismatch.png")
-visualize_stratify_alignment(jacquere_lfc_single, "number of single mismatch \noff-target alignment", "../figure/Fig02_analysis_off-target-sgrna/SuppFig2J_jacquere_single_mismatch.png")
+visualize_stratify_alignment(brunello_lfc_single, "number of single mismatch \noff-target alignment", here::here("figure", "SuppFig2F_brunello_single_mismatch.png"))
+visualize_stratify_alignment(yusa_lfc_single,     "number of single mismatch \noff-target alignment", here::here("figure", "SuppFig2G_yusa_single_mismatch.png"))
+visualize_stratify_alignment(tkov3_lfc_single,    "number of single mismatch \noff-target alignment", here::here("figure", "SuppFig2H_tkov3_single_mismatch.png"))
+visualize_stratify_alignment(avana_lfc_single,    "number of single mismatch \noff-target alignment", here::here("figure", "SuppFig2I_avana_single_mismatch.png"))
+visualize_stratify_alignment(jacquere_lfc_single, "number of single mismatch \noff-target alignment", here::here("figure", "SuppFig2J_jacquere_single_mismatch.png"))
 
 ```
 
