@@ -157,7 +157,7 @@ make_log10_boxplot <- function(combined_df, y_col, ylabel, sig_label_y = 4, ylim
     ) +
     scale_fill_manual(
       name   = "",
-      values = c("control genes" = "deepskyblue", "removed genes" = "orangered"),
+      values = c("control genes" = "#1E88E5", "removed genes" = "#E69F00"),
       labels = c("Other protein-coding genes", "Common genes with < 3 sgRNAs")
     ) +
     labs(x = "", y = ylabel) +
@@ -200,7 +200,7 @@ make_log10_boxplot <- function(combined_df, y_col, ylabel, sig_label_y = 4, ylim
 
 ```{r import-data}
 
-removed_genes <- read_csv(here::here("data", "biogrid_crispr_ko_data", "important_data", "removed_genes_all_library.csv"))
+removed_genes <- read_csv(here::here("data", "removed_genes_survey", "removed_genes_all_library.csv"))
 
 removed_gene_list_combined <- list(
   Avana    = na.omit(removed_genes[["avana_removed_genes_all"]]),
@@ -226,7 +226,7 @@ control_pam_count <- count_pam_per_gene(all_spacers_cds_control_genes)
 
 ```{r upset-plot}
 
-png(here::here("figure", "Fig03_analysis_removed_genes", "Fig3B_removed_genes_all_libraries.png"),
+png(here::here("figure", "Fig3B_removed_genes_all_libraries.png"),
     width = 14000, height = 7500, res = 1000)
 
 par(mar = c(5, 30, 4, 4),
@@ -237,8 +237,8 @@ upset(fromList(removed_gene_list_combined),
       order.by        = "degree",
       sets            = c("Jacquere", "Avana", "Yusa", "TKOv3", "Brunello"),
       keep.order      = TRUE,
-      main.bar.color  = "#4B0092",
-      sets.bar.color  = "#1AFF1A",
+      main.bar.color  = "#000000",
+      sets.bar.color  = "#1E88E5",
       mainbar.y.label = "Number of genes with < 3 sgRNAs",
       sets.x.label    = "\nTotal genes",
       # text.scale: c(intersection size title, intersection size tick labels,
@@ -360,10 +360,10 @@ barplot_cds_control <- make_bin_barplot(
   control_genes_cds, "cds_length_bin", "Total CDS length (bp)"
 )
 
-ggsave(here::here("figure", "Fig03_analysis_removed_genes", "SuppFig3A_cds_length_499_removed_genes.png"),
+ggsave(here::here("figure", "SuppFig3A_cds_length_499_removed_genes.png"),
        plot = barplot_cds_removed, width = 11, height = 5, dpi = 1000)
 
-ggsave(here::here("figure", "Fig03_analysis_removed_genes", "SuppFig3B_cds_length_18562_control_genes.png"),
+ggsave(here::here("figure", "SuppFig3B_cds_length_18562_control_genes.png"),
        plot = barplot_cds_control, width = 11, height = 5, dpi = 1000)
 ```
 
@@ -386,7 +386,7 @@ cds_length_boxplot <- make_log10_boxplot(
 )
 cds_length_boxplot
 
-ggsave(here::here("figure", "Fig03_analysis_removed_genes", "Fig3C_log10_cds_length_removed_genes.png"),
+ggsave(here::here("figure", "Fig3C_log10_cds_length_removed_genes.png"),
        plot = cds_length_boxplot, width = 4, height = 6, dpi = 1000)
 ```
 
@@ -416,10 +416,10 @@ barplot_pam_control <- make_bin_barplot(
   "Number of spacer sequences with NGG PAM-site at CDS"
 )
 
-ggsave(here::here("figure", "Fig03_analysis_removed_genes", "SuppFig3C_spacer_pam_499_removed_genes.png"),
+ggsave(here::here("figure", "SuppFig3C_spacer_pam_499_removed_genes.png"),
        plot = barplot_pam_removed, width = 9, height = 5, dpi = 1000)
 
-ggsave(here::here("figure", "Fig03_analysis_removed_genes", "SuppFig3D_spacer_pam_18562_control_genes.png"),
+ggsave(here::here("figure", "SuppFig3D_spacer_pam_18562_control_genes.png"),
        plot = barplot_pam_control, width = 9, height = 5, dpi = 1000)
 ```
 
@@ -442,7 +442,7 @@ pam_boxplot <- make_log10_boxplot(
 )
 pam_boxplot
 
-ggsave(here::here("figure", "Fig03_analysis_removed_genes", "Fig3D_log10_pam_removed_genes.png"),
+ggsave(here::here("figure", "Fig3D_log10_pam_removed_genes.png"),
        plot = pam_boxplot, width = 4, height = 6, dpi = 1000)
 ```
 
@@ -481,7 +481,7 @@ pam_density_distribution <- ggplot(pam_density_df,
   theme_minimal() +
   scale_color_manual(
     name   = "",
-    values = c("control genes" = "deepskyblue", "removed genes" = "orangered"),
+    values = c("control genes" = "#1E88E5", "removed genes" = "#E69F00"),
     labels = c("control genes" = "Other protein-coding genes",
                "removed genes" = "Common genes with < 3 sgRNAs")
   ) +
@@ -503,7 +503,7 @@ pam_density_distribution <- ggplot(pam_density_df,
   ) +
   xlim(0, 210)
 
-ggsave(here::here("figure", "Fig03_analysis_removed_genes", "Fig3E_pam_density_distribution.png"),
+ggsave(here::here("figure", "Fig3E_pam_density_distribution.png"),
        plot = pam_density_distribution, width = 6.5, height = 4, dpi = 1000)
 ```
 
