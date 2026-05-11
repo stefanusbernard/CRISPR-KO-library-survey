@@ -83,8 +83,8 @@ sum_dataframe_long <- rbind(avana_classification, tkov3_classification, yusa_cla
   mutate(alignment = factor(alignment, levels = c("multi-target guides", "single mismatch", "pam-distal single mismatch", "pam-distal double mismatch")),
          library = factor(library, levels = c("brunello", "tkov3", "yusa", "avana", "jacquere")))
 
-# Define custom colors for the libraries
-my_palette <- brewer.pal(n = 5, name = "Set2")
+# Define custom colors for the libraries (Okabe-Ito, colorblind-friendly)
+my_palette <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2")
 
 
 # Create the grouped multibar chart for each sgRNA libraries
