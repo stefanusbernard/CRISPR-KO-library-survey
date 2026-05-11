@@ -653,7 +653,7 @@ visualize_two_group <- function(library_lfc_data, boxplot_output_name,
     scale_fill_manual(
       name   = "sgRNA: ",
       values = c("perfect"                    = "#0072B2",
-                 "single mismatch"            = "powderblue",
+                 "single mismatch"            = "#56B4E9",
                  "pam-distal single mismatch" = "mistyrose",
                  "pam-distal double mismatch" = "#E7F7D5",
                  "multi-target guides"        = "#E69F00"),
