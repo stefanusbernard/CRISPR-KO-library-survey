@@ -15,7 +15,6 @@ library(here)
 library(tidyverse)
 library(readxl)
 library(openxlsx)
-library(UpSetR)
 ```
 
 ## Helper functions
@@ -91,13 +90,42 @@ build_rescue_library <- function(lib_disposed_pairs, target_genes) {
     select(sgrna, spacer, gene, source_library)
 }
 
-# Classify each of the 499 consistently unrepresented genes into one of three
-# rescue outcomes based on the number of unique spacer sequences available after
-# pooling and deduplicating guides across all libraries:
-#   "Rescued"             : >= min_guides unique spacers across all libraries
-#   "Shared spacers only" : guides exist but cross-library duplicates leave
-#                           fewer than min_guides unique sequences
-#   "Insufficient guides" : no surviving guides found in any library
+# Annotate each row of rescue_library with whether its spacer appears in more
+# than one library for the same gene.
+# Adds column duplicate_spacer_sequence: "Yes (Lib1, Lib2)" or "No".
+annotate_duplicate_spacers <- function(rescue_library) {
+  spacer_libs <- rescue_library %>%
+    group_by(gene, spacer) %>%
+    summarise(
+      n_libs   = n_distinct(source_library),
+      dup_libs = paste(sort(unique(source_library)), collapse = ", "),
+      .groups  = "drop"
+    )
+
+  rescue_library %>%
+    left_join(spacer_libs, by = c("gene", "spacer")) %>%
+    mutate(
+      duplicate_spacer_sequence = if_else(
+        n_libs > 1,
+        paste0("Yes (", dup_libs, ")"),
+        "No"
+      )
+    ) %>%
+    select(-n_libs, -dup_libs)
+}
+
+# Remove cross-library duplicate spacers (keep first occurrence per gene),
+# then retain only genes with >= min_guides unique spacers.
+deduplicate_rescue_library <- function(rescue_library, min_guides = 3) {
+  rescue_library %>%
+    distinct(spacer, gene, .keep_all = TRUE) %>%
+    group_by(gene) %>%
+    filter(n() >= min_guides) %>%
+    ungroup()
+}
+
+# Classify each of the 499 genes as Rescued or Insufficient based on the
+# number of unique spacer sequences after cross-library deduplication.
 classify_rescue_outcome <- function(rescue_library, unrepresented_genes, min_guides = 3) {
   unique_per_gene <- rescue_library %>%
     distinct(spacer, gene) %>%
@@ -107,73 +135,95 @@ classify_rescue_outcome <- function(rescue_library, unrepresented_genes, min_gui
     left_join(unique_per_gene, by = "gene") %>%
     mutate(
       unique_spacers = replace_na(unique_spacers, 0L),
-      rescue_status  = case_when(
-        unique_spacers >= min_guides ~ "Rescued",
-        unique_spacers > 0           ~ "Shared spacers only",
-        TRUE                         ~ "Insufficient guides"
+      rescue_status  = if_else(
+        unique_spacers >= min_guides, "Rescued", "Insufficient guides"
       ),
       rescue_status = factor(
-        rescue_status,
-        levels = c("Rescued", "Shared spacers only", "Insufficient guides")
+        rescue_status, levels = c("Rescued", "Insufficient guides")
       )
     )
 }
 
-# Prepare the named list of spacer sets per library for the Fig 4A UpSet plot.
-# upset() must be called directly in the chunk (not inside a function) so that
-# knitr captures the plot on its own device — same pattern as Fig03.
-prepare_fig4a_data <- function(rescue_library) {
-  rescue_library %>%
+# Fig 4A — Vertical bar chart: library-unique spacers vs duplicated (>=2 libs).
+# Single fill colour #1E88E5, style matches Fig2B.
+plot_fig4a_duplicate_bar <- function(rescue_library, save_path = NULL) {
+  summary_df <- rescue_library %>%
     distinct(spacer, source_library) %>%
-    split(.$source_library) %>%
-    lapply(`[[`, "spacer")
+    count(spacer, name = "n_libs") %>%
+    mutate(
+      category = if_else(
+        n_libs >= 2, "Duplicated (>=2 libraries)", "Library-unique"
+      ),
+      category = factor(
+        category, levels = c("Library-unique", "Duplicated (>=2 libraries)")
+      )
+    ) %>%
+    count(category, name = "n_spacers") %>%
+    mutate(
+      pct   = round(n_spacers / sum(n_spacers) * 100, 1),
+      label = paste0(n_spacers, "\n(", pct, "%)")
+    )
+
+  p <- ggplot(summary_df, aes(x = category, y = n_spacers)) +
+    geom_col(width = 0.5, fill = "#1E88E5") +
+    geom_text(aes(label = label), vjust = -0.5, size = 10.5) +
+    scale_y_continuous(expand = expansion(mult = c(0, 0.2))) +
+    labs(x = "", y = "Number of spacer sequences") +
+    theme_minimal() +
+    theme(
+      axis.text.x       = element_text(size = 32.5, vjust = 0.7, colour = "black"),
+      axis.text.y       = element_text(size = 35,   colour = "black"),
+      axis.title.y      = element_text(size = 35, vjust = 0.5, margin = margin(r = 20)),
+      panel.grid.major  = element_blank(),
+      panel.grid.minor  = element_blank(),
+      axis.line.x       = element_line(size = 0.5),
+      axis.line.y       = element_line(size = 0.5),
+      axis.ticks.y      = element_line(size = 1.5),
+      axis.ticks.length = unit(0.3, "cm"),
+      plot.margin       = margin(1, 1, 1, 1),
+      line              = element_line(size = 4, colour = "black")
+    )
+
+  if (!is.null(save_path)) {
+    ggsave(save_path, plot = p, width = 13.5, height = 10, dpi = 300, bg = "white")
+    message("Saved: ", save_path)
+  }
+
+  p
 }
 
-# Fig 4B — Horizontal stacked bar of rescue outcomes for 499 genes.
-# Okabe-Ito colours: rescued = #009E73, shared spacers = #E69F00, insufficient = #999999
-plot_fig4b_stacked_bar <- function(rescue_df, save_path = NULL) {
-  status_colours <- c(
-    "Rescued"             = "#009E73",
-    "Shared spacers only" = "#E69F00",
-    "Insufficient guides" = "#999999"
-  )
-
+# Fig 4B — Vertical bar chart of rescue outcome for 499 genes (2 categories).
+# Single fill colour #1E88E5, style matches Fig2B.
+plot_fig4b_bar <- function(rescue_df, save_path = NULL) {
   summary_df <- rescue_df %>%
     count(rescue_status, name = "n_genes") %>%
     mutate(
       pct   = round(n_genes / sum(n_genes) * 100, 1),
-      label = paste0(rescue_status, "\n", n_genes, " (", pct, "%)")
+      label = paste0(n_genes, "\n(", pct, "%)")
     )
 
-  p <- ggplot(summary_df, aes(x = n_genes, y = "", fill = rescue_status)) +
-    geom_col(width = 0.5) +
-    geom_text(
-      aes(label = label),
-      position  = position_stack(vjust = 0.5),
-      size      = 3.5,
-      colour    = "white",
-      fontface  = "bold"
-    ) +
-    scale_fill_manual(values = status_colours) +
-    scale_x_continuous(expand = c(0, 0)) +
-    labs(
-      x        = "Number of genes",
-      y        = NULL,
-      title    = "Rescue outcome for 499 consistently unrepresented genes",
-      subtitle = "Outsourcing on-target guides across four CRISPR-KO libraries"
-    ) +
+  p <- ggplot(summary_df, aes(x = rescue_status, y = n_genes)) +
+    geom_col(width = 0.5, fill = "#1E88E5") +
+    geom_text(aes(label = label), vjust = -0.5, size = 10.5) +
+    scale_y_continuous(expand = expansion(mult = c(0, 0.2))) +
+    labs(x = "", y = "Number of genes") +
     theme_minimal() +
     theme(
-      axis.text.y     = element_blank(),
-      axis.ticks.y    = element_blank(),
-      panel.grid      = element_blank(),
-      legend.position = "none",
-      plot.title      = element_text(size = 12, face = "bold"),
-      plot.subtitle   = element_text(size = 10)
+      axis.text.x       = element_text(size = 32.5, vjust = 0.7, colour = "black"),
+      axis.text.y       = element_text(size = 35,   colour = "black"),
+      axis.title.y      = element_text(size = 35, vjust = 0.5, margin = margin(r = 20)),
+      panel.grid.major  = element_blank(),
+      panel.grid.minor  = element_blank(),
+      axis.line.x       = element_line(size = 0.5),
+      axis.line.y       = element_line(size = 0.5),
+      axis.ticks.y      = element_line(size = 1.5),
+      axis.ticks.length = unit(0.3, "cm"),
+      plot.margin       = margin(1, 1, 1, 1),
+      line              = element_line(size = 4, colour = "black")
     )
 
   if (!is.null(save_path)) {
-    ggsave(save_path, plot = p, width = 10, height = 3, dpi = 150, bg = "white")
+    ggsave(save_path, plot = p, width = 13.5, height = 10, dpi = 300, bg = "white")
     message("Saved: ", save_path)
   }
 
@@ -270,9 +320,14 @@ head(surviving_guides, 20)
 ## Data preparation — rescue library
 
 ```{r fig4b-rescue-library}
-target_genes    <- surviving_guides$gene
-rescue_library  <- build_rescue_library(lib_disposed_pairs, target_genes) %>%
-  arrange(gene)
+target_genes   <- surviving_guides$gene
+
+# Full rescue library: all per-library survivors with duplicate annotation.
+# Exported to Excel for inspection — duplicate_spacer_sequence column flags
+# spacers shared across libraries for the same gene.
+rescue_library <- build_rescue_library(lib_disposed_pairs, target_genes) %>%
+  arrange(gene) %>%
+  annotate_duplicate_spacers()
 
 cat("Total guide entries :", nrow(rescue_library), "\n")
 cat("Unique sequences    :", n_distinct(rescue_library$spacer), "\n")
@@ -280,46 +335,39 @@ cat("Target genes covered:", n_distinct(rescue_library$gene), "\n")
 
 head(rescue_library, 20)
 
-write.xlsx(rescue_library,
-           here("results", paste0("rescue_", length(unique(rescue_library$gene)), "_unrepresented_genes_surviving_guides.xlsx")),
-           rowNames = FALSE)
+write.xlsx(
+  rescue_library,
+  here("results", "rescue_library_499_unrepresented_genes_annotated.xlsx"),
+  rowNames = FALSE
+)
 
-rescue_library_tsv <- rescue_library %>%
+# Deduplicated TSV: cross-library duplicate spacers removed, genes with < 3
+# unique spacers dropped. This is the final rescue library for downstream use.
+rescue_library_deduped <- deduplicate_rescue_library(rescue_library)
+
+cat("\nAfter deduplication:\n")
+cat("Unique sequences    :", n_distinct(rescue_library_deduped$spacer), "\n")
+cat("Genes with >=3 guides:", n_distinct(rescue_library_deduped$gene), "\n")
+
+rescue_library_tsv <- rescue_library_deduped %>%
   mutate(sgrna = paste0(sgrna, "_", source_library)) %>%
   select(sgrna, spacer, gene)
 
-write_tsv(rescue_library_tsv,
-          here("results", paste0("rescue_", length(unique(rescue_library$gene)), "_unrepresented_genes_surviving_guides.tsv")),
-          col_names = FALSE)
+write_tsv(
+  rescue_library_tsv,
+  here("results", paste0("rescue_", n_distinct(rescue_library_deduped$gene),
+                         "_unrepresented_genes_surviving_guides.tsv")),
+  col_names = FALSE
+)
 ```
 
 ## Figure 4A
 
 ```{r figure-4a}
-library_spacers <- prepare_fig4a_data(rescue_library)
-
-png(here("figure", "Fig4A_upset_spacers_499_unrepresented_genes.png"),
-    width = 14000, height = 7500, res = 1000)
-
-par(mar      = c(5, 30, 4, 4),
-    col.axis = "black", col.lab = "black", col = "black",
-    fg       = "black", mgp = c(1.5, 0.8, 0))
-
-upset(
-  fromList(library_spacers),
-  order.by        = "degree",
-  sets            = c("Jacquere", "Avana", "TKOv3", "Brunello"),
-  keep.order      = TRUE,
-  main.bar.color  = "#000000",
-  sets.bar.color  = "#1E88E5",
-  mainbar.y.label = "Number of shared spacer sequences",
-  sets.x.label    = "\nTotal spacers",
-  text.scale      = c(2.5, 2.2, 2.5, 2.2, 2.5, 2.0),
-  point.size      = 4,
-  line.size       = 1.5
+plot_fig4a_duplicate_bar(
+  rescue_library,
+  save_path = here("figure", "Fig4A_duplicate_spacers_499_unrepresented_genes.png")
 )
-
-dev.off()
 ```
 
 ## Figure 4B
@@ -327,7 +375,7 @@ dev.off()
 ```{r figure-4b}
 rescue_df <- classify_rescue_outcome(rescue_library, unrepresented_genes)
 
-plot_fig4b_stacked_bar(
+plot_fig4b_bar(
   rescue_df,
   save_path = here("figure", "Fig4B_rescue_outcome_499_genes.png")
 )
