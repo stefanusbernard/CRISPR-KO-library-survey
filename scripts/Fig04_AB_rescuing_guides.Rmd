@@ -1,0 +1,334 @@
+---
+title: "Rescuing guides for 499 consistently unrepresented genes across five CRISPR-KO libraries"
+author: "Author: Stefanus Bernard"
+date: "Date: `r format(Sys.time(), '%d %B %Y')`"
+output:
+  html_document:
+    theme: cerulean
+    toc: true
+    toc_float: true
+    number_section: true
+---
+
+```{r setup, include=FALSE}
+library(here)
+library(tidyverse)
+library(readxl)
+library(openxlsx)
+library(UpSetR)
+```
+
+## Helper functions
+
+```{r helper-functions}
+# Load the 499 consistently unrepresented genes from the supplementary table.
+# Genes with NA num_pam_site did not map to T2T-CHM13 annotation and are excluded
+# (520 total across all libraries - 21 unmapped = 499).
+get_unrepresented_genes <- function(filepath) {
+  read_excel(filepath) %>%
+    filter(!is.na(num_pam_site)) %>%
+    pull(gene_id)
+}
+
+# Collect all disposed guide IDs across every disposal category column in the TSV.
+build_disposed_set <- function(disposed_df) {
+  disposed_df %>%
+    unlist(use.names = FALSE) %>%
+    na.omit() %>%
+    as.character() %>%
+    unique()
+}
+
+# Count unique surviving spacer sequences per gene in one library.
+# Subtracts all disposed guide IDs from the original library, then counts
+# distinct spacer sequences per gene to avoid overcounting duplicate guide IDs.
+count_surviving_from_library <- function(lib_df, disposed_df, unrepresented_genes) {
+  disposed <- build_disposed_set(disposed_df)
+
+  surviving_counts <- lib_df %>%
+    filter(gene %in% unrepresented_genes, !sgrna %in% disposed) %>%
+    group_by(gene) %>%
+    summarise(n = n_distinct(spacer), .groups = "drop")
+
+  tibble(gene = unrepresented_genes) %>%
+    left_join(surviving_counts, by = "gene") %>%
+    mutate(n = replace_na(n, 0L))
+}
+
+# Returns a data frame (genes x libraries) of surviving guide counts across
+# all libraries.
+# lib_disposed_pairs: named list where each element is list(lib=..., disposed=...)
+count_surviving_guides_all_libraries <- function(lib_disposed_pairs, unrepresented_genes) {
+  counts_list <- map(names(lib_disposed_pairs), function(lib_name) {
+    pair <- lib_disposed_pairs[[lib_name]]
+    count_surviving_from_library(pair$lib, pair$disposed, unrepresented_genes) %>%
+      rename(!!lib_name := n)
+  })
+
+  reduce(counts_list, left_join, by = "gene")
+}
+
+# Return rows from lib_df for target_genes that were NOT disposed,
+# deduplicated by (spacer, gene) to remove same-sequence duplicates within
+# the same library.
+get_surviving_guide_sequences <- function(lib_df, disposed_df, target_genes) {
+  disposed <- build_disposed_set(disposed_df)
+
+  lib_df %>%
+    filter(gene %in% target_genes, !sgrna %in% disposed) %>%
+    distinct(spacer, gene, .keep_all = TRUE)
+}
+
+# Build a mini library of surviving sgRNAs across all libraries for target_genes.
+# Each guide is tagged with its source library.
+# Returns a data frame with columns: sgrna, spacer, gene, source_library
+build_rescue_library <- function(lib_disposed_pairs, target_genes) {
+  map_dfr(names(lib_disposed_pairs), function(lib_name) {
+    pair <- lib_disposed_pairs[[lib_name]]
+    get_surviving_guide_sequences(pair$lib, pair$disposed, target_genes) %>%
+      mutate(source_library = lib_name)
+  }) %>%
+    select(sgrna, spacer, gene, source_library)
+}
+
+# Classify each of the 499 consistently unrepresented genes into one of three
+# rescue outcomes based on the number of unique spacer sequences available after
+# pooling and deduplicating guides across all libraries:
+#   "Rescued"             : >= min_guides unique spacers across all libraries
+#   "Shared spacers only" : guides exist but cross-library duplicates leave
+#                           fewer than min_guides unique sequences
+#   "Insufficient guides" : no surviving guides found in any library
+classify_rescue_outcome <- function(rescue_library, unrepresented_genes, min_guides = 3) {
+  unique_per_gene <- rescue_library %>%
+    distinct(spacer, gene) %>%
+    count(gene, name = "unique_spacers")
+
+  tibble(gene = unrepresented_genes) %>%
+    left_join(unique_per_gene, by = "gene") %>%
+    mutate(
+      unique_spacers = replace_na(unique_spacers, 0L),
+      rescue_status  = case_when(
+        unique_spacers >= min_guides ~ "Rescued",
+        unique_spacers > 0           ~ "Shared spacers only",
+        TRUE                         ~ "Insufficient guides"
+      ),
+      rescue_status = factor(
+        rescue_status,
+        levels = c("Rescued", "Shared spacers only", "Insufficient guides")
+      )
+    )
+}
+
+# Prepare the named list of spacer sets per library for the Fig 4A UpSet plot.
+# upset() must be called directly in the chunk (not inside a function) so that
+# knitr captures the plot on its own device — same pattern as Fig03.
+prepare_fig4a_data <- function(rescue_library) {
+  rescue_library %>%
+    distinct(spacer, source_library) %>%
+    split(.$source_library) %>%
+    lapply(`[[`, "spacer")
+}
+
+# Fig 4B — Horizontal stacked bar of rescue outcomes for 499 genes.
+# Okabe-Ito colours: rescued = #009E73, shared spacers = #E69F00, insufficient = #999999
+plot_fig4b_stacked_bar <- function(rescue_df, save_path = NULL) {
+  status_colours <- c(
+    "Rescued"             = "#009E73",
+    "Shared spacers only" = "#E69F00",
+    "Insufficient guides" = "#999999"
+  )
+
+  summary_df <- rescue_df %>%
+    count(rescue_status, name = "n_genes") %>%
+    mutate(
+      pct   = round(n_genes / sum(n_genes) * 100, 1),
+      label = paste0(rescue_status, "\n", n_genes, " (", pct, "%)")
+    )
+
+  p <- ggplot(summary_df, aes(x = n_genes, y = "", fill = rescue_status)) +
+    geom_col(width = 0.5) +
+    geom_text(
+      aes(label = label),
+      position  = position_stack(vjust = 0.5),
+      size      = 3.5,
+      colour    = "white",
+      fontface  = "bold"
+    ) +
+    scale_fill_manual(values = status_colours) +
+    scale_x_continuous(expand = c(0, 0)) +
+    labs(
+      x        = "Number of genes",
+      y        = NULL,
+      title    = "Rescue outcome for 499 consistently unrepresented genes",
+      subtitle = "Outsourcing on-target guides across four CRISPR-KO libraries"
+    ) +
+    theme_minimal() +
+    theme(
+      axis.text.y     = element_blank(),
+      axis.ticks.y    = element_blank(),
+      panel.grid      = element_blank(),
+      legend.position = "none",
+      plot.title      = element_text(size = 12, face = "bold"),
+      plot.subtitle   = element_text(size = 10)
+    )
+
+  if (!is.null(save_path)) {
+    ggsave(save_path, plot = p, width = 10, height = 3, dpi = 150, bg = "white")
+    message("Saved: ", save_path)
+  }
+
+  p
+}
+```
+
+## Data import
+
+```{r import-disposed-sgrnas}
+brunello_disposed <- read_tsv(
+  here("data", "guiderefine_output", "May2026_T2T-CHM13",
+       "broadgpp-brunello-library-contents_disposed_sgRNAs.tsv"),
+  show_col_types = FALSE
+)
+tkov3_disposed <- read_tsv(
+  here("data", "guiderefine_output", "May2026_T2T-CHM13",
+       "tkov3_guide_sequence_disposed_sgRNAs.tsv"),
+  show_col_types = FALSE
+)
+
+avana_disposed <- read_tsv(
+  here("data", "guiderefine_output", "May2026_T2T-CHM13",
+       "avana_library_disposed_sgRNAs.tsv"),
+  show_col_types = FALSE
+)
+jacquere_disposed <- read_tsv(
+  here("data", "guiderefine_output", "May2026_T2T-CHM13",
+       "Jacquere_PerGuideAnnotations_Quota4_disposed_sgRNAs.tsv"),
+  show_col_types = FALSE
+)
+```
+
+```{r import-original-libraries}
+lib_cols <- c("sgrna", "spacer", "gene")
+
+avana_lib <- read_tsv(
+  here("data", "library_data", "original_library", "avana_library.tsv"),
+  col_names = lib_cols, show_col_types = FALSE
+)
+brunello_lib <- read_tsv(
+  here("data", "library_data", "original_library",
+       "broadgpp-brunello-library-contents.tsv"),
+  col_names = lib_cols, show_col_types = FALSE
+)
+tkov3_lib <- read_tsv(
+  here("data", "library_data", "original_library", "tkov3_guide_sequence.tsv"),
+  col_names = lib_cols, show_col_types = FALSE
+)
+jacquere_lib <- read_tsv(
+  here("data", "library_data", "original_library",
+       "Jacquere_PerGuideAnnotations_Quota4.tsv"),
+  col_names = lib_cols, show_col_types = FALSE
+)
+```
+
+```{r import-unrepresented-genes}
+# 499 consistently unrepresented genes across five CRISPR-KO libraries
+# (520 genes identified as unrepresented, 21 excluded: no T2T-CHM13 annotation match)
+unrepresented_genes <- get_unrepresented_genes(
+  here("results", "supplementary_table_3_520_genes.xlsx")
+)
+message("Unrepresented genes loaded: ", length(unrepresented_genes), "  — expected 499")
+
+lib_disposed_pairs <- list(
+  Avana    = list(lib = avana_lib,    disposed = avana_disposed),
+  Brunello = list(lib = brunello_lib, disposed = brunello_disposed),
+  TKOv3    = list(lib = tkov3_lib,    disposed = tkov3_disposed),
+  # Yusa   = list(lib = yusa_lib,     disposed = yusa_disposed),  # excluded: 19-nt spacers
+  Jacquere = list(lib = jacquere_lib, disposed = jacquere_disposed)
+)
+```
+
+## Data preparation — surviving guides per gene across libraries
+
+```{r fig4a-surviving-guides}
+surviving_guides <- count_surviving_guides_all_libraries(lib_disposed_pairs, unrepresented_genes)
+
+surviving_guides <- surviving_guides %>%
+  mutate(sum_guides = Avana + Brunello + TKOv3 + Jacquere) %>%
+  filter(sum_guides > 2) %>%
+  arrange(desc(sum_guides))
+
+cat("Shape:", nrow(surviving_guides), "x", ncol(surviving_guides),
+    " — expected (≤499, 4 libraries + gene + sum)\n")
+
+write.xlsx(surviving_guides,
+           here("results", "surviving_guides_across_499_unrepresented_genes.xlsx"),
+           rowNames = FALSE)
+
+head(surviving_guides, 20)
+```
+
+## Data preparation — rescue library
+
+```{r fig4b-rescue-library}
+target_genes    <- surviving_guides$gene
+rescue_library  <- build_rescue_library(lib_disposed_pairs, target_genes) %>%
+  arrange(gene)
+
+cat("Total guide entries :", nrow(rescue_library), "\n")
+cat("Unique sequences    :", n_distinct(rescue_library$spacer), "\n")
+cat("Target genes covered:", n_distinct(rescue_library$gene), "\n")
+
+head(rescue_library, 20)
+
+write.xlsx(rescue_library,
+           here("results", paste0("rescue_", length(unique(rescue_library$gene)), "_unrepresented_genes_surviving_guides.xlsx")),
+           rowNames = FALSE)
+
+rescue_library_tsv <- rescue_library %>%
+  mutate(sgrna = paste0(sgrna, "_", source_library)) %>%
+  select(sgrna, spacer, gene)
+
+write_tsv(rescue_library_tsv,
+          here("results", paste0("rescue_", length(unique(rescue_library$gene)), "_unrepresented_genes_surviving_guides.tsv")),
+          col_names = FALSE)
+```
+
+## Figure 4A
+
+```{r figure-4a}
+library_spacers <- prepare_fig4a_data(rescue_library)
+
+png(here("figure", "Fig4A_upset_spacers_499_unrepresented_genes.png"),
+    width = 14000, height = 7500, res = 1000)
+
+par(mar      = c(5, 30, 4, 4),
+    col.axis = "black", col.lab = "black", col = "black",
+    fg       = "black", mgp = c(1.5, 0.8, 0))
+
+upset(
+  fromList(library_spacers),
+  order.by        = "degree",
+  sets            = c("Jacquere", "Avana", "TKOv3", "Brunello"),
+  keep.order      = TRUE,
+  main.bar.color  = "#000000",
+  sets.bar.color  = "#1E88E5",
+  mainbar.y.label = "Number of shared spacer sequences",
+  sets.x.label    = "\nTotal spacers",
+  text.scale      = c(2.5, 2.2, 2.5, 2.2, 2.5, 2.0),
+  point.size      = 4,
+  line.size       = 1.5
+)
+
+dev.off()
+```
+
+## Figure 4B
+
+```{r figure-4b}
+rescue_df <- classify_rescue_outcome(rescue_library, unrepresented_genes)
+
+plot_fig4b_stacked_bar(
+  rescue_df,
+  save_path = here("figure", "Fig4B_rescue_outcome_499_genes.png")
+)
+```
