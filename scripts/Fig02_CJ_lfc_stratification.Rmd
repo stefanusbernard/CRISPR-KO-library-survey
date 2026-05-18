@@ -132,18 +132,126 @@ visualize_two_group(combined_single,
                     comparison_label = "Single mismatch")
 
 visualize_stratify_alignment(brunello_lfc_single, "number of single mismatch \noff-target alignment", here::here("figure", "SuppFig2F_brunello_single_mismatch.png"))
-visualize_stratify_alignment(yusa_lfc_single,     "number of single mismatch \noff-target alignment", here::here("figure", "SuppFig2G_yusa_single_mismatch.png"))
-visualize_stratify_alignment(tkov3_lfc_single,    "number of single mismatch \noff-target alignment", here::here("figure", "SuppFig2H_tkov3_single_mismatch.png"))
+visualize_stratify_alignment(tkov3_lfc_single,    "number of single mismatch \noff-target alignment", here::here("figure", "SuppFig2G_tkov3_single_mismatch.png"))
+visualize_stratify_alignment(yusa_lfc_single,     "number of single mismatch \noff-target alignment", here::here("figure", "SuppFig2H_yusa_single_mismatch.png"))
 visualize_stratify_alignment(avana_lfc_single,    "number of single mismatch \noff-target alignment", here::here("figure", "SuppFig2I_avana_single_mismatch.png"))
 visualize_stratify_alignment(jacquere_lfc_single, "number of single mismatch \noff-target alignment", here::here("figure", "SuppFig2J_jacquere_single_mismatch.png"))
 
 ```
 
-# Effect size (Cliff's delta)
+# Wilcoxon rank-sum test values — Fig 2C and Fig 2D
 
-```{r effect-size}
+```{r wilcoxon-fig2c-fig2d}
 
-calculate_wilcoxon_cles(jacquere_lfc_multi,  "multi-target guides", "perfect")
-calculate_wilcoxon_cles(jacquere_lfc_single, "single mismatch",     "perfect")
+# Fig 2C: perfect vs multi-target guides (Wilcoxon unpaired, two-sided), per library
+# library             W   p_value n_perfect n_multi
+#   <fct>           <dbl>     <dbl>     <int>   <int>
+# 1 brunello   129775196. 5.35e-242     64718    2946
+# 2 toronto_v3  77225532  3.51e- 49     64690    2001
+# 3 yusa       204894804  0             78803    3366
+# 4 avana      237346891  0             59860    5027
+# 5 jacquere    44073838  4.25e-108     51842    1245
+
+wilcoxon_fig2c <- combined_multi %>%
+  group_by(library) %>%
+  group_modify(~ {
+    perf <- filter(.x, alignment == "perfect")$mean
+    tgt  <- filter(.x, alignment == "multi-target guides")$mean
+    w    <- wilcox.test(perf, tgt, alternative = "two.sided")
+    tibble(W = w$statistic, p_value = w$p.value,
+           n_perfect = length(perf), n_multi = length(tgt))
+  })
+print(wilcoxon_fig2c)
+
+# Fig 2D: perfect vs single mismatch (Wilcoxon unpaired, two-sided), per library
+# ---------------------------------------------------------------------------------
+#   library             W   p_value n_perfect n_single
+#   <fct>           <dbl>     <dbl>     <int>    <int>
+# 1 brunello   219728676. 5.61e- 60     64718     6025
+# 2 toronto_v3 106678302  2.49e- 19     64690     3007
+# 3 yusa       321381273  4.36e-190     78803     6708
+# 4 avana      223715847  1.52e- 80     59860     6540
+# 5 jacquere   184407364. 6.79e-166     51842     5837
+
+wilcoxon_fig2d <- combined_single %>%
+  group_by(library) %>%
+  group_modify(~ {
+    perf   <- filter(.x, alignment == "perfect")$mean
+    single <- filter(.x, alignment == "single mismatch")$mean
+    w      <- wilcox.test(perf, single, alternative = "two.sided")
+    tibble(W = w$statistic, p_value = w$p.value,
+           n_perfect = length(perf), n_single = length(single))
+  })
+print(wilcoxon_fig2d)
+
+```
+
+# Jonckheere-Terpstra trend test — Supp Fig 2A–2J
+
+Tests the hypothesis that median sgRNA LFC decreases monotonically as the
+number of off-target alignments increases across ordered bins.
+Asymptotic normal approximation; accurate for n > 100 per group.
+
+```{r jt-trend-supp2a-2j}
+
+# JT statistic computed as sum of Mann-Whitney U over all ordered group pairs (i < j),
+# matching clinfun's convention of counting pairs where x_i < x_j.
+# Asymptotic normal approximation used for z-score and p-value.
+run_jt <- function(df, fig_label, lib_name, analysis) {
+  g      <- as.numeric(df$alignment_bin)
+  x      <- df$mean
+  groups <- sort(unique(g))
+  k      <- length(groups)
+  N      <- length(x)
+  n      <- as.integer(table(g))
+
+  jt_stat <- 0
+  for (i in seq_len(k - 1)) {
+    for (j in (i + 1):k) {
+      xi <- x[g == groups[i]]
+      xj <- x[g == groups[j]]
+      jt_stat <- jt_stat + suppressWarnings(wilcox.test(xj, xi)$statistic)
+    }
+  }
+
+  mu     <- (N^2 - sum(n^2)) / 4
+  sigma2 <- (N^2 * (2*N + 3) - sum(n^2 * (2*n + 3))) / 72
+  z      <- (jt_stat - mu) / sqrt(sigma2)
+
+  tibble(figure       = fig_label,
+         library      = lib_name,
+         analysis     = analysis,
+         n_total      = N,
+         JT_statistic = round(jt_stat),
+         z_score      = round(z, 1),
+         p_value      = pnorm(z))
+}
+
+jt_results <- bind_rows(
+  run_jt(brunello_lfc_multi,  "SuppFig2A", "Brunello",  "Multi-target guides"),
+  run_jt(tkov3_lfc_multi,     "SuppFig2B", "TKOv3",     "Multi-target guides"),
+  run_jt(yusa_lfc_multi,      "SuppFig2C", "Yusa",      "Multi-target guides"),
+  run_jt(avana_lfc_multi,     "SuppFig2D", "Avana",     "Multi-target guides"),
+  run_jt(jacquere_lfc_multi,  "SuppFig2E", "Jacquere",  "Multi-target guides"),
+  run_jt(brunello_lfc_single, "SuppFig2F", "Brunello",  "Single mismatch off-target"),
+  run_jt(yusa_lfc_single,     "SuppFig2G", "Yusa",      "Single mismatch off-target"),
+  run_jt(tkov3_lfc_single,    "SuppFig2H", "TKOv3",     "Single mismatch off-target"),
+  run_jt(avana_lfc_single,    "SuppFig2I", "Avana",     "Single mismatch off-target"),
+  run_jt(jacquere_lfc_single, "SuppFig2J", "Jacquere",  "Single mismatch off-target")
+)
+print(jt_results)
+
+# figure    library  analysis            n_total JT_statistic z_score   p_value
+#    <chr>     <chr>    <chr>                 <int>        <dbl>   <dbl>     <dbl>
+#  1 SuppFig2A Brunello Multi-target guides   67664     61920967   -33.6 3.95e-247
+#  2 SuppFig2B TKOv3    Multi-target guides   66691     52433949   -14.8 8.93e- 50
+#  3 SuppFig2C Yusa     Multi-target guides   82169     61005189   -53.8 0        
+#  4 SuppFig2D Avana    Multi-target guides   64887     65877308   -69.4 0        
+#  5 SuppFig2E Jacquere Multi-target guides   53087     20629019   -22.2 2.58e-109
+#  6 SuppFig2F Brunello Single mismatch of…   70743    173872602   -16.7 1.17e- 62
+#  7 SuppFig2G Yusa     Single mismatch of…   85511    210035071   -29.8 4.57e-196
+#  8 SuppFig2H TKOv3    Single mismatch of…   67697     88313450    -9   1.24e- 19
+#  9 SuppFig2I Avana    Single mismatch of…   66400    171715438   -19.5 7.67e- 85
+# 10 SuppFig2J Jacquere Single mismatch of…   57679    121786702   -27.8 4.84e-170
 
 ```
