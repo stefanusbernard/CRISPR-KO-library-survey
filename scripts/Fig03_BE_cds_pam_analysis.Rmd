@@ -390,6 +390,27 @@ ggsave(here::here("figure", "Fig3C_log10_cds_length_removed_genes.png"),
        plot = cds_length_boxplot, width = 4, height = 6, dpi = 1000)
 ```
 
+```{r wilcoxon-fig3c}
+
+# Fig 3C: Wilcoxon rank-sum test (unpaired, two-sided)
+# Comparison: log10(CDS length) of removed genes vs control genes
+# ------------------------------------------------------------------
+# W = 6,153,776    p = 3.87e-36
+# Median log10 CDS length — removed genes : 2.97 (≈ 937 bp)
+# Median log10 CDS length — control genes : 3.15 (≈ 1,400 bp)
+# n removed = 499    n control = 18,562
+
+wt_fig3c <- wilcox.test(log_transform_cds_length ~ gene_status,
+                         data        = combined_cds,
+                         alternative = "two.sided")
+cat("Fig 3C  W =", wt_fig3c$statistic, " p =", wt_fig3c$p.value, "\n")
+combined_cds %>%
+  group_by(gene_status) %>%
+  summarise(median_log10_cds = median(log_transform_cds_length, na.rm = TRUE),
+            n = n())
+
+```
+
 ## Protospacer / NGG PAM-site analysis: removed vs control genes
 
 ### Supp Figure 3C and 3D : Barplot distribution of protospacer count per gene
@@ -446,6 +467,27 @@ ggsave(here::here("figure", "Fig3D_log10_pam_removed_genes.png"),
        plot = pam_boxplot, width = 4, height = 6, dpi = 1000)
 ```
 
+```{r wilcoxon-fig3d}
+
+# Fig 3D: Wilcoxon rank-sum test (unpaired, two-sided)
+# Comparison: log10(PAM count) of removed genes vs control genes
+# ------------------------------------------------------------------
+# W = 6,354,039    p = 8.74e-46
+# Median log10 PAM count — removed genes : 1.77 (≈ 59 PAM sites)
+# Median log10 PAM count — control genes : 2.00 (≈ 99 PAM sites)
+# n removed = 499    n control = 18,562
+
+wt_fig3d <- wilcox.test(log_transform_num_pam_site ~ gene_status,
+                         data        = combined_pam,
+                         alternative = "two.sided")
+cat("Fig 3D  W =", wt_fig3d$statistic, " p =", wt_fig3d$p.value, "\n")
+combined_pam %>%
+  group_by(gene_status) %>%
+  summarise(median_log10_pam = median(log_transform_num_pam_site, na.rm = TRUE),
+            n = n())
+
+```
+
 ## PAM-site density relative to CDS length
 
 Does a larger CDS simply provide more PAM sites?
@@ -475,9 +517,32 @@ pam_density_df <- bind_rows(
 
 ```{r pam-density-plot}
 
+# Group medians — used for vertical reference lines
+pam_density_medians <- pam_density_df %>%
+  group_by(gene_status) %>%
+  summarise(median_density = median(pam_density, na.rm = TRUE), .groups = "drop")
+# Median: control genes = 70.5,  removed genes = 64.6  (sites / kb CDS)
+
+pam_density_df %>%
+  group_by(gene_status) %>%
+  summarise(median_pam_density = median(pam_density, na.rm = TRUE), n = n())
+
+wt_fig3e <- wilcox.test(pam_density ~ gene_status,
+                         data        = pam_density_df,
+                         alternative = "two.sided")
+cat("Fig 3E  W =", wt_fig3e$statistic, " p =", wt_fig3e$p.value, "\n")
+
 pam_density_distribution <- ggplot(pam_density_df,
                                    aes(x = pam_density, colour = gene_status)) +
   geom_density(alpha = 0.8, size = 1) +
+  # Dashed vertical lines mark each group's median
+  geom_vline(data = pam_density_medians,
+             aes(xintercept = median_density, colour = gene_status),
+             linetype = "dashed", size = 0.7) +
+  # Wilcoxon rank-sum p-value annotation
+  annotate("text", x = 130, y = 0.028,
+           label = paste0("Wilcoxon rank-sum\np = ", formatC(wt_fig3e$p.value, format = "e", digits = 2)),
+           size = 4, hjust = 0, vjust = 1, colour = "black") +
   theme_minimal() +
   scale_color_manual(
     name   = "",
