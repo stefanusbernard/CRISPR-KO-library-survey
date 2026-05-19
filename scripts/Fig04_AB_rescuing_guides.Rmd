@@ -15,6 +15,11 @@ library(here)
 library(tidyverse)
 library(readxl)
 library(openxlsx)
+library(crisprBase)
+library(crisprBowtie)
+library(crisprDesign)
+library(crisprScore)
+library(BSgenome.Hsapiens.NCBI.T2TCHM13v2.0)
 ```
 
 ## Helper functions
@@ -58,13 +63,13 @@ count_surviving_from_library <- function(lib_df, disposed_df, unrepresented_gene
 # all libraries.
 # lib_disposed_pairs: named list where each element is list(lib=..., disposed=...)
 count_surviving_guides_all_libraries <- function(lib_disposed_pairs, unrepresented_genes) {
-  counts_list <- map(names(lib_disposed_pairs), function(lib_name) {
+  counts_list <- purrr::map(names(lib_disposed_pairs), function(lib_name) {
     pair <- lib_disposed_pairs[[lib_name]]
     count_surviving_from_library(pair$lib, pair$disposed, unrepresented_genes) %>%
-      rename(!!lib_name := n)
+      rename_with(~ lib_name, .cols = "n")
   })
 
-  reduce(counts_list, left_join, by = "gene")
+  purrr::reduce(counts_list, left_join, by = "gene")
 }
 
 # Return rows from lib_df for target_genes that were NOT disposed,
@@ -284,7 +289,7 @@ jacquere_lib <- read_tsv(
 # 499 consistently unrepresented genes across five CRISPR-KO libraries
 # (520 genes identified as unrepresented, 21 excluded: no T2T-CHM13 annotation match)
 unrepresented_genes <- get_unrepresented_genes(
-  here("results", "supplementary_table_3_520_genes.xlsx")
+  here("results", "supp_table_3A_520_genes.xlsx")
 )
 message("Unrepresented genes loaded: ", length(unrepresented_genes), "  — expected 499")
 
@@ -335,12 +340,6 @@ cat("Target genes covered:", n_distinct(rescue_library$gene), "\n")
 
 head(rescue_library, 20)
 
-write.xlsx(
-  rescue_library,
-  here("results", "rescue_library_499_unrepresented_genes_annotated.xlsx"),
-  rowNames = FALSE
-)
-
 # Deduplicated TSV: cross-library duplicate spacers removed, genes with < 3
 # unique spacers dropped. This is the final rescue library for downstream use.
 rescue_library_deduped <- deduplicate_rescue_library(rescue_library)
@@ -349,34 +348,88 @@ cat("\nAfter deduplication:\n")
 cat("Unique sequences    :", n_distinct(rescue_library_deduped$spacer), "\n")
 cat("Genes with >=3 guides:", n_distinct(rescue_library_deduped$gene), "\n")
 
-rescue_library_tsv <- rescue_library_deduped %>%
+rescue_library_df <- rescue_library_deduped %>%
   mutate(sgrna = paste0(sgrna, "_", source_library)) %>%
   select(sgrna, spacer, gene)
 
-write_tsv(
-  rescue_library_tsv,
-  here("results", paste0("rescue_", n_distinct(rescue_library_deduped$gene),
-                         "_unrepresented_genes_surviving_guides.tsv")),
-  col_names = FALSE
-)
 ```
 
-## Figure 4A
+## On-target efficiency scoring (Rule Set 3)
 
-```{r figure-4a}
-plot_fig4a_duplicate_bar(
-  rescue_library,
-  save_path = here("figure", "Fig4A_duplicate_spacers_499_unrepresented_genes.png")
+```{r on-target-crisprscan}
+data(SpCas9, package = "crisprBase")
+bsgenome     <- BSgenome.Hsapiens.NCBI.T2TCHM13v2.0
+bowtie_index <- here("..", "GuideRefine", "bowtie_index",
+                     "T2T-CHM13_bsgenome", "T2T-CHM13_BSgenome")
+
+# Align unique spacers to T2T-CHM13 — perfect matches only (on-target sites)
+aln <- runCrisprBowtie(
+  unique(rescue_library_df$spacer),
+  mode                = "spacer",
+  bsgenome            = bsgenome,
+  crisprNuclease      = SpCas9,
+  n_mismatches        = 0,
+  force_spacer_length = TRUE,
+  canonical           = TRUE,
+  bowtie_index        = bowtie_index
 )
+
+# Retain uniquely mapping spacers only
+aln_unique <- aln %>%
+  filter(!is.na(chr)) %>%
+  group_by(spacer) %>%
+  filter(n() == 1) %>%
+  ungroup()
+
+cat("Uniquely aligned spacers:", nrow(aln_unique), "/",
+    n_distinct(rescue_library_df$spacer), "\n")
+
+# Build GuideSet and compute Rule Set 3 on-target scores
+gs <- GuideSet(
+  ids            = aln_unique$spacer,
+  protospacers   = aln_unique$protospacer,
+  pams           = aln_unique$pam,
+  pam_site       = aln_unique$pam_site,
+  seqnames       = aln_unique$chr,
+  strand         = aln_unique$strand,
+  CrisprNuclease = SpCas9,
+  bsgenome       = bsgenome
+)
+
+gs <- addOnTargetScores(gs, methods = "crisprscan")
+
+# Join CRISPRscan scores back to the rescue library (NA for unmapped/multi-mapping guides)
+crisprscan_df <- as.data.frame(mcols(gs)) %>%
+  mutate(spacer = names(gs)) %>%
+  select(spacer, score_crisprscan)
+
+rescue_library_score_annotated <- rescue_library_df %>%
+  left_join(crisprscan_df, by = "spacer") %>%
+  dplyr::rename("crisprscan_score" = "score_crisprscan") %>%
+  mutate(on_target_efficiency = if_else(crisprscan_score >= 0.5, "High (≥0.5)", "Low (<0.5)"))
+
+cat("CRISPRscan score range:", round(range(rescue_library_score_annotated$crisprscan_score, na.rm = TRUE), 3), "\n")
+cat("Guides without score (unmapped/multi-mapping):",
+    sum(is.na(rescue_library_score_annotated$crisprscan_score)), "\n")
+
+# Genes with at least 3 high-efficiency guides (CRISPRscan score > 0.5)
+survived_genes_targeted <- rescue_library_score_annotated %>%
+  filter(crisprscan_score >= 0.5) %>%
+  group_by(gene) %>%
+  filter(n() >= 3) %>%
+  ungroup()
+
+cat("\nGenes with >= 3 high-efficiency guides (CRISPRscan > 0.5):",
+    n_distinct(survived_genes_targeted$gene), "\n")
+
+write.xlsx(rescue_library_score_annotated,
+           here("results", "supp_table_3B_aggregated_guides_scored.xlsx"),
+           rowNames = FALSE)
+
+write.xlsx(survived_genes_targeted,
+           here("results", "supp_table_3C_aggregated__on_target_guides_represented_genes.xlsx"),
+           rowNames = FALSE)
+
 ```
 
-## Figure 4B
 
-```{r figure-4b}
-rescue_df <- classify_rescue_outcome(rescue_library, unrepresented_genes)
-
-plot_fig4b_bar(
-  rescue_df,
-  save_path = here("figure", "Fig4B_rescue_outcome_499_genes.png")
-)
-```
