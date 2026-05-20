@@ -11,6 +11,18 @@ output:
 ---
 
 ```{r setup, include=FALSE}
+# seqfold_init <- "C:/Users/stefa/AppData/Local/R/cache/R/basilisk/1.22.0/crisprScore/1.14.0/rs3__basilisk/lib/site-packages/seqfold/__init__.py"
+# 
+# content <- readLines(seqfold_init)
+# 
+# content <- gsub(
+#   "from importlib.metadata import version, PackageNotFoundError",
+#   "try:\n    from importlib.metadata import version, PackageNotFoundError\nexcept ImportError:\n    from importlib_metadata import version, PackageNotFoundError",
+#   content
+# )
+# 
+# writeLines(content, seqfold_init)
+
 library(here)
 library(tidyverse)
 library(readxl)
@@ -356,70 +368,94 @@ rescue_library_df <- rescue_library_deduped %>%
 
 ## On-target efficiency scoring (Rule Set 3)
 
-```{r on-target-crisprscan}
+```{r on-target-ruleset3}
 data(SpCas9, package = "crisprBase")
 bsgenome     <- BSgenome.Hsapiens.NCBI.T2TCHM13v2.0
 bowtie_index <- here("..", "GuideRefine", "bowtie_index",
                      "T2T-CHM13_bsgenome", "T2T-CHM13_BSgenome")
 
-# Align unique spacers to T2T-CHM13 — perfect matches only (on-target sites)
-aln <- runCrisprBowtie(
-  unique(rescue_library_df$spacer),
-  mode                = "spacer",
-  bsgenome            = bsgenome,
-  crisprNuclease      = SpCas9,
-  n_mismatches        = 0,
-  force_spacer_length = TRUE,
-  canonical           = TRUE,
-  bowtie_index        = bowtie_index
-)
+# Assign each unique spacer to one scoring method based on first occurrence in the
+# deduplicated library (Avana/Brunello/TKOv3 precede Jacquere in lib_disposed_pairs order)
+spacer_method <- rescue_library_deduped %>%
+  distinct(spacer, .keep_all = TRUE) %>%
+  transmute(spacer, method = if_else(source_library == "Jacquere", "Chen2013", "Hsu2013"))
 
-# Retain uniquely mapping spacers only
-aln_unique <- aln %>%
-  filter(!is.na(chr)) %>%
-  group_by(spacer) %>%
-  filter(n() == 1) %>%
-  ungroup()
+non_jaq_spacers <- spacer_method %>% filter(method == "Hsu2013")    %>% pull(spacer)
+jaq_spacers     <- spacer_method %>% filter(method == "Chen2013") %>% pull(spacer)
 
-cat("Uniquely aligned spacers:", nrow(aln_unique), "/",
-    n_distinct(rescue_library_df$spacer), "\n")
+# Helper: align spacers to T2T-CHM13 and retain uniquely mapping hits
+align_unique <- function(spacers) {
+  runCrisprBowtie(
+    spacers,
+    mode                = "spacer",
+    bsgenome            = bsgenome,
+    crisprNuclease      = SpCas9,
+    n_mismatches        = 0,
+    force_spacer_length = TRUE,
+    canonical           = TRUE,
+    bowtie_index        = bowtie_index
+  ) %>%
+    filter(!is.na(chr)) %>%
+    group_by(spacer) %>%
+    filter(n() == 1) %>%
+    ungroup()
+}
 
-# Build GuideSet and compute Rule Set 3 on-target scores
-gs <- GuideSet(
-  ids            = aln_unique$spacer,
-  protospacers   = aln_unique$protospacer,
-  pams           = aln_unique$pam,
-  pam_site       = aln_unique$pam_site,
-  seqnames       = aln_unique$chr,
-  strand         = aln_unique$strand,
-  CrisprNuclease = SpCas9,
-  bsgenome       = bsgenome
-)
+# Helper: build GuideSet from alignment hits
+make_guide_set <- function(aln) {
+  GuideSet(
+    ids            = aln$spacer,
+    protospacers   = aln$protospacer,
+    pams           = aln$pam,
+    pam_site       = aln$pam_site,
+    seqnames       = aln$chr,
+    strand         = aln$strand,
+    CrisprNuclease = SpCas9,
+    bsgenome       = bsgenome
+  )
+}
 
-gs <- addOnTargetScores(gs, methods = "crisprscan")
+# --- Score Brunello / Avana / TKOv3 with Hsu 2013 ---
+aln_non_jaq <- align_unique(non_jaq_spacers)
+gs_non_jaq  <- make_guide_set(aln_non_jaq) %>% addOnTargetScores(methods = "ruleset3", tracrRNA = "Hsu2013")
 
-# Join CRISPRscan scores back to the rescue library (NA for unmapped/multi-mapping guides)
-crisprscan_df <- as.data.frame(mcols(gs)) %>%
-  mutate(spacer = names(gs)) %>%
-  select(spacer, score_crisprscan)
+hsu2013_df <- as.data.frame(mcols(gs_non_jaq)) %>%
+  mutate(spacer = names(gs_non_jaq)) %>%
+  select(spacer, ruleset3_score = score_ruleset3)
+
+cat("Uniquely aligned — non-Jacquere (Hsu2013)  :", nrow(aln_non_jaq), "/", length(non_jaq_spacers), "\n")
+
+# --- Score Jacquere with Rule Set 3 ---
+aln_jaq <- align_unique(jaq_spacers)
+gs_jaq  <- make_guide_set(aln_jaq) %>% addOnTargetScores(methods = "ruleset3", tracrRNA = "Chen2013")
+
+ruleset3_df <- as.data.frame(mcols(gs_jaq)) %>%
+  mutate(spacer = names(gs_jaq)) %>%
+  select(spacer, ruleset3_score = score_ruleset3)
+
+cat("Uniquely aligned — Jacquere (Ruleset3)     :", nrow(aln_jaq), "/", length(jaq_spacers), "\n")
+
+# --- Combine scores and join to rescue library ---
+scores_df <- bind_rows(hsu2013_df, ruleset3_df)
+
+cat("RS3 score range (Hsu2013 tracrRNA) :", round(range(hsu2013_df$ruleset3_score,  na.rm = TRUE), 3), "\n")
+cat("RS3 score range (Chen2013 tracrRNA):", round(range(ruleset3_df$ruleset3_score, na.rm = TRUE), 3), "\n")
 
 rescue_library_score_annotated <- rescue_library_df %>%
-  left_join(crisprscan_df, by = "spacer") %>%
-  dplyr::rename("crisprscan_score" = "score_crisprscan") %>%
-  mutate(on_target_efficiency = if_else(crisprscan_score >= 0.5, "High (≥0.5)", "Low (<0.5)"))
+  left_join(scores_df, by = "spacer") %>%
+  mutate(on_target_efficiency = if_else(ruleset3_score >= 0.5, "High (≥0.5)", "Low (<0.5)"))
 
-cat("CRISPRscan score range:", round(range(rescue_library_score_annotated$crisprscan_score, na.rm = TRUE), 3), "\n")
 cat("Guides without score (unmapped/multi-mapping):",
-    sum(is.na(rescue_library_score_annotated$crisprscan_score)), "\n")
+    sum(is.na(rescue_library_score_annotated$ruleset3_score)), "\n")
 
-# Genes with at least 3 high-efficiency guides (CRISPRscan score > 0.5)
+# Genes with at least 3 high-efficiency guides (RS3 score >= 0.5)
 survived_genes_targeted <- rescue_library_score_annotated %>%
-  filter(crisprscan_score >= 0.5) %>%
+  filter(ruleset3_score >= 0.5) %>%
   group_by(gene) %>%
   filter(n() >= 3) %>%
   ungroup()
 
-cat("\nGenes with >= 3 high-efficiency guides (CRISPRscan > 0.5):",
+cat("\nGenes with >= 3 high-efficiency guides (RS3 score >= 0.5):",
     n_distinct(survived_genes_targeted$gene), "\n")
 
 write.xlsx(rescue_library_score_annotated,
@@ -427,7 +463,7 @@ write.xlsx(rescue_library_score_annotated,
            rowNames = FALSE)
 
 write.xlsx(survived_genes_targeted,
-           here("results", "supp_table_3C_aggregated__on_target_guides_represented_genes.xlsx"),
+           here("results", "supp_table_3C_aggregated_on_target_guides_represented_genes.xlsx"),
            rowNames = FALSE)
 
 ```
