@@ -443,19 +443,19 @@ cat("RS3 score range (Chen2013 tracrRNA):", round(range(ruleset3_df$ruleset3_sco
 
 rescue_library_score_annotated <- rescue_library_df %>%
   left_join(scores_df, by = "spacer") %>%
-  mutate(on_target_efficiency = if_else(ruleset3_score >= 0.5, "High (≥0.5)", "Low (<0.5)"))
+  mutate(on_target_efficiency = if_else(ruleset3_score > 0, "High (>0)", "Low (≤0)"))
 
 cat("Guides without score (unmapped/multi-mapping):",
     sum(is.na(rescue_library_score_annotated$ruleset3_score)), "\n")
 
-# Genes with at least 3 high-efficiency guides (RS3 score >= 0.5)
+# Genes with at least 3 high-efficiency guides (RS3 score > 0)
 survived_genes_targeted <- rescue_library_score_annotated %>%
-  filter(ruleset3_score >= 0.5) %>%
+  filter(ruleset3_score > 0) %>%
   group_by(gene) %>%
   filter(n() >= 3) %>%
   ungroup()
 
-cat("\nGenes with >= 3 high-efficiency guides (RS3 score >= 0.5):",
+cat("\nGenes with >= 3 high-efficiency guides (RS3 score > 0):",
     n_distinct(survived_genes_targeted$gene), "\n")
 
 write.xlsx(rescue_library_score_annotated,
