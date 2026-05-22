@@ -10,10 +10,8 @@ output: html_document
 ```{r setup, include=FALSE}
 
 library(tidyverse)
-library(rtracklayer)
 library(GenomicRanges)
 library(data.table)
-library(ape)
 
 ```
 
