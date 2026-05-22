@@ -147,6 +147,7 @@ See [`data/README.md`](data/README.md) for LFC file provenance, and [`data/annot
 | ggpubr | 0.6.3 | Publication-ready ggplot2 figures |
 | ggsignif | 0.6.4 | Significance brackets for ggplot2 |
 | HGNChelper | 0.8.15 | HGNC gene symbol validation and correction |
+| data.table | 1.18.4 | Fast GFF parsing via shell command in T2T annotation |
 | here | 1.0.2 | Project-root-aware file paths |
 | rmarkdown | 2.31 | R Markdown rendering |
 | knitr | 1.51 | Dynamic report generation |
@@ -160,6 +161,8 @@ See [`data/README.md`](data/README.md) for LFC file provenance, and [`data/annot
 | BSgenome | 1.78.0 | Infrastructure for full genome sequences |
 | BSgenome.Hsapiens.UCSC.hg38 | 1.4.5 | hg38 genome sequence |
 | BSgenome.Hsapiens.NCBI.T2T.CHM13v2.0 | 1.5.0 | T2T-CHM13v2.0 genome sequence |
+| BSgenomeForge | 1.10.2 | Build BSgenome package from NCBI assembly |
+| GenomicRanges | 1.62.1 | GRanges construction for T2T annotation |
 | GenomicFeatures | 1.62.0 | Genomic annotation infrastructure |
 | GenomeInfoDbData | 1.2.15 | Chromosome metadata |
 | txdbmaker | 1.6.2 | Build TxDb objects from annotation sources |
