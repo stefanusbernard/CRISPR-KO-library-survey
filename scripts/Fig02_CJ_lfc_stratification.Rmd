@@ -16,8 +16,8 @@ library(tidyverse)
 library(ggsignif)
 library(ggpubr)
 
-source(file.path(dirname(here::here()), "GuideRefine", "GuideRefine_functions.R"))
-source(here::here("scripts", "00_CRISPR-KO-library-survey-functions.R"))
+source(here::here("GuideRefine-functions.R"))
+source(here::here("scripts", "CRISPR-KO-library-survey-functions.R"))
 ```
 
 # Load data (once)
@@ -55,7 +55,7 @@ jacquere_lfc_raw <- load_library_lfc_raw(here::here("data", "library_data", "ori
 # Multi-target sgRNA analysis — Fig2C, SuppFig2A–E
 
 ```{r multi-target-stratify}
-source(here::here("scripts", "00_CRISPR-KO-library-survey-functions.R"))
+source(here::here("scripts", "CRISPR-KO-library-survey-functions.R"))
 
 multi_guides <- c("perfect", "multi-target guides")
 
@@ -95,7 +95,7 @@ visualize_stratify_alignment(jacquere_lfc_multi, "number of perfect on-target al
 # Single mismatch sgRNA analysis — Fig2D, SuppFig2F–J
 
 ```{r single-mismatch-stratify}
-source(here::here("scripts", "00_CRISPR-KO-library-survey-functions.R"))
+source(here::here("scripts", "CRISPR-KO-library-survey-functions.R"))
 
 single_guides <- c("perfect", "single mismatch")
 

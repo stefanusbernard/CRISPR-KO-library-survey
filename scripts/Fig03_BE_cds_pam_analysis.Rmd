@@ -22,7 +22,7 @@ library(crisprVerse)
 library(ggpubr)
 library(openxlsx)
 
-source(here::here("scripts", "00_CRISPR-KO-library-survey-functions.R"))
+source(here::here("scripts", "CRISPR-KO-library-survey-functions.R"))
 ```
 
 ## Constants and helper functions

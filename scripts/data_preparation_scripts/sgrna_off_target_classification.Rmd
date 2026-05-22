@@ -17,8 +17,8 @@ library(BSgenome)
 library(BSgenome.Hsapiens.UCSC.hg38)
 library(BSgenome.Hsapiens.NCBI.T2TCHM13v2.0)
 
-source(file.path(dirname(here::here()), "GuideRefine", "GuideRefine_functions.R"))
-source(here::here("scripts", "00_CRISPR-KO-library-survey-functions.R"))
+source(here::here("GuideRefine-functions.R"))
+source(here::here("scripts", "CRISPR-KO-library-survey-functions.R"))
 ```
 
 # Import alignment data of each sgRNA libraries and library
