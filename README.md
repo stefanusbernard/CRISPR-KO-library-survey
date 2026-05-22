@@ -9,10 +9,9 @@ Analysis of sgRNA alignment quality and gene coverage across five human genome-w
 ```
 CRISPR-KO-library-survey/
 │
-├── scripts/GuideRefine-functions.R                          # Local copy of GuideRefine shared functions
-│
 ├── scripts/
-│   ├── CRISPR-KO-library-survey-functions.R        # Shared R functions for this project
+│   ├── GuideRefine-functions.R                      # Local copy of GuideRefine shared functions
+│   ├── CRISPR-KO-library-survey-functions.R         # Shared R functions for this project
 │   ├── Fig02_AB_Fig03A_library_overview.Rmd         # → Fig2A, Fig2B, Fig3A
 │   ├── Fig02_CJ_lfc_stratification.Rmd              # → Fig2C–D, SuppFig2A–J
 │   ├── Fig03_BE_cds_pam_analysis.Rmd                # → Fig3B–E, SuppFig3A–D
@@ -48,13 +47,9 @@ CRISPR-KO-library-survey/
 │   │   ├── May2026_T2T-CHM13/
 │   │   └── hg38/
 │   ├── hits_change_data/            # DepMap gene effect and LFC data
-│   ├── read_count_data/             # Raw read counts per library/screen
-│   ├── removed_genes_survey/        # Spacer/CDS/PAM data for removed-gene analysis
-│   └── T2T_data/                    # T2T-CHM13v2.0 TxDb SQLite database
+│   └── read_count_data/             # Raw read counts per library/screen
 │
-├── figure/                          # Output figures (.png)
-└── results/                         # Supplementary tables (.xlsx) and result files
-    └── hits_change/                 # Screen hits comparison across library versions
+└── figure/                          # Output figures (.png)
 ```
 
 ---
