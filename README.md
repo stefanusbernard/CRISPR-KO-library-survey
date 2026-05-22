@@ -9,13 +9,18 @@ Analysis of sgRNA alignment quality and gene coverage across five human genome-w
 ```
 CRISPR-KO-library-survey/
 │
+├── GuideRefine-functions.R                          # Local copy of GuideRefine shared functions
+│
 ├── scripts/
-│   ├── 00_CRISPR-KO-library-survey-functions.R     # Shared R functions
+│   ├── CRISPR-KO-library-survey-functions.R        # Shared R functions for this project
 │   ├── Fig02_AB_Fig03A_library_overview.Rmd         # → Fig2A, Fig2B, Fig3A
 │   ├── Fig02_CJ_lfc_stratification.Rmd              # → Fig2C–D, SuppFig2A–J
 │   ├── Fig03_BE_cds_pam_analysis.Rmd                # → Fig3B–E, SuppFig3A–D
 │   ├── SuppTable03_ABC_aggregate_sgrna.Rmd          # → SuppTable3A–C, Fig4A–B
 │   ├── LibrarySurvey_install_req_packages.R         # Package installer (run first)
+│   ├── T2T_annotation_scripts/                      # One-time genome resource setup
+│   │   ├── 01_T2T_gff_to_ccds_conversion.Rmd       # GFF → GRanges annotation object
+│   │   └── 02_forge_T2T_bsgenome.Rmd               # Build BSgenome.Hsapiens.NCBI.T2TCHM13v2.0
 │   └── data_preparation_scripts/
 │       ├── sgrna_off_target_classification.Rmd      # Classifies sgRNA alignments
 │       ├── normalize_lfc_utils.py                   # Shared normalization functions
@@ -72,6 +77,15 @@ Install Python dependencies (for LFC normalization):
 conda install pandas numpy matplotlib seaborn jupyter
 ```
 
+### Step 0 — One-time genome setup (new machine only)
+
+Run the scripts in `scripts/T2T_annotation_scripts/` once to build the genome resources. See [`scripts/T2T_annotation_scripts/README.md`](scripts/T2T_annotation_scripts/README.md) for download instructions and full details.
+
+| Script | Produces |
+|---|---|
+| `01_T2T_gff_to_ccds_conversion.Rmd` | `data/annotation/T2T-CHM13v2.0_gene_annot_granges.rds` |
+| `02_forge_T2T_bsgenome.Rmd` | `BSgenome.Hsapiens.NCBI.T2TCHM13v2.0` R package |
+
 ### Step 1 — Classify sgRNA alignments
 
 Run `scripts/data_preparation_scripts/sgrna_off_target_classification.Rmd` once per library.
@@ -101,15 +115,16 @@ Knit each `.Rmd` in `scripts/` from RStudio or via `rmarkdown::render()`.
 
 ---
 
-## External dependency
+## Shared functions
 
-Scripts source shared functions from the **GuideRefine** project:
+All scripts source two function files at the project root:
 
 ```r
-source("../../GuideRefine/GuideRefine_functions.R")
+source(here::here("GuideRefine-functions.R"))
+source(here::here("scripts", "CRISPR-KO-library-survey-functions.R"))
 ```
 
-Update line 16 of `scripts/00_CRISPR-KO-library-survey-functions.R` if GuideRefine is at a different path.
+`GuideRefine-functions.R` is a local copy of the shared alignment and annotation functions from the GuideRefine pipeline. If you update GuideRefine, copy the updated file here to keep them in sync.
 
 ---
 
