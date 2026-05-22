@@ -1,16 +1,10 @@
 library(here)
-library(ggvenn)
 library(ggbreak)
 library(HGNChelper)
 library(BSgenome)
-library(BSgenome.Hsapiens.UCSC.hg38)
-library(BSgenome.Hsapiens.NCBI.T2T.CHM13v2.0)
 library(tidyverse)
 library(readxl)
-library(VennDiagram)
 library(grid)
-library(paletteer)
-library(RColorBrewer)
 
 source(file.path(dirname(here::here()), "GuideRefine", "GuideRefine_functions.R"))
 

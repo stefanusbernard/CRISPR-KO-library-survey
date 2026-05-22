@@ -13,13 +13,8 @@ output:
 ```{r setup, include=FALSE}
 library(here)
 library(tidyverse)
-library(ggbreak)
-library(clinfun)
 library(ggsignif)
 library(ggpubr)
-library(rstatix)
-library(effsize)
-library(dplyr)
 
 source(file.path(dirname(here::here()), "GuideRefine", "GuideRefine_functions.R"))
 source(here::here("scripts", "00_CRISPR-KO-library-survey-functions.R"))
