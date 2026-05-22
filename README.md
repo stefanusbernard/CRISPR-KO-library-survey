@@ -1,4 +1,4 @@
-# CRISPR-KO Library Survey
+# A survey of multi-targeting and off-targeting sgRNAs across five genome-wide CRISPR-Cas9 knockout screen's sgRNA libraries
 
 Analysis of sgRNA alignment quality and gene coverage across five human genome-wide CRISPR-KO libraries (Avana, Brunello, TKOv3, Yusa, and Jacquere), aligned against the T2T-CHM13v2.0 genome assembly.
 
@@ -14,12 +14,16 @@ CRISPR-KO-library-survey/
 │   ├── Fig02_AB_Fig03A_library_overview.Rmd         # → Fig2A, Fig2B, Fig3A
 │   ├── Fig02_CJ_lfc_stratification.Rmd              # → Fig2C–D, SuppFig2A–J
 │   ├── Fig03_BE_cds_pam_analysis.Rmd                # → Fig3B–E, SuppFig3A–D
-│   ├── Fig04_AB_rescuing_guides.Rmd                 # → Fig4A–B
-│   ├── LibrarySurvey_install_req_packages.R         # Package installer
+│   ├── SuppTable03_ABC_aggregate_sgrna.Rmd          # → SuppTable3A–C, Fig4A–B
+│   ├── LibrarySurvey_install_req_packages.R         # Package installer (run first)
 │   └── data_preparation_scripts/
 │       ├── sgrna_off_target_classification.Rmd      # Classifies sgRNA alignments
 │       ├── normalize_lfc_utils.py                   # Shared normalization functions
-│       └── normalize_{library}_lfc.ipynb            # One notebook per library
+│       ├── normalize_avana_lfc.ipynb
+│       ├── normalize_brunello_lfc.ipynb
+│       ├── normalize_jacquere_lfc.ipynb
+│       ├── normalize_tkov3_lfc.ipynb
+│       └── normalize_yusa_lfc.ipynb
 │
 ├── data/
 │   ├── annotation/                  # Genome annotation files (see annotation/README.md)
@@ -44,7 +48,8 @@ CRISPR-KO-library-survey/
 │   └── T2T_data/                    # T2T-CHM13v2.0 TxDb SQLite database
 │
 ├── figure/                          # Output figures (.png)
-└── results/                         # Supplementary tables (.xlsx)
+└── results/                         # Supplementary tables (.xlsx) and result files
+    └── hits_change/                 # Screen hits comparison across library versions
 ```
 
 ---
@@ -53,11 +58,13 @@ CRISPR-KO-library-survey/
 
 ### Prerequisites
 
-Install R packages:
+**Install R packages first** — run this before any other script:
 
 ```r
 source("scripts/LibrarySurvey_install_req_packages.R")
 ```
+
+This installs all required CRAN and Bioconductor packages. Run it once before proceeding to any of the steps below.
 
 Install Python dependencies (for LFC normalization):
 
@@ -81,7 +88,7 @@ Run each `scripts/data_preparation_scripts/normalize_{library}_lfc.ipynb` in Jup
 
 **Produces:** `data/sgrna_lfc_data/output_normalized/*_normalized_lfc.csv`
 
-### Step 3 — Generate figures
+### Step 3 — Generate figures and supplementary tables
 
 Knit each `.Rmd` in `scripts/` from RStudio or via `rmarkdown::render()`.
 
@@ -90,7 +97,7 @@ Knit each `.Rmd` in `scripts/` from RStudio or via `rmarkdown::render()`.
 | `Fig02_AB_Fig03A_library_overview.Rmd` | Fig2A, Fig2B, Fig3A |
 | `Fig02_CJ_lfc_stratification.Rmd` | Fig2C–D, SuppFig2A–J |
 | `Fig03_BE_cds_pam_analysis.Rmd` | Fig3B–E, SuppFig3A–D |
-| `Fig04_AB_rescuing_guides.Rmd` | Fig4A–B |
+| `SuppTable03_ABC_aggregate_sgrna.Rmd` | SuppTable3A–C, Fig4A–B |
 
 ---
 
@@ -111,3 +118,54 @@ Update line 16 of `scripts/00_CRISPR-KO-library-survey-functions.R` if GuideRefi
 See [`data/README.md`](data/README.md) for LFC file provenance, and [`data/annotation/README.md`](data/annotation/README.md) for genome annotation file sources.
 
 > Large files (`.csv`, `.tsv`, `.xlsx`, `.gz`) are git-ignored. Re-download or copy from GuideRefine if cloning on a new machine.
+
+---
+
+## Tools and versions
+
+### R (4.5.2)
+
+**CRAN packages**
+
+| Package | Version | Purpose |
+|---|---|---|
+| tidyverse | 2.0.0 | Data wrangling and plotting (ggplot2, dplyr, readr, tidyr, purrr) |
+| readxl | 1.5.0 | Read Excel files |
+| openxlsx | 4.2.8.1 | Write Excel files |
+| ggbreak | 0.1.7 | Axis breaks for ggplot2 |
+| UpSetR | 1.4.0 | UpSet intersection plots |
+| ggpubr | 0.6.3 | Publication-ready ggplot2 figures |
+| ggsignif | 0.6.4 | Significance brackets for ggplot2 |
+| HGNChelper | 0.8.15 | HGNC gene symbol validation and correction |
+| here | 1.0.2 | Project-root-aware file paths |
+| rmarkdown | 2.31 | R Markdown rendering |
+| knitr | 1.51 | Dynamic report generation |
+| pandoc | 0.2.0 | Document conversion (system tool via rmarkdown) |
+
+**Bioconductor packages**
+
+| Package | Version | Purpose |
+|---|---|---|
+| BiocManager | 1.30.27 | Bioconductor package installer |
+| BSgenome | 1.78.0 | Infrastructure for full genome sequences |
+| BSgenome.Hsapiens.UCSC.hg38 | 1.4.5 | hg38 genome sequence |
+| BSgenome.Hsapiens.NCBI.T2T.CHM13v2.0 | 1.5.0 | T2T-CHM13v2.0 genome sequence |
+| GenomicFeatures | 1.62.0 | Genomic annotation infrastructure |
+| GenomeInfoDbData | 1.2.15 | Chromosome metadata |
+| txdbmaker | 1.6.2 | Build TxDb objects from annotation sources |
+| crisprVerse | 1.12.0 | CRISPR guide design framework |
+| crisprBase | 1.14.0 | Core CRISPR data structures |
+
+---
+
+### Python (3.12.7)
+
+Notebooks were run using the `depmap_ppi` conda environment (Python 3.12.7).
+
+| Package | Purpose |
+|---|---|
+| pandas | Tabular data manipulation |
+| numpy | Numerical operations (median, MAD normalisation) |
+| matplotlib | Base plotting library |
+| seaborn | Statistical visualisation |
+| jupyter | Interactive notebook environment |
