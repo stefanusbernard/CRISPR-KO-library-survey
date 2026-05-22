@@ -16,7 +16,7 @@ library(tidyverse)
 library(ggsignif)
 library(ggpubr)
 
-source(here::here("GuideRefine-functions.R"))
+source(here::here("scripts", "GuideRefine-functions.R"))
 source(here::here("scripts", "CRISPR-KO-library-survey-functions.R"))
 ```
 

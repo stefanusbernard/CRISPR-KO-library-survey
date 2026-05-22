@@ -6,7 +6,7 @@ library(tidyverse)
 library(readxl)
 library(grid)
 
-source(here::here("GuideRefine-functions.R"))
+source(here::here("scripts", "GuideRefine-functions.R"))
 
 # FUNCTION to import paralog data
 

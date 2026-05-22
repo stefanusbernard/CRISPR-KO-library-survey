@@ -9,7 +9,7 @@ Analysis of sgRNA alignment quality and gene coverage across five human genome-w
 ```
 CRISPR-KO-library-survey/
 │
-├── GuideRefine-functions.R                          # Local copy of GuideRefine shared functions
+├── scripts/GuideRefine-functions.R                          # Local copy of GuideRefine shared functions
 │
 ├── scripts/
 │   ├── CRISPR-KO-library-survey-functions.R        # Shared R functions for this project
@@ -120,11 +120,11 @@ Knit each `.Rmd` in `scripts/` from RStudio or via `rmarkdown::render()`.
 All scripts source two function files at the project root:
 
 ```r
-source(here::here("GuideRefine-functions.R"))
+source(here::here("scripts/GuideRefine-functions.R"))
 source(here::here("scripts", "CRISPR-KO-library-survey-functions.R"))
 ```
 
-`GuideRefine-functions.R` is a local copy of the shared alignment and annotation functions from the GuideRefine pipeline. If you update GuideRefine, copy the updated file here to keep them in sync.
+`scripts/GuideRefine-functions.R` is a local copy of the shared alignment and annotation functions from the GuideRefine pipeline. If you update GuideRefine, copy the updated file here to keep them in sync.
 
 ---
 
