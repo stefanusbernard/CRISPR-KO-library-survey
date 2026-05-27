@@ -15,6 +15,8 @@ library(here)
 library(tidyverse)
 library(ggsignif)
 library(ggpubr)
+library(clinfun)
+library(coin)
 
 source(here::here("scripts", "GuideRefine-functions.R"))
 source(here::here("scripts", "CRISPR-KO-library-survey-functions.R"))
@@ -112,10 +114,8 @@ brunello_lfc_single <- apply_stratification(brunello_lfc_raw, brunello_single[[1
 jacquere_lfc_single <- apply_stratification(jacquere_lfc_raw, jacquere_single[[1]]) %>% mutate(library = "jacquere")  %>% drop_na()
 
 combined_single <- rbind(avana_lfc_single, tkov3_lfc_single, yusa_lfc_single, brunello_lfc_single, jacquere_lfc_single) %>%
-  mutate(
-    library   = factor(library,   levels = c("brunello", "toronto_v3", "yusa", "avana", "jacquere")),
-    alignment = factor(alignment, levels = single_guides)
-  )
+  mutate(library   = factor(library,   levels = c("brunello", "toronto_v3", "yusa", "avana", "jacquere")), 
+         alignment = factor(alignment, levels = single_guides))
 
 ```
 
@@ -181,60 +181,53 @@ print(wilcoxon_fig2d)
 
 ```
 
-# Jonckheere-Terpstra trend test — Supp Fig 2A–2J
+# Jonckheere-Terpstra using clinfun — Supp Fig 2A–2J
 
 Tests the hypothesis that median sgRNA LFC decreases monotonically as the
 number of off-target alignments increases across ordered bins.
 Asymptotic normal approximation; accurate for n > 100 per group.
 
-```{r jt-trend-supp2a-2j}
+```{r jt-clinfun}
+library(clinfun)
 
-# JT statistic computed as sum of Mann-Whitney U over all ordered group pairs (i < j),
-# matching clinfun's convention of counting pairs where x_i < x_j.
-# Asymptotic normal approximation used for z-score and p-value.
-run_jt <- function(df, fig_label, lib_name, analysis) {
-  g      <- as.numeric(df$alignment_bin)
-  x      <- df$mean
-  groups <- sort(unique(g))
-  k      <- length(groups)
-  N      <- length(x)
-  n      <- as.integer(table(g))
+run_jt_clinfun <- function(df, fig_label, lib_name, analysis) {
+  g   <- as.numeric(df$alignment_bin)
+  x   <- df$mean
+  N   <- length(x)
+  n   <- as.integer(table(g))
 
-  jt_stat <- 0
-  for (i in seq_len(k - 1)) {
-    for (j in (i + 1):k) {
-      xi <- x[g == groups[i]]
-      xj <- x[g == groups[j]]
-      jt_stat <- jt_stat + suppressWarnings(wilcox.test(xj, xi)$statistic)
-    }
-  }
+  # clinfun for the JT statistic; p.value overflows for large N so compute manually
+  res     <- jonckheere.test(x, g, alternative = "decreasing", nperm = 0)
+  jt_stat <- as.numeric(res$statistic)
 
   mu     <- (N^2 - sum(n^2)) / 4
   sigma2 <- (N^2 * (2*N + 3) - sum(n^2 * (2*n + 3))) / 72
   z      <- (jt_stat - mu) / sqrt(sigma2)
 
-  tibble(figure       = fig_label,
-         library      = lib_name,
-         analysis     = analysis,
-         n_total      = N,
-         JT_statistic = round(jt_stat),
-         z_score      = round(z, 1),
-         p_value      = pnorm(z))
+  tibble(
+    figure       = fig_label,
+    library      = lib_name,
+    analysis     = analysis,
+    n_total      = N,
+    JT_statistic = round(jt_stat),
+    z_score      = round(z, 1),
+    p_value      = pnorm(z)
+  )
 }
 
-jt_results <- bind_rows(
-  run_jt(brunello_lfc_multi,  "SuppFig2A", "Brunello",  "Multi-target guides"),
-  run_jt(tkov3_lfc_multi,     "SuppFig2B", "TKOv3",     "Multi-target guides"),
-  run_jt(yusa_lfc_multi,      "SuppFig2C", "Yusa",      "Multi-target guides"),
-  run_jt(avana_lfc_multi,     "SuppFig2D", "Avana",     "Multi-target guides"),
-  run_jt(jacquere_lfc_multi,  "SuppFig2E", "Jacquere",  "Multi-target guides"),
-  run_jt(brunello_lfc_single, "SuppFig2F", "Brunello",  "Single mismatch off-target"),
-  run_jt(yusa_lfc_single,     "SuppFig2G", "Yusa",      "Single mismatch off-target"),
-  run_jt(tkov3_lfc_single,    "SuppFig2H", "TKOv3",     "Single mismatch off-target"),
-  run_jt(avana_lfc_single,    "SuppFig2I", "Avana",     "Single mismatch off-target"),
-  run_jt(jacquere_lfc_single, "SuppFig2J", "Jacquere",  "Single mismatch off-target")
+jt_clinfun_results <- bind_rows(
+  run_jt_clinfun(brunello_lfc_multi,  "SuppFig2A", "Brunello",  "Multi-target guides"),
+  run_jt_clinfun(tkov3_lfc_multi,     "SuppFig2B", "TKOv3",     "Multi-target guides"),
+  run_jt_clinfun(yusa_lfc_multi,      "SuppFig2C", "Yusa",      "Multi-target guides"),
+  run_jt_clinfun(avana_lfc_multi,     "SuppFig2D", "Avana",     "Multi-target guides"),
+  run_jt_clinfun(jacquere_lfc_multi,  "SuppFig2E", "Jacquere",  "Multi-target guides"),
+  run_jt_clinfun(brunello_lfc_single, "SuppFig2F", "Brunello",  "Single mismatch off-target"),
+  run_jt_clinfun(tkov3_lfc_single,    "SuppFig2G", "TKOv3",     "Single mismatch off-target"),
+  run_jt_clinfun(yusa_lfc_single,     "SuppFig2H", "Yusa",      "Single mismatch off-target"),
+  run_jt_clinfun(avana_lfc_single,    "SuppFig2I", "Avana",     "Single mismatch off-target"),
+  run_jt_clinfun(jacquere_lfc_single, "SuppFig2J", "Jacquere",  "Single mismatch off-target")
 )
-print(jt_results)
+print(jt_clinfun_results)
 
 # figure    library  analysis            n_total JT_statistic z_score   p_value
 #    <chr>     <chr>    <chr>                 <int>        <dbl>   <dbl>     <dbl>
@@ -244,8 +237,8 @@ print(jt_results)
 #  4 SuppFig2D Avana    Multi-target guides   64887     65877308   -69.4 0        
 #  5 SuppFig2E Jacquere Multi-target guides   53087     20629019   -22.2 2.58e-109
 #  6 SuppFig2F Brunello Single mismatch of…   70743    173872602   -16.7 1.17e- 62
-#  7 SuppFig2G Yusa     Single mismatch of…   85511    210035071   -29.8 4.57e-196
-#  8 SuppFig2H TKOv3    Single mismatch of…   67697     88313450    -9   1.24e- 19
+#  7 SuppFig2G TKOv3    Single mismatch of…   67697     88313450    -9   1.24e- 19
+#  8 SuppFig2H Yusa     Single mismatch of…   85511    210035071   -29.8 4.57e-196
 #  9 SuppFig2I Avana    Single mismatch of…   66400    171715438   -19.5 7.67e- 85
 # 10 SuppFig2J Jacquere Single mismatch of…   57679    121786702   -27.8 4.84e-170
 
