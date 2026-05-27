@@ -166,8 +166,17 @@ See [`data/README.md`](data/README.md) for LFC file provenance, and [`data/annot
 | GenomicFeatures | 1.62.0 | Genomic annotation infrastructure |
 | GenomeInfoDbData | 1.2.15 | Chromosome metadata |
 | txdbmaker | 1.6.2 | Build TxDb objects from annotation sources |
-| crisprVerse | 1.12.0 | CRISPR guide design framework |
+| crisprVerse | 1.12.0 | CRISPR guide design framework (meta-package) |
 | crisprBase | 1.14.0 | Core CRISPR data structures |
+| crisprDesign | 1.12.0 | GuideSet construction and on-target scoring |
+| crisprBowtie | 1.14.0 | Bowtie-based sgRNA alignment |
+| crisprScore | 1.14.0 | On-target efficiency scoring (Rule Set 3) |
+
+**Base R packages**
+
+| Package | Version | Purpose |
+|---|---|---|
+| stats | 4.5.2 | Wilcoxon rank-sum test, normal distribution (`wilcox.test`, `pnorm`, `cor`) |
 
 ---
 
