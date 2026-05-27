@@ -101,4 +101,11 @@ Each notebook applies the same two-step normalization via `normalize_lfc_utils.p
 1. **Median-MAD normalization** — each LFC column is centred by its median and scaled by its MAD, making distributions comparable across screens.
 2. **Essential-gene scaling** — LFC values are divided by the mean absolute LFC of Hart 2014 core-essential genes (`data/sgrna_lfc_data/constitutive_core_essential_hart_2014.csv`), anchoring the scale so that essential-gene depletion corresponds to approximately −1.
 
-The notebooks were run using the `depmap_ppi` conda environment (Python 3.12.7).
+The notebooks were run using the `depmap_ppi` conda environment (Python 3.12.7, Anaconda distribution). The full environment is exported to [`depmap_ppi_environment.yml`](depmap_ppi_environment.yml) in this directory — recreate it with:
+
+```bash
+conda env create -f scripts/data_preparation_scripts/depmap_ppi_environment.yml
+conda activate depmap_ppi
+```
+
+Key package versions: pandas 2.2.2, numpy 1.26.4, matplotlib 3.9.2, seaborn 0.13.2, jupyterlab 4.2.5.
