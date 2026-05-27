@@ -63,30 +63,6 @@ disposed_jacquere <- import_list_off_target_guides(here::here("data", "guiderefi
 
 ```
 
-# For HG38 use this chunk code
-
-```{r}
-
-annotation <- here::here("data", "annotation", "CCDS.20221027.txt")
-genome_type_version <- "hg38"
-bsgenome <- BSgenome.Hsapiens.UCSC.hg38
-
-# hg38
-avana_alignment_meyers <- import_sgrna_library_alignment(here::here("data", "sgrna_lfc_data", "hg38_alignment", "avana_library_aln.csv"), genome_type_version)
-brunello_alignment <- import_sgrna_library_alignment(here::here("data", "sgrna_lfc_data", "hg38_alignment", "broadgpp-brunello-library-contents_aln.csv"), genome_type_version)
-toronto_alignment <- import_sgrna_library_alignment(here::here("data", "sgrna_lfc_data", "hg38_alignment", "tkov3_guide_sequence_aln.csv"), genome_type_version)
-yusa_alignment <- import_sgrna_library_alignment(here::here("data", "sgrna_lfc_data", "hg38_alignment", "yusa_hcrispr_ko_grnas_aln.csv"), genome_type_version)
-jacquere_alignment <- import_sgrna_library_alignment(here::here("data", "sgrna_lfc_data", "hg38_alignment", "Jacquere_PerGuideAnnotations_Quota4_aln.csv"), genome_type_version)
-
-# list_removed_sgrna sgRNAs
-disposed_avana <- import_list_off_target_guides(here::here("data", "guiderefine_output", "hg38", "old_public_library_result", "avana_library_disposed_sgRNAs.tsv"))
-disposed_brunello <- import_list_off_target_guides(here::here("data", "guiderefine_output", "hg38", "old_public_library_result", "broadgpp-brunello-library-contents_disposed_sgRNAs.tsv"))
-disposed_toronto <- import_list_off_target_guides(here::here("data", "guiderefine_output", "hg38", "old_public_library_result", "tkov3_guide_sequence_disposed_sgRNAs.tsv"))
-disposed_yusa <- import_list_off_target_guides(here::here("data", "guiderefine_output", "hg38", "old_public_library_result", "yusa_hcrispr_ko_grnas_disposed_sgRNAs.tsv"))
-disposed_jacquere <- import_list_off_target_guides(here::here("data", "guiderefine_output", "hg38", "old_public_library_result", "Jacquere_PerGuideAnnotations_Quota4_disposed_sgRNAs.tsv"))
-
-```
-
 # Classify the sgRNAs in each libraries
 
 ```{r}
