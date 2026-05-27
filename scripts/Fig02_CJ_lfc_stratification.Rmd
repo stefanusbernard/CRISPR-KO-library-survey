@@ -16,7 +16,6 @@ library(tidyverse)
 library(ggsignif)
 library(ggpubr)
 library(clinfun)
-library(coin)
 
 source(here::here("scripts", "GuideRefine-functions.R"))
 source(here::here("scripts", "CRISPR-KO-library-survey-functions.R"))
