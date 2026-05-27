@@ -146,6 +146,7 @@ See [`data/README.md`](data/README.md) for LFC file provenance, and [`data/annot
 | UpSetR | 1.4.0 | UpSet intersection plots |
 | ggpubr | 0.6.3 | Publication-ready ggplot2 figures |
 | ggsignif | 0.6.4 | Significance brackets for ggplot2 |
+| clinfun | 1.1.5 | Jonckheere-Terpstra trend test (`jonckheere.test`) |
 | HGNChelper | 0.8.15 | HGNC gene symbol validation and correction |
 | data.table | 1.18.4 | Fast GFF parsing via shell command in T2T annotation |
 | here | 1.0.2 | Project-root-aware file paths |
