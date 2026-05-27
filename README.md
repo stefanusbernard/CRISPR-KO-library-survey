@@ -66,10 +66,11 @@ source("scripts/LibrarySurvey_install_req_packages.R")
 
 This installs all required CRAN and Bioconductor packages. Run it once before proceeding to any of the steps below.
 
-Install Python dependencies (for LFC normalization):
+Install Python dependencies (for LFC normalization) by recreating the exact conda environment:
 
 ```bash
-conda install pandas numpy matplotlib seaborn jupyter
+conda env create -f scripts/data_preparation_scripts/depmap_ppi_environment.yml
+conda activate depmap_ppi
 ```
 
 ### Step 0 — One-time genome setup (new machine only)
@@ -183,12 +184,16 @@ See [`data/README.md`](data/README.md) for LFC file provenance, and [`data/annot
 
 ### Python (3.12.7)
 
-Notebooks were run using the `depmap_ppi` conda environment (Python 3.12.7).
+Notebooks were run using the `depmap_ppi` conda environment (Python 3.12.7, Anaconda distribution). The full environment specification is exported to [`scripts/data_preparation_scripts/depmap_ppi_environment.yml`](scripts/data_preparation_scripts/depmap_ppi_environment.yml).
 
-| Package | Purpose |
-|---|---|
-| pandas | Tabular data manipulation |
-| numpy | Numerical operations (median, MAD normalisation) |
-| matplotlib | Base plotting library |
-| seaborn | Statistical visualisation |
-| jupyter | Interactive notebook environment |
+| Package | Version | Purpose |
+|---|---|---|
+| pandas | 2.2.2 | Tabular data manipulation |
+| numpy | 1.26.4 | Numerical operations (median, MAD normalisation) |
+| matplotlib | 3.9.2 | Base plotting library |
+| seaborn | 0.13.2 | Statistical visualisation |
+| jupyterlab | 4.2.5 | Interactive notebook environment |
+| scipy | 1.14.1 | Scientific computing |
+| scikit-learn | 1.5.1 | Machine learning utilities |
+| statsmodels | 0.14.4 | Statistical modelling |
+| openpyxl | 3.1.5 | Excel file I/O |
