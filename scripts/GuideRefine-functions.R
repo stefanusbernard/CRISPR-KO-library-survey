@@ -2,6 +2,12 @@ library(tidyverse)
 
 STANDARD_CHROMOSOMES <- paste0("chr", c(1:22, "X", "Y"))
 
+# Filter alignment data to standard chromosomes (chr1-22, chrX, chrY).
+# Mirrors the inline filtering in GuideRefine.Rmd for use in downstream analysis.
+alignment_normal_chr <- function(alignment) {
+  alignment %>% filter(chr %in% STANDARD_CHROMOSOMES | is.na(chr))
+}
+
 #### MAIN FUNCTIONS
 
 # function_df_count
