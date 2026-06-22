@@ -270,8 +270,7 @@ saveDb(T2T_txdb, here::here("data", "T2T_data", "TxDb_T2T-CHM13v2.sqlite"))
 
 T2T_txdb <- loadDb(here::here("data", "T2T_data", "TxDb_T2T-CHM13v2.sqlite"))
 
-# 499 removed genes (out of 520) mapped to T2T-CHM13; 5 genes lost due to annotation issues
-# (KRTAP5-1, KRTAP5-10, PLA2G10, TAS2R43, UPK3BL1)
+# 499 removed genes (out of 520) mapped to T2T-CHM13
 removed_genes_cds <- calculate_feature_length(T2T_txdb, unique(all_spacers_cds_removed_genes$gene_id), feature = "cds")
 
 # 18,562 control genes (out of 18,777) mapped to T2T-CHM13
