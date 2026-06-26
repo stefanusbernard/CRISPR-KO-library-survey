@@ -1,0 +1,200 @@
+---
+title: "Comparison of sgRNA off-target classification between T2T-CHM13 and GRCh38"
+author: "Author: Stefanus Bernard"
+date: "Date: `r format(Sys.time(), '%d %B %Y')`"
+output:
+  html_document :
+    theme : cerulean
+    toc : true
+    toc_float : true
+    number_section : true
+---
+
+```{r setup, include=FALSE}
+library(here)
+library(tidyverse)
+
+source(here::here("scripts", "CRISPR-KO-library-survey-functions.R"))
+```
+
+# Load classification files for both genome builds
+
+```{r}
+libraries <- list(
+  avana    = here::here("data", "sgrna_lfc_data", "avana_data"),
+  brunello = here::here("data", "sgrna_lfc_data", "brunello_data"),
+  tkov3    = here::here("data", "sgrna_lfc_data", "tkov3_data"),
+  yusa     = here::here("data", "sgrna_lfc_data", "yusa_data"),
+  jacquere = here::here("data", "sgrna_lfc_data", "jacquere_data")
+)
+
+load_classification <- function(dir_path, library_name, genome) {
+  file_path <- file.path(dir_path, paste0(library_name, "_sgrna_alignment_classification_", genome, ".csv"))
+  read_csv(file_path, show_col_types = FALSE) %>%
+    dplyr::select(sgRNA, spacer, gene, n_mismatches, num_alignments, alignment)
+}
+```
+
+# Join T2T and GRCh38 classification per sgRNA, per library
+
+For each library, join on `sgRNA` and compare the `alignment` category assigned under each genome build. Any sgRNA whose category differs between builds is written out to its own diff CSV.
+
+```{r}
+output_dir <- here::here("data", "sgrna_lfc_data", "T2T_vs_hg38_comparison")
+if (!dir.exists(output_dir)) dir.create(output_dir, recursive = TRUE)
+
+compare_library <- function(dir_path, library_name) {
+  t2t  <- load_classification(dir_path, library_name, "T2T")
+  hg38 <- load_classification(dir_path, library_name, "hg38")
+
+  joined <- full_join(
+    t2t, hg38,
+    by = c("sgRNA", "spacer", "gene"),
+    suffix = c("_T2T", "_hg38")
+  )
+
+  diff <- joined %>%
+    filter(alignment_T2T != alignment_hg38 | is.na(alignment_T2T) != is.na(alignment_hg38)) %>%
+    mutate(library = library_name) %>%
+    relocate(library) %>%
+    arrange(gene, sgRNA)
+
+  write_csv(diff, here::here(output_dir, paste0(library_name, "_T2T_vs_hg38_diff.csv")))
+
+  transition <- joined %>%
+    count(alignment_T2T, alignment_hg38, name = "n_sgRNA") %>%
+    mutate(library = library_name) %>%
+    relocate(library)
+
+  list(diff = diff, transition = transition, n_total = nrow(joined), n_diff = nrow(diff))
+}
+
+results <- imap(libraries, compare_library)
+```
+
+# Per-library summary
+
+```{r}
+summary_table <- map_dfr(names(results), function(lib) {
+  tibble(
+    library = lib,
+    n_sgRNA_total = results[[lib]]$n_total,
+    n_sgRNA_discordant = results[[lib]]$n_diff,
+    pct_discordant = round(100 * results[[lib]]$n_diff / results[[lib]]$n_total, 3)
+  )
+})
+
+write_csv(summary_table, here::here(output_dir, "summary_discordance_per_library.csv"))
+summary_table
+```
+
+# Transition matrix: which categories shift between builds
+
+For each library, this shows how many sgRNAs moved from a given T2T category to a given GRCh38 category (only rows where the two differ).
+
+```{r}
+all_transitions <- map_dfr(results, ~ .x$transition) %>%
+  filter(alignment_T2T != alignment_hg38 | is.na(alignment_T2T) != is.na(alignment_hg38)) %>%
+  arrange(library, desc(n_sgRNA))
+
+write_csv(all_transitions, here::here(output_dir, "transition_matrix_all_libraries.csv"))
+all_transitions
+```
+
+# Net change in multi-target and off-target counts (T2T minus GRCh38)
+
+```{r}
+category_totals <- function(df, genome_col) {
+  df %>%
+    count(alignment = .data[[genome_col]], name = "n") %>%
+    filter(!is.na(alignment))
+}
+
+net_change <- map_dfr(names(results), function(lib) {
+  t2t  <- load_classification(libraries[[lib]], lib, "T2T")
+  hg38 <- load_classification(libraries[[lib]], lib, "hg38")
+
+  full_join(
+    count(t2t, alignment, name = "n_T2T"),
+    count(hg38, alignment, name = "n_hg38"),
+    by = "alignment"
+  ) %>%
+    mutate(across(c(n_T2T, n_hg38), ~ replace_na(.x, 0)),
+           net_T2T_minus_hg38 = n_T2T - n_hg38,
+           library = lib) %>%
+    relocate(library)
+})
+
+write_csv(net_change, here::here(output_dir, "category_count_net_change_per_library.csv"))
+net_change
+```
+
+# Figure: GRCh38 vs T2T-CHM13 percentage per category, faceted by library
+
+```{r}
+library_totals <- net_change %>%
+  group_by(library) %>%
+  summarise(total = sum(n_T2T), .groups = "drop")
+
+plot_data <- net_change %>%
+  filter(alignment %in% c("multi-target guides", "single mismatch", "pam-distal double mismatch")) %>%
+  left_join(library_totals, by = "library") %>%
+  pivot_longer(cols = c(n_T2T, n_hg38), names_to = "genome", values_to = "n") %>%
+  mutate(genome = recode(genome, n_T2T = "T2T-CHM13", n_hg38 = "GRCh38"),
+         percentage = round(100 * n / total, 2),
+         alignment = factor(alignment, levels = c("multi-target guides", "single mismatch", "pam-distal double mismatch")),
+         library = factor(library, levels = c("brunello", "tkov3", "yusa", "avana", "jacquere")),
+         genome = factor(genome, levels = c("GRCh38", "T2T-CHM13")))
+
+genome_palette <- c("GRCh38" = "#56B4E9", "T2T-CHM13" = "#E69F00")
+
+comparison_bar_chart <- ggplot(plot_data, aes(x = alignment, y = percentage, fill = genome)) +
+  geom_bar(stat = "identity", position = position_dodge2(padding = 0.2), width = 0.7) +
+  facet_wrap(~ library, nrow = 1,
+             labeller = labeller(library = c(brunello = "Brunello", tkov3 = "TKOv3",
+                                              yusa = "Yusa (Project Score)", avana = "Avana",
+                                              jacquere = "Jacquere"))) +
+  theme_minimal() +
+  labs(title = "", x = "", y = "sgRNA (%)") +
+  scale_x_discrete(labels = c('multi-target guides' = 'Multi-target',
+                               'single mismatch' = 'Single\nmismatch',
+                               'pam-distal double mismatch' = 'PAM-distal\ndouble mismatch')) +
+  geom_text(aes(label = percentage), position = position_dodge2(width = 0.7), vjust = -0.5, size = 3) +
+  theme(axis.text.x = element_text(size = 10, colour = "black"),
+        axis.text.y = element_text(size = 10, colour = "black"),
+        strip.text = element_text(size = 11, face = "bold"),
+        panel.grid.minor = element_blank(),
+        legend.title = element_text(size = 11),
+        legend.text = element_text(size = 10)) +
+  scale_fill_manual(values = genome_palette, name = "Genome build")
+
+comparison_bar_chart
+
+ggsave(
+  width = 16,
+  height = 5,
+  dpi = 300,
+  plot = comparison_bar_chart,
+  filename = here::here("figure", "SuppFig2A_T2T_vs_hg38_category_comparison.png"))
+```
+
+# Table version of SuppFig2A: GRCh38 vs T2T-CHM13 counts and percentages per category, per library
+
+```{r}
+comparison_table <- net_change %>%
+  filter(alignment %in% c("multi-target guides", "single mismatch", "pam-distal double mismatch")) %>%
+  left_join(library_totals, by = "library") %>%
+  mutate(
+    pct_hg38 = round(100 * n_hg38 / total, 2),
+    pct_T2T = round(100 * n_T2T / total, 2),
+    pct_point_change_T2T_minus_hg38 = round(pct_T2T - pct_hg38, 2)
+  ) %>%
+  dplyr::select(library, alignment, n_hg38, pct_hg38, n_T2T, pct_T2T,
+                net_T2T_minus_hg38, pct_point_change_T2T_minus_hg38) %>%
+  mutate(library = factor(library, levels = c("brunello", "tkov3", "yusa", "avana", "jacquere")),
+         alignment = factor(alignment, levels = c("multi-target guides", "single mismatch", "pam-distal double mismatch"))) %>%
+  arrange(library, alignment)
+
+write_csv(comparison_table, here::here(output_dir, "SuppTable2A_T2T_vs_hg38_category_comparison.csv"))
+comparison_table
+```
