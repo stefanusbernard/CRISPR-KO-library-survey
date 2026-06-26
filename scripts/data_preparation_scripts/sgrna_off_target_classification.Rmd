@@ -69,8 +69,8 @@ disposed_jacquere <- import_list_off_target_guides(here::here("data", "guiderefi
 
 # off_target_classification() has three arguments, the second one is looking for PAM-distal single mismatch, you can turn this off by put it as NA. Therefore the PAM-distal single mismatch will be considered as single mismatch sgRNA
 
-avana_classification <- off_target_classification(avana_alignment_meyers, 
-                                                  NA, 
+avana_classification <- off_target_classification(avana_alignment_meyers,
+                                                  NA,
                                                   disposed_avana["pam_distal_double_mismatch_guides"])
 write_csv(avana_classification[[1]], here::here("data", "sgrna_lfc_data", "avana_data", "avana_sgrna_alignment_classification_T2T.csv"))
 
@@ -96,5 +96,62 @@ jacquere_classification <- off_target_classification(jacquere_alignment,
                                                      disposed_jacquere["pam_distal_double_mismatch_guides"])
 
 write_csv(jacquere_classification[[1]], here::here("data", "sgrna_lfc_data", "jacquere_data", "jacquere_sgrna_alignment_classification_T2T.csv"))
+
+```
+
+# For hg38 use this chunk code
+
+```{r}
+
+genome_type_version_hg38 <- "hg38"
+bsgenome_hg38 <- BSgenome.Hsapiens.UCSC.hg38
+
+# hg38
+avana_alignment_meyers_hg38 <- import_sgrna_library_alignment(here::here("data", "sgrna_lfc_data", "hg38_alignment", "avana_library_aln.csv"), genome_type_version_hg38)
+brunello_alignment_hg38 <- import_sgrna_library_alignment(here::here("data", "sgrna_lfc_data", "hg38_alignment", "broadgpp-brunello-library-contents_aln.csv"), genome_type_version_hg38)
+toronto_alignment_hg38 <- import_sgrna_library_alignment(here::here("data", "sgrna_lfc_data", "hg38_alignment", "tkov3_guide_sequence_aln.csv"), genome_type_version_hg38)
+yusa_alignment_hg38 <- import_sgrna_library_alignment(here::here("data", "sgrna_lfc_data", "hg38_alignment", "yusa_hcrispr_ko_grnas_aln.csv"), genome_type_version_hg38)
+jacquere_alignment_hg38 <- import_sgrna_library_alignment(here::here("data", "sgrna_lfc_data", "hg38_alignment", "Jacquere_PerGuideAnnotations_Quota4_aln.csv"), genome_type_version_hg38)
+
+# list_removed_sgrna sgRNAs
+disposed_avana_hg38 <- import_list_off_target_guides(here::here("data", "guiderefine_output", "hg38", "avana_library_disposed_sgRNAs.tsv"))
+disposed_brunello_hg38 <- import_list_off_target_guides(here::here("data", "guiderefine_output", "hg38", "broadgpp-brunello-library-contents_disposed_sgRNAs.tsv"))
+disposed_toronto_hg38 <- import_list_off_target_guides(here::here("data", "guiderefine_output", "hg38", "tkov3_guide_sequence_disposed_sgRNAs.tsv"))
+disposed_yusa_hg38 <- import_list_off_target_guides(here::here("data", "guiderefine_output", "hg38", "yusa_hcrispr_ko_grnas_disposed_sgRNAs.tsv"))
+disposed_jacquere_hg38 <- import_list_off_target_guides(here::here("data", "guiderefine_output", "hg38", "Jacquere_PerGuideAnnotations_Quota4_disposed_sgRNAs.tsv"))
+
+```
+
+# Classify the sgRNAs in each libraries — hg38
+
+```{r}
+
+avana_classification_hg38 <- off_target_classification(avana_alignment_meyers_hg38,
+                                                       NA,
+                                                       disposed_avana_hg38["pam_distal_double_mismatch_guides"])
+write_csv(avana_classification_hg38[[1]], here::here("data", "sgrna_lfc_data", "avana_data", "avana_sgrna_alignment_classification_hg38.csv"))
+
+brunello_classification_hg38 <- off_target_classification(brunello_alignment_hg38,
+                                                          NA,
+                                                          disposed_brunello_hg38["pam_distal_double_mismatch_guides"])
+write_csv(brunello_classification_hg38[[1]], here::here("data", "sgrna_lfc_data", "brunello_data", "brunello_sgrna_alignment_classification_hg38.csv"))
+
+toronto_classification_hg38 <- off_target_classification(toronto_alignment_hg38,
+                                                         NA,
+                                                         disposed_toronto_hg38["pam_distal_double_mismatch_guides"])
+
+write_csv(toronto_classification_hg38[[1]], here::here("data", "sgrna_lfc_data", "tkov3_data", "tkov3_sgrna_alignment_classification_hg38.csv"))
+
+yusa_classification_hg38 <- off_target_classification(yusa_alignment_hg38,
+                                                      NA,
+                                                      disposed_yusa_hg38["pam_distal_double_mismatch_guides"])
+
+write_csv(yusa_classification_hg38[[1]], here::here("data", "sgrna_lfc_data", "yusa_data", "yusa_sgrna_alignment_classification_hg38.csv"))
+
+jacquere_classification_hg38 <- off_target_classification(jacquere_alignment_hg38,
+                                                          NA,
+                                                          disposed_jacquere_hg38["pam_distal_double_mismatch_guides"])
+
+write_csv(jacquere_classification_hg38[[1]], here::here("data", "sgrna_lfc_data", "jacquere_data", "jacquere_sgrna_alignment_classification_hg38.csv"))
 
 ```

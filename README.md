@@ -12,10 +12,11 @@ CRISPR-KO-library-survey/
 ├── scripts/
 │   ├── GuideRefine-functions.R                      # Local copy of GuideRefine shared functions
 │   ├── CRISPR-KO-library-survey-functions.R         # Shared R functions for this project
-│   ├── Fig02_AB_Fig03A_library_overview.Rmd         # → Fig2A, Fig2B, Fig3A
-│   ├── Fig02_CJ_lfc_stratification.Rmd              # → Fig2C–D, SuppFig2A–J
-│   ├── Fig03_BE_cds_pam_analysis.Rmd                # → Fig3B–E, SuppFig3A–D
-│   ├── SuppTable03_ABC_aggregate_sgrna.Rmd          # → SuppTable3A–C, Fig4A–B
+│   ├── Fig2A-B_Fig3A_library_overview.Rmd           # → Fig2A, Fig2B, Fig3A
+│   ├── SuppFig2A_T2T_vs_hg38_comparison.Rmd         # → SuppFig2A, SuppTable2A
+│   ├── Fig2C-J_SuppFig2B-K_lfc_stratification.Rmd   # → Fig2C–D, SuppFig2B–K
+│   ├── Fig3B-E_cds_pam_analysis.Rmd                 # → Fig3B–E, SuppFig3A–D
+│   ├── SuppTable3A-C_aggregate_sgrna.Rmd            # → SuppTable3A–C, Fig4A–B
 │   ├── LibrarySurvey_install_req_packages.R         # Package installer (run first)
 │   ├── T2T_annotation_scripts/                      # One-time genome resource setup
 │   │   ├── 01_T2T_gff_to_ccds_conversion.Rmd       # GFF → GRanges annotation object
@@ -84,11 +85,19 @@ Run the scripts in `scripts/T2T_annotation_scripts/` once to build the genome re
 
 ### Step 1 — Classify sgRNA alignments
 
-Run `scripts/data_preparation_scripts/sgrna_off_target_classification.Rmd` once per library.
+Run `scripts/data_preparation_scripts/sgrna_off_target_classification.Rmd`. It classifies every library against **both** genome builds — T2T-CHM13 (needed for the main figures) and GRCh38/hg38 (needed for `SuppFig2A_T2T_vs_hg38_comparison.Rmd`).
+
+**T2T-CHM13:**
 
 **Requires:** alignment CSVs from GuideRefine (`data/sgrna_lfc_data/{library}_data/*_aln.csv`) and disposed sgRNA lists (`data/guiderefine_output/T2T-CHM13/*_disposed_sgRNAs.tsv`).
 
 **Produces:** `data/sgrna_lfc_data/{library}_data/*_sgrna_alignment_classification_T2T.csv`
+
+**GRCh38/hg38:**
+
+**Requires:** alignment CSVs from GuideRefine (`data/sgrna_lfc_data/hg38_alignment/*_aln.csv`) and disposed sgRNA lists (`data/guiderefine_output/hg38/*_disposed_sgRNAs.tsv`).
+
+**Produces:** `data/sgrna_lfc_data/{library}_data/*_sgrna_alignment_classification_hg38.csv`
 
 ### Step 2 — Normalize LFC
 
@@ -104,10 +113,11 @@ Knit each `.Rmd` in `scripts/` from RStudio or via `rmarkdown::render()`.
 
 | Script | Output |
 |---|---|
-| `Fig02_AB_Fig03A_library_overview.Rmd` | Fig2A, Fig2B, Fig3A |
-| `Fig02_CJ_lfc_stratification.Rmd` | Fig2C–D, SuppFig2A–J |
-| `Fig03_BE_cds_pam_analysis.Rmd` | Fig3B–E, SuppFig3A–D |
-| `SuppTable03_ABC_aggregate_sgrna.Rmd` | SuppTable3A–C, Fig4A–B |
+| `Fig2A-B_Fig3A_library_overview.Rmd` | Fig2A, Fig2B, Fig3A |
+| `SuppFig2A_T2T_vs_hg38_comparison.Rmd` | SuppFig2A, SuppTable2A |
+| `Fig2C-J_SuppFig2B-K_lfc_stratification.Rmd` | Fig2C–D, SuppFig2B–K |
+| `Fig3B-E_cds_pam_analysis.Rmd` | Fig3B–E, SuppFig3A–D |
+| `SuppTable3A-C_aggregate_sgrna.Rmd` | SuppTable3A–C, Fig4A–B |
 
 ---
 

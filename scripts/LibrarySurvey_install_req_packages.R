@@ -1,8 +1,11 @@
 # Install all packages required for scripts:
-#   00_CRISPR-KO-library-survey-functions.R
-#   Fig02_AB_Fig03A_library_overview.Rmd
-#   Fig02_CJ_lfc_stratification.Rmd
-#   Fig03_BE_cds_pam_analysis.Rmd
+#   CRISPR-KO-library-survey-functions.R
+#   GuideRefine-functions.R
+#   Fig2A-B_Fig3A_library_overview.Rmd
+#   SuppFig2A_T2T_vs_hg38_comparison.Rmd
+#   Fig2C-J_SuppFig2B-K_lfc_stratification.Rmd
+#   Fig3B-E_cds_pam_analysis.Rmd
+#   SuppTable3A-C_aggregate_sgrna.Rmd
 
 # BiocManager is required to install Bioconductor packages
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
