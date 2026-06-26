@@ -53,7 +53,7 @@ jacquere_lfc_raw <- load_library_lfc_raw(here::here("data", "library_data", "ori
 
 ```
 
-# Multi-target sgRNA analysis — Fig2C, SuppFig2A–E
+# Multi-target sgRNA analysis — Fig2C, SuppFig2B–F
 
 ```{r multi-target-stratify}
 source(here::here("scripts", "CRISPR-KO-library-survey-functions.R"))
@@ -85,15 +85,15 @@ combined_multi <- rbind(avana_lfc_multi, tkov3_lfc_multi, yusa_lfc_multi, brunel
 visualize_two_group(combined_multi,
                     here::here("figure", "Fig2C_combined_library_multi_target.png"))
 
-visualize_stratify_alignment(brunello_lfc_multi, "number of perfect on-target alignment", here::here("figure", "SuppFig2A_brunello_multi_target.png"))
-visualize_stratify_alignment(tkov3_lfc_multi,    "number of perfect on-target alignment", here::here("figure", "SuppFig2B_tkov3_multi_target.png"))
-visualize_stratify_alignment(yusa_lfc_multi,     "number of perfect on-target alignment", here::here("figure", "SuppFig2C_yusa_multi_target.png"))
-visualize_stratify_alignment(avana_lfc_multi,    "number of perfect on-target alignment", here::here("figure", "SuppFig2D_avana_multi_target.png"))
-visualize_stratify_alignment(jacquere_lfc_multi, "number of perfect on-target alignment", here::here("figure", "SuppFig2E_jacquere_multi_target.png"))
+visualize_stratify_alignment(brunello_lfc_multi, "number of perfect on-target alignment", here::here("figure", "SuppFig2B_brunello_multi_target.png"))
+visualize_stratify_alignment(tkov3_lfc_multi,    "number of perfect on-target alignment", here::here("figure", "SuppFig2C_tkov3_multi_target.png"))
+visualize_stratify_alignment(yusa_lfc_multi,     "number of perfect on-target alignment", here::here("figure", "SuppFig2D_yusa_multi_target.png"))
+visualize_stratify_alignment(avana_lfc_multi,    "number of perfect on-target alignment", here::here("figure", "SuppFig2E_avana_multi_target.png"))
+visualize_stratify_alignment(jacquere_lfc_multi, "number of perfect on-target alignment", here::here("figure", "SuppFig2F_jacquere_multi_target.png"))
 
 ```
 
-# Single mismatch sgRNA analysis — Fig2D, SuppFig2F–J
+# Single mismatch sgRNA analysis — Fig2D, SuppFig2G–K
 
 ```{r single-mismatch-stratify}
 source(here::here("scripts", "CRISPR-KO-library-survey-functions.R"))
@@ -125,11 +125,11 @@ visualize_two_group(combined_single,
                     comparison_group = "single mismatch",
                     comparison_label = "Single mismatch")
 
-visualize_stratify_alignment(brunello_lfc_single, "number of single mismatch \noff-target alignment", here::here("figure", "SuppFig2F_brunello_single_mismatch.png"))
-visualize_stratify_alignment(tkov3_lfc_single,    "number of single mismatch \noff-target alignment", here::here("figure", "SuppFig2G_tkov3_single_mismatch.png"))
-visualize_stratify_alignment(yusa_lfc_single,     "number of single mismatch \noff-target alignment", here::here("figure", "SuppFig2H_yusa_single_mismatch.png"))
-visualize_stratify_alignment(avana_lfc_single,    "number of single mismatch \noff-target alignment", here::here("figure", "SuppFig2I_avana_single_mismatch.png"))
-visualize_stratify_alignment(jacquere_lfc_single, "number of single mismatch \noff-target alignment", here::here("figure", "SuppFig2J_jacquere_single_mismatch.png"))
+visualize_stratify_alignment(brunello_lfc_single, "number of single mismatch \noff-target alignment", here::here("figure", "SuppFig2G_brunello_single_mismatch.png"))
+visualize_stratify_alignment(tkov3_lfc_single,    "number of single mismatch \noff-target alignment", here::here("figure", "SuppFig2H_tkov3_single_mismatch.png"))
+visualize_stratify_alignment(yusa_lfc_single,     "number of single mismatch \noff-target alignment", here::here("figure", "SuppFig2I_yusa_single_mismatch.png"))
+visualize_stratify_alignment(avana_lfc_single,    "number of single mismatch \noff-target alignment", here::here("figure", "SuppFig2J_avana_single_mismatch.png"))
+visualize_stratify_alignment(jacquere_lfc_single, "number of single mismatch \noff-target alignment", here::here("figure", "SuppFig2K_jacquere_single_mismatch.png"))
 
 ```
 
@@ -215,30 +215,30 @@ run_jt_clinfun <- function(df, fig_label, lib_name, analysis) {
 }
 
 jt_clinfun_results <- bind_rows(
-  run_jt_clinfun(brunello_lfc_multi,  "SuppFig2A", "Brunello",  "Multi-target guides"),
-  run_jt_clinfun(tkov3_lfc_multi,     "SuppFig2B", "TKOv3",     "Multi-target guides"),
-  run_jt_clinfun(yusa_lfc_multi,      "SuppFig2C", "Yusa",      "Multi-target guides"),
-  run_jt_clinfun(avana_lfc_multi,     "SuppFig2D", "Avana",     "Multi-target guides"),
-  run_jt_clinfun(jacquere_lfc_multi,  "SuppFig2E", "Jacquere",  "Multi-target guides"),
-  run_jt_clinfun(brunello_lfc_single, "SuppFig2F", "Brunello",  "Single mismatch off-target"),
-  run_jt_clinfun(tkov3_lfc_single,    "SuppFig2G", "TKOv3",     "Single mismatch off-target"),
-  run_jt_clinfun(yusa_lfc_single,     "SuppFig2H", "Yusa",      "Single mismatch off-target"),
-  run_jt_clinfun(avana_lfc_single,    "SuppFig2I", "Avana",     "Single mismatch off-target"),
-  run_jt_clinfun(jacquere_lfc_single, "SuppFig2J", "Jacquere",  "Single mismatch off-target")
+  run_jt_clinfun(brunello_lfc_multi,  "SuppFig2B", "Brunello",  "Multi-target guides"),
+  run_jt_clinfun(tkov3_lfc_multi,     "SuppFig2C", "TKOv3",     "Multi-target guides"),
+  run_jt_clinfun(yusa_lfc_multi,      "SuppFig2D", "Yusa",      "Multi-target guides"),
+  run_jt_clinfun(avana_lfc_multi,     "SuppFig2E", "Avana",     "Multi-target guides"),
+  run_jt_clinfun(jacquere_lfc_multi,  "SuppFig2F", "Jacquere",  "Multi-target guides"),
+  run_jt_clinfun(brunello_lfc_single, "SuppFig2G", "Brunello",  "Single mismatch off-target"),
+  run_jt_clinfun(tkov3_lfc_single,    "SuppFig2H", "TKOv3",     "Single mismatch off-target"),
+  run_jt_clinfun(yusa_lfc_single,     "SuppFig2I", "Yusa",      "Single mismatch off-target"),
+  run_jt_clinfun(avana_lfc_single,    "SuppFig2J", "Avana",     "Single mismatch off-target"),
+  run_jt_clinfun(jacquere_lfc_single, "SuppFig2K", "Jacquere",  "Single mismatch off-target")
 )
 print(jt_clinfun_results)
 
 # figure    library  analysis            n_total JT_statistic z_score   p_value
 #    <chr>     <chr>    <chr>                 <int>        <dbl>   <dbl>     <dbl>
-#  1 SuppFig2A Brunello Multi-target guides   67664     61920967   -33.6 3.95e-247
-#  2 SuppFig2B TKOv3    Multi-target guides   66691     52433949   -14.8 8.93e- 50
-#  3 SuppFig2C Yusa     Multi-target guides   82169     61005189   -53.8 0        
-#  4 SuppFig2D Avana    Multi-target guides   64887     65877308   -69.4 0        
-#  5 SuppFig2E Jacquere Multi-target guides   53087     20629019   -22.2 2.58e-109
-#  6 SuppFig2F Brunello Single mismatch of…   70743    173872602   -16.7 1.17e- 62
-#  7 SuppFig2G TKOv3    Single mismatch of…   67697     88313450    -9   1.24e- 19
-#  8 SuppFig2H Yusa     Single mismatch of…   85511    210035071   -29.8 4.57e-196
-#  9 SuppFig2I Avana    Single mismatch of…   66400    171715438   -19.5 7.67e- 85
-# 10 SuppFig2J Jacquere Single mismatch of…   57679    121786702   -27.8 4.84e-170
+#  1 SuppFig2B Brunello Multi-target guides   67664     61920967   -33.6 3.95e-247
+#  2 SuppFig2C TKOv3    Multi-target guides   66691     52433949   -14.8 8.93e- 50
+#  3 SuppFig2D Yusa     Multi-target guides   82169     61005189   -53.8 0
+#  4 SuppFig2E Avana    Multi-target guides   64887     65877308   -69.4 0
+#  5 SuppFig2F Jacquere Multi-target guides   53087     20629019   -22.2 2.58e-109
+#  6 SuppFig2G Brunello Single mismatch of…   70743    173872602   -16.7 1.17e- 62
+#  7 SuppFig2H TKOv3    Single mismatch of…   67697     88313450    -9   1.24e- 19
+#  8 SuppFig2I Yusa     Single mismatch of…   85511    210035071   -29.8 4.57e-196
+#  9 SuppFig2J Avana    Single mismatch of…   66400    171715438   -19.5 7.67e- 85
+# 10 SuppFig2K Jacquere Single mismatch of…   57679    121786702   -27.8 4.84e-170
 
 ```
