@@ -28,6 +28,9 @@ libraries <- list(
   jacquere = here::here("data", "sgrna_lfc_data", "jacquere_data")
 )
 
+library_levels <- c("brunello", "tkov3", "yusa", "avana", "jacquere")
+alignment_levels <- c("multi-target guides", "single mismatch", "pam-distal double mismatch")
+
 load_classification <- function(dir_path, library_name, genome) {
   file_path <- file.path(dir_path, paste0(library_name, "_sgrna_alignment_classification_", genome, ".csv"))
   read_csv(file_path, show_col_types = FALSE) %>%
@@ -66,7 +69,14 @@ compare_library <- function(dir_path, library_name) {
     mutate(library = library_name) %>%
     relocate(library)
 
-  list(diff = diff, transition = transition, n_total = nrow(joined), n_diff = nrow(diff))
+  counts <- full_join(
+    count(t2t, alignment, name = "n_T2T"),
+    count(hg38, alignment, name = "n_hg38"),
+    by = "alignment"
+  )
+
+  list(diff = diff, transition = transition, counts = counts,
+       n_total = nrow(joined), n_diff = nrow(diff))
 }
 
 results <- imap(libraries, compare_library)
@@ -104,21 +114,8 @@ all_transitions
 # Net change in multi-target and off-target counts (T2T minus GRCh38)
 
 ```{r}
-category_totals <- function(df, genome_col) {
-  df %>%
-    count(alignment = .data[[genome_col]], name = "n") %>%
-    filter(!is.na(alignment))
-}
-
 net_change <- map_dfr(names(results), function(lib) {
-  t2t  <- load_classification(libraries[[lib]], lib, "T2T")
-  hg38 <- load_classification(libraries[[lib]], lib, "hg38")
-
-  full_join(
-    count(t2t, alignment, name = "n_T2T"),
-    count(hg38, alignment, name = "n_hg38"),
-    by = "alignment"
-  ) %>%
+  results[[lib]]$counts %>%
     mutate(across(c(n_T2T, n_hg38), ~ replace_na(.x, 0)),
            net_T2T_minus_hg38 = n_T2T - n_hg38,
            library = lib) %>%
@@ -129,52 +126,96 @@ write_csv(net_change, here::here(output_dir, "category_count_net_change_per_libr
 net_change
 ```
 
-# Figure: GRCh38 vs T2T-CHM13 percentage per category, faceted by library
+# Figure: GRCh38 vs T2T-CHM13 percentage per category and genome build
 
 ```{r}
 library_totals <- net_change %>%
   group_by(library) %>%
   summarise(total = sum(n_T2T), .groups = "drop")
 
+library_palette <- c(
+  "brunello" = "#E69F00",
+  "tkov3"    = "#56B4E9",
+  "yusa"     = "#009E73",
+  "avana"    = "#F0E442",
+  "jacquere" = "#0072B2"
+)
+
+x_group_levels <- c(
+  "multi-target guides · GRCh38",
+  "multi-target guides · T2T-CHM13",
+  "single mismatch · GRCh38",
+  "single mismatch · T2T-CHM13",
+  "pam-distal double mismatch · GRCh38",
+  "pam-distal double mismatch · T2T-CHM13"
+)
+
+x_group_labels <- c(
+  "multi-target guides · GRCh38"            = "Multi-target sgRNA\n(GRCh38)",
+  "multi-target guides · T2T-CHM13"         = "Multi-target sgRNA\n(T2T-CHM13)",
+  "single mismatch · GRCh38"               = "Single mismatch sgRNA\n(GRCh38)",
+  "single mismatch · T2T-CHM13"            = "Single mismatch sgRNA\n(T2T-CHM13)",
+  "pam-distal double mismatch · GRCh38"    = "PAM-distal double\nmismatch sgRNA\n(GRCh38)",
+  "pam-distal double mismatch · T2T-CHM13" = "PAM-distal double\nmismatch sgRNA\n(T2T-CHM13)"
+)
+
 plot_data <- net_change %>%
-  filter(alignment %in% c("multi-target guides", "single mismatch", "pam-distal double mismatch")) %>%
+  filter(alignment %in% alignment_levels) %>%
   left_join(library_totals, by = "library") %>%
   pivot_longer(cols = c(n_T2T, n_hg38), names_to = "genome", values_to = "n") %>%
-  mutate(genome = recode(genome, n_T2T = "T2T-CHM13", n_hg38 = "GRCh38"),
-         percentage = round(100 * n / total, 2),
-         alignment = factor(alignment, levels = c("multi-target guides", "single mismatch", "pam-distal double mismatch")),
-         library = factor(library, levels = c("brunello", "tkov3", "yusa", "avana", "jacquere")),
-         genome = factor(genome, levels = c("GRCh38", "T2T-CHM13")))
+  mutate(
+    genome           = recode(genome, n_T2T = "T2T-CHM13", n_hg38 = "GRCh38"),
+    percentage       = round(100 * n / total, 2),
+    percentage_label = sprintf("%.2f", percentage),
+    library          = factor(library, levels = library_levels),
+    x_group          = factor(paste(alignment, genome, sep = " · "), levels = x_group_levels)
+  )
 
-genome_palette <- c("GRCh38" = "#56B4E9", "T2T-CHM13" = "#E69F00")
-
-comparison_bar_chart <- ggplot(plot_data, aes(x = alignment, y = percentage, fill = genome)) +
+comparison_bar_chart <- ggplot(plot_data, aes(x = x_group, y = percentage, fill = library)) +
   geom_bar(stat = "identity", position = position_dodge2(padding = 0.2), width = 0.7) +
-  facet_wrap(~ library, nrow = 1,
-             labeller = labeller(library = c(brunello = "Brunello", tkov3 = "TKOv3",
-                                              yusa = "Yusa (Project Score)", avana = "Avana",
-                                              jacquere = "Jacquere"))) +
+  geom_vline(xintercept = c(2.5, 4.5), linetype = "dashed", colour = "#555555", linewidth = 0.7) +
   theme_minimal() +
   labs(title = "", x = "", y = "sgRNA (%)") +
-  scale_x_discrete(labels = c('multi-target guides' = 'Multi-target',
-                               'single mismatch' = 'Single\nmismatch',
-                               'pam-distal double mismatch' = 'PAM-distal\ndouble mismatch')) +
-  geom_text(aes(label = percentage), position = position_dodge2(width = 0.7), vjust = -0.5, size = 3) +
-  theme(axis.text.x = element_text(size = 10, colour = "black"),
-        axis.text.y = element_text(size = 10, colour = "black"),
-        strip.text = element_text(size = 11, face = "bold"),
-        panel.grid.minor = element_blank(),
-        legend.title = element_text(size = 11),
-        legend.text = element_text(size = 10)) +
-  scale_fill_manual(values = genome_palette, name = "Genome build")
+  scale_x_discrete(labels = x_group_labels) +
+  scale_y_continuous(breaks = seq(0, 10, 2), limits = c(0, 10)) +
+  geom_text(aes(label = percentage_label), position = position_dodge2(width = 0.7), vjust = -0.5, size = 5.25) +
+  theme(
+    axis.text.x       = element_text(size = 20, vjust = 0.7, colour = "black"),
+    axis.text.y       = element_text(size = 20, colour = "black"),
+    axis.title.y      = element_text(size = 20, vjust = 0.5, margin = margin(r = 10)),
+    panel.grid.major  = element_blank(),
+    panel.grid.minor  = element_blank(),
+    axis.line.x       = element_line(size = 0.5),
+    axis.line.y       = element_line(size = 0.5),
+    axis.ticks.y      = element_line(size = 1),
+    axis.ticks.length = unit(0.15, "cm"),
+    legend.position      = c(0.91, 0.95),
+    legend.justification = c(0.5, 1),
+    legend.background    = element_rect(fill = "white", colour = NA),
+    legend.title         = element_text(size = 20),
+    legend.text          = element_text(size = 18),
+    plot.margin          = margin(1, 1, 1, 1)
+  ) +
+  scale_fill_manual(
+    values = library_palette,
+    name   = "Library",
+    breaks = library_levels,
+    labels = c(
+      "brunello" = "Brunello",
+      "tkov3"    = "TKOv3",
+      "yusa"     = "Yusa (Project Score)",
+      "avana"    = "Avana",
+      "jacquere" = "Jacquere"
+    )
+  )
 
 comparison_bar_chart
 
 ggsave(
-  width = 16,
-  height = 5,
-  dpi = 300,
-  plot = comparison_bar_chart,
+  width    = 20,
+  height   = 7,
+  dpi      = 1000,
+  plot     = comparison_bar_chart,
   filename = here::here("figure", "SuppFig2A_T2T_vs_hg38_category_comparison.png"))
 ```
 
@@ -182,7 +223,7 @@ ggsave(
 
 ```{r}
 comparison_table <- net_change %>%
-  filter(alignment %in% c("multi-target guides", "single mismatch", "pam-distal double mismatch")) %>%
+  filter(alignment %in% alignment_levels) %>%
   left_join(library_totals, by = "library") %>%
   mutate(
     pct_hg38 = round(100 * n_hg38 / total, 2),
@@ -191,8 +232,8 @@ comparison_table <- net_change %>%
   ) %>%
   dplyr::select(library, alignment, n_hg38, pct_hg38, n_T2T, pct_T2T,
                 net_T2T_minus_hg38, pct_point_change_T2T_minus_hg38) %>%
-  mutate(library = factor(library, levels = c("brunello", "tkov3", "yusa", "avana", "jacquere")),
-         alignment = factor(alignment, levels = c("multi-target guides", "single mismatch", "pam-distal double mismatch"))) %>%
+  mutate(library = factor(library, levels = library_levels),
+         alignment = factor(alignment, levels = alignment_levels)) %>%
   arrange(library, alignment)
 
 write_csv(comparison_table, here::here(output_dir, "SuppTable2A_T2T_vs_hg38_category_comparison.csv"))
