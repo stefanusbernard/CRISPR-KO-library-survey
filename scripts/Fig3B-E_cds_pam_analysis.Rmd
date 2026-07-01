@@ -334,11 +334,18 @@ write_csv(all_spacers_cds_data, here::here("data", "removed_genes_survey", "all_
 
 ## CDS length analysis: removed vs control genes
 
-From 520 removed genes, 5 are not mapped to T2T-CHM13 (KRTAP5-1, KRTAP5-10, PLA2G10, TAS2R43, UPK3BL1) — likely annotation or symbol issues.
+From 520 removed genes, 21 are not mapped to T2T-CHM13, they does not exist in this genome build
 
 ### Supp Figure 3A and 3B: Barplot distribution of total CDS length
 
 ```{r cds-length-barplot}
+
+# 21 genes absent from T2T-CHM13v2.0 RefSeq CDS annotation (GCF_009914755.1):
+# CD200R1L, CLN3, CYP4B1, EFCAB13, GSTM2, KCTD16, KRT24, KRT81,
+# KRTAP5-1, KRTAP5-10, KRTAP9-7, LEO1, MS4A14, PLA2G10, PRSS48,
+# SIGLEC5, SPRR3, TAS2R43, TBCD, UPK3BL1, ZNF681
+# All 21 are protein-coding in GRCh38.p14 and present in all 5 CRISPR-KO libraries.
+# See results/supp_table_GRCh38_vs_T2T_21_unmapped_genes.xlsx for full annotation breakdown.
 
 cds_bins   <- c(0, 500, 1000, 1500, 2000, 2500, Inf)
 cds_labels <- c("0–500", "500–1000", "1000–1500", "1500–2000", "2000–2500", ">2500")
