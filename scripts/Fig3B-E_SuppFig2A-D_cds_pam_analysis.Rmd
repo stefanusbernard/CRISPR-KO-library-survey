@@ -1,0 +1,582 @@
+﻿---
+title: "Analysis of commonly removed genes across libraries"
+author: "Author: Stefanus Bernard"
+date: "Date: `r format(Sys.time(), '%d %B %Y')`"
+output:
+  html_document:
+    theme: cerulean
+    toc: true
+    toc_float: true
+    number_section: true
+---
+
+```{r setup, include=FALSE}
+library(here)
+library(tidyverse)
+library(UpSetR)
+library(GenomicFeatures)
+library(BSgenome.Hsapiens.NCBI.T2TCHM13v2.0)
+library(GenomeInfoDbData)
+library(txdbmaker)
+library(crisprVerse)
+library(ggpubr)
+
+source(here::here("scripts", "CRISPR-KO-library-survey-functions.R"))
+```
+
+## Constants and helper functions
+
+```{r helpers}
+
+# RefSeq accession → chromosome name for T2T-CHM13v2.0 (defined once, reused throughout)
+refseq_to_chr <- c(
+  "NC_060925.1" = "1",  "NC_060926.1" = "2",  "NC_060927.1" = "3",
+  "NC_060928.1" = "4",  "NC_060929.1" = "5",  "NC_060930.1" = "6",
+  "NC_060931.1" = "7",  "NC_060932.1" = "8",  "NC_060933.1" = "9",
+  "NC_060934.1" = "10", "NC_060935.1" = "11", "NC_060936.1" = "12",
+  "NC_060937.1" = "13", "NC_060938.1" = "14", "NC_060939.1" = "15",
+  "NC_060940.1" = "16", "NC_060941.1" = "17", "NC_060942.1" = "18",
+  "NC_060943.1" = "19", "NC_060944.1" = "20", "NC_060945.1" = "21",
+  "NC_060946.1" = "22", "NC_060947.1" = "X",  "NC_060948.1" = "Y"
+)
+
+# ---------------------------------------------------------------------------
+# Compute total CDS or exon length (non-redundant) + genomic gene span per gene.
+#   txdb       : TxDb object
+#   gene_list  : character vector of gene IDs to subset
+#   feature    : "cds" or "exon"
+# Returns a data.frame with columns: gene, total_<feature>_length_bp, total_gene_length_bp
+# ---------------------------------------------------------------------------
+calculate_feature_length <- function(txdb, gene_list, feature = c("cds", "exon")) {
+  feature <- match.arg(feature)
+
+  # Gene span
+  genes_gr     <- genes(txdb)
+  genes_sub    <- genes_gr[mcols(genes_gr)$gene_id %in% gene_list]
+  gene_span_df <- data.frame(
+    gene                 = mcols(genes_sub)$gene_id,
+    total_gene_length_bp = width(genes_sub)
+  )
+
+  # Feature (CDS or exon) length — reduce to remove transcript-level duplicates
+  feat_by_gene <- if (feature == "cds") cdsBy(txdb, by = "gene") else exonsBy(txdb, by = "gene")
+  feat_gr      <- feat_by_gene[names(feat_by_gene) %in% gene_list]
+  total_len    <- sum(width(reduce(feat_gr)))
+
+  len_col  <- if (feature == "cds") "total_cds_length_bp" else "total_exon_length_bp"
+  feat_df  <- data.frame(gene = names(total_len), len = as.numeric(total_len))
+  names(feat_df)[2] <- len_col
+  rownames(feat_df) <- NULL
+
+  feat_df %>% left_join(gene_span_df, join_by(gene))
+}
+
+# ---------------------------------------------------------------------------
+# Count unique PAM sites per gene from a spacer data frame.
+# Expects columns: gene_id, pam_site
+# ---------------------------------------------------------------------------
+count_pam_per_gene <- function(spacer_df) {
+  spacer_df %>%
+    distinct(gene_id, pam_site) %>%
+    count(gene_id, name = "num_pam_site")
+}
+
+# ---------------------------------------------------------------------------
+# Compute PAM-site density (PAM sites per kb of CDS) for a set of genes.
+#   spacer_df : output of read_csv for spacer data (needs gene_id, pam_site)
+#   cds_df    : output of calculate_feature_length(..., feature = "cds")
+# ---------------------------------------------------------------------------
+compute_pam_density <- function(spacer_df, cds_df) {
+  count_pam_per_gene(spacer_df) %>%
+    left_join(cds_df, join_by(gene_id == gene)) %>%
+    mutate(pam_density = num_pam_site / total_cds_length_bp * 1000)
+}
+
+# ---------------------------------------------------------------------------
+# Binned barplot: percentage of genes per bin.
+#   data      : data.frame containing the bin column
+#   bin_col   : column name (string) that holds the bin factor
+#   xlabel    : x-axis label
+#   ylim_max  : upper y-axis limit (default 50)
+# ---------------------------------------------------------------------------
+make_bin_barplot <- function(data, bin_col, xlabel, ylim_max = 50) {
+  df <- data %>%
+    count(.data[[bin_col]], name = "num_genes") %>%
+    mutate(percentage = round(num_genes / sum(num_genes) * 100, 2))
+
+  ggplot(df, aes(x = .data[[bin_col]], y = percentage)) +
+    geom_col(fill = "#1E88E5") +
+    geom_text(aes(label = percentage), nudge_y = 2, size = 7) +
+    theme_minimal() +
+    labs(x = xlabel, y = "Percentage of genes (%)") +
+    theme(
+      axis.text.x        = element_text(size = 20, colour = "black"),
+      axis.text.y        = element_text(size = 20, colour = "black"),
+      axis.title.x       = element_text(size = 20, margin = margin(t = 20), colour = "black"),
+      axis.title.y       = element_text(size = 20, margin = margin(r = 20), colour = "black"),
+      axis.ticks         = element_line(size = 1),
+      axis.ticks.length  = unit(0.15, "cm"),
+      axis.line.y.right  = element_blank(),
+      axis.ticks.y.right = element_blank(),
+      axis.text.y.right  = element_blank(),
+      axis.line.x        = element_line(size = 0.5, colour = "black"),
+      axis.line.y        = element_line(size = 0.5, colour = "black"),
+      panel.grid.major   = element_blank(),
+      panel.grid.minor   = element_blank(),
+      legend.position    = "none",
+      plot.margin        = margin(1, 1, 1, 1)
+    ) +
+    ylim(0, ylim_max)
+}
+
+# ---------------------------------------------------------------------------
+# Log10-transformed boxplot comparing removed vs control genes with
+# Wilcoxon significance annotation and per-group n labels.
+#   combined_df  : data.frame with columns gene_status (factor), <y_col>
+#   y_col        : column name string for the log10-transformed variable
+#   ylabel       : y-axis label
+#   sig_label_y  : y position of significance bracket (default 4)
+#   ylim_range   : c(ymin, ymax) for y-axis limits (default c(0, 5))
+# Returns a ggplot object (does NOT save — call ggsave() separately).
+# ---------------------------------------------------------------------------
+make_log10_boxplot <- function(combined_df, y_col, ylabel, sig_label_y = 4, ylim_range = c(0, 5)) {
+
+  p <- ggboxplot(combined_df,
+                 x        = "gene_status",
+                 y        = y_col,
+                 fill     = "gene_status",
+                 outliers = FALSE) +
+    stat_compare_means(
+      comparisons  = list(c("removed genes", "control genes")),
+      method       = "wilcox.test",
+      method.args  = list(alternative = "two.sided"),
+      size         = 5, step.increase = 0.05, tip.length = 0.01,
+      label        = "p.signif", label.y = sig_label_y
+    ) +
+    scale_fill_manual(
+      name   = "",
+      values = c("control genes" = "#1E88E5", "removed genes" = "#E69F00"),
+      labels = c("Other protein-coding genes", "Common genes with < 3 sgRNAs")
+    ) +
+    labs(x = "", y = ylabel) +
+    theme(
+      plot.margin       = margin(10, 10, 25, 10),
+      strip.text.x      = element_text(size = 17.5),
+      axis.text.x       = element_blank(),
+      axis.text.y       = element_text(size = 17.5, colour = "black"),
+      axis.ticks.y      = element_line(size = 1.5),
+      axis.ticks.x      = element_blank(),
+      axis.ticks.length = unit(0.1, "cm"),
+      axis.title.y      = element_text(size = 17.5, vjust = 0.5, margin = margin(r = 20)),
+      panel.grid.major  = element_line(size = 0.5),
+      panel.grid.minor  = element_blank(),
+      axis.line.x       = element_line(size = 0.5),
+      axis.line.y       = element_line(size = 0.5),
+      line              = element_line(size = 2, colour = "black"),
+      legend.position   = "top",
+      legend.direction  = "vertical",
+      legend.text       = element_text(size = 13)
+    ) +
+    ylim(ylim_range[1], ylim_range[2])
+
+  # Add n labels just below the lower whisker of each group
+  stats    <- ggplot_build(p)$data[[1]]
+  count_df <- combined_df %>%
+    distinct() %>%
+    count(gene_status) %>%
+    bind_cols(stats %>% dplyr::select(x, ymin))
+
+  p + geom_text(
+    data  = count_df,
+    aes(x = x, y = ymin - 0.5, label = paste0("n= ", n)),
+    angle = 45, vjust = 0, hjust = 0.5, size = 6
+  )
+}
+```
+
+## Import data
+
+```{r import-data}
+
+removed_genes <- read_csv(here::here("data", "removed_genes_survey", "removed_genes_all_library.csv"))
+
+removed_gene_list_combined <- list(
+  Avana    = na.omit(removed_genes[["avana_removed_genes_all"]]),
+  Brunello = na.omit(removed_genes[["brunello_removed_genes_all"]]),
+  TKOv3    = na.omit(removed_genes[["toronto_removed_genes_all"]]),
+  Yusa     = na.omit(removed_genes[["yusa_removed_genes_all"]]),
+  Jacquere = na.omit(removed_genes[["jacquere_removed_genes_all"]])
+)
+
+# 520 protein-coding genes removed across all 5 CRISPR-KO libraries
+removed_genes_all_libraries <- unique(Reduce(intersect, removed_gene_list_combined))
+
+# Import pre-computed spacer/CDS/PAM-site data for removed and control genes
+all_spacers_cds_removed_genes <- read_csv(here::here("data", "removed_genes_survey", "all_spacers_cds_data_499_removed_genes.csv"))
+all_spacers_cds_control_genes <- read_csv(here::here("data", "removed_genes_survey", "all_spacers_cds_data_18777_genes.csv"))
+
+# Pre-compute PAM counts (reused in barplots, boxplots, and density sections)
+removed_pam_count <- count_pam_per_gene(all_spacers_cds_removed_genes)
+control_pam_count <- count_pam_per_gene(all_spacers_cds_control_genes)
+```
+
+## Figure 3B : UpSet plot commonality of removed genes between 5 libraries
+
+```{r upset-plot}
+
+png(here::here("figure", "Fig3B_removed_genes_all_libraries.png"),
+    width = 14000, height = 7500, res = 1000)
+
+par(mar = c(5, 30, 4, 4),
+    col.axis = "black", col.lab = "black", col = "black",
+    fg = "black", mgp = c(1.5, 0.8, 0))
+
+upset(fromList(removed_gene_list_combined),
+      order.by        = "degree",
+      sets            = c("Jacquere", "Avana", "Yusa", "TKOv3", "Brunello"),
+      keep.order      = TRUE,
+      main.bar.color  = "#000000",
+      sets.bar.color  = "#1E88E5",
+      mainbar.y.label = "Number of genes with < 3 sgRNAs",
+      sets.x.label    = "\nTotal genes",
+      # text.scale: c(intersection size title, intersection size tick labels,
+      #               set size title, set size tick labels, set names, numbers above bars)
+      text.scale      = c(2.5, 2.2, 2.5, 2.2, 2.5, 2.0),
+      point.size      = 4,
+      line.size       = 1.5)
+
+dev.off()
+```
+
+## Hypothesis 1: removed genes may be hard to target
+
+First, build the T2T-CHM13 TxDb file (one-time setup — skip if already done).
+
+```{r create-txdb, eval=FALSE}
+
+T2T_txdb <- txdbmaker::makeTxDbFromGFF(
+  file       = here::here("data", "annotation", "GCF_009914755.1_T2T-CHM13v2.0_genomic.gff.gz"),
+  dataSource = "NCBI T2T Assembly GCF_009914755.1_T2T-CHM13v2.0",
+  organism   = "Homo sapiens"
+)
+saveDb(T2T_txdb, here::here("data", "T2T_data", "TxDb_T2T-CHM13v2.sqlite"))
+
+```
+
+## Compute CDS lengths and gene spans for removed and control genes
+
+```{r compute-cds-lengths}
+
+T2T_txdb <- loadDb(here::here("data", "T2T_data", "TxDb_T2T-CHM13v2.sqlite"))
+
+# 499 removed genes (out of 520) mapped to T2T-CHM13
+removed_genes_cds <- calculate_feature_length(T2T_txdb, unique(all_spacers_cds_removed_genes$gene_id), feature = "cds")
+
+# 18,562 control genes (out of 18,777) mapped to T2T-CHM13
+control_genes_cds <- calculate_feature_length(T2T_txdb, unique(all_spacers_cds_control_genes$gene_id), feature = "cds")
+
+```
+
+## Obtain possible protospacer sites from CDS of removed genes
+
+```{r find-protospacers}
+
+# Subset canonical CDS ranges for removed genes
+cds_by_gene <- cdsBy(T2T_txdb, by = "gene")
+cds_gr      <- cds_by_gene[names(cds_by_gene) %in% removed_genes_all_libraries]
+
+# Keep only canonical NP transcripts
+cds_gr <- endoapply(cds_gr, function(gr) gr[str_detect(gr$cds_name, "NP")])
+
+# Remap RefSeq seqlevels to chromosome numbers
+seqlevels(cds_gr) <- refseq_to_chr[seqlevels(cds_gr)]
+cds_gr <- keepSeqlevels(cds_gr, seqlevels(BSgenome.Hsapiens.NCBI.T2TCHM13v2.0),
+                        pruning.mode = "coarse")
+
+# Flatten for overlap joining
+cds_flat         <- unlist(cds_gr, use.names = FALSE)
+cds_flat$gene_id <- rep(names(cds_gr), elementNROWS(cds_gr))
+df_cds_flat      <- as.data.frame(cds_flat)
+
+# Reduce (de-duplicate isoform-shared exons) before spacer search
+cds_reduced <- unlist(reduce(split(cds_flat, cds_flat$gene_id)), use.names = FALSE)
+
+# Find all SpCas9 protospacers within CDS
+data(SpCas9, package = "crisprBase")
+cds_find_spacer <- findSpacers(cds_reduced,
+                               bsgenome      = BSgenome.Hsapiens.NCBI.T2TCHM13v2.0,
+                               crisprNuclease = SpCas9)
+
+hits <- findOverlaps(cds_find_spacer, cds_flat, type = "within")
+
+all_spacers_cds_data <- data.frame(
+  gene_id      = cds_flat$gene_id[subjectHits(hits)],
+  cds_id       = cds_flat$cds_id[subjectHits(hits)],
+  spacer_chr   = as.character(seqnames(cds_find_spacer)[queryHits(hits)]),
+  spacer_strand = as.character(strand(cds_find_spacer)[queryHits(hits)]),
+  pam          = cds_find_spacer$pam[queryHits(hits)],
+  pam_site     = cds_find_spacer$pam_site[queryHits(hits)],
+  cut_site     = cds_find_spacer$cut_site[queryHits(hits)],
+  spacer_seq   = cds_find_spacer$protospacer[queryHits(hits)],
+  stringsAsFactors = FALSE
+) %>%
+  left_join(df_cds_flat, join_by(gene_id, cds_id)) %>%
+  dplyr::select(-c(seqnames, strand)) %>%
+  dplyr::rename(start_cds  = start,
+                end_cds    = end,
+                chromosome = spacer_chr,
+                strand     = spacer_strand) %>%
+  relocate(cds_name, .before = start_cds)
+
+write_csv(all_spacers_cds_data, here::here("data", "removed_genes_survey", "all_spacers_cds_data_499_removed_genes.csv"))
+```
+
+## CDS length analysis: removed vs control genes
+
+From 520 removed genes, 21 are not mapped to T2T-CHM13, they does not exist in this genome build
+
+### Supp Figure 3A and 3B: Barplot distribution of total CDS length
+
+```{r cds-length-barplot}
+
+# 21 genes absent from T2T-CHM13v2.0 RefSeq CDS annotation (GCF_009914755.1):
+# CD200R1L, CLN3, CYP4B1, EFCAB13, GSTM2, KCTD16, KRT24, KRT81,
+# KRTAP5-1, KRTAP5-10, KRTAP9-7, LEO1, MS4A14, PLA2G10, PRSS48,
+# SIGLEC5, SPRR3, TAS2R43, TBCD, UPK3BL1, ZNF681
+# All 21 are protein-coding in GRCh38.p14 and present in all 5 CRISPR-KO libraries.
+# See results/supp_table_GRCh38_vs_T2T_21_unmapped_genes.xlsx for full annotation breakdown.
+
+cds_bins   <- c(0, 500, 1000, 1500, 2000, 2500, Inf)
+cds_labels <- c("0–500", "500–1000", "1000–1500", "1500–2000", "2000–2500", ">2500")
+
+removed_genes_cds$cds_length_bin <- cut(removed_genes_cds$total_cds_length_bp,
+                                        breaks = cds_bins, labels = cds_labels,
+                                        right = TRUE, include.lowest = TRUE)
+
+control_genes_cds$cds_length_bin <- cut(control_genes_cds$total_cds_length_bp,
+                                        breaks = cds_bins, labels = cds_labels,
+                                        right = TRUE, include.lowest = TRUE)
+
+barplot_cds_removed <- make_bin_barplot(
+  removed_genes_cds, "cds_length_bin", "Total CDS length (bp)"
+)
+barplot_cds_control <- make_bin_barplot(
+  control_genes_cds, "cds_length_bin", "Total CDS length (bp)"
+)
+
+ggsave(here::here("figure", "SuppFig3A_cds_length_499_removed_genes.png"),
+       plot = barplot_cds_removed, width = 11, height = 5, dpi = 1000)
+
+ggsave(here::here("figure", "SuppFig3B_cds_length_18562_control_genes.png"),
+       plot = barplot_cds_control, width = 11, height = 5, dpi = 1000)
+```
+
+### Figure 3C: Boxplot log10 CDS length — removed vs control
+
+```{r cds-length-boxplot}
+
+combined_cds <- bind_rows(
+  removed_genes_cds %>% mutate(gene_status = "removed genes",
+                                log_transform_cds_length = log10(total_cds_length_bp)),
+  control_genes_cds %>% mutate(gene_status = "control genes",
+                                log_transform_cds_length = log10(total_cds_length_bp))
+) %>%
+  mutate(gene_status = factor(gene_status, levels = c("control genes", "removed genes")))
+
+cds_length_boxplot <- make_log10_boxplot(
+  combined_cds,
+  y_col  = "log_transform_cds_length",
+  ylabel = "log10-transformed total CDS length (bp)"
+)
+cds_length_boxplot
+
+ggsave(here::here("figure", "Fig3C_log10_cds_length_removed_genes.png"),
+       plot = cds_length_boxplot, width = 4, height = 6, dpi = 1000)
+```
+
+```{r wilcoxon-fig3c}
+
+# Fig 3C: Wilcoxon rank-sum test (unpaired, two-sided)
+# Comparison: log10(CDS length) of removed genes vs control genes
+# ------------------------------------------------------------------
+# W = 6,153,776    p = 3.87e-36
+# Median log10 CDS length — removed genes : 2.97 (≈ 937 bp)
+# Median log10 CDS length — control genes : 3.15 (≈ 1,400 bp)
+# n removed = 499    n control = 18,562
+
+wt_fig3c <- wilcox.test(log_transform_cds_length ~ gene_status,
+                         data        = combined_cds,
+                         alternative = "two.sided")
+cat("Fig 3C  W =", wt_fig3c$statistic, " p =", wt_fig3c$p.value, "\n")
+combined_cds %>%
+  group_by(gene_status) %>%
+  summarise(median_log10_cds = median(log_transform_cds_length, na.rm = TRUE),
+            n = n())
+
+```
+
+## Protospacer / NGG PAM-site analysis: removed vs control genes
+
+### Supp Figure 3C and 3D : Barplot distribution of protospacer count per gene
+
+```{r pam-count-barplot}
+
+pam_bins   <- c(0, 50, 100, 150, 200, 250, Inf)
+pam_labels <- c("0–50", "50–100", "100–150", "150–200", "200–250", ">250")
+
+removed_pam_count$count_bin <- cut(removed_pam_count$num_pam_site,
+                                   breaks = pam_bins, labels = pam_labels,
+                                   right = TRUE, include.lowest = TRUE)
+
+control_pam_count$count_bin <- cut(control_pam_count$num_pam_site,
+                                   breaks = pam_bins, labels = pam_labels,
+                                   right = TRUE, include.lowest = TRUE)
+
+barplot_pam_removed <- make_bin_barplot(
+  removed_pam_count, "count_bin",
+  "Number of spacer sequences with NGG PAM-site at CDS"
+)
+barplot_pam_control <- make_bin_barplot(
+  control_pam_count, "count_bin",
+  "Number of spacer sequences with NGG PAM-site at CDS"
+)
+
+ggsave(here::here("figure", "SuppFig3C_spacer_pam_499_removed_genes.png"),
+       plot = barplot_pam_removed, width = 9, height = 5, dpi = 1000)
+
+ggsave(here::here("figure", "SuppFig3D_spacer_pam_18562_control_genes.png"),
+       plot = barplot_pam_control, width = 9, height = 5, dpi = 1000)
+```
+
+### Figure 3D: Boxplot log10 PAM count — removed vs control
+
+```{r pam-count-boxplot}
+
+combined_pam <- bind_rows(
+  removed_pam_count %>% mutate(gene_status = "removed genes",
+                                log_transform_num_pam_site = log10(num_pam_site)),
+  control_pam_count %>% mutate(gene_status = "control genes",
+                                log_transform_num_pam_site = log10(num_pam_site))
+) %>%
+  mutate(gene_status = factor(gene_status, levels = c("control genes", "removed genes")))
+
+pam_boxplot <- make_log10_boxplot(
+  combined_pam,
+  y_col  = "log_transform_num_pam_site",
+  ylabel = "log10-transformed protospacer count in CDS"
+)
+pam_boxplot
+
+ggsave(here::here("figure", "Fig3D_log10_pam_removed_genes.png"),
+       plot = pam_boxplot, width = 4, height = 6, dpi = 1000)
+```
+
+```{r wilcoxon-fig3d}
+
+# Fig 3D: Wilcoxon rank-sum test (unpaired, two-sided)
+# Comparison: log10(PAM count) of removed genes vs control genes
+# ------------------------------------------------------------------
+# W = 6,354,039    p = 8.74e-46
+# Median log10 PAM count — removed genes : 1.77 (≈ 59 PAM sites)
+# Median log10 PAM count — control genes : 2.00 (≈ 99 PAM sites)
+# n removed = 499    n control = 18,562
+
+wt_fig3d <- wilcox.test(log_transform_num_pam_site ~ gene_status,
+                         data        = combined_pam,
+                         alternative = "two.sided")
+cat("Fig 3D  W =", wt_fig3d$statistic, " p =", wt_fig3d$p.value, "\n")
+combined_pam %>%
+  group_by(gene_status) %>%
+  summarise(median_log10_pam = median(log_transform_num_pam_site, na.rm = TRUE),
+            n = n())
+
+```
+
+## PAM-site density relative to CDS length
+
+Does a larger CDS simply provide more PAM sites?
+
+```{r pam-density}
+
+removed_genes_density <- compute_pam_density(all_spacers_cds_removed_genes, removed_genes_cds)
+control_genes_density <- compute_pam_density(all_spacers_cds_control_genes, control_genes_cds)
+
+# Pearson correlation: PAM count vs CDS length (expected ~0.9 — longer CDS → more PAM sites)
+cat("Pearson r (removed genes):",
+    cor(removed_genes_density$num_pam_site, removed_genes_density$total_cds_length_bp), "\n")
+cat("Pearson r (control genes):",
+    cor(control_genes_density$num_pam_site, control_genes_density$total_cds_length_bp), "\n")
+
+# Both groups show r ≈ 0.90–0.92: longer CDS → more PAM sites, so raw count is not
+# informative on its own. We therefore compare density (PAM sites per kb of CDS).
+
+pam_density_df <- bind_rows(
+  removed_genes_density %>% dplyr::select(gene_id, pam_density) %>% mutate(gene_status = "removed genes"),
+  control_genes_density %>% dplyr::select(gene_id, pam_density) %>% mutate(gene_status = "control genes")
+) %>%
+  mutate(gene_status = factor(gene_status, levels = c("control genes", "removed genes")))
+```
+
+### Figure 3E: Density distribution of PAM sites per kb of CDS
+
+```{r pam-density-plot}
+
+# Group medians — used for vertical reference lines
+pam_density_medians <- pam_density_df %>%
+  group_by(gene_status) %>%
+  summarise(median_density = median(pam_density, na.rm = TRUE), .groups = "drop")
+# Median: control genes = 70.5,  removed genes = 64.6  (sites / kb CDS)
+
+pam_density_df %>%
+  group_by(gene_status) %>%
+  summarise(median_pam_density = median(pam_density, na.rm = TRUE), n = n())
+
+wt_fig3e <- wilcox.test(pam_density ~ gene_status,
+                         data        = pam_density_df,
+                         alternative = "two.sided")
+cat("Fig 3E  W =", wt_fig3e$statistic, " p =", wt_fig3e$p.value, "\n")
+
+pam_density_distribution <- ggplot(pam_density_df,
+                                   aes(x = pam_density, colour = gene_status)) +
+  geom_density(alpha = 0.8, size = 1) +
+  # Dashed vertical lines mark each group's median
+  geom_vline(data = pam_density_medians,
+             aes(xintercept = median_density, colour = gene_status),
+             linetype = "dashed", size = 0.7) +
+  # Wilcoxon rank-sum p-value annotation
+  annotate("text", x = 130, y = 0.028,
+           label = paste0("Wilcoxon rank-sum\np = ", formatC(wt_fig3e$p.value, format = "e", digits = 2)),
+           size = 4, hjust = 0, vjust = 1, colour = "black") +
+  theme_minimal() +
+  scale_color_manual(
+    name   = "",
+    values = c("control genes" = "#1E88E5", "removed genes" = "#E69F00"),
+    labels = c("control genes" = "Other protein-coding genes",
+               "removed genes" = "Common genes with < 3 sgRNAs")
+  ) +
+  labs(x = "Number of protospacers with PAM-site per 1 kb", y = "Density") +
+  guides(linetype = "none") +
+  theme(
+    panel.grid.major  = element_blank(),
+    panel.grid.minor  = element_blank(),
+    axis.text.x       = element_text(size = 15, vjust = 0.7, colour = "black"),
+    axis.text.y       = element_text(size = 15, colour = "black"),
+    axis.title.x      = element_text(margin = margin(t = 10), size = 15),
+    axis.title.y      = element_text(margin = margin(r = 10), size = 15),
+    axis.line.x       = element_line(size = 0.5),
+    axis.line.y       = element_line(size = 0.5),
+    axis.ticks        = element_line(size = 1.5),
+    axis.ticks.length = unit(0.1, "cm"),
+    legend.position   = "top",
+    legend.text       = element_text(size = 12)
+  ) +
+  xlim(0, 210)
+
+ggsave(here::here("figure", "Fig3E_pam_density_distribution.png"),
+       plot = pam_density_distribution, width = 6.5, height = 4, dpi = 1000)
+```
+
+Supplementary Table 1B (comprehensive 520-gene T2T-CHM13 CDS/PAM data) and
+Supplementary Table 1C (reason-for-loss classification of the 21 unmapped
+genes) are generated by
+`scripts/SuppTable1B-C_removed_genes_T2T_annotation.Rmd`, not here.
