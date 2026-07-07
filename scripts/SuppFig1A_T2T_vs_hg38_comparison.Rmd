@@ -216,10 +216,10 @@ ggsave(
   height   = 7,
   dpi      = 1000,
   plot     = comparison_bar_chart,
-  filename = here::here("figure", "SuppFig2A_T2T_vs_hg38_category_comparison.png"))
+  filename = here::here("figure", "SuppFig1A_T2T_vs_hg38_category_comparison.png"))
 ```
 
-# Table version of SuppFig2A: GRCh38 vs T2T-CHM13 counts and percentages per category, per library
+# Table version of SuppFig1A: GRCh38 vs T2T-CHM13 counts and percentages per category, per library
 
 ```{r}
 comparison_table <- net_change %>%
