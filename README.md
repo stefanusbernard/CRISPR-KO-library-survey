@@ -13,10 +13,12 @@ CRISPR-KO-library-survey/
 │   ├── GuideRefine-functions.R                      # Local copy of GuideRefine shared functions
 │   ├── CRISPR-KO-library-survey-functions.R         # Shared R functions for this project
 │   ├── Fig2A-B_Fig3A_library_overview.Rmd           # → Fig2A, Fig2B, Fig3A
-│   ├── SuppFig2A_T2T_vs_hg38_comparison.Rmd         # → SuppFig2A, SuppTable2A
-│   ├── Fig2C-J_SuppFig2B-K_lfc_stratification.Rmd   # → Fig2C–D, SuppFig2B–K
-│   ├── Fig3B-E_cds_pam_analysis.Rmd                 # → Fig3B–E, SuppFig3A–D
-│   ├── SuppTable3A-C_aggregate_sgrna.Rmd            # → SuppTable3A–C, Fig4A–B
+│   ├── SuppFig1A_T2T_vs_hg38_comparison.Rmd         # → SuppFig1A, SuppTable2A
+│   ├── Fig2C-D_SuppFig1B-K_lfc_stratification.Rmd   # → Fig2C–D, SuppFig1B–K
+│   ├── SuppFig1L-N_drepanos_comparison.Rmd          # → SuppFig1L–N
+│   ├── Fig3B-E_SuppFig2A-D_cds_pam_analysis.Rmd     # → Fig3B–E, SuppFig3A–D
+│   ├── SuppTable1A_aggregate_sgrna.Rmd              # → SuppTable1A
+│   ├── SuppTable1B-C_removed_genes_T2T_annotation.Rmd # → SuppTable1B, SuppTable1C
 │   ├── LibrarySurvey_install_req_packages.R         # Package installer (run first)
 │   ├── T2T_annotation_scripts/                      # One-time genome resource setup
 │   │   ├── 01_T2T_gff_to_ccds_conversion.Rmd       # GFF → GRanges annotation object
@@ -32,6 +34,7 @@ CRISPR-KO-library-survey/
 │
 ├── data/
 │   ├── annotation/                  # Genome annotation files (see annotation/README.md)
+│   ├── T2T_data/                    # T2T-CHM13 TxDb and related resources
 │   ├── library_data/
 │   │   ├── original_library/        # Original sgRNA library TSV files
 │   │   └── refined_library/         # Refined library TSV files (GuideRefine output)
@@ -42,12 +45,13 @@ CRISPR-KO-library-survey/
 │   │   ├── yusa_data/
 │   │   ├── jacquere_data/
 │   │   ├── hg38_alignment/
-│   │   └── output_normalized/
+│   │   ├── output_normalized/
+│   │   └── T2T_vs_hg38_comparison/
 │   ├── guiderefine_output/          # Full reports and disposed sgRNA lists
-│   │   ├── T2T-CHM13/
 │   │   ├── May2026_T2T-CHM13/
 │   │   └── hg38/
-│   ├── hits_change_data/            # DepMap gene effect and LFC data
+│   ├── removed_genes_survey/        # Removed-gene lists and CDS/PAM data across libraries
+│   ├── drepanos_bernard_difference/ # Drepanos vs. Bernard sgRNA classification comparison
 │   └── read_count_data/             # Raw read counts per library/screen
 │
 └── figure/                          # Output figures (.png)
@@ -85,11 +89,11 @@ Run the scripts in `scripts/T2T_annotation_scripts/` once to build the genome re
 
 ### Step 1 — Classify sgRNA alignments
 
-Run `scripts/data_preparation_scripts/sgrna_off_target_classification.Rmd`. It classifies every library against **both** genome builds — T2T-CHM13 (needed for the main figures) and GRCh38/hg38 (needed for `SuppFig2A_T2T_vs_hg38_comparison.Rmd`).
+Run `scripts/data_preparation_scripts/sgrna_off_target_classification.Rmd`. It classifies every library against **both** genome builds — T2T-CHM13 (needed for the main figures) and GRCh38/hg38 (needed for `SuppFig1A_T2T_vs_hg38_comparison.Rmd`).
 
 **T2T-CHM13:**
 
-**Requires:** alignment CSVs from GuideRefine (`data/sgrna_lfc_data/{library}_data/*_aln.csv`) and disposed sgRNA lists (`data/guiderefine_output/T2T-CHM13/*_disposed_sgRNAs.tsv`).
+**Requires:** alignment CSVs from GuideRefine (`data/sgrna_lfc_data/{library}_data/*_aln.csv`) and disposed sgRNA lists (`data/guiderefine_output/May2026_T2T-CHM13/*_disposed_sgRNAs.tsv`).
 
 **Produces:** `data/sgrna_lfc_data/{library}_data/*_sgrna_alignment_classification_T2T.csv`
 
@@ -114,10 +118,12 @@ Knit each `.Rmd` in `scripts/` from RStudio or via `rmarkdown::render()`.
 | Script | Output |
 |---|---|
 | `Fig2A-B_Fig3A_library_overview.Rmd` | Fig2A, Fig2B, Fig3A |
-| `SuppFig2A_T2T_vs_hg38_comparison.Rmd` | SuppFig2A, SuppTable2A |
-| `Fig2C-J_SuppFig2B-K_lfc_stratification.Rmd` | Fig2C–D, SuppFig2B–K |
-| `Fig3B-E_cds_pam_analysis.Rmd` | Fig3B–E, SuppFig3A–D |
-| `SuppTable3A-C_aggregate_sgrna.Rmd` | SuppTable3A–C, Fig4A–B |
+| `SuppFig1A_T2T_vs_hg38_comparison.Rmd` | SuppFig1A, SuppTable2A |
+| `Fig2C-D_SuppFig1B-K_lfc_stratification.Rmd` | Fig2C–D, SuppFig1B–K |
+| `SuppFig1L-N_drepanos_comparison.Rmd` | SuppFig1L–N |
+| `Fig3B-E_SuppFig2A-D_cds_pam_analysis.Rmd` | Fig3B–E, SuppFig3A–D |
+| `SuppTable1A_aggregate_sgrna.Rmd` | SuppTable1A |
+| `SuppTable1B-C_removed_genes_T2T_annotation.Rmd` | SuppTable1B, SuppTable1C |
 
 ---
 
