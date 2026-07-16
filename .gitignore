@@ -13,6 +13,7 @@
 old_plot/*
 data/cellecta_data/*
 data/T2T_data/*
+data/drepanos_bernard_difference/drepanos_library_survey/*
 data/removed_genes_survey/
 results/
 .Rproj.user
