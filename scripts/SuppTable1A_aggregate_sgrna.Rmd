@@ -196,7 +196,7 @@ jacquere_lib <- read_tsv(
 # 499 consistently unrepresented genes across five CRISPR-KO libraries
 # (520 genes identified as unrepresented, 21 excluded: no T2T-CHM13 annotation match)
 unrepresented_genes <- get_unrepresented_genes(
-  here("results", "supp_table_1b_520_genes.xlsx")
+  here("results", "supp_table_1d_520_genes.xlsx")
 )
 message("Unrepresented genes loaded: ", length(unrepresented_genes), "  — expected 499")
 
@@ -350,7 +350,7 @@ cat("\nGenes with >= 3 high-efficiency guides (RS3 score > 0):",
     n_distinct(survived_genes_targeted$gene), "\n")
 
 write.xlsx(survived_genes_targeted,
-           here("results", "supp_table_1a_aggregated_on_target_guides_represented_genes.xlsx"),
+           here("results", "supp_table_1c_aggregated_on_target_guides_represented_genes.xlsx"),
            rowNames = FALSE)
 
 ```
