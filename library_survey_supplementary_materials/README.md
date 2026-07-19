@@ -9,7 +9,7 @@ This folder contains the supplementary data files companion for "A survey of mul
 The files are organized into three groups:
 
 1. **Supplementary materials 1–5** — tables describing how each guide RNA in each library aligns to the human genome
-2. **Supplementary tables 1A and 1B** — summary tables about gene coverage across libraries
+2. **Supplementary tables 1C and 1D** — summary tables about gene coverage across libraries
 3. **GuideRefine outputs** — detailed quality filtering results for each library
 
 ---
@@ -39,14 +39,14 @@ Each file has the following columns:
 
 ---
 
-## Supplementary Tables 1A and 1B
+## Supplementary Tables 1C and 1D
 
 These Excel files summarize gene coverage across the five libraries.
 
-**`supp_table_1a_aggregated_on_target_guides_represented_genes.xlsx`**
+**`supp_table_1c_aggregated_on_target_guides_represented_genes.xlsx`**
 The mini-composite library derived from cross-library on-target sgRNAs aggregation approach. This library comprises of 657 on-target sgRNAs targeting 176 consistently underrepresented genes.
 
-**`supp_table_1b_520_genes.xlsx`**
+**`supp_table_1d_520_genes.xlsx`**
 The comprehensive information of 520 genes consistently underrepresented across five CRISPR-KO libraries after library refinement from multi-targeting and off-targeting sgRNAs.
 
 ---
