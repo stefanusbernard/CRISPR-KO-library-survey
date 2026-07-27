@@ -353,6 +353,15 @@ supp_table_1a
 write.xlsx(supp_table_1a, here::here("results", "supp_table_1a_jacquere_cfd_score_by_alignment_bin.xlsx"))
 ```
 
+### Median on-target vs. single mismatch off-target => 1 max CFD (manuscript reporting)
+
+```{r}
+jacquere_cfd_by_bin_hg38 %>%
+  mutate(offtarget_group = if_else(alignment_bin == "0", "0 off-target alignments", ">=1 off-target alignments")) %>%
+  group_by(offtarget_group) %>%
+  summarise(n_sgRNA = n(), median_max_cfd_score = median(max_cfd_score), .groups = "drop")
+```
+
 ```{r}
 # Same style/annotation as visualize_stratify_alignment() (SuppFig1M), reimplemented
 # here since that helper is hardcoded to LFC's y-axis/range.
