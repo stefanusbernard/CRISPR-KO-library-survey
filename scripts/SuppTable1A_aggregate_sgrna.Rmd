@@ -11,18 +11,6 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-# seqfold_init <- "C:/Users/stefa/AppData/Local/R/cache/R/basilisk/1.22.0/crisprScore/1.14.0/rs3__basilisk/lib/site-packages/seqfold/__init__.py"
-# 
-# content <- readLines(seqfold_init)
-# 
-# content <- gsub(
-#   "from importlib.metadata import version, PackageNotFoundError",
-#   "try:\n    from importlib.metadata import version, PackageNotFoundError\nexcept ImportError:\n    from importlib_metadata import version, PackageNotFoundError",
-#   content
-# )
-# 
-# writeLines(content, seqfold_init)
-
 library(here)
 library(tidyverse)
 library(readxl)
@@ -196,7 +184,7 @@ jacquere_lib <- read_tsv(
 # 499 consistently unrepresented genes across five CRISPR-KO libraries
 # (520 genes identified as unrepresented, 21 excluded: no T2T-CHM13 annotation match)
 unrepresented_genes <- get_unrepresented_genes(
-  here("results", "supp_table_1d_520_genes.xlsx")
+  here("library_survey_supplementary_materials", "supp_table_1d_520_genes.xlsx")
 )
 message("Unrepresented genes loaded: ", length(unrepresented_genes), "  — expected 499")
 
@@ -204,7 +192,6 @@ lib_disposed_pairs <- list(
   Avana    = list(lib = avana_lib,    disposed = avana_disposed),
   Brunello = list(lib = brunello_lib, disposed = brunello_disposed),
   TKOv3    = list(lib = tkov3_lib,    disposed = tkov3_disposed),
-  # Yusa   = list(lib = yusa_lib,     disposed = yusa_disposed),  # excluded: 19-nt spacers
   Jacquere = list(lib = jacquere_lib, disposed = jacquere_disposed)
 )
 ```
@@ -231,8 +218,7 @@ head(surviving_guides, 20)
 target_genes   <- surviving_guides$gene
 
 # Full rescue library: all per-library survivors with duplicate annotation.
-# duplicate_spacer_sequence column flags spacers shared across libraries
-# for the same gene.
+# duplicate_spacer_sequence column flags spacers shared across libraries for the same gene.
 rescue_library <- build_rescue_library(lib_disposed_pairs, target_genes) %>%
   arrange(gene) %>%
   annotate_duplicate_spacers()
