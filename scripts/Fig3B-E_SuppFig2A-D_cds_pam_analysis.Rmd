@@ -278,6 +278,7 @@ control_genes_cds <- calculate_feature_length(T2T_txdb, unique(all_spacers_cds_c
 ```
 
 ## Obtain possible protospacer sites from CDS of removed genes
+Reminder: this is only for the consistently underrepresented genes
 
 ```{r find-protospacers}
 
