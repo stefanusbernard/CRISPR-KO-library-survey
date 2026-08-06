@@ -116,8 +116,6 @@ supp_table_1c <- tibble(gene_id = removed_genes_all_libraries) %>%
                                right = TRUE, include.lowest = TRUE))
 
 cat("Table 1C rows:", nrow(supp_table_1c), "\n")
-cat("Rows with NA num_pam_site:", sum(is.na(supp_table_1c$num_pam_site)),
-    "(expect only the documented 7-gene strand-specific PAM-counting gap, not a T2T-mapping gap -- see PLAN_B notes)\n")
 
 write.xlsx(supp_table_1c, here::here("library_survey_supplementary_materials", paste0("supp_table_1c_", nrow(supp_table_1c), "_genes.xlsx")))
 ```
