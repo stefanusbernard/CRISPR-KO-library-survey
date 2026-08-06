@@ -18,16 +18,7 @@ library(GenomicFeatures)
 library(openxlsx)
 ```
 
-## Objective
-
-**Supplementary Table 1C** — comprehensive T2T-CHM13 CDS/PAM-site data for
-every gene removed (< 3 surviving guides in all 5 libraries), under the
-restricted HGNC+T2T-CHM13 universe. Supplementary Table 1B (GRCh38-vs-T2T
-status for genes that don't map to T2T-CHM13) is retired — every gene here
-already passed the T2T-CHM13 restriction upstream, so there's no "unmapped
-gene" category left to explain.
-
-## Step 1: removed genes (intersection across all 5 libraries)
+## Underrepresented genes (intersection across all 5 libraries)
 
 ```{r removed-genes}
 removed_genes <- read_csv(here::here("data", "removed_genes_survey", "removed_genes_all_library.csv"),
@@ -45,27 +36,14 @@ removed_genes_all_libraries <- unique(Reduce(intersect, removed_gene_list_combin
 length(removed_genes_all_libraries)
 ```
 
-## Step 2: PAM-site counts (reslice the existing spacer/CDS data, don't recompute)
-
-Reslice the existing spacer/CDS CSVs by the current removed-gene list, same
-pattern as `Fig3B-E_SuppFig2A-D_cds_pam_analysis.Rmd` — concatenate both
-existing files first (a gene's removed-vs-control label can flip between runs),
-then filter. `old_removed` is read by pattern, not a hardcoded gene count --
-that file is regenerated fresh under its current count every run (~5 min,
-cheap), so a fixed name would go stale the moment the removed-gene count
-changes (this is what the "499" name used to be, before that mismatch was
-found and fixed).
+## Step 2: PAM-site counts
 
 ```{r pam-counts}
 old_removed_path <- list.files(here::here("data", "removed_genes_survey"),
                                 pattern = "^all_spacers_cds_data_\\d+_removed_genes\\.csv$", full.names = TRUE)[1]
-old_removed <- read_csv(old_removed_path, show_col_types = FALSE) %>%
-  mutate(chromosome = as.character(chromosome))
-old_control <- read_csv(here::here("data", "removed_genes_survey", "all_spacers_cds_data_18777_genes.csv"), show_col_types = FALSE) %>%
-  mutate(chromosome = as.character(chromosome))
-master_cds_pam <- bind_rows(old_removed, old_control) %>% distinct()
-
-all_spacers_cds_removed_genes <- master_cds_pam %>% filter(gene_id %in% removed_genes_all_libraries)
+all_spacers_cds_removed_genes <- read_csv(old_removed_path, show_col_types = FALSE) %>%
+  mutate(chromosome = as.character(chromosome)) %>%
+  filter(gene_id %in% removed_genes_all_libraries)
 
 removed_pam_count <- all_spacers_cds_removed_genes %>%
   distinct(gene_id, pam_site) %>%
@@ -108,12 +86,6 @@ cds_labels <- c("0–500", "500–1000", "1000–1500", "1500–2000", "2000–2
 hgnc_raw_path <- list.files(here::here("data"), pattern = "^hgnc_complete_set_.*\\.txt$", full.names = TRUE)[1]
 hgnc <- read_tsv(hgnc_raw_path, show_col_types = FALSE)
 
-# HGNC is a live, continuously-updated feed — a gene can be renamed there
-# (e.g. ZBTB8OS -> TSLIG1) while the T2T-CHM13 GFF release (and this
-# project's gene lists) still use the older symbol. Match on current
-# `symbol` first, then fall back to `prev_symbol` so renamed genes aren't
-# silently dropped, but keep our own gene_id (not HGNC's current symbol) so
-# this table stays internally consistent with the rest of the pipeline.
 hgnc_current <- hgnc %>%
   filter(symbol %in% removed_genes_all_libraries) %>%
   transmute(gene_id = symbol, name)

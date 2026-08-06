@@ -25,9 +25,6 @@ output_dir <- here::here("data", "drepanos_bernard_difference")
 
 
 ```{r setup, include=FALSE}
-# Max CFD score per guide across its off-target site(s) in `sites`, grouped by
-# sgRNA plus any extra columns the caller needs downstream (e.g. "upset_group"
-# for Section 1, or c("gene", "alignment_bin") for Section 3's per-bin summary).
 score_by_site <- function(guides, sites, extra_group_cols = character()) {
   guides %>%
     inner_join(sites, by = c("sgRNA", "spacer")) %>%
@@ -36,11 +33,7 @@ score_by_site <- function(guides, sites, extra_group_cols = character()) {
     summarise(cfd_score = max(cfd_score), .groups = "drop")
 }
 
-# Jonckheere-Terpstra trend test (same as SuppFig1B-K in
-# Fig2C-D_SuppFig1B-K_lfc_stratification.Rmd): tests whether median sgRNA LFC
-# decreases monotonically as the number of off-target alignments increases
-# across ordered bins. Asymptotic normal approximation; accurate for n > 100
-# per group. `df` needs `alignment_bin` (ordered factor) and `mean` (LFC).
+# Jonckheere-Terpstra trend test
 run_jt_clinfun <- function(df, fig_label, lib_name, analysis) {
   g   <- as.numeric(df$alignment_bin)
   x   <- df$mean
@@ -67,27 +60,6 @@ run_jt_clinfun <- function(df, fig_label, lib_name, analysis) {
 }
 ```
 
-> **Scope**: GRCh38/hg38 throughout, to match Drepanos et al.'s RefSeq-GRCh38
-> `Jacquere_PerGuideAnnotations_Quota4.csv`. Kept separate from the T2T-CHM13
-> figures/scripts; LFC data is keyed by spacer identity, not coordinates, so
-> it overlays directly. Runs last (SuppFig1L-N) as an external validation
-> case study on top of SuppFig1B-K.
->
-> **Restricted to the Fig1B universe** (HGNC + T2T-CHM13), reslicing the
-> existing GRCh38 classification down to the restricted+control subset's
-> sgRNA IDs rather than re-running GuideRefine for GRCh38. Reframes this from
-> "does everything match Drepanos" to "for guides we can compare, is one
-> build worse" — the Drepanos-side data itself isn't restricted; anything it
-> doesn't cover is simply absent from the inner join, not a gap to explain.
->
-> **Note on source file**: uses `Jacquere_PerGuideAnnotations_Quota4.csv`
-> (80,124 rows, full coverage of our 4-guides/gene Jacquere library), not
-> the earlier `Jacquere_PerGuideAnnotations.csv` (60,550 rows), which turned
-> out to be scoped to a different, 3-guides/gene version of the library and
-> was missing ~19,000 of our guides entirely. See
-> `data/drepanos_bernard_difference/drepanos_comparison_notes.md` for the
-> full investigation.
-
 # Section 1 — Drepanos CFD100 vs. Bernard alignment classification (UpSet plot)
 
 ## Load and join both datasets
@@ -110,12 +82,6 @@ drepanos_cfd100 <- read_csv(
     has_cfd100_offtarget = max_cfd100_hits > 0
   )
 
-# Restricted to the Fig1B universe (reslicing existing classification, not a
-# fresh GRCh38 GuideRefine re-run -- see PLAN_B notes). Any Fig1B-universe gene
-# with no corresponding Drepanos/GRCh38 data is simply dropped by the inner
-# join below, not treated as a gap needing explanation -- this reframes the
-# comparison from "does everything match" to "for guides we can compare,
-# which build is worse."
 jacquere_restricted_sgrna_ids <- read_tsv(
   here::here("data", "library_data", "restricted_library", "Jacquere_PerGuideAnnotations_Quota4.tsv"),
   col_names = c("sgRNA", "spacer", "gene"), show_col_types = FALSE
@@ -137,6 +103,12 @@ tibble(
   pct_drepanos_matched = round(100 * nrow(joined) / nrow(drepanos_cfd100), 2),
   pct_bernard_matched  = round(100 * nrow(joined) / nrow(bernard_classification), 2)
 )
+
+# CFD=1.0-flagged subset specifically (reported in the manuscript) 
+flagged <- drepanos_cfd100 %>% filter(has_cfd100_offtarget)
+matched <- flagged %>% inner_join(bernard_classification, by = "spacer")
+cat("Drepanos CFD=1.0-flagged sgRNAs:", nrow(flagged),
+    " | matched within restricted universe:", nrow(matched), "\n")
 ```
 
 ## Cross-tabulate Drepanos flags vs. our alignment classification
@@ -160,8 +132,7 @@ joined %>%
   arrange(alignment, desc(has_cfd100_offtarget))
 ```
 
-Guides we flag as multi-target/off-target but Drepanos does not flag at
-CFD = 1.0, and vice versa:
+Guides we flag as multi-target/off-target but Drepanos does not flag at CFD = 1.0, and vice versa:
 
 ```{r}
 joined %>%
@@ -283,21 +254,9 @@ upset_group_cfd_summary
 
 # Section 2 — Jacquere single-mismatch guides: Log2FC stratification (GRCh38)
 
-Same approach as SuppFig1K, staying on the GRCh38 classification loaded in
-Section 1. Produces **SuppFig1M**. This section's guide universe is
-independent of Section 1 / SuppFig1L — it doesn't use Drepanos's CFD100 data
-at all, so guides are restricted only to what this section itself requires:
-classified by GuideRefine as "perfect" or "single mismatch," with available
-LFC data (a guide with no Log2FC value can't be plotted). Joins by `sgRNA`
-**and** `spacer` (not the shared `apply_stratification()` helper, which joins
-by `sgRNA` alone) because ~0.32% of Jacquere guides have the same `sgRNA`
-label pointing at a different spacer across files.
-
 ```{r}
 single_guides <- c("perfect", "single mismatch")
 
-# [PLAN B, D5 fix] one combined control-term list (see Fig2C-D_SuppFig1B-K_lfc_stratification.Rmd
-# for the full rationale) -- load_library_lfc_raw() now requires it explicitly.
 generic_terms <- c("CONTROL", "Control", "control", "INTRON", "Intron", "intron",
                     "LacZ", "luciferase", "EGFP", "NO_SITE", "ONE_SITE_INTERGENIC")
 terms_for_filtering <- paste(generic_terms, collapse = "|")
@@ -327,6 +286,21 @@ visualize_stratify_alignment(jacquere_lfc_single_hg38,
                               here::here("figure", "SuppFig1M_jacquere_single_mismatch_GRCh38.png"))
 
 write_csv(jacquere_lfc_single_hg38, here::here(output_dir, "jacquere_lfc_single_mismatch_GRCh38.csv"))
+```
+
+## Single mismatch only (not flagged by Drepanos): LFC-data availability
+
+```{r}
+single_mismatch_only <- joined_for_upset %>%
+  filter(alignment == "single mismatch", !has_cfd100_offtarget)
+
+single_mismatch_only_with_lfc <- single_mismatch_only %>%
+  inner_join(jacquere_lfc_single_hg38 %>% filter(alignment == "single mismatch") %>% dplyr::select(sgRNA, spacer),
+             by = c("sgRNA", "spacer"))
+
+cat("Single mismatch only (not flagged by Drepanos):", nrow(single_mismatch_only),
+    " | with usable LFC data:", nrow(single_mismatch_only_with_lfc),
+    " | without:", nrow(single_mismatch_only) - nrow(single_mismatch_only_with_lfc), "\n")
 ```
 
 ## Jonckheere-Terpstra trend test
@@ -361,9 +335,16 @@ jacquere_cfd_by_bin_hg38 <- jacquere_lfc_single_hg38 %>%
   bind_rows(perfect_guides_hg38) %>%
   mutate(alignment_bin = fct_relevel(alignment_bin, "0", "1", "2", "3", "4", "5", "> 5"))
 
+# Median on-target vs. single mismatch off-target stratified per bin (Supplementary Table 1A)
 jacquere_cfd_by_bin_hg38 %>%
   group_by(alignment_bin) %>%
   summarise(n_sgRNA = n(), median_cfd_score = median(max_cfd_score), .groups = "drop")
+
+# Median on-target vs. single mismatch off-target => 1 max CFD (manuscript reporting)
+jacquere_cfd_by_bin_hg38 %>%
+  mutate(offtarget_group = if_else(alignment_bin == "0", "0 off-target alignments", ">=1 off-target alignments")) %>%
+  group_by(offtarget_group) %>%
+  summarise(n_sgRNA = n(), median_max_cfd_score = median(max_cfd_score), .groups = "drop")
 ```
 
 ## Supplementary Table 1A: CFD score by number of off-target alignments
@@ -377,15 +358,6 @@ supp_table_1a <- jacquere_cfd_by_bin_hg38 %>%
 supp_table_1a
 
 write.xlsx(supp_table_1a, here::here("library_survey_supplementary_materials", "supp_table_1a_jacquere_cfd_score_by_alignment_bin.xlsx"))
-```
-
-### Median on-target vs. single mismatch off-target => 1 max CFD (manuscript reporting)
-
-```{r}
-jacquere_cfd_by_bin_hg38 %>%
-  mutate(offtarget_group = if_else(alignment_bin == "0", "0 off-target alignments", ">=1 off-target alignments")) %>%
-  group_by(offtarget_group) %>%
-  summarise(n_sgRNA = n(), median_max_cfd_score = median(max_cfd_score), .groups = "drop")
 ```
 
 ```{r}

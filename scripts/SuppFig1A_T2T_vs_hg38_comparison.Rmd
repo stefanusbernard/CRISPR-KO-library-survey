@@ -17,14 +17,6 @@ library(tidyverse)
 source(here::here("scripts", "CRISPR-KO-library-survey-functions.R"))
 ```
 
-Both builds are now restricted to the Fig1B universe (HGNC + T2T-CHM13),
-reslicing existing classification data on both sides rather than restricting
-only one. Consequence: this reframes the comparison from "do the builds
-disagree" (genes missing entirely from T2T-CHM13 no longer appear at all) to
-"for guides confirmed real in both builds, is T2T-CHM13 classification more
-problematic than GRCh38's" — the annotation-gap finding itself is told in full
-by Fig1B/Fig3A/B, not here.
-
 # Load classification files for both genome builds
 
 ```{r}
@@ -39,10 +31,6 @@ libraries <- list(
 library_levels <- c("brunello", "tkov3", "yusa", "avana", "jacquere")
 alignment_levels <- c("multi-target guides", "single mismatch", "pam-distal double mismatch")
 
-# Restrict both builds to the same Fig1B universe. Reslice (filter existing
-# classification by sgRNA ID) rather than re-running GuideRefine for GRCh38 --
-# per-guide alignment doesn't depend on which other guides are in the run, and
-# this is a supplementary comparison figure, not the primary restricted result.
 restricted_library_file <- c(
   avana = "avana_library", brunello = "broadgpp-brunello-library-contents",
   tkov3 = "tkov3_guide_sequence", yusa = "yusa_hcrispr_ko_grnas",

@@ -24,30 +24,15 @@ source(here::here("scripts", "CRISPR-KO-library-survey-functions.R"))
 # Import the data of sgRNA library report
 
 ```{r}
-
 brunello <- 'broadgpp-brunello-library-contents'
 toronto <- 'tkov3_guide_sequence'
 avana <- 'avana_library'
 yusa <- 'yusa_hcrispr_ko_grnas'
 jacquere <- 'Jacquere_PerGuideAnnotations_Quota4'
 
-# [PLAN B, D5 fix] one combined control-term list, used for every library --
-# GuideRefine's full_report.xlsx aggregates each control label into its own
-# "gene" row (e.g. one "EGFP" row, one "NO_SITE" row), and a generic-only
-# filter here previously let TKOv3's EGFP and Jacquere's NO_SITE/ONE_SITE_INTERGENIC
-# rows count as passed_genes, contaminating Fig2B/Fig3A's percentage
-# denominators for those two libraries. None of these terms collide with a
-# real HGNC gene symbol, so applying the full combined list to every library
-# (not just the one it applies to) is safe -- it simply matches nothing extra
-# in libraries that don't have that control type.
 generic_terms <- c("CONTROL", "Control", "control", "INTRON", "Intron", "intron",
                     "LacZ", "luciferase", "EGFP", "NO_SITE", "ONE_SITE_INTERGENIC")
 terms_for_filtering <- paste(generic_terms, collapse = "|")
-
-# import sgRNA refining report
-# [PLAN B] No separate HGNC/T2T-CHM13 filter needed here -- these reports come
-# from GuideRefine's fresh output on the already-restricted library (Step 0/1),
-# so every gene is guaranteed to already qualify.
 
 avana_report <- import_and_process_report(here::here("data", "guiderefine_output", "Jul2026_T2T-CHM13", paste0(avana, "_full_report.xlsx")), terms_for_filtering)
 brunello_report <- import_and_process_report(here::here("data", "guiderefine_output", "Jul2026_T2T-CHM13", paste0(brunello, "_full_report.xlsx")), terms_for_filtering)
@@ -142,9 +127,6 @@ ggsave(
 ### Percentage of genes not represented after library refinement
 
 ```{r}
-
-# in here we pull the failed/passed genes based on protein-coding genes defined by HGNC (gene_hgnc), it was first standardized using import_and_process_report()
-
 avana_result_gene <- percentages_and_list_genes(avana_report, NULL)
 brunello_result_gene <- percentages_and_list_genes(brunello_report, NULL)
 toronto_result_gene <- percentages_and_list_genes(toronto_report, NULL)
@@ -156,7 +138,6 @@ jacquere_result_gene <- percentages_and_list_genes(jacquere_report, NULL)
 ### Export the removed genes from each library (input for script 04_analysis_removed_genes_biogrid.Rmd)
 
 ```{r}
-
 max_len <- max(length(avana_result_gene[["failed_genes"]]),
                length(brunello_result_gene[["failed_genes"]]),
                length(toronto_result_gene[["failed_genes"]]),
@@ -183,7 +164,6 @@ write_csv(df_removed_genes, here::here("data", "removed_genes_survey", "removed_
 ### Total percentages removed sgRNAs and unrepresented genes across libraries
 
 ```{r}
-
 main_df_percentage <- data.frame(
   library = c("brunello", "toronto_v3", "yusa", "avana", "jacquere"),
   total_percentage_failed_genes = c(brunello_result_gene[["total_percentage_failed_genes"]],
@@ -203,9 +183,6 @@ main_df_percentage <- data.frame(
 # Figure 2B - plot of sgRNA that is not represented in the refined library
 
 ```{r}
-
-# in here we pull the failed/passed genes based on protein-coding genes defined by HGNC (gene_hgnc). then the failed_sgrna_percentage came from main_df_percentage, which it was from the percentage_and_list_gene(), a function to standardize gene symbol based on HGNC and select protein-coding genes only
-
 failed_sgrna_percentage <- main_df_percentage %>%
   dplyr::select(library, total_percentage_failed_sgrna) %>%
   mutate(library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana", "jacquere")))
@@ -256,7 +233,6 @@ ggsave(
 # Figure 3A - Plot of genes that are not represented in the refined library
 
 ```{r}
-
 failed_genes_percentage <- main_df_percentage %>%
   mutate(library = factor(library, levels = c("brunello", "toronto_v3", "yusa", "avana", "jacquere")))
 

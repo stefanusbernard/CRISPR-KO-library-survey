@@ -39,7 +39,7 @@ t2t_gene_annot <- readRDS(here::here("data", "annotation", "T2T-CHM13v2.0_gene_a
 t2t_genes <- unique(t2t_gene_annot$gene)
 ```
 
-# Restricted+control subset per library
+# Restricted + control subset per library
 
 Per-library control-term patterns, verified against each raw library file's gene column — the generic list alone misses two real control conventions: Jacquere's `NO_SITE`/`ONE_SITE_INTERGENIC` and TKOv3's `EGFP`.
 
@@ -47,10 +47,10 @@ Per-library control-term patterns, verified against each raw library file's gene
 generic_control_terms <- c("CONTROL", "Control", "control", "INTRON", "Intron", "intron", "LacZ", "luciferase")
 control_terms_by_library <- list(
   avana_library = generic_control_terms,
-  `broadgpp-brunello-library-contents` = generic_control_terms,
-  tkov3_guide_sequence = c(generic_control_terms, "EGFP"),
-  yusa_hcrispr_ko_grnas = generic_control_terms,
-  Jacquere_PerGuideAnnotations_Quota4 = c(generic_control_terms, "NO_SITE", "ONE_SITE_INTERGENIC")
+  brunello_library = generic_control_terms,
+  tkov3_library = c(generic_control_terms, "EGFP"),
+  yusa_library = generic_control_terms,
+  jacquere_library = c(generic_control_terms, "NO_SITE", "ONE_SITE_INTERGENIC")
 )
 ```
 
@@ -61,10 +61,10 @@ dir.create(restricted_dir, showWarnings = FALSE, recursive = TRUE)
 
 files <- list(
   avana_library = file.path(base, "avana_library.tsv"),
-  `broadgpp-brunello-library-contents` = file.path(base, "broadgpp-brunello-library-contents.tsv"),
-  tkov3_guide_sequence = file.path(base, "tkov3_guide_sequence.tsv"),
-  yusa_hcrispr_ko_grnas = file.path(base, "yusa_hcrispr_ko_grnas.tsv"),
-  Jacquere_PerGuideAnnotations_Quota4 = file.path(base, "Jacquere_PerGuideAnnotations_Quota4.tsv")
+  brunello_library = file.path(base, "broadgpp-brunello-library-contents.tsv"),
+  tkov3_library = file.path(base, "tkov3_guide_sequence.tsv"),
+  yusa_library = file.path(base, "yusa_hcrispr_ko_grnas.tsv"),
+  jacquere_library = file.path(base, "Jacquere_PerGuideAnnotations_Quota4.tsv")
 )
 
 summary_rows <- list()
@@ -87,10 +87,6 @@ for (name in names(files)) {
   subset_lib <- bind_rows(target_restricted, control_rows) %>% arrange(sgRNA)
   write_tsv(subset_lib, file.path(restricted_dir, paste0(name, ".tsv")), col_names = FALSE)
 
-  # Gene counts: "before" uses the raw, as-labelled gene symbol (no HGNC
-  # standardization applied yet); "after" uses gene_hgnc (the standardized
-  # symbol the restriction itself filters on), so two raw synonyms mapping to
-  # the same approved symbol aren't double-counted post-restriction.
   n_genes_before <- length(genes_u)
   n_genes_after  <- target_annotated %>%
     filter(gene_hgnc %in% hgnc_protein_coding$symbol, gene_hgnc %in% t2t_genes) %>%
@@ -110,5 +106,5 @@ for (name in names(files)) {
 summary_df <- bind_rows(summary_rows)
 supp_dir <- here::here("library_survey_supplementary_materials")
 dir.create(supp_dir, showWarnings = FALSE, recursive = TRUE)
-write_csv(summary_df, file.path(supp_dir, "Fig1B_working_library_composition.csv"))
+write_csv(summary_df, file.path(supp_dir, "all_working_library_composition.csv"))
 ```

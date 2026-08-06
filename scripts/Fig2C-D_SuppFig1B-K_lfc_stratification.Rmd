@@ -34,13 +34,6 @@ jacquere_raw <- read_csv(here::here("data", "sgrna_lfc_data", "jacquere_data", "
 ```
 
 ```{r control-terms}
-# [PLAN B, D5 fix] one combined control-term list, used for every library --
-# a generic-only filter here previously let TKOv3's EGFP and Jacquere's
-# NO_SITE/ONE_SITE_INTERGENIC control guides leak into *_lfc_raw. Harmless in
-# practice (apply_stratification()'s join against clean classification data
-# drops them anyway), but the filter should do the job itself. None of these
-# terms collide with a real HGNC gene symbol, so one combined list applied to
-# every library is safe.
 generic_terms <- c("CONTROL", "Control", "control", "INTRON", "Intron", "intron",
                     "LacZ", "luciferase", "EGFP", "NO_SITE", "ONE_SITE_INTERGENIC")
 terms_for_filtering <- paste(generic_terms, collapse = "|")
@@ -154,16 +147,6 @@ visualize_stratify_alignment(jacquere_lfc_single, "number of single mismatch \no
 # Wilcoxon rank-sum test values — Fig 2C and Fig 2D
 
 ```{r wilcoxon-fig2c-fig2d}
-
-# Fig 2C: perfect vs multi-target guides (Wilcoxon unpaired, two-sided), per library
-# library             W   p_value n_perfect n_multi
-#   <fct>           <dbl>     <dbl>     <int>   <int>
-# 1 brunello   129775196. 5.35e-242     64718    2946
-# 2 toronto_v3  77225532  3.51e- 49     64690    2001
-# 3 yusa       204894804  0             78803    3366
-# 4 avana      237346891  0             59860    5027
-# 5 jacquere    44073838  4.25e-108     51842    1245
-
 wilcoxon_fig2c <- combined_multi %>%
   group_by(library) %>%
   group_modify(~ {
@@ -175,15 +158,14 @@ wilcoxon_fig2c <- combined_multi %>%
   })
 print(wilcoxon_fig2c)
 
-# Fig 2D: perfect vs single mismatch (Wilcoxon unpaired, two-sided), per library
-# ---------------------------------------------------------------------------------
-#   library             W   p_value n_perfect n_single
-#   <fct>           <dbl>     <dbl>     <int>    <int>
-# 1 brunello   219728676. 5.61e- 60     64718     6025
-# 2 toronto_v3 106678302  2.49e- 19     64690     3007
-# 3 yusa       321381273  4.36e-190     78803     6708
-# 4 avana      223715847  1.52e- 80     59860     6540
-# 5 jacquere   184407364. 6.79e-166     51842     5837
+# Fig 2C: perfect vs multi-target guides (Wilcoxon unpaired, two-sided), per library
+# library             W   p_value n_perfect n_multi
+#   <fct>           <dbl>     <dbl>     <int>   <int>
+# 1 brunello   110354292. 8.96e-203     62851    2599
+# 2 toronto_v3  73519464. 4.74e- 48     63009    1956
+# 3 yusa       194149227  0             77119    3254
+# 4 avana      215704119  0             58386    4707
+# 5 jacquere    34527918  1.77e- 85     49105    1038
 
 wilcoxon_fig2d <- combined_single %>%
   group_by(library) %>%
@@ -196,6 +178,16 @@ wilcoxon_fig2d <- combined_single %>%
   })
 print(wilcoxon_fig2d)
 
+# Fig 2D: perfect vs single mismatch (Wilcoxon unpaired, two-sided), per library
+# ---------------------------------------------------------------------------------
+#   library             W   p_value n_perfect n_single
+#   <fct>           <dbl>     <dbl>     <int>    <int>
+# 1 brunello   201371736  6.41e- 59     62851     5673
+# 2 toronto_v3 101151776  5.19e- 18     63009     2934
+# 3 yusa       304714705  3.23e-183     77119     6503
+# 4 avana      209698076  4.40e- 81     58386     6266
+# 5 jacquere   158493056. 2.08e-165     49105     5249
+
 ```
 
 # Jonckheere-Terpstra using clinfun — SuppFig1B–1K
@@ -205,8 +197,6 @@ number of off-target alignments increases across ordered bins.
 Asymptotic normal approximation; accurate for n > 100 per group.
 
 ```{r jt-clinfun}
-library(clinfun)
-
 run_jt_clinfun <- function(df, fig_label, lib_name, analysis) {
   g   <- as.numeric(df$alignment_bin)
   x   <- df$mean
@@ -248,15 +238,15 @@ print(jt_clinfun_results)
 
 # figure    library  analysis            n_total JT_statistic z_score   p_value
 #    <chr>     <chr>    <chr>                 <int>        <dbl>   <dbl>     <dbl>
-#  1 SuppFig1B Brunello Multi-target guides   67664     61920967   -33.6 3.95e-247
-#  2 SuppFig1C TKOv3    Multi-target guides   66691     52433949   -14.8 8.93e- 50
-#  3 SuppFig1D Yusa     Multi-target guides   82169     61005189   -53.8 0
-#  4 SuppFig1E Avana    Multi-target guides   64887     65877308   -69.4 0
-#  5 SuppFig1F Jacquere Multi-target guides   53087     20629019   -22.2 2.58e-109
-#  6 SuppFig1G Brunello Single mismatch of…   70743    173872602   -16.7 1.17e- 62
-#  7 SuppFig1H TKOv3    Single mismatch of…   67697     88313450    -9   1.24e- 19
-#  8 SuppFig1I Yusa     Single mismatch of…   85511    210035071   -29.8 4.57e-196
-#  9 SuppFig1J Avana    Single mismatch of…   66400    171715438   -19.5 7.67e- 85
-# 10 SuppFig1K Jacquere Single mismatch of…   57679    121786702   -27.8 4.84e-170
+#  1 SuppFig1B Brunello Multi-target guides   65450     53793708   -30.6 1.42e-206
+#  2 SuppFig1C TKOv3    Multi-target guides   64965     49933331   -14.6 1.25e- 48
+#  3 SuppFig1D Yusa     Multi-target guides   80373     57403158   -53.1 0        
+#  4 SuppFig1E Avana    Multi-target guides   63093     61141296   -66.3 0        
+#  5 SuppFig1F Jacquere Multi-target guides   50143     16553810   -19.7 2.19e- 86
+#  6 SuppFig1G Brunello Single mismatch of…   68524    158338452   -16.5 1.79e- 61
+#  7 SuppFig1H TKOv3    Single mismatch of…   65943     84159896    -8.6 2.63e- 18
+#  8 SuppFig1I Yusa     Single mismatch of…   83622    199399257   -29.3 6.14e-189
+#  9 SuppFig1J Avana    Single mismatch of…   64652    159699358   -19.5 2.70e- 85
+# 10 SuppFig1K Jacquere Single mismatch of…   54354    102032516   -27.7 2.00e-169
 
 ```
