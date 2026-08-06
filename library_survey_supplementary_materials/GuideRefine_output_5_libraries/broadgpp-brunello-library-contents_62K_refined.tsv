@@ -3,103 +3,9 @@ sgEGFR_2	GTGGAGCCTCTTACACCCAG	EGFR
 sgEGFR_3	TCTTGCCGGAATGTCAGCCG	EGFR
 sgEGFR_4	TGTCACCACATAATTACCTG	EGFR
 sgNon-Targeting Control_1	AAAAAGCTTCCGCCTGATGG	Non-Targeting Control
-sgNon-Targeting Control_2	AAAACAGGACGATGTGCGGC	Non-Targeting Control
-sgNon-Targeting Control_3	AAAACATCGACCGAAAGCGT	Non-Targeting Control
-sgNon-Targeting Control_4	AAAATAGCAGTAAACTCAAC	Non-Targeting Control
-sgNon-Targeting Control_5	AAAATCGATGGGCTGAATCT	Non-Targeting Control
-sgNon-Targeting Control_6	AAAATTATCGGAAACGGTAG	Non-Targeting Control
-sgNon-Targeting Control_7	AAACCCTATGCCCAAATGAG	Non-Targeting Control
-sgNon-Targeting Control_8	AAACCTAGCCCCAATACTTA	Non-Targeting Control
-sgNon-Targeting Control_9	AAACGAGATCGAGAAAGGTA	Non-Targeting Control
 sgNon-Targeting Control_10	AAACGGTACGACAGCGTGTG	Non-Targeting Control
-sgNon-Targeting Control_11	AAACTGTAGTGCAGGGTCAG	Non-Targeting Control
-sgNon-Targeting Control_12	AAAGAAAGAGGAATAGTAGC	Non-Targeting Control
-sgNon-Targeting Control_13	AAAGACTTGCTCCAAAACAC	Non-Targeting Control
-sgNon-Targeting Control_14	AAAGATATAGCAAATTATGG	Non-Targeting Control
-sgNon-Targeting Control_15	AAAGCGACGTAGGCATACTT	Non-Targeting Control
-sgNon-Targeting Control_16	AAATAATATGCATCTCTCGA	Non-Targeting Control
-sgNon-Targeting Control_17	AAATACAAGCTATAGCGATA	Non-Targeting Control
-sgNon-Targeting Control_18	AAATGCACAGATCGCTGATC	Non-Targeting Control
-sgNon-Targeting Control_19	AAATTGGCTTTCGTTCGTGC	Non-Targeting Control
-sgNon-Targeting Control_20	AACAGGAAACGTGACTAAAG	Non-Targeting Control
-sgNon-Targeting Control_21	AACATCTCGTTAGGGGTATC	Non-Targeting Control
-sgNon-Targeting Control_22	AACCACGGCATTGAGAGGTG	Non-Targeting Control
-sgNon-Targeting Control_23	AACGCGAGTCCGGTGGCTAG	Non-Targeting Control
-sgNon-Targeting Control_24	AACGCTGTCGTACGTGTATA	Non-Targeting Control
-sgNon-Targeting Control_25	AACGTGCTGACGATGCGGGC	Non-Targeting Control
-sgNon-Targeting Control_26	AACTACAAGTAAAAGTATCG	Non-Targeting Control
-sgNon-Targeting Control_27	AACTAGAATAGGCGGGCTTG	Non-Targeting Control
-sgNon-Targeting Control_28	AACTAGCCCGAGCAGCTTCG	Non-Targeting Control
-sgNon-Targeting Control_29	AAGAAGAATTGGGGATGATG	Non-Targeting Control
-sgNon-Targeting Control_30	AAGAAGGGCCGTACCCGAAA	Non-Targeting Control
-sgNon-Targeting Control_31	AAGAATTAGGCACGGTTACT	Non-Targeting Control
-sgNon-Targeting Control_32	AAGAGATCACATCTAGGCCA	Non-Targeting Control
-sgNon-Targeting Control_33	AAGAGCGAATCGATTTCGTG	Non-Targeting Control
-sgNon-Targeting Control_34	AAGAGTAGTAGACGCCCGGG	Non-Targeting Control
-sgNon-Targeting Control_35	AAGCACTAGTCCGTATGATG	Non-Targeting Control
-sgNon-Targeting Control_36	AAGCCATTGTATAACTCCAG	Non-Targeting Control
-sgNon-Targeting Control_37	AAGCGGGCACACATGACAAG	Non-Targeting Control
-sgNon-Targeting Control_40	AAGGCGCGCGAATGTGGCAG	Non-Targeting Control
-sgNon-Targeting Control_41	AAGGGCGTGCCCTGCGTTGT	Non-Targeting Control
-sgNon-Targeting Control_42	AAGTGACAGATGGGCAGGCG	Non-Targeting Control
-sgNon-Targeting Control_43	AAGTGACGGTGTCATGCGGG	Non-Targeting Control
-sgNon-Targeting Control_44	AAGTGTGTGCATAGCAGGGT	Non-Targeting Control
-sgNon-Targeting Control_45	AATATTTGGCTCGGCTGCGC	Non-Targeting Control
-sgNon-Targeting Control_46	AATCGACTCGAACTTCGTGT	Non-Targeting Control
-sgNon-Targeting Control_47	AATCGCAGGTATCCCAGAGC	Non-Targeting Control
-sgNon-Targeting Control_48	AATCTTACTCGTCCTCCTTG	Non-Targeting Control
-sgNon-Targeting Control_49	AATGCGAGTGTATCCGCAGT	Non-Targeting Control
-sgNon-Targeting Control_50	AATGGGTTGCCGGGAGTAAA	Non-Targeting Control
-sgNon-Targeting Control_51	AATTTAAGCTTCGTAACTGG	Non-Targeting Control
-sgNon-Targeting Control_52	AATTTATCGTCAACATTAAT	Non-Targeting Control
-sgNon-Targeting Control_53	ACAAAAAACTACGGTGATTA	Non-Targeting Control
-sgNon-Targeting Control_54	ACAAAATGCCGTGCGTCAAT	Non-Targeting Control
-sgNon-Targeting Control_55	ACAAACGACCTTGAGCAGGG	Non-Targeting Control
-sgNon-Targeting Control_56	ACAAAGATCGCATGGCATAC	Non-Targeting Control
-sgNon-Targeting Control_57	ACACCCATTCTCATAACGGA	Non-Targeting Control
-sgNon-Targeting Control_58	ACACCGAAGCACCTGTACGT	Non-Targeting Control
-sgNon-Targeting Control_59	ACAGCCCTCACGAGCCCGAA	Non-Targeting Control
-sgNon-Targeting Control_60	ACAGCGCTCTCGTGTACTAT	Non-Targeting Control
-sgNon-Targeting Control_61	ACAGGTTCTTATTCATTGAC	Non-Targeting Control
-sgNon-Targeting Control_62	ACATACCCCCCTGGTTCAGA	Non-Targeting Control
-sgNon-Targeting Control_63	ACATAGTCGACGGCTCGATT	Non-Targeting Control
-sgNon-Targeting Control_64	ACCACTAATGAGATTCTTGT	Non-Targeting Control
-sgNon-Targeting Control_65	ACCCAATGTGGCGGAGCCGA	Non-Targeting Control
-sgNon-Targeting Control_66	ACCCATATATGCTGCCGCAC	Non-Targeting Control
-sgNon-Targeting Control_67	ACCCATGAGTTAAGTTTTCT	Non-Targeting Control
-sgNon-Targeting Control_68	ACCCATTGAGAGTCGCCTGA	Non-Targeting Control
-sgNon-Targeting Control_69	ACCCGATAATAGCTACTGGT	Non-Targeting Control
-sgNon-Targeting Control_70	ACCCTCCGAATCGTAACGGA	Non-Targeting Control
-sgNon-Targeting Control_71	ACCGCTCATATAGGTAAAAA	Non-Targeting Control
-sgNon-Targeting Control_72	ACCTATAATCGACCACATTT	Non-Targeting Control
-sgNon-Targeting Control_73	ACCTATTGTCCCTTCAAGCT	Non-Targeting Control
-sgNon-Targeting Control_74	ACCTTACAATAAGTTATATT	Non-Targeting Control
-sgNon-Targeting Control_75	ACGATCGGTAATGGTCTGTT	Non-Targeting Control
-sgNon-Targeting Control_76	ACGCATGCTTCCCAAAGCGT	Non-Targeting Control
-sgNon-Targeting Control_77	ACGCCATATTTCTGGCTCTA	Non-Targeting Control
-sgNon-Targeting Control_78	ACGCCTCCTCAAATTAGCTC	Non-Targeting Control
-sgNon-Targeting Control_79	ACGCTCAGCACCCGCTATGC	Non-Targeting Control
-sgNon-Targeting Control_80	ACGCTCTCCTGGCAACAAGT	Non-Targeting Control
-sgNon-Targeting Control_81	ACGCTGACGAGTAAAAGCGG	Non-Targeting Control
-sgNon-Targeting Control_82	ACGGAAAGACCTCGCTATTC	Non-Targeting Control
-sgNon-Targeting Control_83	ACGGAGGCTAAGCGTCGCAA	Non-Targeting Control
-sgNon-Targeting Control_84	ACGGGCGGCTATCGCTGACT	Non-Targeting Control
-sgNon-Targeting Control_85	ACGGGGTGAAACCATGTCGT	Non-Targeting Control
-sgNon-Targeting Control_86	ACGGTACATGCGCATGAGTC	Non-Targeting Control
-sgNon-Targeting Control_87	ACGGTGGGGATGGACCTACT	Non-Targeting Control
-sgNon-Targeting Control_88	ACGGTTATGGTCTCATGGGG	Non-Targeting Control
-sgNon-Targeting Control_89	ACGTCAACTGCTGGAGTGGG	Non-Targeting Control
-sgNon-Targeting Control_90	ACGTCCATACTGTCGGCTAC	Non-Targeting Control
-sgNon-Targeting Control_91	ACGTCGTTTAGCACCCGGCT	Non-Targeting Control
-sgNon-Targeting Control_92	ACGTGGGGACATATACGTGT	Non-Targeting Control
-sgNon-Targeting Control_93	ACGTTCGAGTACGACCAGCT	Non-Targeting Control
-sgNon-Targeting Control_94	ACTACTCCGGCAAATACTCG	Non-Targeting Control
-sgNon-Targeting Control_95	ACTACTGGCTATCCGCGCCA	Non-Targeting Control
-sgNon-Targeting Control_96	ACTAGAGTCATGATCAGCGA	Non-Targeting Control
-sgNon-Targeting Control_97	ACTAGCCTGTTCGCGAGTAG	Non-Targeting Control
-sgNon-Targeting Control_98	ACTAGGGCAGTGTGTCTGCA	Non-Targeting Control
-sgNon-Targeting Control_99	ACTATCATGGCACCCAATTG	Non-Targeting Control
 sgNon-Targeting Control_100	ACTATTTAATATTGGTAAGT	Non-Targeting Control
+sgNon-Targeting Control_1000	TTTTTCTCACCCGATGAATC	Non-Targeting Control
 sgNon-Targeting Control_101	ACTCAGCCATTTTATTAGAA	Non-Targeting Control
 sgNon-Targeting Control_102	ACTCGAAATCACCTATGGTA	Non-Targeting Control
 sgNon-Targeting Control_103	ACTGAGTGGGTAACACGCAT	Non-Targeting Control
@@ -109,6 +15,7 @@ sgNon-Targeting Control_106	ACTGCTGCTGACATCTCTTA	Non-Targeting Control
 sgNon-Targeting Control_107	ACTGCTGCTGTCTTCTAAAT	Non-Targeting Control
 sgNon-Targeting Control_108	ACTGTTGCCGCGCCAACTGC	Non-Targeting Control
 sgNon-Targeting Control_109	ACTTACGGCACTCGCATGCC	Non-Targeting Control
+sgNon-Targeting Control_11	AAACTGTAGTGCAGGGTCAG	Non-Targeting Control
 sgNon-Targeting Control_110	ACTTCAGTTCGGCGTAGTCA	Non-Targeting Control
 sgNon-Targeting Control_112	AGAAACTGAACTATCCTACT	Non-Targeting Control
 sgNon-Targeting Control_113	AGAACCCAGACGCCAGCGGT	Non-Targeting Control
@@ -118,6 +25,7 @@ sgNon-Targeting Control_116	AGAATGCCATCTAGTTAGTA	Non-Targeting Control
 sgNon-Targeting Control_117	AGACACGTCACCGGTCAAAA	Non-Targeting Control
 sgNon-Targeting Control_118	AGACCCCGTAGGCAGGACGT	Non-Targeting Control
 sgNon-Targeting Control_119	AGACTCGTATTGTCATATTA	Non-Targeting Control
+sgNon-Targeting Control_12	AAAGAAAGAGGAATAGTAGC	Non-Targeting Control
 sgNon-Targeting Control_120	AGAGCATGATGACCCGTGAC	Non-Targeting Control
 sgNon-Targeting Control_121	AGAGCGTCTTCGTGACAAAC	Non-Targeting Control
 sgNon-Targeting Control_122	AGAGGGATTGGGAGCTTGAC	Non-Targeting Control
@@ -128,6 +36,7 @@ sgNon-Targeting Control_126	AGCATTCTCACCAAGACCGA	Non-Targeting Control
 sgNon-Targeting Control_127	AGCATTTGCGCGGCAACTGT	Non-Targeting Control
 sgNon-Targeting Control_128	AGCCCGCCACAGAATAGCTG	Non-Targeting Control
 sgNon-Targeting Control_129	AGCCGGCTTGTGACAGTGAA	Non-Targeting Control
+sgNon-Targeting Control_13	AAAGACTTGCTCCAAAACAC	Non-Targeting Control
 sgNon-Targeting Control_130	AGCGATCTGGACACTCTCCA	Non-Targeting Control
 sgNon-Targeting Control_131	AGCGATTCACGTATTAGATG	Non-Targeting Control
 sgNon-Targeting Control_132	AGCGCAGATAGCGCGTATCA	Non-Targeting Control
@@ -138,6 +47,7 @@ sgNon-Targeting Control_136	AGCTCGCCATGTCGGTTCTC	Non-Targeting Control
 sgNon-Targeting Control_137	AGCTGAAAATATACGTATTC	Non-Targeting Control
 sgNon-Targeting Control_138	AGCTGCGCGCTACTGGATCA	Non-Targeting Control
 sgNon-Targeting Control_139	AGCTGGACTCTGTAGAAATC	Non-Targeting Control
+sgNon-Targeting Control_14	AAAGATATAGCAAATTATGG	Non-Targeting Control
 sgNon-Targeting Control_140	AGCTTAATGTGCAGGTCAGA	Non-Targeting Control
 sgNon-Targeting Control_141	AGCTTTCGAAATTGAGTGTC	Non-Targeting Control
 sgNon-Targeting Control_142	AGGACACAGGATACGCAGCT	Non-Targeting Control
@@ -148,6 +58,7 @@ sgNon-Targeting Control_146	AGGATGCTGAACAAGTACGT	Non-Targeting Control
 sgNon-Targeting Control_147	AGGATGGATTGAGCAGCGGT	Non-Targeting Control
 sgNon-Targeting Control_148	AGGCCACAAATTGTATACAG	Non-Targeting Control
 sgNon-Targeting Control_149	AGGCGCCAACATTGACCGTA	Non-Targeting Control
+sgNon-Targeting Control_15	AAAGCGACGTAGGCATACTT	Non-Targeting Control
 sgNon-Targeting Control_150	AGGCTTAAATGGCGAGATTG	Non-Targeting Control
 sgNon-Targeting Control_151	AGGGAAACCTCTATGGGTAA	Non-Targeting Control
 sgNon-Targeting Control_152	AGGGATCGTTAGGAAGGGAA	Non-Targeting Control
@@ -158,6 +69,7 @@ sgNon-Targeting Control_156	AGGGTCAGTCTGTCCTTTTT	Non-Targeting Control
 sgNon-Targeting Control_157	AGGTAAGCCCCTTAGAACTG	Non-Targeting Control
 sgNon-Targeting Control_158	AGGTCAAGCCGACCTCGAAC	Non-Targeting Control
 sgNon-Targeting Control_159	AGGTCGGCCGAACATACGGT	Non-Targeting Control
+sgNon-Targeting Control_16	AAATAATATGCATCTCTCGA	Non-Targeting Control
 sgNon-Targeting Control_160	AGGTTGAATACCCCTTACTA	Non-Targeting Control
 sgNon-Targeting Control_161	AGTACCCCTAGGTATGGGGA	Non-Targeting Control
 sgNon-Targeting Control_162	AGTAGACGGACGGTGAGCTG	Non-Targeting Control
@@ -168,6 +80,7 @@ sgNon-Targeting Control_166	AGTCATAACTGAGTGAATCG	Non-Targeting Control
 sgNon-Targeting Control_167	AGTCTTAAAGACCCTAAGCT	Non-Targeting Control
 sgNon-Targeting Control_168	AGTCTTGGCCAATGTCACGG	Non-Targeting Control
 sgNon-Targeting Control_169	AGTGAGTGACAACCAGATCG	Non-Targeting Control
+sgNon-Targeting Control_17	AAATACAAGCTATAGCGATA	Non-Targeting Control
 sgNon-Targeting Control_170	AGTGCTACTGAAACTTGCCT	Non-Targeting Control
 sgNon-Targeting Control_171	AGTGGGGCGCTAAGTGGGGG	Non-Targeting Control
 sgNon-Targeting Control_172	AGTGTATCTTCCACCTGTCT	Non-Targeting Control
@@ -178,6 +91,7 @@ sgNon-Targeting Control_176	AGTTCTGTTCGATAGATGCC	Non-Targeting Control
 sgNon-Targeting Control_177	AGTTGAATGGACCTCGACTA	Non-Targeting Control
 sgNon-Targeting Control_178	ATAAGCCACACTACCCGCCT	Non-Targeting Control
 sgNon-Targeting Control_179	ATAAGCTACTCTGAGTTCCT	Non-Targeting Control
+sgNon-Targeting Control_18	AAATGCACAGATCGCTGATC	Non-Targeting Control
 sgNon-Targeting Control_180	ATAATCCGGAAACGCTCGAC	Non-Targeting Control
 sgNon-Targeting Control_181	ATACAATACTTTGGCGCATA	Non-Targeting Control
 sgNon-Targeting Control_182	ATACCAGATGCGTCCGCTTG	Non-Targeting Control
@@ -188,6 +102,7 @@ sgNon-Targeting Control_186	ATACTCTCACAGGTACATAA	Non-Targeting Control
 sgNon-Targeting Control_187	ATAGAAGTGTGACCGCTGGG	Non-Targeting Control
 sgNon-Targeting Control_188	ATAGCAGGACGAGGTTCCTT	Non-Targeting Control
 sgNon-Targeting Control_189	ATAGCCGCCGCTCATTACTT	Non-Targeting Control
+sgNon-Targeting Control_19	AAATTGGCTTTCGTTCGTGC	Non-Targeting Control
 sgNon-Targeting Control_190	ATAGCGGATGTCCTTGGAAA	Non-Targeting Control
 sgNon-Targeting Control_191	ATAGCTAAAGTTGATGTGTA	Non-Targeting Control
 sgNon-Targeting Control_192	ATAGGCACCTTAAGGGTCTC	Non-Targeting Control
@@ -198,6 +113,8 @@ sgNon-Targeting Control_196	ATATGACAGGGCAAACGCAT	Non-Targeting Control
 sgNon-Targeting Control_197	ATATTTCGGCAGTTGCAGCA	Non-Targeting Control
 sgNon-Targeting Control_198	ATATTTTATGACATAAAAAT	Non-Targeting Control
 sgNon-Targeting Control_199	ATCAAAGTGTCTGACTTATT	Non-Targeting Control
+sgNon-Targeting Control_2	AAAACAGGACGATGTGCGGC	Non-Targeting Control
+sgNon-Targeting Control_20	AACAGGAAACGTGACTAAAG	Non-Targeting Control
 sgNon-Targeting Control_200	ATCAAGTCAGGTTATGCGGG	Non-Targeting Control
 sgNon-Targeting Control_201	ATCACGTGATCGGATGGTTC	Non-Targeting Control
 sgNon-Targeting Control_202	ATCAGCCCATTTCTGCGCAC	Non-Targeting Control
@@ -208,6 +125,7 @@ sgNon-Targeting Control_206	ATCCTAGGTACAAAAGGACG	Non-Targeting Control
 sgNon-Targeting Control_207	ATCGATATACCGCCATAAAA	Non-Targeting Control
 sgNon-Targeting Control_208	ATCGGTACCTCTTCACATAT	Non-Targeting Control
 sgNon-Targeting Control_209	ATCGTATCATCAGCTAGCGC	Non-Targeting Control
+sgNon-Targeting Control_21	AACATCTCGTTAGGGGTATC	Non-Targeting Control
 sgNon-Targeting Control_210	ATCGTTGCTGACAGGATCTA	Non-Targeting Control
 sgNon-Targeting Control_211	ATCGTTTCCGCTTAACGGCG	Non-Targeting Control
 sgNon-Targeting Control_212	ATCTACAATCCAGCCCTCTA	Non-Targeting Control
@@ -218,6 +136,7 @@ sgNon-Targeting Control_216	ATCTGCCATGGCGTCCTGGC	Non-Targeting Control
 sgNon-Targeting Control_217	ATCTGTCCTAATTCGGATCG	Non-Targeting Control
 sgNon-Targeting Control_218	ATCTGTGTGACTGCGGTCGG	Non-Targeting Control
 sgNon-Targeting Control_219	ATCTTCAGGGTAACTACGAA	Non-Targeting Control
+sgNon-Targeting Control_22	AACCACGGCATTGAGAGGTG	Non-Targeting Control
 sgNon-Targeting Control_220	ATCTTCTCGACGAAAATGCG	Non-Targeting Control
 sgNon-Targeting Control_221	ATGACATTGCGCGTCTACGG	Non-Targeting Control
 sgNon-Targeting Control_222	ATGATATCTGACATGCAGCG	Non-Targeting Control
@@ -228,6 +147,7 @@ sgNon-Targeting Control_226	ATGCGCAGCTCCAGAATTTT	Non-Targeting Control
 sgNon-Targeting Control_227	ATGCGCTTTAATCGCCGTTC	Non-Targeting Control
 sgNon-Targeting Control_228	ATGCTGCAGCTTTACGATCA	Non-Targeting Control
 sgNon-Targeting Control_229	ATGGAAGAGCGTCATGACTT	Non-Targeting Control
+sgNon-Targeting Control_23	AACGCGAGTCCGGTGGCTAG	Non-Targeting Control
 sgNon-Targeting Control_230	ATGTAACGAGTTGTAAGTCA	Non-Targeting Control
 sgNon-Targeting Control_231	ATGTCTAGACCTAATCGTTT	Non-Targeting Control
 sgNon-Targeting Control_232	ATGTTATTACAGACGCGTGT	Non-Targeting Control
@@ -238,6 +158,7 @@ sgNon-Targeting Control_236	ATTAGGCCTTTTTCTTAACT	Non-Targeting Control
 sgNon-Targeting Control_237	ATTCAGCGCGCTCGCCCTGG	Non-Targeting Control
 sgNon-Targeting Control_238	ATTCATGCGCCGCCTCCTCT	Non-Targeting Control
 sgNon-Targeting Control_239	ATTCCTTCGGCGCTCTGCGT	Non-Targeting Control
+sgNon-Targeting Control_24	AACGCTGTCGTACGTGTATA	Non-Targeting Control
 sgNon-Targeting Control_240	ATTGAGAATTCGTTTCAAGG	Non-Targeting Control
 sgNon-Targeting Control_241	ATTGCGCAATCCTTAGGATA	Non-Targeting Control
 sgNon-Targeting Control_242	ATTGCTCTGTCGCATCAATC	Non-Targeting Control
@@ -248,6 +169,7 @@ sgNon-Targeting Control_246	ATTTATAAACACAGGGTCGC	Non-Targeting Control
 sgNon-Targeting Control_247	ATTTCCCTACGGAGATATCC	Non-Targeting Control
 sgNon-Targeting Control_248	ATTTTCGAAAGCTTAGGCCA	Non-Targeting Control
 sgNon-Targeting Control_249	CAAAAAGGCGTTTGAGCGTG	Non-Targeting Control
+sgNon-Targeting Control_25	AACGTGCTGACGATGCGGGC	Non-Targeting Control
 sgNon-Targeting Control_250	CAAAAGTCTCGCTTGGTCCT	Non-Targeting Control
 sgNon-Targeting Control_251	CAAAATCTAGCAATTTTTGG	Non-Targeting Control
 sgNon-Targeting Control_252	CAAACAGTCTAAGGCGACGA	Non-Targeting Control
@@ -258,6 +180,7 @@ sgNon-Targeting Control_256	CAACACCCCGCGTTATGCTA	Non-Targeting Control
 sgNon-Targeting Control_257	CAACCGGCGGGCCCCTACAA	Non-Targeting Control
 sgNon-Targeting Control_258	CAACGACGGGCCTAGTCTCA	Non-Targeting Control
 sgNon-Targeting Control_259	CAACGGGTTCTCCCGGCTAC	Non-Targeting Control
+sgNon-Targeting Control_26	AACTACAAGTAAAAGTATCG	Non-Targeting Control
 sgNon-Targeting Control_260	CAAGACCTTATCGTGCAGCG	Non-Targeting Control
 sgNon-Targeting Control_261	CAAGCATTTAGACACCTGTC	Non-Targeting Control
 sgNon-Targeting Control_262	CAAGTGAGCATAAGCGATGT	Non-Targeting Control
@@ -268,6 +191,7 @@ sgNon-Targeting Control_266	CAATGGCGTGGACATTTGAT	Non-Targeting Control
 sgNon-Targeting Control_267	CACATAACATGAGGTATCAG	Non-Targeting Control
 sgNon-Targeting Control_268	CACATGGGGTACAGCACACC	Non-Targeting Control
 sgNon-Targeting Control_269	CACCATAGAACCTGAAATAC	Non-Targeting Control
+sgNon-Targeting Control_27	AACTAGAATAGGCGGGCTTG	Non-Targeting Control
 sgNon-Targeting Control_270	CACCCGGAACCACTACTGAG	Non-Targeting Control
 sgNon-Targeting Control_271	CACCCTTATATTCAGTAACT	Non-Targeting Control
 sgNon-Targeting Control_272	CACGAACTCACACCGCGCGA	Non-Targeting Control
@@ -278,6 +202,7 @@ sgNon-Targeting Control_276	CACGGCCTAACTTGCTGATA	Non-Targeting Control
 sgNon-Targeting Control_277	CACTGCAGTATTCGTGGCCT	Non-Targeting Control
 sgNon-Targeting Control_278	CACTTACACATGAGGCGGTA	Non-Targeting Control
 sgNon-Targeting Control_279	CAGACCCAGTAAAACCACCA	Non-Targeting Control
+sgNon-Targeting Control_28	AACTAGCCCGAGCAGCTTCG	Non-Targeting Control
 sgNon-Targeting Control_280	CAGACCTAGCTCCGCTCCCA	Non-Targeting Control
 sgNon-Targeting Control_281	CAGACGGTTGGTAAGGACGC	Non-Targeting Control
 sgNon-Targeting Control_282	CAGAGACAATGACATGTAGA	Non-Targeting Control
@@ -288,6 +213,7 @@ sgNon-Targeting Control_286	CAGCGGTGCTATTTGGTCTT	Non-Targeting Control
 sgNon-Targeting Control_287	CAGGAGTCGCCGATACGCGT	Non-Targeting Control
 sgNon-Targeting Control_288	CAGGCTGCGCTTCGCAAGCT	Non-Targeting Control
 sgNon-Targeting Control_289	CAGGGTTGCGCAGAGGACTC	Non-Targeting Control
+sgNon-Targeting Control_29	AAGAAGAATTGGGGATGATG	Non-Targeting Control
 sgNon-Targeting Control_290	CAGGTTTGCACGCATAGCTA	Non-Targeting Control
 sgNon-Targeting Control_291	CAGTAGCGATCGAATGTCAA	Non-Targeting Control
 sgNon-Targeting Control_292	CAGTCGTTTCTATGGGATCT	Non-Targeting Control
@@ -298,6 +224,8 @@ sgNon-Targeting Control_296	CATCATAAATGTACAACGGG	Non-Targeting Control
 sgNon-Targeting Control_297	CATCTGTAGGGTTGCAAGCC	Non-Targeting Control
 sgNon-Targeting Control_298	CATGAGCGCATTGAATAATA	Non-Targeting Control
 sgNon-Targeting Control_299	CATGATAGATCAGTCTTCCC	Non-Targeting Control
+sgNon-Targeting Control_3	AAAACATCGACCGAAAGCGT	Non-Targeting Control
+sgNon-Targeting Control_30	AAGAAGGGCCGTACCCGAAA	Non-Targeting Control
 sgNon-Targeting Control_300	CATGGCATAAGTATAAGACA	Non-Targeting Control
 sgNon-Targeting Control_301	CATGGCCTACGGTGTCTTTG	Non-Targeting Control
 sgNon-Targeting Control_302	CATTAAACCTTGCCCCACAA	Non-Targeting Control
@@ -308,6 +236,7 @@ sgNon-Targeting Control_306	CATTGCACTCGTTGCCAACG	Non-Targeting Control
 sgNon-Targeting Control_307	CATTGTATGAACGCAATAGC	Non-Targeting Control
 sgNon-Targeting Control_308	CATTGTTGAGCGGGCGCGCT	Non-Targeting Control
 sgNon-Targeting Control_309	CCAAAAAGATGAATATCTCG	Non-Targeting Control
+sgNon-Targeting Control_31	AAGAATTAGGCACGGTTACT	Non-Targeting Control
 sgNon-Targeting Control_310	CCAATCTTGAACGTCATGTT	Non-Targeting Control
 sgNon-Targeting Control_311	CCAATGATAAGCCCGAACGG	Non-Targeting Control
 sgNon-Targeting Control_312	CCACACCTGTCTAGCATGAC	Non-Targeting Control
@@ -318,6 +247,7 @@ sgNon-Targeting Control_316	CCAGAGCCTTGGTTTATATC	Non-Targeting Control
 sgNon-Targeting Control_317	CCAGCAATACCCCGGTATGG	Non-Targeting Control
 sgNon-Targeting Control_318	CCAGCCAAGAATCCAGCCCC	Non-Targeting Control
 sgNon-Targeting Control_319	CCAGGCTGAAGTTCGTACCT	Non-Targeting Control
+sgNon-Targeting Control_32	AAGAGATCACATCTAGGCCA	Non-Targeting Control
 sgNon-Targeting Control_320	CCAGTGCCCTTTTGTCGCAA	Non-Targeting Control
 sgNon-Targeting Control_321	CCAGTTATAATTAGGGGTTT	Non-Targeting Control
 sgNon-Targeting Control_322	CCAGTTGCTCTGGGGGAACA	Non-Targeting Control
@@ -328,6 +258,7 @@ sgNon-Targeting Control_326	CCATTCACAATCCCACTACA	Non-Targeting Control
 sgNon-Targeting Control_327	CCATTCCGTAAGGGCTTGGA	Non-Targeting Control
 sgNon-Targeting Control_328	CCATTCTCAACCGGTCCAAT	Non-Targeting Control
 sgNon-Targeting Control_329	CCCAATGGCTTCTGCGTGAC	Non-Targeting Control
+sgNon-Targeting Control_33	AAGAGCGAATCGATTTCGTG	Non-Targeting Control
 sgNon-Targeting Control_330	CCCAGGTGTATAATGAAACG	Non-Targeting Control
 sgNon-Targeting Control_331	CCCCAACTTTCGCGACTCCG	Non-Targeting Control
 sgNon-Targeting Control_332	CCCCGTAGCTCATTAGTCTG	Non-Targeting Control
@@ -338,6 +269,7 @@ sgNon-Targeting Control_336	CCCGCTAACAGCCTAGATCA	Non-Targeting Control
 sgNon-Targeting Control_337	CCCGGACGTCAAAGCTGGAT	Non-Targeting Control
 sgNon-Targeting Control_338	CCCGTGGCGTGCGCACCTGT	Non-Targeting Control
 sgNon-Targeting Control_339	CCCTACCTATCCGGTGCTTT	Non-Targeting Control
+sgNon-Targeting Control_34	AAGAGTAGTAGACGCCCGGG	Non-Targeting Control
 sgNon-Targeting Control_340	CCCTCAGGAGCTACTAAGGT	Non-Targeting Control
 sgNon-Targeting Control_341	CCCTGTGAAGGAGGCGTAAG	Non-Targeting Control
 sgNon-Targeting Control_342	CCCTTCTGGCGGGCCAAACA	Non-Targeting Control
@@ -348,6 +280,7 @@ sgNon-Targeting Control_346	CCGGCAAGAAACTATACTTG	Non-Targeting Control
 sgNon-Targeting Control_347	CCGGGAGATTAACGTTAATT	Non-Targeting Control
 sgNon-Targeting Control_348	CCGTCTCCGCATCGTCTTTT	Non-Targeting Control
 sgNon-Targeting Control_349	CCGTGTTCCACAACTACCCT	Non-Targeting Control
+sgNon-Targeting Control_35	AAGCACTAGTCCGTATGATG	Non-Targeting Control
 sgNon-Targeting Control_350	CCGTTGATCCCCAGGCGTGC	Non-Targeting Control
 sgNon-Targeting Control_351	CCGTTGGACTATGGCGGGTC	Non-Targeting Control
 sgNon-Targeting Control_352	CCTAAACTCAGACGCACTAC	Non-Targeting Control
@@ -358,6 +291,7 @@ sgNon-Targeting Control_356	CCTACTCCCGTGTGTTATCC	Non-Targeting Control
 sgNon-Targeting Control_357	CCTAGAGGTCCCAAGGCGTG	Non-Targeting Control
 sgNon-Targeting Control_358	CCTAGTTCATAAGCTACGCC	Non-Targeting Control
 sgNon-Targeting Control_359	CCTCCGTGCTAACGCGGACG	Non-Targeting Control
+sgNon-Targeting Control_36	AAGCCATTGTATAACTCCAG	Non-Targeting Control
 sgNon-Targeting Control_360	CCTCGATGGTCACCTGTAGC	Non-Targeting Control
 sgNon-Targeting Control_361	CCTCGGGCGTAAATACTCAT	Non-Targeting Control
 sgNon-Targeting Control_362	CCTCGTCCAGATTCCGGCGG	Non-Targeting Control
@@ -368,6 +302,7 @@ sgNon-Targeting Control_366	CCTGCGCGTAGAACAGTGGT	Non-Targeting Control
 sgNon-Targeting Control_367	CCTGCGGTGCACGGCTAGCC	Non-Targeting Control
 sgNon-Targeting Control_368	CCTGTCGCTATCGTTAGAGA	Non-Targeting Control
 sgNon-Targeting Control_369	CCTTATGGAATCAGACCGTT	Non-Targeting Control
+sgNon-Targeting Control_37	AAGCGGGCACACATGACAAG	Non-Targeting Control
 sgNon-Targeting Control_370	CCTTGAAATCAAATCAAACC	Non-Targeting Control
 sgNon-Targeting Control_371	CCTTGGCGAGACGGAGGTAC	Non-Targeting Control
 sgNon-Targeting Control_372	CGAAACCCTCTTAAGTTAAC	Non-Targeting Control
@@ -398,6 +333,8 @@ sgNon-Targeting Control_396	CGCAGTACGTATAGACTTAA	Non-Targeting Control
 sgNon-Targeting Control_397	CGCAGTCATTCGATAGGAAT	Non-Targeting Control
 sgNon-Targeting Control_398	CGCATAAGTCGATAGACACA	Non-Targeting Control
 sgNon-Targeting Control_399	CGCCCGTTTATGTGGCTACC	Non-Targeting Control
+sgNon-Targeting Control_4	AAAATAGCAGTAAACTCAAC	Non-Targeting Control
+sgNon-Targeting Control_40	AAGGCGCGCGAATGTGGCAG	Non-Targeting Control
 sgNon-Targeting Control_400	CGCCGGGACCGTTAGGGAAT	Non-Targeting Control
 sgNon-Targeting Control_401	CGCCGGGCTGACAATTAACG	Non-Targeting Control
 sgNon-Targeting Control_402	CGCCGTTCCGAGATACTTGA	Non-Targeting Control
@@ -408,6 +345,7 @@ sgNon-Targeting Control_406	CGCGCACCACGGGCGCGCAC	Non-Targeting Control
 sgNon-Targeting Control_407	CGCGCAGAAGGCAAGCAGGG	Non-Targeting Control
 sgNon-Targeting Control_408	CGCGGAAATTTTACCGACGA	Non-Targeting Control
 sgNon-Targeting Control_409	CGCGGCCCACGCGTCATCGC	Non-Targeting Control
+sgNon-Targeting Control_41	AAGGGCGTGCCCTGCGTTGT	Non-Targeting Control
 sgNon-Targeting Control_410	CGCGTGCATCTGCCGAAGGC	Non-Targeting Control
 sgNon-Targeting Control_411	CGCGTGTAGCTGGAGACAAG	Non-Targeting Control
 sgNon-Targeting Control_412	CGCTAAATTGTCACACGTTT	Non-Targeting Control
@@ -418,6 +356,7 @@ sgNon-Targeting Control_416	CGCTTCCGCGGCCCGTTCAA	Non-Targeting Control
 sgNon-Targeting Control_417	CGGAGCTTAGCGTGGGGGCG	Non-Targeting Control
 sgNon-Targeting Control_418	CGGAGTAACAAGCGGACGGA	Non-Targeting Control
 sgNon-Targeting Control_419	CGGAGTTAACCTGGAACCTT	Non-Targeting Control
+sgNon-Targeting Control_42	AAGTGACAGATGGGCAGGCG	Non-Targeting Control
 sgNon-Targeting Control_420	CGGCACACCAATGCGTTCGT	Non-Targeting Control
 sgNon-Targeting Control_421	CGGCACCTGTTAGGCTATTC	Non-Targeting Control
 sgNon-Targeting Control_422	CGGCACTAGAAGTTTTTGAA	Non-Targeting Control
@@ -427,6 +366,7 @@ sgNon-Targeting Control_425	CGGCTCGTTCTACGCACTGA	Non-Targeting Control
 sgNon-Targeting Control_426	CGGCTGAGGCACCTGGTTTA	Non-Targeting Control
 sgNon-Targeting Control_427	CGGCTTTGTTGCCCGTAAGC	Non-Targeting Control
 sgNon-Targeting Control_428	CGGGACGTCGCGAAAATGTA	Non-Targeting Control
+sgNon-Targeting Control_43	AAGTGACGGTGTCATGCGGG	Non-Targeting Control
 sgNon-Targeting Control_430	CGGGATGGTCCCTGCCGAGA	Non-Targeting Control
 sgNon-Targeting Control_431	CGGGCCTATAACACCATCGA	Non-Targeting Control
 sgNon-Targeting Control_432	CGGGGAATTGCACGGCGGAA	Non-Targeting Control
@@ -437,6 +377,7 @@ sgNon-Targeting Control_436	CGGTGAGCCACACGAAGGAA	Non-Targeting Control
 sgNon-Targeting Control_437	CGGTGCTGTGAAAGCCGAGC	Non-Targeting Control
 sgNon-Targeting Control_438	CGGTGTGCCCCCAAATATTG	Non-Targeting Control
 sgNon-Targeting Control_439	CGGTTTACATCTGCCCATCG	Non-Targeting Control
+sgNon-Targeting Control_44	AAGTGTGTGCATAGCAGGGT	Non-Targeting Control
 sgNon-Targeting Control_440	CGTAATTTTGTAATCGCTTC	Non-Targeting Control
 sgNon-Targeting Control_441	CGTAGTAAATATCTAGCTAA	Non-Targeting Control
 sgNon-Targeting Control_442	CGTATTCGACTCTCAACGCG	Non-Targeting Control
@@ -447,6 +388,7 @@ sgNon-Targeting Control_446	CGTCCCTTCGTCTCTGCTTA	Non-Targeting Control
 sgNon-Targeting Control_447	CGTCGAGTGCTCGAACTCCA	Non-Targeting Control
 sgNon-Targeting Control_448	CGTCGCCATATGCCGGTGGC	Non-Targeting Control
 sgNon-Targeting Control_449	CGTCGGGTAGCTATTTCTTT	Non-Targeting Control
+sgNon-Targeting Control_45	AATATTTGGCTCGGCTGCGC	Non-Targeting Control
 sgNon-Targeting Control_450	CGTGCCTTTACATTCACTTT	Non-Targeting Control
 sgNon-Targeting Control_451	CGTGCGGTAAATACGAAATA	Non-Targeting Control
 sgNon-Targeting Control_452	CGTGCGTGAAATCGCTAGCT	Non-Targeting Control
@@ -457,6 +399,7 @@ sgNon-Targeting Control_456	CGTGTGTGGGTAAACGGAAA	Non-Targeting Control
 sgNon-Targeting Control_457	CGTGTTTGGAATTTGCCGCG	Non-Targeting Control
 sgNon-Targeting Control_458	CGTTAAGACTAGCTCGGTTT	Non-Targeting Control
 sgNon-Targeting Control_459	CGTTGGGCATAGCGAACACT	Non-Targeting Control
+sgNon-Targeting Control_46	AATCGACTCGAACTTCGTGT	Non-Targeting Control
 sgNon-Targeting Control_460	CGTTGTAGGGTCTTTCTTGA	Non-Targeting Control
 sgNon-Targeting Control_461	CTAAAATTTTTGCGTGTTTG	Non-Targeting Control
 sgNon-Targeting Control_462	CTAACATGAGTACATAGATA	Non-Targeting Control
@@ -467,6 +410,7 @@ sgNon-Targeting Control_466	CTAGAGGGGTATAGCAACAA	Non-Targeting Control
 sgNon-Targeting Control_467	CTAGCCGCCCAGATCGAGCC	Non-Targeting Control
 sgNon-Targeting Control_468	CTATAACCGAATCAAAGGGT	Non-Targeting Control
 sgNon-Targeting Control_469	CTATATTGTCGCGCAGTGGA	Non-Targeting Control
+sgNon-Targeting Control_47	AATCGCAGGTATCCCAGAGC	Non-Targeting Control
 sgNon-Targeting Control_470	CTATCTCGAGTGGTAATGCG	Non-Targeting Control
 sgNon-Targeting Control_471	CTCAACCGACCGTATGGTCA	Non-Targeting Control
 sgNon-Targeting Control_472	CTCACGGGGACATACAGGGC	Non-Targeting Control
@@ -477,6 +421,7 @@ sgNon-Targeting Control_476	CTCCCATTGATCTACGATGG	Non-Targeting Control
 sgNon-Targeting Control_477	CTCCCTGCCGGCCGGGTTAG	Non-Targeting Control
 sgNon-Targeting Control_478	CTCCGTTATGTGGCATGAGA	Non-Targeting Control
 sgNon-Targeting Control_479	CTCCTTACGTCGGGCATTAA	Non-Targeting Control
+sgNon-Targeting Control_48	AATCTTACTCGTCCTCCTTG	Non-Targeting Control
 sgNon-Targeting Control_480	CTCGACAGTTCGTCCCGAGC	Non-Targeting Control
 sgNon-Targeting Control_481	CTCGCACCATTGAGGGTAGT	Non-Targeting Control
 sgNon-Targeting Control_482	CTCGGAATACTCCTATTACA	Non-Targeting Control
@@ -486,6 +431,7 @@ sgNon-Targeting Control_486	CTCTGTGAGATGTCCCGAAA	Non-Targeting Control
 sgNon-Targeting Control_487	CTCTTTTGAGATTGACAAGT	Non-Targeting Control
 sgNon-Targeting Control_488	CTGAAGGTGTCTGGCAGAGC	Non-Targeting Control
 sgNon-Targeting Control_489	CTGACGTGTCTGAAATGAGT	Non-Targeting Control
+sgNon-Targeting Control_49	AATGCGAGTGTATCCGCAGT	Non-Targeting Control
 sgNon-Targeting Control_490	CTGAGTGAAAAATAAAAGTT	Non-Targeting Control
 sgNon-Targeting Control_491	CTGCACTGTGGAGACGCCCG	Non-Targeting Control
 sgNon-Targeting Control_492	CTGCCCCAGGCGTAATCCTC	Non-Targeting Control
@@ -495,6 +441,8 @@ sgNon-Targeting Control_496	CTGGCCGAATCTCACTATGT	Non-Targeting Control
 sgNon-Targeting Control_497	CTGGCTTATTAGCTATAAAG	Non-Targeting Control
 sgNon-Targeting Control_498	CTGGTGACCGACAATTACAC	Non-Targeting Control
 sgNon-Targeting Control_499	CTGTATTAACGAACCTTGTG	Non-Targeting Control
+sgNon-Targeting Control_5	AAAATCGATGGGCTGAATCT	Non-Targeting Control
+sgNon-Targeting Control_50	AATGGGTTGCCGGGAGTAAA	Non-Targeting Control
 sgNon-Targeting Control_500	CTGTCCACCTACAGCGATGT	Non-Targeting Control
 sgNon-Targeting Control_501	CTGTGTTGCTCCCCTCCCCT	Non-Targeting Control
 sgNon-Targeting Control_502	CTTAACACTTTAGTGCGTCA	Non-Targeting Control
@@ -505,6 +453,7 @@ sgNon-Targeting Control_506	CTTACAATCGTCGGTCCAAT	Non-Targeting Control
 sgNon-Targeting Control_507	CTTACCCCTATTATAATGAA	Non-Targeting Control
 sgNon-Targeting Control_508	CTTACGCGCCTGGTCAAAAG	Non-Targeting Control
 sgNon-Targeting Control_509	CTTAGCTGACCGACAAGGTG	Non-Targeting Control
+sgNon-Targeting Control_51	AATTTAAGCTTCGTAACTGG	Non-Targeting Control
 sgNon-Targeting Control_510	CTTAGGATTCCGAGGTATCT	Non-Targeting Control
 sgNon-Targeting Control_511	CTTATTACTCCAGTATAAGA	Non-Targeting Control
 sgNon-Targeting Control_512	CTTCCGTTATTCGGAAGTGA	Non-Targeting Control
@@ -515,6 +464,7 @@ sgNon-Targeting Control_516	CTTGTTGCGTATACGAGACT	Non-Targeting Control
 sgNon-Targeting Control_517	CTTTATCTGGCGTGGGGTAT	Non-Targeting Control
 sgNon-Targeting Control_518	CTTTGATAACGTGGGCGGTA	Non-Targeting Control
 sgNon-Targeting Control_519	CTTTTCAGCTGAGACGTACG	Non-Targeting Control
+sgNon-Targeting Control_52	AATTTATCGTCAACATTAAT	Non-Targeting Control
 sgNon-Targeting Control_520	CTTTTTTTATTTATCGATCG	Non-Targeting Control
 sgNon-Targeting Control_521	GAAAACACGATGACGTCTCT	Non-Targeting Control
 sgNon-Targeting Control_522	GAAACGAGAAGTTTGTACTA	Non-Targeting Control
@@ -525,6 +475,7 @@ sgNon-Targeting Control_526	GAACCGACTTGAAGGGGGCT	Non-Targeting Control
 sgNon-Targeting Control_527	GAACCTCCCCGAATATCTGG	Non-Targeting Control
 sgNon-Targeting Control_528	GAACGCCGCTCAAGTTGATA	Non-Targeting Control
 sgNon-Targeting Control_529	GAACGTAGAAATTCCCATTT	Non-Targeting Control
+sgNon-Targeting Control_53	ACAAAAAACTACGGTGATTA	Non-Targeting Control
 sgNon-Targeting Control_530	GAACGTCCAAGCAAGGGAGC	Non-Targeting Control
 sgNon-Targeting Control_531	GAACTCAACCAGAGGGCCAA	Non-Targeting Control
 sgNon-Targeting Control_532	GAACTGGCAAACAGGCGTGG	Non-Targeting Control
@@ -534,6 +485,7 @@ sgNon-Targeting Control_535	GAAGCGGGACCGTGTCTCAC	Non-Targeting Control
 sgNon-Targeting Control_536	GAATAGATTTGTCAGTTAGG	Non-Targeting Control
 sgNon-Targeting Control_537	GAATCGACCGACACTAATGT	Non-Targeting Control
 sgNon-Targeting Control_539	GACACTATCCAACCCAAGAG	Non-Targeting Control
+sgNon-Targeting Control_54	ACAAAATGCCGTGCGTCAAT	Non-Targeting Control
 sgNon-Targeting Control_540	GACAGATCACGTATCAGGGC	Non-Targeting Control
 sgNon-Targeting Control_541	GACAGTGAAATTAGCTCCCA	Non-Targeting Control
 sgNon-Targeting Control_542	GACCCCCGATAACTTTTGAC	Non-Targeting Control
@@ -544,6 +496,7 @@ sgNon-Targeting Control_546	GACCTTCATTGAAGAAAAGC	Non-Targeting Control
 sgNon-Targeting Control_547	GACGAGGGCGGCAGAGCAGT	Non-Targeting Control
 sgNon-Targeting Control_548	GACGCCCTAATGCCCATCGT	Non-Targeting Control
 sgNon-Targeting Control_549	GACGCCTTGCCCGGCTCACA	Non-Targeting Control
+sgNon-Targeting Control_55	ACAAACGACCTTGAGCAGGG	Non-Targeting Control
 sgNon-Targeting Control_550	GACGTAGCCTTCCGAAATAT	Non-Targeting Control
 sgNon-Targeting Control_551	GACTGAAATCCAAGGACTGT	Non-Targeting Control
 sgNon-Targeting Control_552	GACTTCTAGAATATAAAAGA	Non-Targeting Control
@@ -552,6 +505,7 @@ sgNon-Targeting Control_554	GAGAAGGATGGAAATTAGAA	Non-Targeting Control
 sgNon-Targeting Control_556	GAGACCACTTTCGTGCAAGC	Non-Targeting Control
 sgNon-Targeting Control_557	GAGAGCGTTAGCGTGGGATG	Non-Targeting Control
 sgNon-Targeting Control_558	GAGAGTGCGCCTTGATAGTA	Non-Targeting Control
+sgNon-Targeting Control_56	ACAAAGATCGCATGGCATAC	Non-Targeting Control
 sgNon-Targeting Control_560	GAGCAATCCAAAGTTAACGG	Non-Targeting Control
 sgNon-Targeting Control_561	GAGCAGCTGTCAGGTCTTGT	Non-Targeting Control
 sgNon-Targeting Control_562	GAGCTTAGCAAAGGGTTGGG	Non-Targeting Control
@@ -562,6 +516,7 @@ sgNon-Targeting Control_566	GAGTAATTTCGAACGTATTG	Non-Targeting Control
 sgNon-Targeting Control_567	GAGTACAGCGATTCCTCATG	Non-Targeting Control
 sgNon-Targeting Control_568	GAGTCGAAGATGGTCTAGGA	Non-Targeting Control
 sgNon-Targeting Control_569	GAGTGATGCTTAGACTCCGT	Non-Targeting Control
+sgNon-Targeting Control_57	ACACCCATTCTCATAACGGA	Non-Targeting Control
 sgNon-Targeting Control_570	GAGTGTAAGCTAACACTCTG	Non-Targeting Control
 sgNon-Targeting Control_571	GAGTTATTTATTCTCTCGAG	Non-Targeting Control
 sgNon-Targeting Control_572	GAGTTTCTAGTAGTGGTAGG	Non-Targeting Control
@@ -572,6 +527,7 @@ sgNon-Targeting Control_576	GATCCAGCAATATTTCTTAA	Non-Targeting Control
 sgNon-Targeting Control_577	GATCCAGGAGTGATCGAGTA	Non-Targeting Control
 sgNon-Targeting Control_578	GATCCTTCTCTTTTTGGTTT	Non-Targeting Control
 sgNon-Targeting Control_579	GATCTAGTCCTCTAATCGAT	Non-Targeting Control
+sgNon-Targeting Control_58	ACACCGAAGCACCTGTACGT	Non-Targeting Control
 sgNon-Targeting Control_580	GATGGCGCGCAGTTGAGTCA	Non-Targeting Control
 sgNon-Targeting Control_581	GATGGCGCTTCAGTCGTCGG	Non-Targeting Control
 sgNon-Targeting Control_582	GATGTGATCTATGGTTGCGA	Non-Targeting Control
@@ -582,6 +538,7 @@ sgNon-Targeting Control_586	GCAAAAACCCAACGCTATTC	Non-Targeting Control
 sgNon-Targeting Control_587	GCAAAAGTGGCATAAAACCG	Non-Targeting Control
 sgNon-Targeting Control_588	GCAAACCCGAGTGACACGTC	Non-Targeting Control
 sgNon-Targeting Control_589	GCAAATTCAGACAGCTAATT	Non-Targeting Control
+sgNon-Targeting Control_59	ACAGCCCTCACGAGCCCGAA	Non-Targeting Control
 sgNon-Targeting Control_590	GCAAGGTCATGAAACCAAGC	Non-Targeting Control
 sgNon-Targeting Control_591	GCAATGCAATCGCAGGAGCA	Non-Targeting Control
 sgNon-Targeting Control_592	GCACAAAACCAGCAATGGTC	Non-Targeting Control
@@ -592,6 +549,8 @@ sgNon-Targeting Control_596	GCACTTTGTTTGGCCTACTG	Non-Targeting Control
 sgNon-Targeting Control_597	GCAGCGAGATAACTTGACTC	Non-Targeting Control
 sgNon-Targeting Control_598	GCAGTACTACTGAGTTTTTC	Non-Targeting Control
 sgNon-Targeting Control_599	GCCAACAAGAATCGGATCCC	Non-Targeting Control
+sgNon-Targeting Control_6	AAAATTATCGGAAACGGTAG	Non-Targeting Control
+sgNon-Targeting Control_60	ACAGCGCTCTCGTGTACTAT	Non-Targeting Control
 sgNon-Targeting Control_600	GCCACACGAATCATAAAGAG	Non-Targeting Control
 sgNon-Targeting Control_601	GCCAGCGGGGATATGGTGAA	Non-Targeting Control
 sgNon-Targeting Control_602	GCCAGGGTATGGGCATCTCG	Non-Targeting Control
@@ -602,6 +561,7 @@ sgNon-Targeting Control_606	GCCCCAAGCTAGAACTCAGC	Non-Targeting Control
 sgNon-Targeting Control_607	GCCCCGCCGCCCTCCCCTCC	Non-Targeting Control
 sgNon-Targeting Control_608	GCCCCGTAAATCTCATTACA	Non-Targeting Control
 sgNon-Targeting Control_609	GCCCCTTATGATTGTTATAG	Non-Targeting Control
+sgNon-Targeting Control_61	ACAGGTTCTTATTCATTGAC	Non-Targeting Control
 sgNon-Targeting Control_610	GCCCTTCAATGCGTTCCGTA	Non-Targeting Control
 sgNon-Targeting Control_611	GCCGCCGATTTCATAAGTAA	Non-Targeting Control
 sgNon-Targeting Control_612	GCCGTGGTATCAAGTCGGTA	Non-Targeting Control
@@ -612,6 +572,7 @@ sgNon-Targeting Control_616	GCCTGCCCTAAACCCCGGAA	Non-Targeting Control
 sgNon-Targeting Control_617	GCCTGGGTTTTGGTGCATAC	Non-Targeting Control
 sgNon-Targeting Control_618	GCGAACCCCGTAGCCAGGCT	Non-Targeting Control
 sgNon-Targeting Control_619	GCGAATGCCTGAAAGTATAA	Non-Targeting Control
+sgNon-Targeting Control_62	ACATACCCCCCTGGTTCAGA	Non-Targeting Control
 sgNon-Targeting Control_620	GCGATCGGAGTGCCACGATA	Non-Targeting Control
 sgNon-Targeting Control_621	GCGGAATGAACACGAGGTAG	Non-Targeting Control
 sgNon-Targeting Control_622	GCGGCGTCATCCACGCGTGC	Non-Targeting Control
@@ -622,6 +583,7 @@ sgNon-Targeting Control_626	GCGGTTCCGGGAGCACATTT	Non-Targeting Control
 sgNon-Targeting Control_627	GCGTGCGTCCCGGGTTACCC	Non-Targeting Control
 sgNon-Targeting Control_628	GCGTTCCCCCACTGACGGGG	Non-Targeting Control
 sgNon-Targeting Control_629	GCTAAGGTCATGTTTGCAAT	Non-Targeting Control
+sgNon-Targeting Control_63	ACATAGTCGACGGCTCGATT	Non-Targeting Control
 sgNon-Targeting Control_630	GCTAGTGTCGTGGGGGATGA	Non-Targeting Control
 sgNon-Targeting Control_631	GCTAGTTTCTGTTAGCTCCT	Non-Targeting Control
 sgNon-Targeting Control_632	GCTCCCATCCATAGTAAAAA	Non-Targeting Control
@@ -632,6 +594,7 @@ sgNon-Targeting Control_636	GCTGCGGCGAGATCACATAA	Non-Targeting Control
 sgNon-Targeting Control_637	GCTGGAGAGACAATTCTACT	Non-Targeting Control
 sgNon-Targeting Control_638	GCTGTTCCGAAGTTGAGAAT	Non-Targeting Control
 sgNon-Targeting Control_639	GCTGTTGTAACGGTAGATAT	Non-Targeting Control
+sgNon-Targeting Control_64	ACCACTAATGAGATTCTTGT	Non-Targeting Control
 sgNon-Targeting Control_640	GCTTAACCTATCCGCCAGTA	Non-Targeting Control
 sgNon-Targeting Control_641	GCTTAAGTCACGGCTTTCCA	Non-Targeting Control
 sgNon-Targeting Control_642	GCTTCGCTGGCAGGACCTCA	Non-Targeting Control
@@ -642,6 +605,7 @@ sgNon-Targeting Control_646	GCTTTTTCCAGCGAGAGCAA	Non-Targeting Control
 sgNon-Targeting Control_647	GGAAACTGGGTTTCATCGTC	Non-Targeting Control
 sgNon-Targeting Control_648	GGAACCCTCCCTGCGATAGA	Non-Targeting Control
 sgNon-Targeting Control_649	GGAACGAGGCAGTGACAGGG	Non-Targeting Control
+sgNon-Targeting Control_65	ACCCAATGTGGCGGAGCCGA	Non-Targeting Control
 sgNon-Targeting Control_650	GGAATCCGGAGCTCATGAGG	Non-Targeting Control
 sgNon-Targeting Control_651	GGAATGTCCTAGGTTACTGA	Non-Targeting Control
 sgNon-Targeting Control_652	GGAATTACGACTAACCGATT	Non-Targeting Control
@@ -652,6 +616,7 @@ sgNon-Targeting Control_656	GGACTTTAGTTCCAGTGGTT	Non-Targeting Control
 sgNon-Targeting Control_657	GGAGAGGAAAATCGGCACAG	Non-Targeting Control
 sgNon-Targeting Control_658	GGAGAGGGCCCGCGAACTCA	Non-Targeting Control
 sgNon-Targeting Control_659	GGAGATGCGGCCTTCTCAAA	Non-Targeting Control
+sgNon-Targeting Control_66	ACCCATATATGCTGCCGCAC	Non-Targeting Control
 sgNon-Targeting Control_660	GGAGTATAAAAAAGTGGTGT	Non-Targeting Control
 sgNon-Targeting Control_661	GGAGTGGTCCCGTACGCAAC	Non-Targeting Control
 sgNon-Targeting Control_662	GGATACCTGGGCCGACTTTC	Non-Targeting Control
@@ -662,6 +627,7 @@ sgNon-Targeting Control_666	GGATTAATTCGCTAAATGAT	Non-Targeting Control
 sgNon-Targeting Control_667	GGATTGAATGGCTAACGCGG	Non-Targeting Control
 sgNon-Targeting Control_668	GGATTTGTCGCTTGCCACAC	Non-Targeting Control
 sgNon-Targeting Control_669	GGCACTCCGAAAGACCTTAT	Non-Targeting Control
+sgNon-Targeting Control_67	ACCCATGAGTTAAGTTTTCT	Non-Targeting Control
 sgNon-Targeting Control_670	GGCCACAAAAACTCGCTAAG	Non-Targeting Control
 sgNon-Targeting Control_671	GGCCACGAAGGGCGAAAAGG	Non-Targeting Control
 sgNon-Targeting Control_672	GGCCCTCTAGAAAAGTCTCG	Non-Targeting Control
@@ -672,6 +638,7 @@ sgNon-Targeting Control_676	GGCGTCAAAATTAGAAGCCG	Non-Targeting Control
 sgNon-Targeting Control_677	GGCGTTAATTAAACTGTTTT	Non-Targeting Control
 sgNon-Targeting Control_678	GGCTCTGGGGCTCACGGACG	Non-Targeting Control
 sgNon-Targeting Control_679	GGCTGGTTGACCTTCCCGCT	Non-Targeting Control
+sgNon-Targeting Control_68	ACCCATTGAGAGTCGCCTGA	Non-Targeting Control
 sgNon-Targeting Control_680	GGCTGGTTGACGACTCCTGA	Non-Targeting Control
 sgNon-Targeting Control_681	GGCTTACGTGGGGGGCAAAA	Non-Targeting Control
 sgNon-Targeting Control_682	GGGACATCCTTGCCGTCTCA	Non-Targeting Control
@@ -682,6 +649,7 @@ sgNon-Targeting Control_686	GGGAGGTGGCTTTAGGTTTT	Non-Targeting Control
 sgNon-Targeting Control_687	GGGAGTTGATTGTTTCGAGA	Non-Targeting Control
 sgNon-Targeting Control_688	GGGATGCGTCTTGCTAAACC	Non-Targeting Control
 sgNon-Targeting Control_689	GGGCAGAAGTTGCTGTCCTG	Non-Targeting Control
+sgNon-Targeting Control_69	ACCCGATAATAGCTACTGGT	Non-Targeting Control
 sgNon-Targeting Control_690	GGGCCCGCATAGGATATCGC	Non-Targeting Control
 sgNon-Targeting Control_691	GGGCCTACGATCAGAGGTGT	Non-Targeting Control
 sgNon-Targeting Control_692	GGGCGCTAAGATATATGCCC	Non-Targeting Control
@@ -692,6 +660,8 @@ sgNon-Targeting Control_696	GGGGCAGGGACCGAGTATCC	Non-Targeting Control
 sgNon-Targeting Control_697	GGGGCTTACGTGAAGGGCGG	Non-Targeting Control
 sgNon-Targeting Control_698	GGGTATAGACGCGATCCTCA	Non-Targeting Control
 sgNon-Targeting Control_699	GGGTCGAGGACTAATAGATT	Non-Targeting Control
+sgNon-Targeting Control_7	AAACCCTATGCCCAAATGAG	Non-Targeting Control
+sgNon-Targeting Control_70	ACCCTCCGAATCGTAACGGA	Non-Targeting Control
 sgNon-Targeting Control_700	GGGTGCCCACTAATAGCCGC	Non-Targeting Control
 sgNon-Targeting Control_701	GGGTGGTCATTCTCTACTTG	Non-Targeting Control
 sgNon-Targeting Control_702	GGTACCTGAACAACGGCACC	Non-Targeting Control
@@ -702,6 +672,7 @@ sgNon-Targeting Control_706	GGTCACCGATCGAGAGCTAG	Non-Targeting Control
 sgNon-Targeting Control_707	GGTCCCTCAGGGTGCAACTT	Non-Targeting Control
 sgNon-Targeting Control_708	GGTCCCTCTGGCTGGGTTAA	Non-Targeting Control
 sgNon-Targeting Control_709	GGTCCGCGCACAAGAGCAGG	Non-Targeting Control
+sgNon-Targeting Control_71	ACCGCTCATATAGGTAAAAA	Non-Targeting Control
 sgNon-Targeting Control_710	GGTCGCCTGTGCGACATGCT	Non-Targeting Control
 sgNon-Targeting Control_711	GGTCTCACCTGCACCCCGAA	Non-Targeting Control
 sgNon-Targeting Control_712	GGTCTCTGTACGGGCCGCCC	Non-Targeting Control
@@ -712,6 +683,7 @@ sgNon-Targeting Control_716	GGTGTCACCACCGCTTACCA	Non-Targeting Control
 sgNon-Targeting Control_717	GGTTAACATCGCCACTCTGA	Non-Targeting Control
 sgNon-Targeting Control_718	GGTTAGAGACTAGGCGCGCG	Non-Targeting Control
 sgNon-Targeting Control_719	GGTTCGAGACCTACTTAAGT	Non-Targeting Control
+sgNon-Targeting Control_72	ACCTATAATCGACCACATTT	Non-Targeting Control
 sgNon-Targeting Control_720	GGTTGCTGTGACGAACGGGG	Non-Targeting Control
 sgNon-Targeting Control_721	GGTTTCACTTCGAGACCGGC	Non-Targeting Control
 sgNon-Targeting Control_722	GGTTTTATAAGGGTGGGCCT	Non-Targeting Control
@@ -722,6 +694,7 @@ sgNon-Targeting Control_726	GTAAGGCCCGCGTACGAGCT	Non-Targeting Control
 sgNon-Targeting Control_727	GTAATTTTATGAGTTAAGTG	Non-Targeting Control
 sgNon-Targeting Control_728	GTACACACTTATGCCATCAC	Non-Targeting Control
 sgNon-Targeting Control_729	GTACATTCCAGTATTCACGC	Non-Targeting Control
+sgNon-Targeting Control_73	ACCTATTGTCCCTTCAAGCT	Non-Targeting Control
 sgNon-Targeting Control_730	GTACCATACCGCGTACCCTT	Non-Targeting Control
 sgNon-Targeting Control_731	GTACCATTGCCGGCTCCCTA	Non-Targeting Control
 sgNon-Targeting Control_732	GTACCCCTATGGCCGTTCTA	Non-Targeting Control
@@ -732,6 +705,7 @@ sgNon-Targeting Control_736	GTAGGCGCGCCGCTCTCTAC	Non-Targeting Control
 sgNon-Targeting Control_737	GTAGGGTACAGCGTCAGCTT	Non-Targeting Control
 sgNon-Targeting Control_738	GTATCCCATATCGGCACAGG	Non-Targeting Control
 sgNon-Targeting Control_739	GTATTAAGATGCGTCTTAGA	Non-Targeting Control
+sgNon-Targeting Control_74	ACCTTACAATAAGTTATATT	Non-Targeting Control
 sgNon-Targeting Control_740	GTATTACTGATATTGGTGGG	Non-Targeting Control
 sgNon-Targeting Control_741	GTCAAGAGATTATGAGATTC	Non-Targeting Control
 sgNon-Targeting Control_742	GTCAGGTAATAGTCGGACTC	Non-Targeting Control
@@ -742,6 +716,7 @@ sgNon-Targeting Control_746	GTCCTCATCCGGTCAGGCTG	Non-Targeting Control
 sgNon-Targeting Control_747	GTCGCTGCGCCAGTGAGAAC	Non-Targeting Control
 sgNon-Targeting Control_748	GTCGTCCGGGATTACAAAAT	Non-Targeting Control
 sgNon-Targeting Control_749	GTCTTCACAGGGTGCAACGA	Non-Targeting Control
+sgNon-Targeting Control_75	ACGATCGGTAATGGTCTGTT	Non-Targeting Control
 sgNon-Targeting Control_750	GTGAAACAGAGGGTCCATCA	Non-Targeting Control
 sgNon-Targeting Control_751	GTGAACTGCAATCTTATTAT	Non-Targeting Control
 sgNon-Targeting Control_752	GTGAGATGCACCTTTTGGCC	Non-Targeting Control
@@ -752,6 +727,7 @@ sgNon-Targeting Control_756	GTGCGCATGGGCTGATGTTA	Non-Targeting Control
 sgNon-Targeting Control_757	GTGCGTGAGTATTAACGCTC	Non-Targeting Control
 sgNon-Targeting Control_758	GTGGGGTAGTCTGTTGCTCG	Non-Targeting Control
 sgNon-Targeting Control_759	GTGTAAATCTGTCCAAGTAG	Non-Targeting Control
+sgNon-Targeting Control_76	ACGCATGCTTCCCAAAGCGT	Non-Targeting Control
 sgNon-Targeting Control_760	GTGTAGTCCTAGCCATGGGG	Non-Targeting Control
 sgNon-Targeting Control_761	GTGTATGAATGTTAATTCCG	Non-Targeting Control
 sgNon-Targeting Control_762	GTGTATGATGCTTCGACTTA	Non-Targeting Control
@@ -762,6 +738,7 @@ sgNon-Targeting Control_766	GTTAGGAATAAAAGCTTTGA	Non-Targeting Control
 sgNon-Targeting Control_767	GTTATCCTGTCGAAGTAAAG	Non-Targeting Control
 sgNon-Targeting Control_768	GTTATTGACCCGTCGGGAGT	Non-Targeting Control
 sgNon-Targeting Control_769	GTTCATTTCCAAGTCCGCTG	Non-Targeting Control
+sgNon-Targeting Control_77	ACGCCATATTTCTGGCTCTA	Non-Targeting Control
 sgNon-Targeting Control_770	GTTCCCCGGGAAGTCTATGC	Non-Targeting Control
 sgNon-Targeting Control_771	GTTCCGTGAGGGTTACTTCA	Non-Targeting Control
 sgNon-Targeting Control_772	GTTCGCTTCGTAACGAGGAA	Non-Targeting Control
@@ -772,6 +749,7 @@ sgNon-Targeting Control_776	GTTGGCATATTGGCCCAGAC	Non-Targeting Control
 sgNon-Targeting Control_777	GTTTAAAGAAAGGGGCTAAG	Non-Targeting Control
 sgNon-Targeting Control_778	GTTTACTCATATCCAGTCAC	Non-Targeting Control
 sgNon-Targeting Control_779	GTTTCGAAACTTGAAGTAAG	Non-Targeting Control
+sgNon-Targeting Control_78	ACGCCTCCTCAAATTAGCTC	Non-Targeting Control
 sgNon-Targeting Control_780	GTTTCTCTTGAACCCCGCGA	Non-Targeting Control
 sgNon-Targeting Control_781	GTTTTCAGTTGCCCAACAGC	Non-Targeting Control
 sgNon-Targeting Control_782	GTTTTTGGTTAATTGCCTAC	Non-Targeting Control
@@ -782,6 +760,7 @@ sgNon-Targeting Control_786	TAAATTCAGACCACAGCTAA	Non-Targeting Control
 sgNon-Targeting Control_787	TAACCCAGAAGCCCATTCAG	Non-Targeting Control
 sgNon-Targeting Control_788	TAACCGATACTCCCCACATT	Non-Targeting Control
 sgNon-Targeting Control_789	TAACGCGCATATCTGAACAC	Non-Targeting Control
+sgNon-Targeting Control_79	ACGCTCAGCACCCGCTATGC	Non-Targeting Control
 sgNon-Targeting Control_790	TAAGATCCGCGGGTGGCAAC	Non-Targeting Control
 sgNon-Targeting Control_791	TAAGCCTCATGAAGGAGGGG	Non-Targeting Control
 sgNon-Targeting Control_792	TAAGGCGACCTGCGCTTGTG	Non-Targeting Control
@@ -792,6 +771,8 @@ sgNon-Targeting Control_796	TACATGGTATAGTGTTTATT	Non-Targeting Control
 sgNon-Targeting Control_797	TACCCACGCGTATTCCATCT	Non-Targeting Control
 sgNon-Targeting Control_798	TACCCTCCGGATACGGACTG	Non-Targeting Control
 sgNon-Targeting Control_799	TACCCTGGATTGTCCTTGCG	Non-Targeting Control
+sgNon-Targeting Control_8	AAACCTAGCCCCAATACTTA	Non-Targeting Control
+sgNon-Targeting Control_80	ACGCTCTCCTGGCAACAAGT	Non-Targeting Control
 sgNon-Targeting Control_800	TACGAAACATCATGGGTTCC	Non-Targeting Control
 sgNon-Targeting Control_801	TACGCTTGCGTTTAGCGTCC	Non-Targeting Control
 sgNon-Targeting Control_802	TACGGATCACCAAATCTTAG	Non-Targeting Control
@@ -802,6 +783,7 @@ sgNon-Targeting Control_806	TACTAACGCCGCTCCTACAG	Non-Targeting Control
 sgNon-Targeting Control_807	TACTGGAGTTTGCGACTCGG	Non-Targeting Control
 sgNon-Targeting Control_808	TACTTTTTGGAATCCGTCTA	Non-Targeting Control
 sgNon-Targeting Control_809	TAGAATTTGACCAAAGGCAC	Non-Targeting Control
+sgNon-Targeting Control_81	ACGCTGACGAGTAAAAGCGG	Non-Targeting Control
 sgNon-Targeting Control_810	TAGACAACCGCGGAGAATGC	Non-Targeting Control
 sgNon-Targeting Control_811	TAGAGATATCCGATCGTGGT	Non-Targeting Control
 sgNon-Targeting Control_812	TAGAGTGCATAAGAGAACCA	Non-Targeting Control
@@ -812,6 +794,7 @@ sgNon-Targeting Control_816	TAGGAGCTGTATCTAGTGGC	Non-Targeting Control
 sgNon-Targeting Control_817	TAGGCGCCCGTAGCATTGGA	Non-Targeting Control
 sgNon-Targeting Control_818	TAGGGGATTAGCTGACAGTC	Non-Targeting Control
 sgNon-Targeting Control_819	TAGTACATGTGTGGTATTTA	Non-Targeting Control
+sgNon-Targeting Control_82	ACGGAAAGACCTCGCTATTC	Non-Targeting Control
 sgNon-Targeting Control_820	TAGTCAACATTCGCAAGAGG	Non-Targeting Control
 sgNon-Targeting Control_821	TAGTCCTTAGGGTGGGCTGA	Non-Targeting Control
 sgNon-Targeting Control_822	TAGTCTCACCTGATGGCGTG	Non-Targeting Control
@@ -822,6 +805,7 @@ sgNon-Targeting Control_826	TAGTTCTAATCGTTCCTTGA	Non-Targeting Control
 sgNon-Targeting Control_827	TATAACGGTAATGGGATTCC	Non-Targeting Control
 sgNon-Targeting Control_828	TATACCAGACCACAGCGCCG	Non-Targeting Control
 sgNon-Targeting Control_829	TATACTGCGGATCAATCTGA	Non-Targeting Control
+sgNon-Targeting Control_83	ACGGAGGCTAAGCGTCGCAA	Non-Targeting Control
 sgNon-Targeting Control_830	TATAGACCTCCCAAATACAT	Non-Targeting Control
 sgNon-Targeting Control_831	TATAGCTGTTTCGAAGGCGC	Non-Targeting Control
 sgNon-Targeting Control_832	TATCAATCGTCCGGGTCACT	Non-Targeting Control
@@ -832,6 +816,7 @@ sgNon-Targeting Control_836	TATTTATACACTATGCGGCA	Non-Targeting Control
 sgNon-Targeting Control_837	TATTTCTCCTAAGTCTAGCG	Non-Targeting Control
 sgNon-Targeting Control_838	TATTTTGACTTGACGCAGGC	Non-Targeting Control
 sgNon-Targeting Control_839	TCAACCCCAGCGCACCGTTG	Non-Targeting Control
+sgNon-Targeting Control_84	ACGGGCGGCTATCGCTGACT	Non-Targeting Control
 sgNon-Targeting Control_840	TCAAGGAGCCTTATTTCTTG	Non-Targeting Control
 sgNon-Targeting Control_841	TCAATTCTCACTCACGACCA	Non-Targeting Control
 sgNon-Targeting Control_842	TCACCTCCGAACGAACACCT	Non-Targeting Control
@@ -841,6 +826,7 @@ sgNon-Targeting Control_845	TCAGATTCCGCAAGGGTCCA	Non-Targeting Control
 sgNon-Targeting Control_846	TCAGCAAAGGACGAAACAAA	Non-Targeting Control
 sgNon-Targeting Control_848	TCAGTATCGGCTGCTGGTAA	Non-Targeting Control
 sgNon-Targeting Control_849	TCATCTTACATCTGGGAGAC	Non-Targeting Control
+sgNon-Targeting Control_85	ACGGGGTGAAACCATGTCGT	Non-Targeting Control
 sgNon-Targeting Control_850	TCATGCTTGCTTGGGCAAAA	Non-Targeting Control
 sgNon-Targeting Control_851	TCCAGCGCGAGCTTACTCGT	Non-Targeting Control
 sgNon-Targeting Control_852	TCCCAAGGGTTTAAGTCGGG	Non-Targeting Control
@@ -851,6 +837,7 @@ sgNon-Targeting Control_856	TCCCTGCATTCATGGTTTTA	Non-Targeting Control
 sgNon-Targeting Control_857	TCCGGAGGCTCAAACCAAGT	Non-Targeting Control
 sgNon-Targeting Control_858	TCCGTCTGCTTCATGAGCGG	Non-Targeting Control
 sgNon-Targeting Control_859	TCCTCACCTAAAGTGCAATA	Non-Targeting Control
+sgNon-Targeting Control_86	ACGGTACATGCGCATGAGTC	Non-Targeting Control
 sgNon-Targeting Control_860	TCCTCGATAGCTGGAATCCA	Non-Targeting Control
 sgNon-Targeting Control_861	TCCTGCCAAGAAACACCCTT	Non-Targeting Control
 sgNon-Targeting Control_862	TCCTGGATACCGCGTGGTTA	Non-Targeting Control
@@ -861,6 +848,7 @@ sgNon-Targeting Control_866	TCGATGTAGCCCCGCCCAAG	Non-Targeting Control
 sgNon-Targeting Control_867	TCGCAAGGAAGCCAGCTAAG	Non-Targeting Control
 sgNon-Targeting Control_868	TCGCAGCGGCGTGGGATCGG	Non-Targeting Control
 sgNon-Targeting Control_869	TCGCGCTTGGGTTATACGCT	Non-Targeting Control
+sgNon-Targeting Control_87	ACGGTGGGGATGGACCTACT	Non-Targeting Control
 sgNon-Targeting Control_870	TCGCGGACATAGGGCTCTAA	Non-Targeting Control
 sgNon-Targeting Control_871	TCGGAAGCAAACTTCTGGAG	Non-Targeting Control
 sgNon-Targeting Control_872	TCGGCATACGGGACACACGC	Non-Targeting Control
@@ -871,6 +859,7 @@ sgNon-Targeting Control_876	TCGGGCAGTGAGTACAATAC	Non-Targeting Control
 sgNon-Targeting Control_877	TCGGGGACCACCCACGATCC	Non-Targeting Control
 sgNon-Targeting Control_878	TCGTAAACACACGACCAAGT	Non-Targeting Control
 sgNon-Targeting Control_879	TCTAAAGCCGTCCTGATGTT	Non-Targeting Control
+sgNon-Targeting Control_88	ACGGTTATGGTCTCATGGGG	Non-Targeting Control
 sgNon-Targeting Control_880	TCTACCTATTGTGGAATTTG	Non-Targeting Control
 sgNon-Targeting Control_881	TCTACGTGTAGTTGTACATA	Non-Targeting Control
 sgNon-Targeting Control_882	TCTATTTTGTCTGCGCAGAA	Non-Targeting Control
@@ -881,6 +870,7 @@ sgNon-Targeting Control_886	TCTGACGATTAATGCTTCTA	Non-Targeting Control
 sgNon-Targeting Control_887	TCTGGCTTGACACGACCGTT	Non-Targeting Control
 sgNon-Targeting Control_888	TCTGGCTTGCACCGTGTCAT	Non-Targeting Control
 sgNon-Targeting Control_889	TGAACGCGTGTTTCCTTGCA	Non-Targeting Control
+sgNon-Targeting Control_89	ACGTCAACTGCTGGAGTGGG	Non-Targeting Control
 sgNon-Targeting Control_890	TGAACGGTGAAGAGATAGGG	Non-Targeting Control
 sgNon-Targeting Control_891	TGAAGTGGGGCGTCGGACAC	Non-Targeting Control
 sgNon-Targeting Control_892	TGAATCGAATACAAACGATG	Non-Targeting Control
@@ -891,6 +881,8 @@ sgNon-Targeting Control_896	TGACGCGATAGAGTTGGCTT	Non-Targeting Control
 sgNon-Targeting Control_897	TGACGCTCCACGTCCGGACC	Non-Targeting Control
 sgNon-Targeting Control_898	TGACTAGCTCTTACATATTC	Non-Targeting Control
 sgNon-Targeting Control_899	TGACTCGGGCAATATCGGTT	Non-Targeting Control
+sgNon-Targeting Control_9	AAACGAGATCGAGAAAGGTA	Non-Targeting Control
+sgNon-Targeting Control_90	ACGTCCATACTGTCGGCTAC	Non-Targeting Control
 sgNon-Targeting Control_900	TGAGCATGTCGGGAGTAACT	Non-Targeting Control
 sgNon-Targeting Control_901	TGAGCATTCGTAGCCCAGCA	Non-Targeting Control
 sgNon-Targeting Control_902	TGAGCGGCCTCTAATTAATC	Non-Targeting Control
@@ -901,6 +893,7 @@ sgNon-Targeting Control_906	TGCAAGGACCTGGTATGAAC	Non-Targeting Control
 sgNon-Targeting Control_907	TGCAGGTCTAGGTCCCAAAG	Non-Targeting Control
 sgNon-Targeting Control_908	TGCAGTCGCGCTGAGCGTCA	Non-Targeting Control
 sgNon-Targeting Control_909	TGCATGCCGAGCATTTTCAA	Non-Targeting Control
+sgNon-Targeting Control_91	ACGTCGTTTAGCACCCGGCT	Non-Targeting Control
 sgNon-Targeting Control_910	TGCCCACTTAGCAACACTCT	Non-Targeting Control
 sgNon-Targeting Control_911	TGCCCCACCCCAGTGCTCAG	Non-Targeting Control
 sgNon-Targeting Control_912	TGCCGCTATACTAAAACCTT	Non-Targeting Control
@@ -910,6 +903,7 @@ sgNon-Targeting Control_915	TGCCTATGACCTAGGTACCA	Non-Targeting Control
 sgNon-Targeting Control_916	TGCCTCTCCCTTACCCGGAC	Non-Targeting Control
 sgNon-Targeting Control_917	TGCGCCTTACTCGTTAACTG	Non-Targeting Control
 sgNon-Targeting Control_918	TGCGGCGTAATGCTTGAAAG	Non-Targeting Control
+sgNon-Targeting Control_92	ACGTGGGGACATATACGTGT	Non-Targeting Control
 sgNon-Targeting Control_920	TGCTACCTTCGGGACCACCA	Non-Targeting Control
 sgNon-Targeting Control_922	TGGAAAGCGAGCACACCGTC	Non-Targeting Control
 sgNon-Targeting Control_923	TGGAAATCGACTGTGCGCTT	Non-Targeting Control
@@ -919,6 +913,7 @@ sgNon-Targeting Control_926	TGGATCGGCAGTGGTACTGG	Non-Targeting Control
 sgNon-Targeting Control_927	TGGCAGTGGAAAATCTGCGG	Non-Targeting Control
 sgNon-Targeting Control_928	TGGCCACGAATTCCGCCGCC	Non-Targeting Control
 sgNon-Targeting Control_929	TGGCGGCCCAAACTTAACAC	Non-Targeting Control
+sgNon-Targeting Control_93	ACGTTCGAGTACGACCAGCT	Non-Targeting Control
 sgNon-Targeting Control_930	TGGGAATTCCTCGGCCGATT	Non-Targeting Control
 sgNon-Targeting Control_931	TGGGGACGTTTATCAATATA	Non-Targeting Control
 sgNon-Targeting Control_932	TGGTTCCGTAGGTCGGTATA	Non-Targeting Control
@@ -929,6 +924,7 @@ sgNon-Targeting Control_936	TGTCAGTAGTCAGGACCCCG	Non-Targeting Control
 sgNon-Targeting Control_937	TGTCATGCGTCACTTAGTGC	Non-Targeting Control
 sgNon-Targeting Control_938	TGTCATTAGCGTAACGATAT	Non-Targeting Control
 sgNon-Targeting Control_939	TGTCCCTTGCAACCTCCGTT	Non-Targeting Control
+sgNon-Targeting Control_94	ACTACTCCGGCAAATACTCG	Non-Targeting Control
 sgNon-Targeting Control_940	TGTCTTCGGATAGGCGGCTT	Non-Targeting Control
 sgNon-Targeting Control_941	TGTCTTTAAACACGCCATCG	Non-Targeting Control
 sgNon-Targeting Control_943	TGTGCACAAGTCGCAACGAA	Non-Targeting Control
@@ -938,6 +934,7 @@ sgNon-Targeting Control_946	TGTTTTGCATGTTGCATAGG	Non-Targeting Control
 sgNon-Targeting Control_947	TTAACGCCTTATTTTTATGT	Non-Targeting Control
 sgNon-Targeting Control_948	TTAACTCGAACGCTCGAAAG	Non-Targeting Control
 sgNon-Targeting Control_949	TTAATTTGGGTGGGCCCTGC	Non-Targeting Control
+sgNon-Targeting Control_95	ACTACTGGCTATCCGCGCCA	Non-Targeting Control
 sgNon-Targeting Control_950	TTAGCCAGTAGTGCATATGA	Non-Targeting Control
 sgNon-Targeting Control_951	TTAGCCCTCGATTGGTTGCG	Non-Targeting Control
 sgNon-Targeting Control_952	TTATATGGTTTTAAACGGCT	Non-Targeting Control
@@ -948,6 +945,7 @@ sgNon-Targeting Control_956	TTCAATTCACCGAGGGCGCA	Non-Targeting Control
 sgNon-Targeting Control_957	TTCACCGTCCACGTGCGCAT	Non-Targeting Control
 sgNon-Targeting Control_958	TTCACGTCGTCTCGCGACCA	Non-Targeting Control
 sgNon-Targeting Control_959	TTCAGCGAGTGTGACTAAGC	Non-Targeting Control
+sgNon-Targeting Control_96	ACTAGAGTCATGATCAGCGA	Non-Targeting Control
 sgNon-Targeting Control_960	TTCCACGGTAAAATCGGTCA	Non-Targeting Control
 sgNon-Targeting Control_961	TTCCATTGGCTGGAATCTGA	Non-Targeting Control
 sgNon-Targeting Control_962	TTCCTAAGATTTTTAAGACT	Non-Targeting Control
@@ -958,6 +956,7 @@ sgNon-Targeting Control_966	TTCGCACGATTGCACCTTGG	Non-Targeting Control
 sgNon-Targeting Control_967	TTCGGAACTTACTCAGGGTA	Non-Targeting Control
 sgNon-Targeting Control_968	TTCGTAGGAACTAAACTGTA	Non-Targeting Control
 sgNon-Targeting Control_969	TTCGTGGTAGGTATAACTAT	Non-Targeting Control
+sgNon-Targeting Control_97	ACTAGCCTGTTCGCGAGTAG	Non-Targeting Control
 sgNon-Targeting Control_970	TTCTAAGCCACGTGTGGTAC	Non-Targeting Control
 sgNon-Targeting Control_971	TTCTAAGCGCCCTGGGGACA	Non-Targeting Control
 sgNon-Targeting Control_972	TTCTTAGAAGTTGCTCCACG	Non-Targeting Control
@@ -968,6 +967,7 @@ sgNon-Targeting Control_976	TTGCAGCCACTCCTGCAATA	Non-Targeting Control
 sgNon-Targeting Control_977	TTGCGTCAGCGCTGCACATC	Non-Targeting Control
 sgNon-Targeting Control_978	TTGGATATTAATTAGACATG	Non-Targeting Control
 sgNon-Targeting Control_979	TTGGCCTGGAATTTAGGATC	Non-Targeting Control
+sgNon-Targeting Control_98	ACTAGGGCAGTGTGTCTGCA	Non-Targeting Control
 sgNon-Targeting Control_980	TTGGGGATTAACCCAGAGCC	Non-Targeting Control
 sgNon-Targeting Control_981	TTGGTCCGAGTCTGGAGAAA	Non-Targeting Control
 sgNon-Targeting Control_982	TTGTACGGTACTGGCTTTGT	Non-Targeting Control
@@ -977,6 +977,7 @@ sgNon-Targeting Control_986	TTTACGAAGTATACCAGGTC	Non-Targeting Control
 sgNon-Targeting Control_987	TTTACGATCTAGCGGCGTAG	Non-Targeting Control
 sgNon-Targeting Control_988	TTTATGCATTTAATACGCCG	Non-Targeting Control
 sgNon-Targeting Control_989	TTTCAGGCTACGGGCGCGGG	Non-Targeting Control
+sgNon-Targeting Control_99	ACTATCATGGCACCCAATTG	Non-Targeting Control
 sgNon-Targeting Control_990	TTTCCCATGATCATTTAGTG	Non-Targeting Control
 sgNon-Targeting Control_991	TTTCGCCCAAGAGGCTTGGG	Non-Targeting Control
 sgNon-Targeting Control_992	TTTCGTGCCGATGTAACACA	Non-Targeting Control
@@ -986,7 +987,6 @@ sgNon-Targeting Control_995	TTTGGGTTTATCCGCCCCCA	Non-Targeting Control
 sgNon-Targeting Control_996	TTTGGTCAACGCATAGCTTG	Non-Targeting Control
 sgNon-Targeting Control_998	TTTTGACTCTAATCACCGGT	Non-Targeting Control
 sgNon-Targeting Control_999	TTTTTAATACAAGGTAATCT	Non-Targeting Control
-sgNon-Targeting Control_1000	TTTTTCTCACCCGATGAATC	Non-Targeting Control
 sgA1BG_1	CATCTTCTTTCACCTGAACG	A1BG
 sgA1BG_2	CTCCGGGGAGAACTCCGGCG	A1BG
 sgA1BG_3	TCTCCATGGTGCATCAGCAC	A1BG
@@ -1073,6 +1073,10 @@ sgAARS2_1	AGCAAACTGGGGTCGCCGCG	AARS2
 sgAARS2_2	CCAACTTCTACGCAGAACAG	AARS2
 sgAARS2_3	GCTGAGCCAGTTCAGAAGCA	AARS2
 sgAARS2_4	TCGTAGTGGATCTCAGTACA	AARS2
+sgAARSD1_1	ACCTCCGCTCCCAATCTACC	AARSD1
+sgAARSD1_2	CATTCGGGTTGTTAACATCG	AARSD1
+sgAARSD1_3	CCCAGACAGAAATATCAGGT	AARSD1
+sgAARSD1_4	GTGCTGAGAGTGACTCGCCG	AARSD1
 sgAASDHPPT_1	AGGAAAACCAGTTCTTGCAA	AASDHPPT
 sgAASDHPPT_2	CCCGAGGAGAAGGAGCGCAT	AASDHPPT
 sgAASDHPPT_3	CTGCCAGCAGCCATTCGGCT	AASDHPPT
@@ -1089,10 +1093,6 @@ sgAATF_1	AAACCACCTCTAGAAAAGCA	AATF
 sgAATF_2	AGAAACTTTGACACTAGAGA	AATF
 sgAATF_3	AGGCACTTAAAGCATTGTTG	AATF
 sgAATF_4	GAATATGATGAGGACGACCT	AATF
-sgAATK_1	AGCACCGGAACCACGCCCGG	AATK
-sgAATK_2	CTCCTCAAGTCCACAGACGT	AATK
-sgAATK_3	GCATAGCAACCTGCTCGTCG	AATK
-sgAATK_4	GTGTCAGCCAACAACAACAG	AATK
 sgABAT_1	CCTTAAAGACCATCTTCATG	ABAT
 sgABAT_2	GAAAGAAGTCATCGGATGCG	ABAT
 sgABAT_3	GTGAATGGCTTTAGAGTGCG	ABAT
@@ -2268,6 +2268,10 @@ sgADO_4	CGTCGCGATCGGAAGCGCCG	ADO
 sgADPGK_1	AAGATGAATCGGTTGGCATG	ADPGK
 sgADPGK_2	ACTCTCTTACAGCACTATGT	ADPGK
 sgADPGK_4	GCTGGCCAGTATGACTAACA	ADPGK
+sgADPRHL1_1	CATGCACATCGCAACCGCCG	ADPRHL1
+sgADPRHL1_2	CTCCTGGCGAGAGTACGAGG	ADPRHL1
+sgADPRHL1_3	GGAGATGGTGAGATGCTATG	ADPRHL1
+sgADPRHL1_4	TGCGGCGAACGACACAAACA	ADPRHL1
 sgADPRH_1	AAGTGAGCATCGAGAGTGGT	ADPRH
 sgADPRH_2	AGTCTTGGTAATGCTTAGCA	ADPRH
 sgADPRH_3	ATAGCAGACCACCCTTGCAG	ADPRH
@@ -3212,6 +3216,10 @@ sgANKFY1_1	AGCTTTGTGACTAACCAGCG	ANKFY1
 sgANKFY1_2	CATATGGCATCAACTACGAG	ANKFY1
 sgANKFY1_3	CCGACACGCTGTGTGCAACG	ANKFY1
 sgANKFY1_4	TTAGAACTCAAAGACCACGA	ANKFY1
+sgANKHD1_1	AATAGAGACCAATCGGAACA	ANKHD1
+sgANKHD1_2	AGGAGCAGACTTACGCACTG	ANKHD1
+sgANKHD1_3	GCCAACGCATACACTTGCCA	ANKHD1
+sgANKHD1_4	TGCAGAGATTCCAATCGTAG	ANKHD1
 sgANKH_1	ACCCGTGAAGAACTTCATGA	ANKH
 sgANKH_2	AGGCCGACTGATTCTCTGTG	ANKH
 sgANKH_4	GAGCACGAGCAACACAGTCA	ANKH
@@ -3627,6 +3635,10 @@ sgAP3M1_4	TGTCCAACATACCATGGCGT	AP3M1
 sgAP3M2_1	CAGCGTTTGAAACGAACACA	AP3M2
 sgAP3M2_3	TGTGGCCGTGATCCAGACGG	AP3M2
 sgAP3M2_4	TTCTTTAAGAATGTTCGACT	AP3M2
+sgAP3S2_1	CCACACAAAATACAAAGTAG	AP3S2
+sgAP3S2_2	GGGCCGCACTCACGAAACGC	AP3S2
+sgAP3S2_3	GGTGCACTACATCCTCCAGG	AP3S2
+sgAP3S2_4	TTTCCATCTAGTCCTCAAGC	AP3S2
 sgAP4B1_1	CTTCTGGACAATATCTACAG	AP4B1
 sgAP4B1_2	GAACTGCTTGAGGTCTCTAG	AP4B1
 sgAP4B1_3	GACCCCAATCCAATGGTGCG	AP4B1
@@ -4107,6 +4119,10 @@ sgARHGAP6_1	AGGGCCACCTACCATGAACA	ARHGAP6
 sgARHGAP6_2	CGGATTTCCACACGACGTAG	ARHGAP6
 sgARHGAP6_3	GAGGTTCCCCTGGGTCGCGG	ARHGAP6
 sgARHGAP6_4	TACGTGAGGAATTTGACCGT	ARHGAP6
+sgARHGAP8_1	ACTTACCGCAAAACTTCGGG	ARHGAP8
+sgARHGAP8_2	AGTGTGTACTTCAAATACCT	ARHGAP8
+sgARHGAP8_3	CCACCAAGACACCACCGCCG	ARHGAP8
+sgARHGAP8_4	CGTGAACTTTGACGACTACG	ARHGAP8
 sgARHGAP9_1	ACAGGGGGCTCTGACATGAG	ARHGAP9
 sgARHGAP9_2	ACATGACCAAGATTGCCCAA	ARHGAP9
 sgARHGAP9_3	AGGGAACCATGAAACAACTT	ARHGAP9
@@ -4426,6 +4442,10 @@ sgARPC5_1	AAACATGACAGCTGCCCTAC	ARPC5
 sgARPC5_2	CTGACTCTTGGTGTTGATAG	ARPC5
 sgARPC5_3	GAATGCAAGGATATTGCCGC	ARPC5
 sgARPC5_4	GTCGTCGGCCCGCTTCCGGA	ARPC5
+sgARPIN_1	CCAGGCCTACCCCTGGTGGG	ARPIN
+sgARPIN_2	CGGCGCGCTCCGGAACAAGG	ARPIN
+sgARPIN_3	GCATCCAGAACGCCACTGTG	ARPIN
+sgARPIN_4	TCCTCATGTCGTCCTACAGT	ARPIN
 sgARPP21_1	AGATTGCAGCCAAGAATACA	ARPP21
 sgARPP21_2	AGTTCCATCGGGATTCACAA	ARPP21
 sgARPP21_3	GAGGATGCTTGTCCATCGAG	ARPP21
@@ -4593,6 +4613,10 @@ sgASB2_1	AGACACAGACTCGTGCAGAG	ASB2
 sgASB2_2	CCCTTGGAACAAGCCCATTG	ASB2
 sgASB2_3	CGCACGCGCATACGCCGTAG	ASB2
 sgASB2_4	GAATCTCGCAGAGCCCAACA	ASB2
+sgASB3_1	ATTGCCTAGAAATATTACTC	ASB3
+sgASB3_2	TATCAGCAACATCGACACTT	ASB3
+sgASB3_3	TCTTGAGCAGCAATGAACAA	ASB3
+sgASB3_4	TTAAGGCTGTTGCTTCAACA	ASB3
 sgASB4_1	GAAGACCAACAACCAAGATG	ASB4
 sgASB4_2	GCGCTAAAGTCCAATGACTT	ASB4
 sgASB4_3	GCTTTGCCCCACGATCACAG	ASB4
@@ -6000,6 +6024,10 @@ sgBIRC7_1	AGCCGGTGATGGTCCCACGC	BIRC7
 sgBIRC7_2	CAGCGGCCAGTCATAGAAGG	BIRC7
 sgBIRC7_3	CCTGGACGGAGCATGCCAAG	BIRC7
 sgBIRC7_4	GCTGCCGGCTTCTTCCACAC	BIRC7
+sgBIVM_1	AAGTATTAGACCTCAGACGA	BIVM
+sgBIVM_2	ATAATTTCCGATGTACTAGT	BIVM
+sgBIVM_3	GGGCAAGCTACCTCTCGCAT	BIVM
+sgBIVM_4	TTAGGTTTGGTCCTTTCACG	BIVM
 sgBLCAP_1	ACCAAGGCACAAATTGTGCA	BLCAP
 sgBLCAP_2	AGAAGCCCATGAACATGGAG	BLCAP
 sgBLCAP_3	GCTATAGCAGATAAGGAACA	BLCAP
@@ -6057,6 +6085,10 @@ sgBMF_1	AGACTGCTGGGAAACTGGCA	BMF
 sgBMF_2	GGCTGAGGGGGCAGTCCAGT	BMF
 sgBMF_3	GGGAGCCGGTGACCCAACCC	BMF
 sgBMF_4	TCACCATAAAAGAGTCGCTG	BMF
+sgBMI1_1	AATGGCTCTAATGAAGATAG	BMI1
+sgBMI1_2	CTCCACAAAGCACACACATC	BMI1
+sgBMI1_3	GATTGATGTCATGTATGAGG	BMI1
+sgBMI1_4	TTCTCTTTATTAGATTGGAT	BMI1
 sgBMP10_1	AGGGATCGTATGATATACGA	BMP10
 sgBMP10_2	GTTCCAACATGTACTCTGGT	BMP10
 sgBMP10_4	TGATGACCAAAGCAGTGACA	BMP10
@@ -6677,10 +6709,6 @@ sgC16orf86_1	ACCATGACGGGGCCTCACAA	C16orf86
 sgC16orf86_2	CAGATGGTGAGGGCTCACTC	C16orf86
 sgC16orf86_3	GGGGCAGGGACAGCTCACGG	C16orf86
 sgC16orf86_4	TAGTTGACGTACTGGTACAG	C16orf86
-sgC16orf87_1	CATTCAGATCATATCAGACG	C16orf87
-sgC16orf87_2	CCATACAGAAAACAAGCATG	C16orf87
-sgC16orf87_3	CCCCGAGTGCGACCAACAGG	C16orf87
-sgC16orf87_4	GCATGTAAATCATGTCCTTG	C16orf87
 sgC16orf89_1	CCTCTGTTCTAGGAAGACGG	C16orf89
 sgC16orf89_2	CGGATACGCCTACCCTACCC	C16orf89
 sgC16orf89_3	GCCCCAGGACTCATTCTCAG	C16orf89
@@ -6705,10 +6733,6 @@ sgC17orf107_1	CACCCGAACCGAAGATGCAG	C17orf107
 sgC17orf107_2	CTCCAGATATTCATGGGCTG	C17orf107
 sgC17orf107_3	GCGGCGACTAGACGGCAGCG	C17orf107
 sgC17orf107_4	GTACCCCACCTCTAACAAGG	C17orf107
-sgC17orf50_1	AGGACACTGAGCGCCGCTCG	C17orf50
-sgC17orf50_2	CCCTCCTCCGCTACCCGCGG	C17orf50
-sgC17orf50_3	CTGCTGCGGCGCGCGGACAG	C17orf50
-sgC17orf50_4	TCCGTCGCGCTGTCCTCCAG	C17orf50
 sgC17orf67_1	CAGGATAGACCAAGCAAACC	C17orf67
 sgC17orf67_2	CTTCTCTGTCAAAATCGGGG	C17orf67
 sgC17orf67_3	GCTCCTAAGATCTCGGCGAC	C17orf67
@@ -7022,10 +7046,6 @@ sgC2orf42_1	CAGTTGGCCACGGAACCCAC	C2orf42
 sgC2orf42_2	CCATTGTATGTGCCACATCG	C2orf42
 sgC2orf42_3	CCCCGAGCTCCACAAAGCAT	C2orf42
 sgC2orf42_4	TCTGAATGGCAACCTAACTG	C2orf42
-sgC2orf49_1	ACTGGTAAAGCTTGCCTGCG	C2orf49
-sgC2orf49_2	ATTTGCCGAAGAATAGATGG	C2orf49
-sgC2orf49_3	CTTCCATCAAATACGATGAG	C2orf49
-sgC2orf49_4	GAGGCAATGGTATTGCATGT	C2orf49
 sgC2orf66_1	CAACCCCAGAAACAGAGATC	C2orf66
 sgC2orf66_2	CACATGCCCAAGCAGCACCA	C2orf66
 sgC2orf66_4	TTTGTCCTCATTTCTTACTG	C2orf66
@@ -7039,10 +7059,6 @@ sgC2orf72_1	CGAGCCGCCCTTCCAGGCGT	C2orf72
 sgC2orf72_2	CGGCACAGCACGAAGACCAG	C2orf72
 sgC2orf72_3	GAGATGCTGCGGGACGTGCG	C2orf72
 sgC2orf72_4	GCTGCGGGACTTCGCACGGG	C2orf72
-sgC2orf74_1	AGTGGTGACAAGCAATCCAG	C2orf74
-sgC2orf74_2	CCTTGTACAGATGCAAACGG	C2orf74
-sgC2orf74_3	TCTTGTCCAGAGACAGAGTA	C2orf74
-sgC2orf74_4	TGAACTTGAATGTGCCGATG	C2orf74
 sgC2orf76_1	GAATTTGGACCAAACTGTAA	C2orf76
 sgC2orf76_2	TCATCAAGCACATAAATCAA	C2orf76
 sgC2orf76_3	TTATAATTTCTGAATGGTGG	C2orf76
@@ -7070,10 +7086,6 @@ sgC3orf18_1	CATGTACAACTTCGACCCCA	C3orf18
 sgC3orf18_2	TATCACCGTGATGATCCCAA	C3orf18
 sgC3orf18_3	TCCAGGTCAGACTCAGAGGT	C3orf18
 sgC3orf18_4	TGTACATGGGCATGAGCTGG	C3orf18
-sgC3orf20_1	AATAAAAGGATACTAAACGA	C3orf20
-sgC3orf20_2	AGGGCTATGTAGTCCACAAG	C3orf20
-sgC3orf20_3	CAATGGCGGACATGTTTGCG	C3orf20
-sgC3orf20_4	CAGTGTGGGGACCTGCACAA	C3orf20
 sgC3orf22_1	AGAAGAGGTTGGTGCCAACG	C3orf22
 sgC3orf22_2	AGTGCTGTTGCAGGTTGTCG	C3orf22
 sgC3orf22_3	GGATCCTCCACTTCTTACTC	C3orf22
@@ -7246,6 +7258,10 @@ sgC8orf74_1	AACAAGCTTAGAGATTACCG	C8orf74
 sgC8orf74_2	ACGAACAGAGAGACTCCCGG	C8orf74
 sgC8orf74_3	AGTGGGCAAAGGCTTCCCAT	C8orf74
 sgC8orf74_4	GAGCTGCTAAGGGAAACCAA	C8orf74
+sgC8orf76_1	AAATAAAGAGCTCTCAGGCA	C8orf76
+sgC8orf76_2	CAACACAGACCATTTAACCA	C8orf76
+sgC8orf76_3	CTGATACTCTTGTCGTCTGT	C8orf76
+sgC8orf76_4	TTGGCGCAGTAGGACGCGGG	C8orf76
 sgC8orf82_1	CCGCGAGTATTTCTACTACG	C8orf82
 sgC8orf82_2	CCTCCGCGCCTCTCCTACTG	C8orf82
 sgC8orf82_3	CGCCTGAGACCCAACCGCAG	C8orf82
@@ -9992,6 +10008,10 @@ sgCFHR5_1	ATAGGACAAGTACGATCATG	CFHR5
 sgCFHR5_2	CTAGTGAAGCTGCATATGGG	CFHR5
 sgCFHR5_3	CTTCATCATACAGAAATCCA	CFHR5
 sgCFHR5_4	TCAACATGGAGTTTCAGTCG	CFHR5
+sgCFH_1	ACATCAGGATCAATTACATG	CFH
+sgCFH_2	AGACCAGTATAAAGTTGGAG	CFH
+sgCFH_3	ATAGTGGAGGAGAGTACCTG	CFH
+sgCFH_4	GAAATGCATTGTTCAGACGA	CFH
 sgCFI_1	AGAAGACTTTATCGCAGGAG	CFI
 sgCFI_2	GATGCCAGTGGAATCACCTG	CFI
 sgCFI_3	TGAGGTGGACTGCATTACAG	CFI
@@ -10209,6 +10229,10 @@ sgCHMP2B_1	AACAATGCAGAATTTCCAGA	CHMP2B
 sgCHMP2B_2	AGAGAAACAAGAAAAACAGC	CHMP2B
 sgCHMP2B_3	CCAAACAACTTGTGCATCTA	CHMP2B
 sgCHMP2B_4	GAACAGAATCGAGAGTTACG	CHMP2B
+sgCHMP3_1	ACATGAACTCAGTGCTCATG	CHMP3
+sgCHMP3_2	GCCCTTACCAGTTCTTTGGG	CHMP3
+sgCHMP3_3	GTTGTCCAAAGAAATGATGA	CHMP3
+sgCHMP3_4	GTTGTTGACAGGCAAATAAG	CHMP3
 sgCHMP4A_1	AGAGGCGAGCTCGCGATGAG	CHMP4A
 sgCHMP4A_2	CAGCAAGCTCCATGGTACGA	CHMP4A
 sgCHMP4A_4	TGACGGGACATTATCCACCC	CHMP4A
@@ -10542,6 +10566,10 @@ sgCKB_1	ATCATCGAGGACCGGCACGG	CKB
 sgCKB_2	CCACGGTCATGATGTACGGG	CKB
 sgCKB_3	GCATGGAGATGACCCGCAGG	CKB
 sgCKB_4	GGACACGCACCAGATACCGC	CKB
+sgCKLF_1	AACTGAACACTTACAAGCAA	CKLF
+sgCKLF_2	AAGGCCACGTGAAGATGCTG	CKLF
+sgCKLF_3	CATGCTCATCGTATCTGTGT	CKLF
+sgCKLF_4	GATAACAATATATGGTTCAG	CKLF
 sgCKMT2_1	AAATGAGGAGGATCACACCA	CKMT2
 sgCKMT2_2	CCAGTGCATCCAGACTGGAG	CKMT2
 sgCKMT2_3	CCCAGCACATGTTAATAAAG	CKMT2
@@ -11019,6 +11047,10 @@ sgCMPK2_4	GAGGCACCACGCCCGCACTT	CMPK2
 sgCMSS1_1	AGGTCGATGACAGCATTCAG	CMSS1
 sgCMSS1_3	GGACCGATTTCTTCTCACTG	CMSS1
 sgCMSS1_4	TCTAGACTCCTGTTTCCTCA	CMSS1
+sgCMTM1_1	CACTGCGAATTGAGACTGCG	CMTM1
+sgCMTM1_2	CAGGATCTTCAACATTCCAG	CMTM1
+sgCMTM1_3	GCGGTGCCCTCACTGCCTTG	CMTM1
+sgCMTM1_4	GGCGATCAAAGAGCGCGTGG	CMTM1
 sgCMTM2_1	GCAGGACCATAAGGAGCCAT	CMTM2
 sgCMTM2_2	GGCACGCTGAGATCAAGATT	CMTM2
 sgCMTM2_3	GGGGTGTCGCCGCTACCGGT	CMTM2
@@ -11556,6 +11588,10 @@ sgCOMMD2_1	AGTAGTGACACTGTCCAGCA	COMMD2
 sgCOMMD2_2	CATTCAAGGTTATGATAACT	COMMD2
 sgCOMMD2_3	GCAAACCCAAAAATCTACGA	COMMD2
 sgCOMMD2_4	TGACCCGCGCTGTCCACTTG	COMMD2
+sgCOMMD3_1	AAGAAACATCCGTTATATGA	COMMD3
+sgCOMMD3_2	CTTGAAACATATCGACCCAG	COMMD3
+sgCOMMD3_3	GCGTTGGAGTCGAAGGAGCG	COMMD3
+sgCOMMD3_4	TTAGAGTTGACTTGTCAGCT	COMMD3
 sgCOMMD6_1	AATCGTCATTTCAAAGCACT	COMMD6
 sgCOMMD6_2	ACATCGGACTTAGCATCCAG	COMMD6
 sgCOMMD6_3	CTAAAAGTGGCAGATCATTC	COMMD6
@@ -11701,6 +11737,14 @@ sgCORO6_1	CCAGTCAATATCCAGCACAG	CORO6
 sgCORO6_2	CGGGCCGTCTTCACGCGCCA	CORO6
 sgCORO6_3	GGAGATGGACACAAGCAACG	CORO6
 sgCORO6_4	TTCCGTAATGTTGCGCATGG	CORO6
+sgCORO7_1	AGGAGAGGACAAGCGACGCG	CORO7
+sgCORO7_2	GACACAGCCATCGTGCCCAT	CORO7
+sgCORO7_3	GAGGCAGCTGTACTGTTACG	CORO7
+sgCORO7_4	GGTTGAATCCAGTAGACACA	CORO7
+sgCORT_1	CAGCAGCAGCAGGAGGCCGG	CORT
+sgCORT_2	CCCCACCGGCCGAGACAGCG	CORT
+sgCORT_3	CCTGCTGCTGCTGCTCTCCG	CORT
+sgCORT_4	GCTGCCCTGCCCCTGGAGGG	CORT
 sgCOTL1_1	CTCACCGATCCACGTGATGA	COTL1
 sgCOTL1_2	CTTCGTGCGCTTCACCACCG	COTL1
 sgCOTL1_3	GAAAAGTTCCTACCAGATGA	COTL1
@@ -12102,6 +12146,10 @@ sgCRHBP_1	AGGGGAAAGCCGGTACCTAG	CRHBP
 sgCRHBP_2	GTGAGAGTGGTCTTAGCAGG	CRHBP
 sgCRHBP_3	TCGACTCACGCAGAGCGCGG	CRHBP
 sgCRHBP_4	TTGATGGTTGGATTCTCAAG	CRHBP
+sgCRHR1_1	GAGCCGCAGAAAGAGGACAA	CRHR1
+sgCRHR1_2	GCACTCGGAGTAATTCACGC	CRHR1
+sgCRHR1_3	GGACACCATAGAAAAAGGCA	CRHR1
+sgCRHR1_4	TAGCTGGACCACGAACCAGG	CRHR1
 sgCRHR2_1	CTCATAGTAGAGCTTGCCGA	CRHR2
 sgCRHR2_2	GACATTTCGCAGGATAAAGG	CRHR2
 sgCRHR2_3	GGAAGGCTGCTACCTGCACA	CRHR2
@@ -12359,6 +12407,10 @@ sgCSNK1A1L_4	TGCTCTCATACAGCAACTGG	CSNK1A1L
 sgCSNK1D_1	AGAGGGGGACTACAACGTCA	CSNK1D
 sgCSNK1D_3	CGTACCGCGCCGTCCCCGTG	CSNK1D
 sgCSNK1D_4	CTTTACACAACACTTCGATG	CSNK1D
+sgCSNK1E_1	GAAGATGTCAACGCCCATCG	CSNK1E
+sgCSNK1E_2	GGTTGCGGAAGAGCTGACGT	CSNK1E
+sgCSNK1E_3	TCCTTCGGAGATATCTACCT	CSNK1E
+sgCSNK1E_4	TGAGGGCGACTACAACGTGA	CSNK1E
 sgCSNK1G1_1	AACTTCCTGATTGGTCGACA	CSNK1G1
 sgCSNK1G1_2	AAGTAAATGTTCGGTCACAG	CSNK1G1
 sgCSNK1G1_3	ATGGCATTATATTTCCCACA	CSNK1G1
@@ -13067,6 +13119,10 @@ sgCYP3A43_4	TGTCAAAATTCCAAAGACCC	CYP3A43
 sgCYP3A5_2	GGCCAGTTCATATAAAGTGA	CYP3A5
 sgCYP3A5_3	TAGCACTGTTCTGATCACGT	CYP3A5
 sgCYP3A5_4	TCTTAGTGCTCTCCACAAAG	CYP3A5
+sgCYP3A7_1	AAAAGTATAGAAAAGTCTGG	CYP3A7
+sgCYP3A7_2	ACTCTAGCCTTTCGGGCCAG	CYP3A7
+sgCYP3A7_3	AGATATGGAACCCGTACACA	CYP3A7
+sgCYP3A7_4	TCGCCTCAAAGAGACACAAA	CYP3A7
 sgCYP46A1_1	AAAACACATCTTGGAGCACA	CYP46A1
 sgCYP46A1_2	GATGTCAACCAAGTACAACA	CYP46A1
 sgCYP46A1_3	GTCCCGCAACACTCTGGCAA	CYP46A1
@@ -13400,6 +13456,9 @@ sgDCDC2C_1	AGCACCCGGTGCCCACGCGT	DCDC2C
 sgDCDC2C_2	CCCGTTGCGGTACACCACGA	DCDC2C
 sgDCDC2C_3	GACATCGTGCTGGCCACGAT	DCDC2C
 sgDCDC2C_4	TCCTTACTGGAAGTCTCCAA	DCDC2C
+sgDCDC2_1	AGGAGTAAGACTTACCCAAA	DCDC2
+sgDCDC2_2	ATCCAACTGTTGACTTAGAG	DCDC2
+sgDCDC2_3	TCAACTTACAAGATAGTGCA	DCDC2
 sgDCD_1	AAAATGCAGGTGAAGACCCA	DCD
 sgDCD_2	ACCCTAGAAAAAGGCCTAGA	DCD
 sgDCD_3	ACTCACGGTTCCCCGATCCT	DCD
@@ -14590,6 +14649,10 @@ sgDNAJC22_4	CAGACTTTAAGAACACTCTG	DNAJC22
 sgDNAJC24_1	AAAGAGAGTATGACCTGCAG	DNAJC24
 sgDNAJC24_2	AAGGATTGGTACAGCATCCT	DNAJC24
 sgDNAJC24_3	AGATATACTTGAGCATCTAC	DNAJC24
+sgDNAJC25_1	AACCGCCTACGAGACACTCA	DNAJC25
+sgDNAJC25_2	AGTAAAATAGATATAAAGGG	DNAJC25
+sgDNAJC25_3	CCAAGCGCCTGCTATAGTAG	DNAJC25
+sgDNAJC25_4	GTAGCTTGGATACGGTACTT	DNAJC25
 sgDNAJC27_1	AAGATTCGTGTCTAAATACC	DNAJC27
 sgDNAJC27_2	ATTTGTAGTTTGTGCCAACA	DNAJC27
 sgDNAJC27_3	CCATGGGCAACGCCGAAGTG	DNAJC27
@@ -16494,6 +16557,10 @@ sgEPO_1	CATGTGGATAAAGCCGTCAG	EPO
 sgEPO_2	CGGCTGTCACAGATGAGGCG	EPO
 sgEPO_3	CTGTCGGAAGCTGTCCTGCG	EPO
 sgEPO_4	GGTCAACTCTTCCCAGCCGT	EPO
+sgEPPIN_1	AAATGTTTAGATCTCAAACA	EPPIN
+sgEPPIN_2	AATAACCAATCAGTCAGACC	EPPIN
+sgEPPIN_3	AGAAAGGGATGTGTGTACAA	EPPIN
+sgEPPIN_4	GTCCCTGGACATTCGCTAAG	EPPIN
 sgEPPK1_1	AGAGTTGATCAGCTCCCACG	EPPK1
 sgEPPK1_2	CAGCGGGTACCTCACCCCGT	EPPK1
 sgEPPK1_3	GAACTGCAAAAATGCGCGTG	EPPK1
@@ -16583,6 +16650,10 @@ sgERCC4_1	TCGAGCATTTATAAACATCG	ERCC4
 sgERCC4_2	TGAAGTGGAGCCAAGATACG	ERCC4
 sgERCC4_3	TTGACCTTAACTCAAATGGT	ERCC4
 sgERCC4_4	TTTCGCCAGAAAAACAAACG	ERCC4
+sgERCC5_1	AAATGTCACTTGTTCACGTG	ERCC5
+sgERCC5_2	GACTCAATATCTATCGCTTG	ERCC5
+sgERCC5_3	GGAACCAATGGAAATTGACT	ERCC5
+sgERCC5_4	TTAATGGCTGAAAGAGTCCG	ERCC5
 sgERCC6L2_1	AAGCATAAAATCTATCACAG	ERCC6L2
 sgERCC6L2_2	AATTAATTCGTGTAAAGCAG	ERCC6L2
 sgERCC6L2_3	ACAAAGAGAGAACTAGCCAC	ERCC6L2
@@ -16591,6 +16662,10 @@ sgERCC6L_1	AACCTTTCATGGTCCTAGCA	ERCC6L
 sgERCC6L_2	TCATTAATAAGACAAACTAC	ERCC6L
 sgERCC6L_3	TCTAAGTACTCATCATACTC	ERCC6L
 sgERCC6L_4	TTAAGACATTGCGAATCGAT	ERCC6L
+sgERCC6_1	ACTGATTACGAGATACAATG	ERCC6
+sgERCC6_2	AGACAGAATGATCCGATGAG	ERCC6
+sgERCC6_3	AGTGATGCTGAATTTGACGA	ERCC6
+sgERCC6_4	GGGTGAAGGAATTTCACACG	ERCC6
 sgERCC8_1	ACCTGCTACCAAACAGTGCT	ERCC8
 sgERCC8_2	GATGTTGAAAGAATCCACGG	ERCC8
 sgERCC8_3	GCCAAGATATAGTCATAACG	ERCC8
@@ -17558,6 +17633,10 @@ sgFAM47B_1	GCTTCCCATAACTCGTCGAA	FAM47B
 sgFAM47B_2	GGCCCGGGAGAAGACAACCG	FAM47B
 sgFAM47B_3	GGGCCAGGAGATGACAACCG	FAM47B
 sgFAM47B_4	TCGCGCATCTCATCTCCGCG	FAM47B
+sgFAM47E_1	AGATTCAGGTAGAGCGCTAA	FAM47E
+sgFAM47E_2	TCACGGTCCCAGGTAGACTT	FAM47E
+sgFAM47E_3	TCATCGTGTGGAGCGCATCA	FAM47E
+sgFAM47E_4	TGAGTCACCAGACCAGTGCA	FAM47E
 sgFAM50A_1	CGTGACCCTGAATGACATGA	FAM50A
 sgFAM50A_2	CTTGCCTGATCGAGACCGTG	FAM50A
 sgFAM50A_3	GGGATGGCTCTGGGCACCGG	FAM50A
@@ -17612,18 +17691,6 @@ sgFAM89B_4	TGTCAACCTCGACTCAGCGC	FAM89B
 sgFAM8A1_1	CCGCAGAGCTTCCCTTCGGG	FAM8A1
 sgFAM8A1_2	CGCCACGAGAGAGACCAGCT	FAM8A1
 sgFAM8A1_3	CGCTTCCTGAGCTCGCGCGG	FAM8A1
-sgFAM98A_1	AAAGTTCCACCTAATCATGT	FAM98A
-sgFAM98A_2	ACGTTTCGGCTGGTAAACCT	FAM98A
-sgFAM98A_3	TGAACTTACTGAGCAAGAGG	FAM98A
-sgFAM98A_4	TGAGGTGAGTGGGCTACTAG	FAM98A
-sgFAM98B_1	AAGGTCCAGAAAAATCATGT	FAM98B
-sgFAM98B_2	ACCCAAGACAACGATTACAA	FAM98B
-sgFAM98B_3	AGAAGAGCAAGCCCTTACAA	FAM98B
-sgFAM98B_4	GTTTCATTAACATTCGTCGG	FAM98B
-sgFAM98C_1	GCTGCAGGAGTTGCATGCTA	FAM98C
-sgFAM98C_2	GGCAGCGGTACTGATCTCTG	FAM98C
-sgFAM98C_3	GTGCATCTAGCGAGCAGCTG	FAM98C
-sgFAM98C_4	TCCACTACCCCTTCACCAAG	FAM98C
 sgFAM9B_1	AAGAAGCCAGAAGATACTGC	FAM9B
 sgFAM9B_2	CATCACAGACGAGCAGAAAG	FAM9B
 sgFAM9B_3	TGAGAAAAAAGCAACTTAAA	FAM9B
@@ -18674,6 +18741,10 @@ sgFNIP1_4	TCTGGCTTACAATGATGTCG	FNIP1
 sgFNIP2_2	CCAGTTGATATGCCAAGCAG	FNIP2
 sgFNIP2_3	TTCATGTGAGATTCAAACAG	FNIP2
 sgFNIP2_4	TTCCGATGTCAACATGTTAG	FNIP2
+sgFNTB_1	AGGATCCAATAGCAGAGCCA	FNTB
+sgFNTB_2	AGTAGAAGAAAAGATCCAAG	FNTB
+sgFNTB_3	CACAGAAGGTATAGCCACCA	FNTB
+sgFNTB_4	TCGGGCCTCAGACTGTACAG	FNTB
 sgFOCAD_1	AAAGTGACAGCTCTTAGTCG	FOCAD
 sgFOCAD_2	GCAGAGTGATATATCCCACG	FOCAD
 sgFOCAD_3	TCAACTTGATTCCATCAACC	FOCAD
@@ -19158,6 +19229,10 @@ sgFXYD4_4	TTGGAAGCCAATGACCCATT	FXYD4
 sgFXYD5_1	ACACACAAGAGCACCAAAGC	FXYD5
 sgFXYD5_3	GGGGAGAATCAGGCCAACGA	FXYD5
 sgFXYD5_4	TGGTCTCTCAGAGAGCGTCG	FXYD5
+sgFXYD6_1	GAACAAACTTACTTAGGATA	FXYD6
+sgFXYD6_2	TACCACTGGCCAGGACCATG	FXYD6
+sgFXYD6_3	TGGGGGACTGGTGTTCGCTG	FXYD6
+sgFXYD6_4	TTACCAGACCCTGAGGATTG	FXYD6
 sgFXYD7_1	AACGACGCTCACCCTTTGTG	FXYD7
 sgFXYD7_2	ATCTTCCCCAGACTACAACA	FXYD7
 sgFXYD7_3	CGCACTTACTGATGACGATG	FXYD7
@@ -19463,6 +19538,10 @@ sgGALNT3_1	AAAAGTCCTCCTGCAAAAGT	GALNT3
 sgGALNT3_2	GTATAATATCCTTGCAAACA	GALNT3
 sgGALNT3_3	GTGGACAGTTCTAAGCAACG	GALNT3
 sgGALNT3_4	TATGGAAGTAACCATAACCG	GALNT3
+sgGALNT4_1	ATAGAAAGCAATGATAACAG	GALNT4
+sgGALNT4_2	CCATGGTAGGTGATCTGATG	GALNT4
+sgGALNT4_3	CTGCCCGAGCAGTATTCTGT	GALNT4
+sgGALNT4_4	GATTAGGACCAATAAGCGAG	GALNT4
 sgGALNT5_1	ACTAACCATGCTTTAACTGG	GALNT5
 sgGALNT5_2	CACAGGCAGTAGCAAACGAG	GALNT5
 sgGALNT5_3	CCTTAGCGATTTGATCCCAG	GALNT5
@@ -20052,6 +20131,10 @@ sgGIMAP4_1	GCCCAATGCTGAAACGTCCA	GIMAP4
 sgGIMAP4_2	TCATGATTCTCATATTCACC	GIMAP4
 sgGIMAP4_3	TCCACTGGGCCGTTACACTG	GIMAP4
 sgGIMAP4_4	TGTTGTTTAACGCACAGTAG	GIMAP4
+sgGIMAP5_1	ACCCACAAAGAGGACTTAGG	GIMAP5
+sgGIMAP5_2	GCTGCGGGAAAAGTGCCACA	GIMAP5
+sgGIMAP5_3	TACTGTGCCTTCAACAACTG	GIMAP5
+sgGIMAP5_4	TGGAGGGCGTGTCAACCACC	GIMAP5
 sgGIMAP6_1	AGGAAACAGCATCCTCGGCA	GIMAP6
 sgGIMAP6_2	CCCTGGGGCGGATAAGACGA	GIMAP6
 sgGIMAP6_3	GACTGAGGCTCATTCTCATG	GIMAP6
@@ -21156,6 +21239,10 @@ sgGPRASP1_1	AAAGACCAGTATGAAAACTG	GPRASP1
 sgGPRASP1_2	AGGAAGCCCTCATTGGGACC	GPRASP1
 sgGPRASP1_3	ATCAGTACTGACAAGTGGAG	GPRASP1
 sgGPRASP1_4	ATGAGTCTGTTAAGACACCC	GPRASP1
+sgGPRASP2_1	ACTGAGGTCCAAGTAATGGG	GPRASP2
+sgGPRASP2_2	CCAGTACGCGGATCCGCCAA	GPRASP2
+sgGPRASP2_3	TCCAGACCAGGAATCAACAT	GPRASP2
+sgGPRASP2_4	TGAGTTCTATAAGCAGTCCT	GPRASP2
 sgGPRC5A_1	ACAAAGTCTTCATTGCGACG	GPRC5A
 sgGPRC5A_3	CTTCGCCTTCATCATCGGAC	GPRC5A
 sgGPRC5A_4	GGGCATCGTCCTAGAAACGG	GPRC5A
@@ -24734,6 +24821,9 @@ sgISX_1	AGAATCAGCGAGCCAAGTGG	ISX
 sgISX_2	AGGAAGGAAGAGCAAGCGGA	ISX
 sgISX_3	CCTGCACCCGAGCTTCTGGG	ISX
 sgISX_4	GCAGCTGAGTGAAGCCAGTG	ISX
+sgISY1_2	AGGCAGTTCAGTACATTCTG	ISY1
+sgISY1_3	GAGGTCCGGATAAAGGAGCT	ISY1
+sgISY1_4	TCAAACAGCTCTCTAACACC	ISY1
 sgISYNA1_1	CCACCTGGGCAACAACGATG	ISYNA1
 sgISYNA1_2	GACGACGCGCGTCAGCCGCG	ISYNA1
 sgISYNA1_3	GAGACTTCCGGTCTAGCGCG	ISYNA1
@@ -25075,6 +25165,10 @@ sgJMJD6_1	AGCAAGACGAAGCTATTACC	JMJD6
 sgJMJD6_2	CGGAACCAGAAGTTCAAGTG	JMJD6
 sgJMJD6_3	TTAATTCCCTCAGGATAACG	JMJD6
 sgJMJD6_4	TTGCGCATTCAACAAAACCA	JMJD6
+sgJMJD7_1	AGAGCGTTGCGGATAATGCA	JMJD7
+sgJMJD7_2	CATTCCTCTAGAGCCACAGT	JMJD7
+sgJMJD7_3	CTATGAGAACCTCTACTGCG	JMJD7
+sgJMJD7_4	TTACGCGGATGCCGTGAGAG	JMJD7
 sgJMJD8_1	AGGCCGCGTACCTTTGTGGT	JMJD8
 sgJMJD8_2	GCAGGGACTCACGGACAACT	JMJD8
 sgJMJD8_3	GTTCCCAGCAGGCCAAATGG	JMJD8
@@ -26242,6 +26336,10 @@ sgKLHL22_1	CCACCAGCACAACATCGAAG	KLHL22
 sgKLHL22_2	CTTCGTATACTTGATTGGAG	KLHL22
 sgKLHL22_3	GCGAGACCGAGGTATATGAG	KLHL22
 sgKLHL22_4	GTACCTGCCTACAACACACA	KLHL22
+sgKLHL23_1	AAATGTTCAAAGCCTGCTTG	KLHL23
+sgKLHL23_2	ACACACATGAAATTCTGCAA	KLHL23
+sgKLHL23_3	GCCTCCAATTATATACATTG	KLHL23
+sgKLHL23_4	TAATACCTGGCATTGAGCAT	KLHL23
 sgKLHL24_1	AGAACTTGGCACATGCATCA	KLHL24
 sgKLHL24_2	AGTTATAAATCCAGACATCA	KLHL24
 sgKLHL24_3	GTCAGGAGCTCGTGTAACAG	KLHL24
@@ -26420,6 +26518,10 @@ sgKLRG2_1	CCGGGCGCCTCGCCATTCCG	KLRG2
 sgKLRG2_2	CTGCGCGCACCATCCCAGGG	KLRG2
 sgKLRG2_3	GCGAAGGTGCGACAACCTGA	KLRG2
 sgKLRG2_4	TACAGGGACTTCACGTACAT	KLRG2
+sgKLRK1_1	AATAATGAAACGGATTCCCA	KLRK1
+sgKLRK1_2	CGGAGGTCTCGACACAGCTG	KLRK1
+sgKLRK1_3	GAAGTTCAAATTCCCTTGAC	KLRK1
+sgKLRK1_4	TTTGAGACATACAAGAAGCC	KLRK1
 sgKL_1	AATTGGCGGAACTTCATGTG	KL
 sgKL_2	AGAGGTTACAGCATCAGGCG	KL
 sgKL_3	CACCATCGACAACCCCTACG	KL
@@ -28390,6 +28492,10 @@ sgLTV1_1	AGCTGACCCTACATGATGAG	LTV1
 sgLTV1_2	CTGCTGCTAAAGGATCTCGT	LTV1
 sgLTV1_3	GTGTGCACTGAAGGTACTTG	LTV1
 sgLTV1_4	TCAGGATCAAAATCCAGTCG	LTV1
+sgLUC7L2_1	AGGAGCTGAAGGGAATGTGG	LUC7L2
+sgLUC7L2_2	CCATGACCTGGCTTTAAGAG	LUC7L2
+sgLUC7L2_3	CTGGCAGAGACTTACCGTCC	LUC7L2
+sgLUC7L2_4	TCATGATAATGACAGACGAC	LUC7L2
 sgLUC7L3_1	ACTGCTAAGGTCCACAACGT	LUC7L3
 sgLUC7L3_2	CATCAAATGGTCATCTACCC	LUC7L3
 sgLUC7L3_3	CCGCGGGACTTACGCTCTCG	LUC7L3
@@ -28462,6 +28568,10 @@ sgLY6K_1	ACGAGGGTGACAATAGAGTG	LY6K
 sgLY6K_2	AGAGCCATACTGCGTTATAG	LY6K
 sgLY6K_3	CTTTCGAGTGCCAGAACCCA	LY6K
 sgLY6K_4	TCGTTGTCTCGCAGTCAGGT	LY6K
+sgLY75_1	GGTTGAGTATTAGGGCACAG	LY75
+sgLY75_2	TTACCGATTTGGTAATATCG	LY75
+sgLY75_3	TTATGAATATGACCGAAAGT	LY75
+sgLY75_4	TTCTTGTGGAGAGTATAACT	LY75
 sgLY86_1	AGCCGCCTCACAGATGGGAT	LY86
 sgLY86_2	AGCCTTGAGACATGAGAGCT	LY86
 sgLY86_3	CACGTGGTCTGTAGCGACAG	LY86
@@ -29744,6 +29854,10 @@ sgMEDAG_3	GCTGCCCGTCGAGGCGCACG	MEDAG
 sgMEF2A_1	GAGTTGGTTCTGCTTTCATG	MEF2A
 sgMEF2A_2	GCTGAGTACACAAGTCCTTG	MEF2A
 sgMEF2A_3	TGAGCACAGTCCACTCTCGG	MEF2A
+sgMEF2B_1	AGGCCCCGTATACCACATCT	MEF2B
+sgMEF2B_2	CACCAACACTGACATCCTCG	MEF2B
+sgMEF2B_3	CCTCTTCCAGTATGCCAGCA	MEF2B
+sgMEF2B_4	TCTGACCTCCGCCCTTCCGT	MEF2B
 sgMEF2C_1	ACTCCTACTTTACCAGGACA	MEF2C
 sgMEF2C_2	AGCAGACCTGGTGAGTTTCG	MEF2C
 sgMEF2C_3	CTACGGAATCGTCCGCATCG	MEF2C
@@ -31374,6 +31488,10 @@ sgMTHFSD_1	ATGTCTTTAGTTGCCCCAGG	MTHFSD
 sgMTHFSD_2	CCACCACAACTAAATCCACG	MTHFSD
 sgMTHFSD_3	TATGCCATGATGGTATCCAT	MTHFSD
 sgMTHFSD_4	TGGAGAAAATCCCCATACTG	MTHFSD
+sgMTHFS_1	GCAGCGCCAAGCGGAGCCTG	MTHFS
+sgMTHFS_2	GGTGAGAATAGAATCACCAG	MTHFS
+sgMTHFS_3	GTCCCGCGTACTGAGCCAGA	MTHFS
+sgMTHFS_4	TCTGCGGGCGATGAGTGCCG	MTHFS
 sgMTIF2_1	ATGGATTGGAATGACTATTG	MTIF2
 sgMTIF2_2	CCCCGCATTTACCGTAAGTG	MTIF2
 sgMTIF2_3	GATCAAAGAAGTGATAACGA	MTIF2
@@ -31939,6 +32057,10 @@ sgMYT1_1	AGAGTAGCTCCAATTCCGAT	MYT1
 sgMYT1_2	ATGCAGGACATGATGACCCG	MYT1
 sgMYT1_3	GGTGACTTCGACGACCTCCT	MYT1
 sgMYT1_4	TCTGTTTCGGATGAATCGGA	MYT1
+sgMYZAP_1	AAGAAATGGTGGTGTATGGG	MYZAP
+sgMYZAP_2	ACGATCCAGGGCAGACGACT	MYZAP
+sgMYZAP_3	AGCAGCAGAGATCAGCCTAG	MYZAP
+sgMYZAP_4	TTCCAAAGTCACATCCACGA	MYZAP
 sgMZB1_1	ACTTCATACCTCAAACTCTG	MZB1
 sgMZB1_2	CACAGGCCCAGGACTTAGCG	MZB1
 sgMZB1_3	CAGCTACGGAGTTCGAGAAG	MZB1
@@ -32189,10 +32311,6 @@ sgNAT2_1	ATTGTAAGAAGAAACCGGGG	NAT2
 sgNAT2_2	TAACAAATACAGCACTGGCA	NAT2
 sgNAT2_3	TAGAGGCTGCCACATCTGGG	NAT2
 sgNAT2_4	TGTGGTCTGAAAACCGATTG	NAT2
-sgNAT8L_1	CACCACGTTGCCATCCAGCA	NAT8L
-sgNAT8L_2	CATGGAGCGCATCCCTAACA	NAT8L
-sgNAT8L_3	GGTAGGCGCGGATCACCTTG	NAT8L
-sgNAT8L_4	GTGCATCCGCGAGTTCCGTG	NAT8L
 sgNATD1_1	GCAGGGCTGCCCCATCCGCG	NATD1
 sgNATD1_2	GGCGATGCCACGCCCACGGT	NATD1
 sgNATD1_3	GGGCCGCCTTACCGTTGAGC	NATD1
@@ -32225,6 +32343,10 @@ sgNBEA_1	AGAGTTCACTCATGGCATCA	NBEA
 sgNBEA_2	ATACGAAACATTGTAGTCCG	NBEA
 sgNBEA_3	ATGATGTACTACTATTGGGA	NBEA
 sgNBEA_4	TTACCTACTTACGATGCATG	NBEA
+sgNBL1_1	AACAGTGCCAGCTTGTTGAT	NBL1
+sgNBL1_2	ACCAGGGACTCTGTGGACTG	NBL1
+sgNBL1_3	AGTACTCACAATCTCCCACA	NBL1
+sgNBL1_4	GGGCAGCCAGTAGCATGGCA	NBL1
 sgNBN_1	AGAATGCACTCACCTTGTCA	NBN
 sgNBN_2	AGCAGCCTCCACAAATTGAA	NBN
 sgNBN_3	CCAGGACCAAGCCTTTCACA	NBN
@@ -33238,6 +33360,10 @@ sgNMD3_1	AGTAAAGTGGACATCAGCCA	NMD3
 sgNMD3_2	ATTGATCCAAACACCCTACA	NMD3
 sgNMD3_3	GTTGTTCAGTCCCAAATGTG	NMD3
 sgNMD3_4	TTCAGTGTACAGTTCCCTGT	NMD3
+sgNME1_1	AAGACGGGCCGAGTCATGCT	NME1
+sgNME1_2	GGCTTCCGAAGATCTTCTCA	NME1
+sgNME1_3	GTGCATGTATTTCACCAGGC	NME1
+sgNME1_4	TCATTGCGATCAAACCAGAT	NME1
 sgNME2_1	AAGACCGACCATTCTTCCCT	NME2
 sgNME2_2	AAGCCGGACGGCGTGCAGCG	NME2
 sgNME2_3	AGTTACCCGGAGGAACTTCA	NME2
@@ -33972,6 +34098,9 @@ sgNT5C1A_1	CCGATTCTTCGAGCATGAGA	NT5C1A
 sgNT5C1A_2	CGAAGACGTCCTCACTATCA	NT5C1A
 sgNT5C1A_3	CGTCCATGCGAAACAAGGCT	NT5C1A
 sgNT5C1A_4	GCTGCGCGTGGCCTTCGATG	NT5C1A
+sgNT5C1B_1	ACTAATAACCATGCCCAAGT	NT5C1B
+sgNT5C1B_2	CTGCGCGCTCTTCAACATGG	NT5C1B
+sgNT5C1B_4	GACGTGCGCGAATATTCCAG	NT5C1B
 sgNT5C2_1	ATCGTCGAGAAGCCTATCAT	NT5C2
 sgNT5C2_2	CAGCATGGTATCGTCTACTC	NT5C2
 sgNT5C2_3	GAGTCACATACGGTACCTTG	NT5C2
@@ -34164,6 +34293,10 @@ sgNUDT22_4	TTGGGGGCGTCGAAGAGCCA	NUDT22
 sgNUDT2_1	AAGATGCCTCATTCCCAAAG	NUDT2
 sgNUDT2_3	CATCACTGGACTCCTCCCAA	NUDT2
 sgNUDT2_4	GCCAGCTGACCATTATTGAG	NUDT2
+sgNUDT3_1	ACCCGCACCTACGACGGCGA	NUDT3
+sgNUDT3_2	AGAACCAGGAGAGGAAGCAC	NUDT3
+sgNUDT3_3	AGCAGTTCGTGAAGTCTGTG	NUDT3
+sgNUDT3_4	GTGTTTCCGCAGCGAGAGCG	NUDT3
 sgNUDT5_1	AATCAGTGAAACGTACAACC	NUDT5
 sgNUDT5_2	ACAACGTACATGGATCCTAC	NUDT5
 sgNUDT5_3	CAAACAGTATATCATTTCAG	NUDT5
@@ -34869,6 +35002,9 @@ sgOR2A12_4	TGGGAAATGGGATTATCCTG	OR2A12
 sgOR2A25_1	AAAAAGTGATTAAGTTTCTG	OR2A25
 sgOR2A25_3	TGATGGTAGAATATCGGAGA	OR2A25
 sgOR2A25_4	TGTTCTCAAACTTGCCTGTG	OR2A25
+sgOR2A4_1	AAGTAACACAAGATGAATCA	OR2A4
+sgOR2A4_2	ATGATGGCCAAATATCGGAG	OR2A4
+sgOR2A4_4	CTGCATCATGCGGCCCGCAA	OR2A4
 sgOR2A5_2	GCCTCAGGATGAGAACCACA	OR2A5
 sgOR2A5_3	TATTCTGTCATCATGAGATG	OR2A5
 sgOR2A5_4	TGGTAATGATGTCCTACGAT	OR2A5
@@ -35564,6 +35700,10 @@ sgORC6_1	GACCTACTTACCCTGTCCAA	ORC6
 sgORC6_2	GAGGCCGACACACTTCACCC	ORC6
 sgORC6_3	TACAGCTAAACTGTACAGCT	ORC6
 sgORC6_4	TCTTCCCCAGACACAGCAAG	ORC6
+sgORM1_1	CCACCTACCTGAATGTCCAG	ORM1
+sgORM1_2	CTTCACCCCCAACAAGACAG	ORM1
+sgORM1_3	GATGGGCACCGGTACTAGGT	ORM1
+sgORM1_4	TGTAGGTCTTGGTGTCCCTG	ORM1
 sgORMDL1_1	ACCCGTGTCATGAACAGCCG	ORMDL1
 sgORMDL1_2	AGCAAGGCTCCTAACTCATT	ORMDL1
 sgORMDL1_3	CCCTGGTCAGGAGTTTCGAA	ORMDL1
@@ -35869,6 +36009,10 @@ sgP2RX7_3	GTAGTATTCGTTGACCACAC	P2RX7
 sgP2RY10_1	AATGAATATGAGGATATAGG	P2RY10
 sgP2RY10_3	TGACGTGCATCAGTCTTCAA	P2RY10
 sgP2RY10_4	TGGAAGCGTAGGTACGATGT	P2RY10
+sgP2RY11_1	ACGCAGCCCAGGCATGACTG	P2RY11
+sgP2RY11_2	AGGCCTGCATCAAGTGTCTG	P2RY11
+sgP2RY11_3	AGGCGTGCTTGGGTCGCAGG	P2RY11
+sgP2RY11_4	CCCCAAGCACTGGCGCTATG	P2RY11
 sgP2RY12_1	CAGAGACTACAAAATCACCC	P2RY12
 sgP2RY12_2	CCAACCCCAAAAATCTCTTG	P2RY12
 sgP2RY12_3	CCGGTCATACGTAAGAACGA	P2RY12
@@ -37924,6 +38068,10 @@ sgPLA2G4A_1	AATGGATGCCAATTATGTCA	PLA2G4A
 sgPLA2G4A_2	ACAGAGCCATACTAAATCGT	PLA2G4A
 sgPLA2G4A_3	CACACCAGAGAATCCCACCA	PLA2G4A
 sgPLA2G4A_4	GATGAATCACACGAACCCAA	PLA2G4A
+sgPLA2G4B_1	ATCACAAGCTCTCAGATCAA	PLA2G4B
+sgPLA2G4B_2	GTGGCCATAATAGCTACCAC	PLA2G4B
+sgPLA2G4B_3	TGTCAGTACTGTTTGATGCG	PLA2G4B
+sgPLA2G4B_4	TTGGCTCCGAGTTCTTTATG	PLA2G4B
 sgPLA2G4C_1	AGAAAACCATCCAAGCAGCG	PLA2G4C
 sgPLA2G4C_2	AGATGCTCGAGAATTGGACC	PLA2G4C
 sgPLA2G4C_3	TCTGAAGAAGCTAAGGATTG	PLA2G4C
@@ -38392,6 +38540,10 @@ sgPMEL_4	GTGACTGTCTACCATCGCCG	PMEL
 sgPMEPA1_1	ACCGTGCAGACAGCTTGTAG	PMEPA1
 sgPMEPA1_3	CCGTGCCGCCCTTCGCCCAG	PMEPA1
 sgPMEPA1_4	GTCAGGCAACGGAATCCCAG	PMEPA1
+sgPMF1_1	CCTTCTCTGGGATCCCGCTG	PMF1
+sgPMF1_2	GAATGCCTTGGATAAAATTG	PMF1
+sgPMF1_3	TAGATTTGCTGTGTCATCGC	PMF1
+sgPMF1_4	TCTCTGACATCAAAGAGGAG	PMF1
 sgPMFBP1_1	ACTTACCAAAGCGTTACTGC	PMFBP1
 sgPMFBP1_2	AGAACTTGAAATGACAGTCA	PMFBP1
 sgPMFBP1_3	GAAGCTTGAAAATTCAGACA	PMFBP1
@@ -38927,6 +39079,10 @@ sgPPA2_1	AGGCGGTAATTCTGCGAGCA	PPA2
 sgPPA2_2	ATATGATTGTAGAAATACCT	PPA2
 sgPPA2_3	TCAGAGGAATATCATGAAAG	PPA2
 sgPPA2_4	TCCATATATAACCCTTGTAA	PPA2
+sgPPAN_1	AGAAAGTGTGTGACCCCGAG	PPAN
+sgPPAN_2	AGTCGGGGTTGTAGTCGATG	PPAN
+sgPPAN_3	GCTTCACATGCATACCATGG	PPAN
+sgPPAN_4	TGGCTCAGTGAGCAAGACGG	PPAN
 sgPPARA_1	GACTCCGTAATGATAGCCTG	PPARA
 sgPPARA_2	GATTTCGCAATCCATCGGCG	PPARA
 sgPPARA_3	GTGTATGGCTGAGAAGACGC	PPARA
@@ -40332,6 +40488,10 @@ sgPTBP3_1	AAAGAATCACCTGTAGCTTG	PTBP3
 sgPTBP3_2	ACTCGCTTAGACCTTCCTAC	PTBP3
 sgPTBP3_3	CCTGGTATACCACTAGCCCC	PTBP3
 sgPTBP3_4	GTAATAATTCACCATAGTAA	PTBP3
+sgPTCD1_1	CAGGAGCGTCAGGAAAACAC	PTCD1
+sgPTCD1_2	CATGCAGCATGGCTGACATG	PTCD1
+sgPTCD1_3	CTGCAAGAAGTACCAGTACG	PTCD1
+sgPTCD1_4	TTTGCGGAATAGTCTCCGGG	PTCD1
 sgPTCD2_1	AAGCCGCGGATACCTCCGAG	PTCD2
 sgPTCD2_3	GTGTGAGTCTCGGGACCATG	PTCD2
 sgPTCD2_4	GTGTTACGAGTTGGATCTCG	PTCD2
@@ -41575,6 +41735,10 @@ sgRB1_1	AAACAATCAAAGGACCGAGA	RB1
 sgRB1_2	AACATCTAATGGACTTCCAG	RB1
 sgRB1_3	GGTTCTTTGAGCAACATGGG	RB1
 sgRB1_4	TGAACTACTTACGAACTGCT	RB1
+sgRBAK_1	AGGGAACCCTCACTGTACAT	RBAK
+sgRBAK_2	GACTTCTATAATGTATAGTG	RBAK
+sgRBAK_3	GTAGTGATGGAAGCTATGCT	RBAK
+sgRBAK_4	TCATAAGAGAGCTTACATAG	RBAK
 sgRBBP5_1	AAGATTCTCCATGGGACGAG	RBBP5
 sgRBBP5_2	CCAGATAGATACCACTCCAC	RBBP5
 sgRBBP5_3	GGCAGCAATAGGGTCCACGC	RBBP5
@@ -43109,6 +43273,9 @@ sgRPL11_4	TTCATTTCTCCGGATGCCAA	RPL11
 sgRPL12_2	GACCCCAACGAGATCAAAGT	RPL12
 sgRPL12_3	GATAACGTACCAGACCCAGG	RPL12
 sgRPL12_4	TCTTCTGCAGTTAAACACAG	RPL12
+sgRPL17_2	CTGTCCACTTACATTTCGTG	RPL17
+sgRPL17_3	GAGAATCTACATCTAAACCC	RPL17
+sgRPL17_4	TTCTTTCAGGCCAAGCAATG	RPL17
 sgRPL28_1	CACCACGACACCTTTGCCGT	RPL28
 sgRPL28_2	GGCCCCACTTACAGTGCTGT	RPL28
 sgRPL28_4	GTGTCGTGGTGGTCATTAAG	RPL28
@@ -43698,6 +43865,10 @@ sgS1PR5_1	AGAGTGCACAGATAGCGGCC	S1PR5
 sgS1PR5_2	CCAGCAGATCCGACAACGTG	S1PR5
 sgS1PR5_3	CGCCAGGCACACCACGGCGT	S1PR5
 sgS1PR5_4	GGGGACAGTTTCAGCGTGAG	S1PR5
+sgSAA4_1	ATGCTGCCCAAAGAGGACCT	SAA4
+sgSAA4_2	CCTGAAGATAGACCCTGGAA	SAA4
+sgSAA4_3	CTTTCCAGGGGTTGGGGACA	SAA4
+sgSAA4_4	TAATCCCTGAAGATAGACCC	SAA4
 sgSAAL1_1	GTTAGAATGGGTCAGAAATG	SAAL1
 sgSAAL1_2	TACATACTTACTCTTAATCG	SAAL1
 sgSAAL1_4	TTGGCAGCTTCAAGTATACA	SAAL1
@@ -44071,6 +44242,10 @@ sgSCGB3A2_4	GCCAACTTGTCAACAGGAAG	SCGB3A2
 sgSCGN_2	CAGCAGCGTGGAGTTTATGC	SCGN
 sgSCGN_3	GGAAGAATACACTGGCACCA	SCGN
 sgSCGN_4	TGGATCTAAATGACTTAGCA	SCGN
+sgSCHIP1_1	CAGTAAGACTGAAACCAGCT	SCHIP1
+sgSCHIP1_2	GCTGCTTACAAGATCAGCGA	SCHIP1
+sgSCHIP1_3	TACAGCTGGTATAAATTCCT	SCHIP1
+sgSCHIP1_4	TGATAGAGACACTACTGAAG	SCHIP1
 sgSCIMP_1	AGAGAAGGCCAATTCCTCGG	SCIMP
 sgSCIMP_2	TACAGACACAGTACAGGATG	SCIMP
 sgSCIMP_3	TGTAAGTGGCAGCTTAGACG	SCIMP
@@ -44156,6 +44331,10 @@ sgSCN8A_4	TGGAAACTAAAAGAGATCCA	SCN8A
 sgSCN9A_1	AGGTAACCTCACCTTAGTGT	SCN9A
 sgSCN9A_2	GGAACACCACCCAATGACTG	SCN9A
 sgSCN9A_3	GTGTCCGAAGGGATTTAATG	SCN9A
+sgSCNM1_1	AGTCGTGTCTGAGTTAGCAG	SCNM1
+sgSCNM1_2	CCTGCAGAAAAGAAGAGTCG	SCNM1
+sgSCNM1_3	CGGCAGCAACTGTTATAGTG	SCNM1
+sgSCNM1_4	GATGTTTCTTGCCTGCACGG	SCNM1
 sgSCNN1A_1	GGAGCGGTGGAACTCGATCA	SCNN1A
 sgSCNN1A_2	GGCCCGTCGAGCCCGTAGCG	SCNN1A
 sgSCNN1A_3	GGGCCGCGGATAGAAGATGT	SCNN1A
@@ -45022,6 +45201,10 @@ sgSGK2_1	AGAGCCTTATGATCGAGCAG	SGK2
 sgSGK2_2	CCGTCATTCTCAGGGACACG	SGK2
 sgSGK2_3	TGGGGCGTTCTATGCAGTGA	SGK2
 sgSGK2_4	TTGAGGAAGTCGAAGTCCGT	SGK2
+sgSGK3_1	ACCTCACAGAACATCAACCT	SGK3
+sgSGK3_2	ATTCCATCAAAATAGTATAC	SGK3
+sgSGK3_3	TGTCCCACAAAATGTGGTAG	SGK3
+sgSGK3_4	TTATAAAGTTCTGGTTTCAG	SGK3
 sgSGMS1_1	ATAATGAAGCTCATTGCTGG	SGMS1
 sgSGMS1_2	CTTGATCAACCTAACCCAAG	SGMS1
 sgSGMS1_3	GAATTAACCAGAGTCCTACA	SGMS1
@@ -45957,6 +46140,10 @@ sgSLC25A17_1	AAAGGTCAACATTCTACCAC	SLC25A17
 sgSLC25A17_2	ATTGTACCAACAAACTACAA	SLC25A17
 sgSLC25A17_3	CCTAGCCTGGCACCATATCG	SLC25A17
 sgSLC25A17_4	GGAATCTCGGCTTTATGGAA	SLC25A17
+sgSLC25A18_1	CCTGTTCCCATAGGATGCAG	SLC25A18
+sgSLC25A18_2	GAGTCTTGGCCAAGTCGATG	SLC25A18
+sgSLC25A18_3	GGAAGCCGAACCAGTTGTGT	SLC25A18
+sgSLC25A18_4	TGGGACAGGTCACCACGACC	SLC25A18
 sgSLC25A19_1	AAGTGGGCCATACCAGCCGA	SLC25A19
 sgSLC25A19_2	GGCGCAGCGTATTATAGACC	SLC25A19
 sgSLC25A19_3	TGCCATGGTACTTTGCGCTG	SLC25A19
@@ -47495,6 +47682,9 @@ sgSNURF_1	AGAACAGCACGTACCAGAGG	SNURF
 sgSNURF_2	CAGTCCTTCTGCGTTTGACT	SNURF
 sgSNURF_3	GTAGGTGTCAGTTGTACCCG	SNURF
 sgSNURF_4	TCACTCTTGGTTGCTCAGTG	SNURF
+sgSNW1_2	CCTTTCCGGTATCCGTACGG	SNW1
+sgSNW1_3	CTGTAAAGGAACAACAAGAG	SNW1
+sgSNW1_4	TATGATGCAATTGCTCGACA	SNW1
 sgSNX10_1	AGATCCTAGGATTCAGAAGG	SNX10
 sgSNX10_2	CATGAACAATCGCCAGCACG	SNX10
 sgSNX10_3	GAAGATATAGAGAATTCGTG	SNX10
@@ -47648,6 +47838,10 @@ sgSOD3_4	GATCCGAGACATGTACGCCA	SOD3
 sgSOHLH1_1	GGCGGAACGTGATCAGCGAG	SOHLH1
 sgSOHLH1_3	TCCCGCCGGCCATCGAACTG	SOHLH1
 sgSOHLH1_4	TTGTCGAGTCAGATTCAAGC	SOHLH1
+sgSOHLH2_1	AGGTCCTACAGCGAACACCT	SOHLH2
+sgSOHLH2_2	CATCACCATCAGTGACACGA	SOHLH2
+sgSOHLH2_3	GCCTTCTTCACTAAGTGCCG	SOHLH2
+sgSOHLH2_4	TGATGCGGCTTCAGTTCTTG	SOHLH2
 sgSORBS1_1	ACCTGGTTAATACTGACAGA	SORBS1
 sgSORBS1_2	AGTGAAGAGGGAATCAGACG	SORBS1
 sgSORBS1_3	GTGCTCTTGCAACACAATCG	SORBS1
@@ -48999,6 +49193,9 @@ sgSTOM_1	ACTCACCCTTGAAGGAGTCG	STOM
 sgSTOM_2	GCCACCAAAATCCATCCGCA	STOM
 sgSTOM_3	GGATTCAGTGACAATTAGCG	STOM
 sgSTOM_4	TTGATGAAGCTGTCAGTGCA	STOM
+sgSTON1_1	AAAACCAAAAAAGAACTACG	STON1
+sgSTON1_2	AGCCCACTCGCAATATCAGG	STON1
+sgSTON1_4	TTGCAGATGTATTATGAACA	STON1
 sgSTON2_1	AGCACTGAAAGGGTTGATAG	STON2
 sgSTON2_2	AGTTTGAAGATGACACACCC	STON2
 sgSTON2_3	GTATACGAACATCCAAAGCT	STON2
@@ -49502,6 +49699,10 @@ sgSYNJ1_1	AGTGGCTACAGACGAAGCAA	SYNJ1
 sgSYNJ1_2	ATACTTATATGTCGGAGCAA	SYNJ1
 sgSYNJ1_3	ATGGCGTGAATTGTGATGAC	SYNJ1
 sgSYNJ1_4	TCATCGTGTCCGTATGTCAA	SYNJ1
+sgSYNJ2BP_1	AGTGGATTATTTGGTCACTG	SYNJ2BP
+sgSYNJ2BP_2	CAGCCGCATCAAAGAAAATG	SYNJ2BP
+sgSYNJ2BP_3	CAGTATGTCTCCAACGACAG	SYNJ2BP
+sgSYNJ2BP_4	GAAGAGATCAATCTTACCAG	SYNJ2BP
 sgSYNJ2_1	ACTTCGATGTGTTCACAAAG	SYNJ2
 sgSYNJ2_2	CCAGTCCAACTTCTTCGACG	SYNJ2
 sgSYNJ2_3	CTGGCTGAAAGGTTTGCGAG	SYNJ2
@@ -50809,6 +51010,9 @@ sgTGFBRAP1_1	AGCCCGGAGGAACATTCCAA	TGFBRAP1
 sgTGFBRAP1_2	CCTATCCTCTTGACGATCGG	TGFBRAP1
 sgTGFBRAP1_3	CTTGCTCAAACTGTATGCAG	TGFBRAP1
 sgTGFBRAP1_4	TCTTACCTACTGCTTAGACG	TGFBRAP1
+sgTGIF2_2	GCAAGTACAGCCAGTCCCGG	TGIF2
+sgTGIF2_3	GGAGTCGGTGAAGATCCTCC	TGIF2
+sgTGIF2_4	GGCGGGCAAAAGGAAGCGCA	TGIF2
 sgTGM1_1	CATGCTAGTAGTGAACGGTG	TGM1
 sgTGM1_2	CCGCACACAATCAGACGCTG	TGM1
 sgTGM1_3	GGACGGAATATCCCGTGCGT	TGM1
@@ -51037,6 +51241,10 @@ sgTICAM1_1	AGTCCGAAACACCGTCAATG	TICAM1
 sgTICAM1_2	CAGACGAACACATCGCCCTG	TICAM1
 sgTICAM1_3	CTGGCAATCTCCCCCGATGG	TICAM1
 sgTICAM1_4	GATGAGGCCCGAAACCGGTG	TICAM1
+sgTICAM2_1	ATTTAGATGATGCTGTAAAT	TICAM2
+sgTICAM2_2	TGAGCACAGCAATACAACAG	TICAM2
+sgTICAM2_3	TGTAAATGCTGTCTGCCACA	TICAM2
+sgTICAM2_4	TTGGGGTAAAAGGCACAGTG	TICAM2
 sgTICRR_1	ACTGGGTGGATACCACCGAA	TICRR
 sgTICRR_2	GACGCTGCTAGACTACCAGT	TICRR
 sgTICRR_4	TCAAAGAGATCACTAAAGCG	TICRR
@@ -51457,6 +51665,10 @@ sgTMED5_4	TTGGTACTCGATCTCCAGCG	TMED5
 sgTMED6_1	AGTAATCAGCATAATCACTT	TMED6
 sgTMED6_2	GCCATCATGATACCTCCAGG	TMED6
 sgTMED6_3	GGCAGGTTCAGCGGACAGTG	TMED6
+sgTMED7_1	AAGCTCGAAGGTGATCTCAG	TMED7
+sgTMED7_2	CGAGCAGCCTGCACCCCCAA	TMED7
+sgTMED7_3	TCTCACTAGGAAACAAAGGT	TMED7
+sgTMED7_4	TTCTACGAGGACATCGCTCA	TMED7
 sgTMED8_1	CACCACGCTTCACCACCAGA	TMED8
 sgTMED8_2	CAGCAAATCCTGTTTCACCA	TMED8
 sgTMED8_3	CTAAGTATCAAGTTCCACAG	TMED8
@@ -51465,6 +51677,10 @@ sgTMED9_1	AATTGGAGTGAAGACAGATC	TMED9
 sgTMED9_2	AGCGCGCTCTACTTTCACAT	TMED9
 sgTMED9_3	CACAAACATGCCAAGCCCCG	TMED9
 sgTMED9_4	CCGGGCTGGGTAGAGTGATG	TMED9
+sgTMEFF1_1	AGCGGCGGGGACTGTCCCGG	TMEFF1
+sgTMEFF1_2	CGCCTTCTGCTGCTACACGT	TMEFF1
+sgTMEFF1_3	GATGCTTCTCGAACAAAACA	TMEFF1
+sgTMEFF1_4	TCATACATACCAGAGTAGCA	TMEFF1
 sgTMEM100_1	AACTGAATCTCACTGACCAG	TMEM100
 sgTMEM100_2	CAGTTGATGGCTGCTACAGG	TMEM100
 sgTMEM100_3	GGCTCACATGGCAGCGACGA	TMEM100
@@ -52371,17 +52587,6 @@ sgTNFAIP6_1	CAAGGATGGGGATTCAAGGA	TNFAIP6
 sgTNFAIP6_2	CACCGCCTTAGCTTCTGCGT	TNFAIP6
 sgTNFAIP6_3	GCCTATTGCTACAACCCACA	TNFAIP6
 sgTNFAIP6_4	GGTCAAAATCTAAAAAACTC	TNFAIP6
-sgTNFAIP8L1_1	CCTTGGACGCCATCTTACTC	TNFAIP8L1
-sgTNFAIP8L1_2	GATGCTCAAGAACCTGGTCA	TNFAIP8L1
-sgTNFAIP8L1_3	GCGGCACTCGAGCAGCCCGG	TNFAIP8L1
-sgTNFAIP8L1_4	TGAGCTGTACCGCGCCACCA	TNFAIP8L1
-sgTNFAIP8L2_1	ACCAAAGCTAAGTGCCGTCA	TNFAIP8L2
-sgTNFAIP8L2_2	CTGGCGAAAGCGGGTAGCCA	TNFAIP8L2
-sgTNFAIP8L2_3	TAAGATGGCGGGTCGCTCTG	TNFAIP8L2
-sgTNFAIP8L2_4	TGGGGCCAAAGGAGCCATTG	TNFAIP8L2
-sgTNFAIP8L3_1	GAACAACCAGTTTAGCCAAG	TNFAIP8L3
-sgTNFAIP8L3_2	GATCATGAAAGACTTAATCA	TNFAIP8L3
-sgTNFAIP8L3_3	GGTGTCATCAATCAACATGT	TNFAIP8L3
 sgTNFAIP8_1	ACTTGTGTCGTCTATTAAGG	TNFAIP8
 sgTNFAIP8_2	CAGGCACAAAAGAAGATCTT	TNFAIP8
 sgTNFAIP8_3	GGAGTACACCCAAAACAAGA	TNFAIP8
@@ -52467,6 +52672,9 @@ sgTNFSF10_4	GAGTAGCAGCTCACATAACT	TNFSF10
 sgTNFSF11_1	ACCCCGATCATGGTACCAAG	TNFSF11
 sgTNFSF11_3	CATGAGCCATCCACCATCGC	TNFSF11
 sgTNFSF11_4	GGAGGGCCACGAACATGGAG	TNFSF11
+sgTNFSF12_1	ACCTAAAGGCCGGAAAACAC	TNFSF12
+sgTNFSF12_2	CGGGGAGTTTATAGTCACCC	TNFSF12
+sgTNFSF12_4	TTTACAGTTCATCCACGACC	TNFSF12
 sgTNFSF13B_1	CAAACTCACTTTCAGTCCCG	TNFSF13B
 sgTNFSF13B_2	GCTGTCTTGCTGCCTCACGG	TNFSF13B
 sgTNFSF13B_3	TGGCTTCTCAGCTTTAAAAG	TNFSF13B
@@ -52550,6 +52758,10 @@ sgTNNI2_1	ATGGAGCCCGGGATATGCAG	TNNI2
 sgTNNI2_2	CAGAAGCTATTTGATCTGCG	TNNI2
 sgTNNI2_3	GACATGCGCACCCTCCGCAG	TNNI2
 sgTNNI2_4	GCTGCACGCCAAGATCGATG	TNNI2
+sgTNNI3K_1	CCATAGATATTAACAACATG	TNNI3K
+sgTNNI3K_2	CCCACAAACTGAATTACGCA	TNNI3K
+sgTNNI3K_3	GAACCAGGCGAATGTGACCG	TNNI3K
+sgTNNI3K_4	TACAATAGCTGGCCACCTAG	TNNI3K
 sgTNNI3_1	CCGACAGCTCCACGCCCGTG	TNNI3
 sgTNNI3_2	GCCGCTTAAACTTGCCTCGA	TNNI3
 sgTNNI3_3	GCGGCTCCGTGGCATAAGCG	TNNI3
@@ -53240,6 +53452,9 @@ sgTRIM38_1	ACAGACTCTGAGTAGACTGA	TRIM38
 sgTRIM38_2	GCACATAGTATGAAGTTCCA	TRIM38
 sgTRIM38_3	GGAGATTCTTAAAGTCAGAC	TRIM38
 sgTRIM38_4	GGATCAAGAAATGTCATGTG	TRIM38
+sgTRIM39_2	GCCGATTAGGTCGGAGACTG	TRIM39
+sgTRIM39_3	TAAGCACTTGCCCTCCACCT	TRIM39
+sgTRIM39_4	TCCTGTGTAGCATCGTCCAG	TRIM39
 sgTRIM3_1	ACGGCGCTTCACATCGTCCG	TRIM3
 sgTRIM3_2	GCAGCAATTGCCTTAGTCGG	TRIM3
 sgTRIM3_3	TGATGGGGCCCACGACCCGG	TRIM3
@@ -53336,6 +53551,10 @@ sgTRIM69_1	AAGAAGTTACCCTTACTCAA	TRIM69
 sgTRIM69_2	CGGAACCAATCATTGCACAG	TRIM69
 sgTRIM69_3	CTATCCAGTACATGGTATGG	TRIM69
 sgTRIM69_4	GGAGCAATGTCTCTTAGCCA	TRIM69
+sgTRIM6_1	ACAGATGTCCAAAGCTACTG	TRIM6
+sgTRIM6_2	GGGGCTACGAATTATAGAAG	TRIM6
+sgTRIM6_3	TGGCCACAGTCTATGCTCAG	TRIM6
+sgTRIM6_4	TGGTCACCACACGTTCCTCG	TRIM6
 sgTRIM71_1	AAGGACCACTACATCGAGCG	TRIM71
 sgTRIM71_3	CCAGAAAGTAGTGCTAGCCG	TRIM71
 sgTRIM71_4	GTCATTGGTTATGACCACGA	TRIM71
@@ -54009,6 +54228,9 @@ sgTTLL2_1	AAAAACCAGCGGCTTCAAGA	TTLL2
 sgTTLL2_2	AACACAACAGTGTTAAACCG	TTLL2
 sgTTLL2_3	CTGCTGAGTTATCTCGTGGG	TTLL2
 sgTTLL2_4	TTGGGCATGACGAACGTCAG	TTLL2
+sgTTLL3_1	AGCTGGTGGTGAAGTCTGAG	TTLL3
+sgTTLL3_2	CAGAAACGCCAAAATCTACG	TTLL3
+sgTTLL3_3	GCTGTCGCGGTAGAACCACA	TTLL3
 sgTTLL4_1	AACTCTTGGCATAGCCAACG	TTLL4
 sgTTLL4_2	CAGGCGGTGGAAACCTCCTG	TTLL4
 sgTTLL4_3	GAAAAGAGGTAAATCCGCAG	TTLL4
@@ -54918,6 +55140,10 @@ sgURB2_1	AAGCTTGAATCAGAGAACGA	URB2
 sgURB2_2	CCCGAAGGTATAGAACCTAG	URB2
 sgURB2_3	GATCAAGAGATAATGGCCAA	URB2
 sgURB2_4	TCGAACCAAAAAAGCCCAGG	URB2
+sgURGCP_1	ACTGGGCCTAAAGGTCGACG	URGCP
+sgURGCP_2	ATGCCCGGGAGATTTCGGAT	URGCP
+sgURGCP_3	CCGAGTCAGGCAACACGAGT	URGCP
+sgURGCP_4	GAACTTCGAATGCAGCAGAA	URGCP
 sgURI1_1	CTGTAGGTTTAGTTGAGCAC	URI1
 sgURI1_2	CTTGCAACATCCTTATGACA	URI1
 sgURI1_3	GCCAAGAGAGAATCCAGCAT	URI1
@@ -55607,6 +55833,9 @@ sgVSIG4_1	ACTACACGTGTGAAGTCACC	VSIG4
 sgVSIG4_2	AGGCTAATCCTCATTCCCTG	VSIG4
 sgVSIG4_3	ATCCAGCAGGCAAAGTACCA	VSIG4
 sgVSIG4_4	GTGAAGTGGCTGGTACAACG	VSIG4
+sgVSIG8_1	AGTGACAATGACCTTCCGGG	VSIG8
+sgVSIG8_2	CAGGACAAGAGGATCAACCA	VSIG8
+sgVSIG8_3	CATGACATATGGCAACGATG	VSIG8
 sgVSTM1_1	AGACAACAGCCTCCCATGAG	VSTM1
 sgVSTM1_2	GAACGACTCTGGGTACAAGC	VSTM1
 sgVSTM1_4	TTAGGCTTCAGGTCCGTGAA	VSTM1
@@ -57359,6 +57588,10 @@ sgZNF175_1	CTGGGAAAATGATTCGCACG	ZNF175
 sgZNF175_2	GTAGGAAACCTCCATGAATG	ZNF175
 sgZNF175_3	GTAGGTGAGTTCACAAGAGA	ZNF175
 sgZNF175_4	GTATCACATTCCCAACCCAG	ZNF175
+sgZNF177_1	CACAAAAACTGGTAGTGTGG	ZNF177
+sgZNF177_2	GACTCCTAAGAGTTGAGGGA	ZNF177
+sgZNF177_3	TCAATCAAGAGTCATCCCTC	ZNF177
+sgZNF177_4	TCCCTGGAGTGTAACCATTG	ZNF177
 sgZNF17_1	AACCTCACATGCATGCAGGG	ZNF17
 sgZNF17_2	GGTGCTCAAACAGTGTATGT	ZNF17
 sgZNF17_4	TGTCAGGGCCTTACCTACTG	ZNF17
@@ -58901,13 +59134,6 @@ sgAARS1_1_SC	CCAAGAAAAGCATTGACACA	AARS1
 sgAARS1_2_SC	GGAGGCCAGATCTATGACGA	AARS1
 sgAARS1_3_SC	TCAGAATGTGCGTAGCTGTG	AARS1
 sgAARS1_4_SC	TTGGTGCTGAGGATGCCGAT	AARS1
-sgAARSD1_1	ACCTCCGCTCCCAATCTACC	AARSD1
-sgAARSD1_2	CATTCGGGTTGTTAACATCG	AARSD1
-sgAARSD1_3	CCCAGACAGAAATATCAGGT	AARSD1
-sgAARSD1_4	GTGCTGAGAGTGACTCGCCG	AARSD1
-sgAARSD1_1_SC	AGATGTCATTGATTGTACCA	AARSD1
-sgAARSD1_2_SC	ATGGGTCCCACAGCACATGT	AARSD1
-sgAARSD1_3_SC	TGTTCAGTTCACCACCACCG	AARSD1
 sgABHD18_1_SC	ATGACTGGAATATCCATGGG	ABHD18
 sgABHD18_2_SC	CAATTGAATCTGTTATTGCA	ABHD18
 sgABHD18_3_SC	GCTGTGGACCAAGACAGGCA	ABHD18
@@ -58923,10 +59149,6 @@ sgABTB3_1_SC	AGATGCACAAAAGCAGTCGT	ABTB3
 sgABTB3_2_SC	GATGTATGCCTGCGTCCGTG	ABTB3
 sgABTB3_3_SC	GGAATGGGAAAACCCCAACG	ABTB3
 sgABTB3_4_SC	TCTTCCGGGACATCTACTCG	ABTB3
-sgACKR5_1_SC	AGTTGACGCATATCACCAGG	ACKR5
-sgACKR5_2_SC	CGTGGCACTCAGACAAAGTG	ACKR5
-sgACKR5_3_SC	GGTGCCATGAAGAGGCACAT	ACKR5
-sgACKR5_4_SC	TGACATAGCGGTCGACACTG	ACKR5
 sgACOD1_1_SC	ACAAAAGCAGCATATGTGGG	ACOD1
 sgACOD1_2_SC	ACATTTATCTACCCACTGGG	ACOD1
 sgACOD1_3_SC	ACTACCCAACGTTCCTACCA	ACOD1
@@ -58947,14 +59169,6 @@ sgACTMAP_4_SC	TCCAGGCCGAAGACATGACG	ACTMAP
 sgADISSP_1_SC	CAGGGACGGGCACCACGCTG	ADISSP
 sgADISSP_2_SC	GCTGAGCAAGGATGTCCGCG	ADISSP
 sgADISSP_3_SC	TGTGGGATCCTTCTGCATCG	ADISSP
-sgADPRHL1_1	CATGCACATCGCAACCGCCG	ADPRHL1
-sgADPRHL1_2	CTCCTGGCGAGAGTACGAGG	ADPRHL1
-sgADPRHL1_3	GGAGATGGTGAGATGCTATG	ADPRHL1
-sgADPRHL1_4	TGCGGCGAACGACACAAACA	ADPRHL1
-sgADPRHL1_1_SC	GAAGATATTCTTGGCCGCCG	ADPRHL1
-sgADPRHL1_2_SC	GGAATTTGGACAGTTATCCG	ADPRHL1
-sgADPRHL1_3_SC	GTGGACGCCTTGCCTCCGAG	ADPRHL1
-sgADPRHL1_4_SC	TGAGAAGACTCTATTAGCAG	ADPRHL1
 sgADPRS_1_SC	ATGGCAATGGAGGTGCCATG	ADPRS
 sgADPRS_2_SC	CAGGACTGACGTCAGGTCGA	ADPRS
 sgADPRS_3_SC	GATGGCGCCATTGTAACCCA	ADPRS
@@ -58987,10 +59201,6 @@ sgAKAIN1_1_SC	ACCTGGAAATGAGCCTGAAG	AKAIN1
 sgAKAIN1_2_SC	AGACTTGCTGCACAGCTTGC	AKAIN1
 sgAKAIN1_3_SC	AGCTGTGCAGCAAGTCTCCC	AKAIN1
 sgAKAIN1_4_SC	ATTCTGCACAATCTGTTTGC	AKAIN1
-sgAKAP19_1_SC	AGGGACCAATACTGTGATCT	AKAP19
-sgAKAP19_2_SC	ATCACAGTATTGGTCCCTGG	AKAP19
-sgAKAP19_3_SC	CAGAAGAGAGATGTCTACCT	AKAP19
-sgAKAP19_4_SC	TTCTCACCTTCATATATGGT	AKAP19
 sgALKAL1_1_SC	AAATTCATAAAGCATTTCAC	ALKAL1
 sgALKAL1_2_SC	CAGGAAGAGTGCGGGCAAAG	ALKAL1
 sgALKAL1_3_SC	CCCCGCACGGAGCCCACGGG	ALKAL1
@@ -59002,14 +59212,6 @@ sgANGPTL8_1_SC	ACTGTTTATTAAGCAGATGG	ANGPTL8
 sgANGPTL8_2_SC	CAGTTCTGGGCCGCCCATGG	ANGPTL8
 sgANGPTL8_3_SC	CTTTGTCAGCCGTCCCTCCG	ANGPTL8
 sgANGPTL8_4_SC	GCCGCACAATAGAACTCCTG	ANGPTL8
-sgANKHD1_1	AATAGAGACCAATCGGAACA	ANKHD1
-sgANKHD1_2	AGGAGCAGACTTACGCACTG	ANKHD1
-sgANKHD1_3	GCCAACGCATACACTTGCCA	ANKHD1
-sgANKHD1_4	TGCAGAGATTCCAATCGTAG	ANKHD1
-sgANKHD1_1_SC	AATCTCACTAGCCCTAAAAG	ANKHD1
-sgANKHD1_2_SC	AGAGATTCCAATCGTAGTGG	ANKHD1
-sgANKHD1_3_SC	CTTTGGCTGGCATCCAATGG	ANKHD1
-sgANKHD1_4_SC	TGTCCAGTAATAGCAATCTG	ANKHD1
 sgANTKMT_1_SC	AGGACGCCCCGGAAAAACGG	ANTKMT
 sgANTKMT_2_SC	CAGCAGCGCCCACACCGCGT	ANTKMT
 sgANTKMT_3_SC	CCGGTCCAGGTGCCCTACGT	ANTKMT
@@ -59017,11 +59219,6 @@ sgAOPEP_1_SC	CTGCCATGTTGACATGGCAA	AOPEP
 sgAOPEP_2_SC	GGCACCCGTGAGGCACACAG	AOPEP
 sgAOPEP_3_SC	TACCATATCCTGATAGCATG	AOPEP
 sgAOPEP_4_SC	TTTGTCACGGGAATATGGCA	AOPEP
-sgAP3S2_1	CCACACAAAATACAAAGTAG	AP3S2
-sgAP3S2_2	GGGCCGCACTCACGAAACGC	AP3S2
-sgAP3S2_3	GGTGCACTACATCCTCCAGG	AP3S2
-sgAP3S2_4	TTTCCATCTAGTCCTCAAGC	AP3S2
-sgAP3S2_1_SC	AACATCTGTAACTTCTTGGA	AP3S2
 sgARB2A_1_SC	AAGATACGAGGCTCTAGGAG	ARB2A
 sgARB2A_2_SC	AGTTAAGACACATAAAAACT	ARB2A
 sgARB2A_3_SC	TAAGTATGTACCTTTCAGTG	ARB2A
@@ -59030,13 +59227,6 @@ sgARHGAP45_1_SC	CGACAAGGCTCGCTTCCTCG	ARHGAP45
 sgARHGAP45_2_SC	GAGCGACCAAACCATCAAGT	ARHGAP45
 sgARHGAP45_3_SC	GGGACTTTAAGAAGTTCGAG	ARHGAP45
 sgARHGAP45_4_SC	GTACCCGCTGCTGAACACCG	ARHGAP45
-sgARHGAP8_1	ACTTACCGCAAAACTTCGGG	ARHGAP8
-sgARHGAP8_2	AGTGTGTACTTCAAATACCT	ARHGAP8
-sgARHGAP8_3	CCACCAAGACACCACCGCCG	ARHGAP8
-sgARHGAP8_4	CGTGAACTTTGACGACTACG	ARHGAP8
-sgARHGAP8_1_SC	CCCGTAGTGGAAATAGACGA	ARHGAP8
-sgARHGAP8_2_SC	CTTACCGCAAAACTTCGGGA	ARHGAP8
-sgARHGAP8_3_SC	GAGTCACCCGTTCTACGACG	ARHGAP8
 sgARK2C_1_SC	AGGTAATGCTGATAGTGCTG	ARK2C
 sgARK2C_2_SC	GTGCCCTCAGCCAAATACCT	ARK2C
 sgARK2C_3_SC	TCTTTCACTTACCATCTGTG	ARK2C
@@ -59057,23 +59247,10 @@ sgARMH4_1_SC	ACTGTCTCTGATAAGCTCGA	ARMH4
 sgARMH4_2_SC	ATATACAGAGACAGAAACAG	ARMH4
 sgARMH4_3_SC	CTCATGCAAACAGAACGCCC	ARMH4
 sgARMH4_4_SC	GTGTACTCGGAAGTTTCGAG	ARMH4
-sgARPIN_1	CCAGGCCTACCCCTGGTGGG	ARPIN
-sgARPIN_2	CGGCGCGCTCCGGAACAAGG	ARPIN
-sgARPIN_3	GCATCCAGAACGCCACTGTG	ARPIN
-sgARPIN_4	TCCTCATGTCGTCCTACAGT	ARPIN
-sgARPIN_1_SC	GCAGAGCGTCCGGCTGCCAG	ARPIN
-sgARPIN_2_SC	TTACGGCGATGGATGTGACT	ARPIN
 sgARSL_1_SC	CAAAATAGGAGCTTGCGAGG	ARSL
 sgARSL_2_SC	GAGACTGACCTGATCGCACA	ARSL
 sgARSL_3_SC	GCTGTATGGGGACAACGTAG	ARSL
 sgARSL_4_SC	GGTTCCCTAGAGAATCAACT	ARSL
-sgASB3_1	ATTGCCTAGAAATATTACTC	ASB3
-sgASB3_2	TATCAGCAACATCGACACTT	ASB3
-sgASB3_3	TCTTGAGCAGCAATGAACAA	ASB3
-sgASB3_4	TTAAGGCTGTTGCTTCAACA	ASB3
-sgASB3_1_SC	CAAACACTGCTGAGTAAACA	ASB3
-sgASB3_2_SC	GCATACTTACCTAAAAACAA	ASB3
-sgASB3_3_SC	GTCGATGTTGCTGATAACAG	ASB3
 sgATOSA_1_SC	AGTGTGTTACATGCAAAAAG	ATOSA
 sgATOSA_2_SC	CGTTCAACAACTTACTGTCG	ATOSA
 sgATOSA_3_SC	GGTCTGAGGTCACATTGTTG	ATOSA
@@ -59155,11 +59332,6 @@ sgBICRAL_1_SC	AAGAGATCCCTTGTTGTACG	BICRAL
 sgBICRAL_2_SC	ATGGCTTTATGCAACATGTG	BICRAL
 sgBICRAL_3_SC	GCTGCGAAACAGCTAACGAA	BICRAL
 sgBICRAL_4_SC	TGACAGGTGTAATACAGTTG	BICRAL
-sgBIVM_1	AAGTATTAGACCTCAGACGA	BIVM
-sgBIVM_2	ATAATTTCCGATGTACTAGT	BIVM
-sgBIVM_3	GGGCAAGCTACCTCTCGCAT	BIVM
-sgBIVM_4	TTAGGTTTGGTCCTTTCACG	BIVM
-sgBIVM_1_SC	TTATCAATTTCCCATGCGAG	BIVM
 sgBLTP1_1_SC	ACAATAGGAACGACTAACCA	BLTP1
 sgBLTP1_2_SC	GCGGCATGTTCCATATTCGG	BLTP1
 sgBLTP1_3_SC	GGACACAATAGTCTTCCCAC	BLTP1
@@ -59186,11 +59358,6 @@ sgBMAL2_4_SC	TTGTTGAAAGAAGATAGGTA	BMAL2
 sgBMERB1_1_SC	ACCGCCCCATAGCGCCTCAG	BMERB1
 sgBMERB1_2_SC	CTTGGAAAACGGAGAGACTG	BMERB1
 sgBMERB1_3_SC	GCAGAAGAGAGACTTCCTGG	BMERB1
-sgBMI1_1	AATGGCTCTAATGAAGATAG	BMI1
-sgBMI1_2	CTCCACAAAGCACACACATC	BMI1
-sgBMI1_3	GATTGATGTCATGTATGAGG	BMI1
-sgBMI1_4	TTCTCTTTATTAGATTGGAT	BMI1
-sgBMI1_1_SC	ACAAAGCACACACATCAGGT	BMI1
 sgBNIP5_1_SC	CCAGGAGGCCCCATCTACAG	BNIP5
 sgBNIP5_2_SC	CCATGCTGAACTTCTTCGTG	BNIP5
 sgBNIP5_3_SC	CCCCAAGAAACACGGCTCCG	BNIP5
@@ -59238,14 +59405,6 @@ sgC1QTNF12_1_SC	CATGGCTGAACTTTGTCCGG	C1QTNF12
 sgC1QTNF12_2_SC	GGGGGCCGTGAACCGACCCG	C1QTNF12
 sgC1QTNF12_3_SC	GTCCGCTTGTCCACCCGGCG	C1QTNF12
 sgC1QTNF12_4_SC	TCCAGGTGCAGAAGTGACCG	C1QTNF12
-sgC8orf76_1	AAATAAAGAGCTCTCAGGCA	C8orf76
-sgC8orf76_2	CAACACAGACCATTTAACCA	C8orf76
-sgC8orf76_3	CTGATACTCTTGTCGTCTGT	C8orf76
-sgC8orf76_4	TTGGCGCAGTAGGACGCGGG	C8orf76
-sgC8orf76_1_SC	ATGAAAAGGGATGTCCAGGA	C8orf76
-sgC8orf76_2_SC	CGTGGTTAAATGGTCTGTGT	C8orf76
-sgC8orf76_3_SC	TAATTTCCAGAAAGCACTGC	C8orf76
-sgC8orf76_4_SC	TTGTTCAAGTTTGCAGAACT	C8orf76
 sgCABCOCO1_1_SC	AGAAATTGTGATAGGAACTG	CABCOCO1
 sgCABCOCO1_2_SC	ATTCGCAAAAGAGTGAGGAC	CABCOCO1
 sgCABCOCO1_3_SC	TAAGTAATCAATGATAGCAT	CABCOCO1
@@ -59293,17 +59452,6 @@ sgCATSPERE_1_SC	GAACAACGCAATTCTGTCGT	CATSPERE
 sgCATSPERE_2_SC	GCCATTAATTGACTACCACG	CATSPERE
 sgCATSPERE_3_SC	TGCTACTCTGACCATAGACA	CATSPERE
 sgCATSPERE_4_SC	TGGCTCATGTGATCTTATCG	CATSPERE
-sgCATSPERH_1_SC	CCGTGTAGTGAAAGCTCATG	CATSPERH
-sgCATSPERH_2_SC	CTCAGCATAGAGTGACCCCA	CATSPERH
-sgCATSPERH_3_SC	TACACGGTCGTCCTGATGGT	CATSPERH
-sgCATSPERQ_1_SC	CTGGAAGCGCCAGCCGATGG	CATSPERQ
-sgCATSPERQ_2_SC	CTGGTGCTGAACCACACGCG	CATSPERQ
-sgCATSPERQ_3_SC	GCACGTAGACCAGATGCAAG	CATSPERQ
-sgCATSPERQ_4_SC	GGTCTTCCTCGTGTACGGCG	CATSPERQ
-sgCATSPERT_1_SC	CATGCACATTAAAGGGTCGG	CATSPERT
-sgCATSPERT_2_SC	CGCTTATCATCATAACGTCT	CATSPERT
-sgCATSPERT_3_SC	TGAAGAACTGGAAATAACAC	CATSPERT
-sgCATSPERT_4_SC	TGGTGCAAGATTCATAAACA	CATSPERT
 sgCATSPERZ_1_SC	ACATTAGCAAGACCCGCGGG	CATSPERZ
 sgCATSPERZ_2_SC	ACTGCATCCCAGATCGAGGC	CATSPERZ
 sgCATSPERZ_3_SC	GAGCGTGCATAGCGACACTC	CATSPERZ
@@ -59328,10 +59476,6 @@ sgCBARP_1_SC	AGTAGCCCTGACGACGTCGT	CBARP
 sgCBARP_2_SC	CAGAGTCGCTAGATGCCGAG	CBARP
 sgCBARP_3_SC	CCGGTGAGGGCCTTCCCCGG	CBARP
 sgCBARP_4_SC	TGGATGGTGACAATCTTGAG	CBARP
-sgCBLIF_1_SC	ACTTGTATTCCATTGACCAA	CBLIF
-sgCBLIF_2_SC	ATGTACAACAAGATCCCTGT	CBLIF
-sgCBLIF_3_SC	CTCATGTCCAGCGACAACAA	CBLIF
-sgCBLIF_4_SC	CTGATTGCCATGAATCTGGC	CBLIF
 sgCBLL2_1_SC	AAAATTCCTGGTTACCGTTG	CBLL2
 sgCBLL2_2_SC	AGCACAGGATAACGACAGCG	CBLL2
 sgCBLL2_3_SC	TCCACCAGAACAGCACACCA	CBLL2
@@ -59374,9 +59518,6 @@ sgCCN1_4_SC	TAGTATCAAGGACCCCATGG	CCN1
 sgCCN2_1_SC	AAGACTCGACTCACCCGCGA	CCN2
 sgCCN2_2_SC	GGCGTTGTCATTGGTAACCC	CCN2
 sgCCN2_3_SC	GGTGGTACGGTGTACCGCAG	CCN2
-sgCCN3_1_SC	AGATAACTGTGTGTTCGATG	CCN3
-sgCCN3_2_SC	GTAGCACATCCAGCTGACAG	CCN3
-sgCCN3_3_SC	GTTCCTATTGGTGACCCGGG	CCN3
 sgCCN4_1_SC	GCCATCTGTGACCCCCACCG	CCN4
 sgCCN4_2_SC	GGGCGCACTCGGAGGCACAG	CCN4
 sgCCN4_3_SC	GTTAACATTGGAGATCCGAG	CCN4
@@ -59408,12 +59549,6 @@ sgCENPS_1_SC	CACCAGTGAATTACTCCTCC	CENPS
 sgCENPS_2_SC	CAGCTCCGAAATGGCCGCAA	CENPS
 sgCENPS_3_SC	GAAGCTTCATACCACACTGT	CENPS
 sgCENPS_4_SC	GGCAGCAGTTCACTATACTG	CENPS
-sgCENPS_5_SC	GAGCTGACTTTCCGACAGTG	CENPS
-sgCENPS_6_SC	GCAGCAGTTCACTATACTGT	CENPS
-sgCENPS_7_SC	GTTCAGCAAACAGACCATTG	CENPS
-sgCENPX_1_SC	AAGCAGCAGTCCGCGGCGTG	CENPX
-sgCENPX_2_SC	AGCTGGATCCGGCTTCCGGA	CENPX
-sgCENPX_3_SC	GTTGCTGAAGGTCTTCGTTG	CENPX
 sgCEP15_1_SC	AACTTACCTTTAAAAGACTA	CEP15
 sgCEP15_2_SC	ACCTCAAGAGAAACCACCTC	CEP15
 sgCEP15_3_SC	CAGAAAAGTCACTACAGACC	CEP15
@@ -59541,11 +59676,6 @@ sgCFAP97D1_1_SC	AAAATCGCAAATGCCCATCG	CFAP97D1
 sgCFAP97D1_2_SC	ATGTGATTTGTGTGCGCCAC	CFAP97D1
 sgCFAP97D1_3_SC	TATTCTTGTGAGATACGTAG	CFAP97D1
 sgCFAP97D1_4_SC	TTTAAAATTGAGCAAACTAC	CFAP97D1
-sgCFH_1	ACATCAGGATCAATTACATG	CFH
-sgCFH_2	AGACCAGTATAAAGTTGGAG	CFH
-sgCFH_3	ATAGTGGAGGAGAGTACCTG	CFH
-sgCFH_4	GAAATGCATTGTTCAGACGA	CFH
-sgCFH_1_SC	GAGCCCTTATGAAATGTTTG	CFH
 sgCGAS_1_SC	ATACAGATGTCATCATGAAG	CGAS
 sgCGAS_2_SC	ATCCCTCCGTACGAGAATGG	CGAS
 sgCGAS_3_SC	ATGATATCTCCACGGCGGCG	CGAS
@@ -59555,14 +59685,6 @@ sgCHCT1_3_SC	TCTTGGTGTACTTGTAAAGT	CHCT1
 sgCHLSN_1_SC	CAGGACCCTCTGCTCCTCTG	CHLSN
 sgCHLSN_2_SC	TCACCTGCAGAGGTAGTCCA	CHLSN
 sgCHLSN_3_SC	TCTGCGGGAGGCAGGCCTTG	CHLSN
-sgCHMP3_1	ACATGAACTCAGTGCTCATG	CHMP3
-sgCHMP3_2	GCCCTTACCAGTTCTTTGGG	CHMP3
-sgCHMP3_3	GTTGTCCAAAGAAATGATGA	CHMP3
-sgCHMP3_4	GTTGTTGACAGGCAAATAAG	CHMP3
-sgCHMP3_1_SC	AGGAAATGAGAGTTGTTGAC	CHMP3
-sgCHMP3_2_SC	ATGGGGATGAAGAACCAGCT	CHMP3
-sgCHMP3_3_SC	CCAAGGAGATGATCAGGTCA	CHMP3
-sgCHMP3_4_SC	TCAATGACCACTCATTGACC	CHMP3
 sgCIAO2A_1_SC	AGAGTCGCCAAAGAGCAATG	CIAO2A
 sgCIAO2A_2_SC	AGTGGTCTCGGAAAGTTGTG	CIAO2A
 sgCIAO2A_3_SC	GGACGCTGAGCAGAGTCCTG	CIAO2A
@@ -59641,15 +59763,6 @@ sgCIP2A_1_SC	GCAAAAACACCGAATCAGTG	CIP2A
 sgCIP2A_2_SC	GGCCCATAGTAGTTTAACTG	CIP2A
 sgCIP2A_3_SC	TAAATGTTTAGAACCTACTG	CIP2A
 sgCIP2A_4_SC	TCAGTGAAGCACTTATGTTG	CIP2A
-sgCIROZ_1_SC	CAGCTTCTAAAGAATAGGCA	CIROZ
-sgCIROZ_2_SC	CTCCACTGTCCAGAGGACCG	CIROZ
-sgCIROZ_3_SC	GGCCAGGAAAGCGTCCACTG	CIROZ
-sgCIROZ_4_SC	TTCAGGTCGTTCAGGCCTCG	CIROZ
-sgCKLF_1	AACTGAACACTTACAAGCAA	CKLF
-sgCKLF_2	AAGGCCACGTGAAGATGCTG	CKLF
-sgCKLF_3	CATGCTCATCGTATCTGTGT	CKLF
-sgCKLF_4	GATAACAATATATGGTTCAG	CKLF
-sgCKLF_1_SC	CCACGTGAAGATGCTGCGGC	CKLF
 sgCLBA1_1_SC	GAGGCGCTGAGAAGTAGACG	CLBA1
 sgCLBA1_2_SC	GGGTCCCTCGAGGAGTTCAA	CLBA1
 sgCLBA1_3_SC	TGAGTGATGACAGTTTGGAA	CLBA1
@@ -59666,13 +59779,6 @@ sgCMKLR2_1_SC	ACTGGCAAACATGTTCAACT	CMKLR2
 sgCMKLR2_2_SC	AGAAGACAGTCACCACTCTG	CMKLR2
 sgCMKLR2_3_SC	CAGGCACCATGTTCTGACTT	CMKLR2
 sgCMKLR2_4_SC	CCTGTACTTCCGGGACACTG	CMKLR2
-sgCMTM1_1	CACTGCGAATTGAGACTGCG	CMTM1
-sgCMTM1_2	CAGGATCTTCAACATTCCAG	CMTM1
-sgCMTM1_3	GCGGTGCCCTCACTGCCTTG	CMTM1
-sgCMTM1_4	GGCGATCAAAGAGCGCGTGG	CMTM1
-sgCMTM1_1_SC	CACAGCTGTAATGATACTGT	CMTM1
-sgCMTM1_2_SC	GCATTTACTCTATGTCGGGG	CMTM1
-sgCMTM1_3_SC	GTGTTGCATCGATGCGTTTG	CMTM1
 sgCNMD_1_SC	AGAAAATTCTCTTATCTGGG	CNMD
 sgCNMD_2_SC	AGCTCCCGAAATGAGGACCA	CNMD
 sgCNMD_3_SC	GCAGGCGTACGCTACGCTGA	CNMD
@@ -59685,13 +59791,6 @@ sgCOA8_1_SC	AAGTCTTGCCATGATTGGAT	COA8
 sgCOA8_2_SC	ACCTGAAAATGAATCTCCAT	COA8
 sgCOA8_3_SC	CAGGGATACGGCGCCCAGCG	COA8
 sgCOA8_4_SC	CCGCGGCTGTCAACTCGCTC	COA8
-sgCOMMD3_1	AAGAAACATCCGTTATATGA	COMMD3
-sgCOMMD3_2	CTTGAAACATATCGACCCAG	COMMD3
-sgCOMMD3_3	GCGTTGGAGTCGAAGGAGCG	COMMD3
-sgCOMMD3_4	TTAGAGTTGACTTGTCAGCT	COMMD3
-sgCOMMD3_1_SC	AATTCCCTAGAAATCCTACT	COMMD3
-sgCOMMD3_2_SC	AGCTGCAACTTACATACTAG	COMMD3
-sgCOMMD3_3_SC	GCCGAGCGGCTTACCTAACA	COMMD3
 sgCOP1_1_SC	ATCACTAGCATATGACAATG	COP1
 sgCOP1_2_SC	GATTCTTATGGAATTCCTCA	COP1
 sgCOP1_3_SC	GCTAACGTGCTATTATACCA	COP1
@@ -59707,27 +59806,6 @@ sgCOQ8B_1_SC	GCACCTTGCGTTCTCGAGAG	COQ8B
 sgCOQ8B_2_SC	GGAGTGTGACTACCGTCGTG	COQ8B
 sgCOQ8B_3_SC	TAAGGTCTGCACAATCCGCT	COQ8B
 sgCOQ8B_4_SC	TTAAGGAGCTGTGCACGACA	COQ8B
-sgCORO7_1	AGGAGAGGACAAGCGACGCG	CORO7
-sgCORO7_2	GACACAGCCATCGTGCCCAT	CORO7
-sgCORO7_3	GAGGCAGCTGTACTGTTACG	CORO7
-sgCORO7_4	GGTTGAATCCAGTAGACACA	CORO7
-sgCORO7_1_SC	AAAGGGCGAGAAGTCCAAGT	CORO7
-sgCORO7_2_SC	AGGACGCCAGGATCCGACTG	CORO7
-sgCORO7_3_SC	GCAGCTGTACTGTTACGAGG	CORO7
-sgCORO7_4_SC	TGCGTCCCAGACCTTCACAG	CORO7
-sgCORT_1	CAGCAGCAGCAGGAGGCCGG	CORT
-sgCORT_2	CCCCACCGGCCGAGACAGCG	CORT
-sgCORT_3	CCTGCTGCTGCTGCTCTCCG	CORT
-sgCORT_4	GCTGCCCTGCCCCTGGAGGG	CORT
-sgCORT_1_SC	ACCAAGCGAGGAAAGTCAGG	CORT
-sgCOXFA4L2_1_SC	CCGCAGATCATCCCGATGAT	COXFA4L2
-sgCOXFA4L2_2_SC	GCAGATCAAAAGACATCCGG	COXFA4L2
-sgCOXFA4L2_3_SC	GCCGTGCCTTTACCAGACGT	COXFA4L2
-sgCOXFA4L2_4_SC	TATGGCAGGAGCCAGTCTTG	COXFA4L2
-sgCOXFA4L3_1_SC	AGAATACACAGCGAAAGATG	COXFA4L3
-sgCOXFA4L3_2_SC	CTTGGTGGTGTTCATGACTG	COXFA4L3
-sgCOXFA4L3_3_SC	GAGACCTACTTACATCACAT	COXFA4L3
-sgCOXFA4L3_4_SC	GTAGGGTCCACAGTTTCCCA	COXFA4L3
 sgCPAP_1_SC	CCTGTGCAGCCAGTATCGCA	CPAP
 sgCPAP_2_SC	GACTAACCAGAGCACTTCCG	CPAP
 sgCPAP_3_SC	TACCATAAAACCATCGACTG	CPAP
@@ -59752,14 +59830,6 @@ sgCRAMP1_1_SC	CACTCAGCGGAAGACACTCG	CRAMP1
 sgCRAMP1_2_SC	CGGAACTTAGGGTCTTCTGG	CRAMP1
 sgCRAMP1_3_SC	GGGGCCAGGTGAAATGCCCG	CRAMP1
 sgCRAMP1_4_SC	TGACAGGACTTTAGGTAGCG	CRAMP1
-sgCRHR1_1	GAGCCGCAGAAAGAGGACAA	CRHR1
-sgCRHR1_2	GCACTCGGAGTAATTCACGC	CRHR1
-sgCRHR1_3	GGACACCATAGAAAAAGGCA	CRHR1
-sgCRHR1_4	TAGCTGGACCACGAACCAGG	CRHR1
-sgCRHR1_1_SC	GTACTGAATGGTCTCAGACG	CRHR1
-sgCRHR1_2_SC	GTCGTAGTACAGCTTCCCAA	CRHR1
-sgCRHR1_3_SC	TACACCGACTACATCTACCA	CRHR1
-sgCRHR1_4_SC	TGCTCACCTACTCCACTGAC	CRHR1
 sgCRPPA_1_SC	CACAGCTGCTAAGGAACACG	CRPPA
 sgCRPPA_2_SC	CCAAGTCATAGTCACTACAC	CRPPA
 sgCRPPA_3_SC	CTACAAACGAGATCTCTATG	CRPPA
@@ -59776,31 +59846,14 @@ sgCSKMT_1_SC	CCACCTCCCTACCCGCAAAG	CSKMT
 sgCSKMT_2_SC	GTGGGGACAGTGCCCAAACG	CSKMT
 sgCSKMT_3_SC	TGAAGTGGAGGCTTGAGGCA	CSKMT
 sgCSKMT_4_SC	TTGGATACGACGAAGTCCAG	CSKMT
-sgCSNK1E_1	GAAGATGTCAACGCCCATCG	CSNK1E
-sgCSNK1E_2	GGTTGCGGAAGAGCTGACGT	CSNK1E
-sgCSNK1E_3	TCCTTCGGAGATATCTACCT	CSNK1E
-sgCSNK1E_4	TGAGGGCGACTACAACGTGA	CSNK1E
-sgCSNK1E_1_SC	ATCCCGTCCATCAAGTGGTG	CSNK1E
-sgCSNK1E_2_SC	CCAAGCGCCAGAAGTATGAA	CSNK1E
-sgCSNK1E_3_SC	GTCCTTCGGAGATATCTACC	CSNK1E
-sgCSNK1E_4_SC	TGTCGGGCTTGACGTCCCGG	CSNK1E
 sgCSTPP1_1_SC	AAATGATACCCTATTGTGGG	CSTPP1
 sgCSTPP1_2_SC	CTACCGGACTACGAGTATCT	CSTPP1
 sgCSTPP1_3_SC	TGCTGCCCACTGGACGACGT	CSTPP1
 sgCSTPP1_4_SC	TGTACTTGTGCCGATCACAC	CSTPP1
-sgCT45A10_2	AGGCTATTCCTCTGCATTCT	CT45A10
-sgCT45A10_3	GGAGATGACCTAGAATGCAG	CT45A10
-sgCT45A10_1_SC	TTCACTGGTTTCAGCAAAGA	CT45A10
 sgCYBC1_1_SC	AAGGTCCGGTACTTCGGGAA	CYBC1
 sgCYBC1_2_SC	CCATCTTCGACAAGAGCACA	CYBC1
 sgCYBC1_3_SC	GCTGCTGCCTACTACAGCGG	CYBC1
 sgCYBC1_4_SC	TGATGTCCGTGATGTGAGCG	CYBC1
-sgCYP3A7_1	AAAAGTATAGAAAAGTCTGG	CYP3A7
-sgCYP3A7_2	ACTCTAGCCTTTCGGGCCAG	CYP3A7
-sgCYP3A7_3	AGATATGGAACCCGTACACA	CYP3A7
-sgCYP3A7_4	TCGCCTCAAAGAGACACAAA	CYP3A7
-sgCYP3A7_1_SC	AAAAACACTCACCTTACGGA	CYP3A7
-sgCYP3A7_2_SC	AAAGACTCTGAGACCCACAA	CYP3A7
 sgCYREN_1_SC	AGTACACAGTCCTTGTCGCA	CYREN
 sgCYREN_2_SC	CCAGGTGGCTACAAAGAATG	CYREN
 sgCYREN_3_SC	TACAATCCGAGACTAAAACG	CYREN
@@ -59832,17 +59885,6 @@ sgDCDC1_1_SC	AGTGATAGCCACTTACCATG	DCDC1
 sgDCDC1_2_SC	CAGGTGAGATATCTGGACCA	DCDC1
 sgDCDC1_3_SC	GTAAAGACAATAGACGTGCT	DCDC1
 sgDCDC1_4_SC	TGAACCCCCAAGACTAGCTG	DCDC1
-sgDCDC2_1	AGGAGTAAGACTTACCCAAA	DCDC2
-sgDCDC2_2	ATCCAACTGTTGACTTAGAG	DCDC2
-sgDCDC2_3	TCAACTTACAAGATAGTGCA	DCDC2
-sgDCDC2_1_SC	ACGGGGACCCCTTCTACGCG	DCDC2
-sgDCDC2_2_SC	CACAAGCACGCTCTTCACGA	DCDC2
-sgDCDC2_3_SC	CGTGCTTGTGTACCGCAACG	DCDC2
-sgDCDC2_4_SC	TCACGACGGGCTGAGACAGG	DCDC2
-sgDCPH1_1_SC	AAAGTGATGGAAAATCAAGA	DCPH1
-sgDCPH1_2_SC	AATACCACAGATCTTAACTA	DCPH1
-sgDCPH1_3_SC	ACATCAAAGTAATCGATTGG	DCPH1
-sgDCPH1_4_SC	CAACAAATTTCTCAACCAAG	DCPH1
 sgDDT_2	CCCTCAGCGCGTGAACGTGA	DDT
 sgDDT_4	GAGTCGTTTCTCCAGCCCCG	DDT
 sgDDT_1_SC	AGCGCGTGAACGTGACGGTA	DDT
@@ -59934,14 +59976,6 @@ sgDNAI7_1_SC	AAATGTTACTCTGTATGTGT	DNAI7
 sgDNAI7_2_SC	CAAGTGTGACCTCTATAGGT	DNAI7
 sgDNAI7_3_SC	TCTGGGTGGAGTATACCACT	DNAI7
 sgDNAI7_4_SC	TGTAGAAAAAGCAATCAGCA	DNAI7
-sgDNAJC25_1	AACCGCCTACGAGACACTCA	DNAJC25
-sgDNAJC25_2	AGTAAAATAGATATAAAGGG	DNAJC25
-sgDNAJC25_3	CCAAGCGCCTGCTATAGTAG	DNAJC25
-sgDNAJC25_4	GTAGCTTGGATACGGTACTT	DNAJC25
-sgDNAJC25_1_SC	CGGCACGCGGGACTGCTACG	DNAJC25
-sgDNAJC25_2_SC	GCAGTAGAGCCCCTCCACCA	DNAJC25
-sgDNAJC25_3_SC	GCTACCACCCTGACCGCTAC	DNAJC25
-sgDNAJC25_4_SC	TCTCCGCCTTGCCCGCCGAG	DNAJC25
 sgDOP1A_1_SC	ACAGAAACAGCATCCACTGT	DOP1A
 sgDOP1A_2_SC	CAACCCTTAAGTCCAAACCA	DOP1A
 sgDOP1A_3_SC	GGTGAGAAGACTACCCCACA	DOP1A
@@ -59950,54 +59984,14 @@ sgDOP1B_1_SC	CAACCCTAAGGAATTCATCG	DOP1B
 sgDOP1B_2_SC	CAGACTTGTTCACAGCACGA	DOP1B
 sgDOP1B_3_SC	CCGGTAGAACAATTCTACGC	DOP1B
 sgDOP1B_4_SC	GACCAATCACCAACTCACGG	DOP1B
-sgDORIP1_1_SC	AATGAAGAGAGAGTTCCCTA	DORIP1
-sgDORIP1_2_SC	ACATGGAAACTTGATAAGAC	DORIP1
-sgDORIP1_3_SC	ATAGTAAAAACACCCCCCCA	DORIP1
-sgDORIP1_4_SC	TCGAGTTGGGCATCGCCAGT	DORIP1
-sgDPEP2NB_1_SC	ACTACCATGTTCTCTACCGA	DPEP2NB
-sgDPEP2NB_2_SC	GGACCCGGTAGCCACCAACC	DPEP2NB
-sgDPEP2NB_3_SC	GGGTGTGGAGAAACTCAGGT	DPEP2NB
-sgDPEP2NB_4_SC	TCCTTTGGCCACCCCAACAA	DPEP2NB
-sgDRC10_1_SC	ACTGATATCCTGTAAGAACT	DRC10
-sgDRC10_2_SC	GACCAAACTCACCACCATTG	DRC10
-sgDRC10_3_SC	GGATGCCACATACGACAGCA	DRC10
-sgDRC10_4_SC	TCTGCAGCTCTATGGAAAGG	DRC10
-sgDRC11_1_SC	AAAGAGTATCCCTTTCGATG	DRC11
-sgDRC11_2_SC	ACTCACCAATGTAATCAGAG	DRC11
-sgDRC11_3_SC	CAAGAAAGTGACAGATACCT	DRC11
-sgDRC11_4_SC	GAAGGATGTAACGCATACAA	DRC11
-sgDRC11L_1_SC	GGCACTCGATAAACCACTGT	DRC11L
-sgDRC11L_2_SC	TCGAATCTCTCGCATGAAGG	DRC11L
-sgDRC11L_3_SC	TGGGGTGTATGCTCTCACAC	DRC11L
-sgDRC11L_4_SC	TGTCGTATGTCAAACAGGGA	DRC11L
 sgDRC12_1_SC	GAAGGGAAGGCCATATATGC	DRC12
 sgDRC12_2_SC	GAGCTGCTCCGAGACCACTT	DRC12
 sgDRC12_3_SC	GCCTTCGGGGGCAGCTAGGT	DRC12
 sgDRC12_4_SC	GGATGAAGCCCGTCGAGCCA	DRC12
-sgDRC2_1_SC	ACTTAAGGCCCAAAGAACTC	DRC2
-sgDRC2_2_SC	GAATTACACTGATGCCACAG	DRC2
-sgDRC2_3_SC	GGAAAGTAATGCCACCCTCA	DRC2
-sgDRC2_4_SC	GTGGAATGATCTCAAAAACA	DRC2
 sgDRC3_1_SC	ACTCCGAAAGTCCAGCTGCA	DRC3
 sgDRC3_2_SC	ATGTACGCTGAGGACTCAGA	DRC3
 sgDRC3_3_SC	CTCTAGGAACCCTATCTCTG	DRC3
 sgDRC3_4_SC	TGGTCAGAAAAAGCTTGCGG	DRC3
-sgDRC4_1_SC	AACAGCTCGCAAACTACGAG	DRC4
-sgDRC4_2_SC	CCCTGTGCAGAAACACACCG	DRC4
-sgDRC4_3_SC	CCTTCTGGGAGATCACACGG	DRC4
-sgDRC4_4_SC	TGAGGGACGAACTCGACTTG	DRC4
-sgDRC5_1_SC	ACTGCGGCATGAATTTCGAG	DRC5
-sgDRC5_2_SC	CAAAACCTCATTGGAGACCG	DRC5
-sgDRC5_3_SC	GGAAACGCATGTTCTTCGAG	DRC5
-sgDRC5_4_SC	TGGGAGCAGACAGTACCTTG	DRC5
-sgDRC8_1_SC	CCATGAGTCGAATAATACAG	DRC8
-sgDRC8_2_SC	GCTGCATGATCTGATTGCAG	DRC8
-sgDRC8_3_SC	GTCATTAGGATGCTGTCCTA	DRC8
-sgDRC8_4_SC	TTCGAATCGAATGTATCCAG	DRC8
-sgDRC9_1_SC	AAGGCAGACCATCATGACTA	DRC9
-sgDRC9_2_SC	ACCCAGTCCGTTAATAACTG	DRC9
-sgDRC9_3_SC	AGGGAGACAGAGCATCTGCG	DRC9
-sgDRC9_4_SC	TCTTCTTCTACGGTACTAGG	DRC9
 sgDUSP29_1_SC	CAGTGTCTTCTTCTACCCGG	DUSP29
 sgDUSP29_2_SC	CCAGTACACCCACGTCAACG	DUSP29
 sgDUSP29_3_SC	GCCCAGTGTCCACGTTCCAG	DUSP29
@@ -60104,13 +60098,6 @@ sgEPOP_1_SC	AGCTGGTCGTAGATTCCCGA	EPOP
 sgEPOP_2_SC	AGTCGATGGAAACCCCCCGC	EPOP
 sgEPOP_3_SC	GGAGGCGGTTTCCCGCACTT	EPOP
 sgEPOP_4_SC	GTCCCCCGACACGGCTTCCG	EPOP
-sgEPPIN_1	AAATGTTTAGATCTCAAACA	EPPIN
-sgEPPIN_2	AATAACCAATCAGTCAGACC	EPPIN
-sgEPPIN_3	AGAAAGGGATGTGTGTACAA	EPPIN
-sgEPPIN_4	GTCCCTGGACATTCGCTAAG	EPPIN
-sgEPPIN_1_SC	AGAATGTGAATTCCAAGAAA	EPPIN
-sgEPPIN_2_SC	CTAAGAGGACGAATAGCACC	EPPIN
-sgEPPIN_3_SC	GCAGCCACCATAGACAAACA	EPPIN
 sgEPRS1_1_SC	AATGTATATCAAAACACACG	EPRS1
 sgEPRS1_2_SC	ACTTTGGGACTATACCACAC	EPRS1
 sgEPRS1_3_SC	AGTAGAGTATAAGCCTGTGT	EPRS1
@@ -60119,19 +60106,6 @@ sgERBIN_1_SC	ACAGAACAATCACTGTCATG	ERBIN
 sgERBIN_2_SC	ATCTGCCAGACTCTATAGGA	ERBIN
 sgERBIN_3_SC	CTGAAGCTGAGATTAGTCCT	ERBIN
 sgERBIN_4_SC	CTTGGAAATAGGGTTTACAC	ERBIN
-sgERCC5_1	AAATGTCACTTGTTCACGTG	ERCC5
-sgERCC5_2	GACTCAATATCTATCGCTTG	ERCC5
-sgERCC5_3	GGAACCAATGGAAATTGACT	ERCC5
-sgERCC5_4	TTAATGGCTGAAAGAGTCCG	ERCC5
-sgERCC5_1_SC	AAAATCGAAGGCAGGCCCGT	ERCC5
-sgERCC5_2_SC	AACATTCAGGACACATCCGA	ERCC5
-sgERCC5_3_SC	ACGTAGCCAGCACTAATGAG	ERCC5
-sgERCC6_1	ACTGATTACGAGATACAATG	ERCC6
-sgERCC6_2	AGACAGAATGATCCGATGAG	ERCC6
-sgERCC6_3	AGTGATGCTGAATTTGACGA	ERCC6
-sgERCC6_4	GGGTGAAGGAATTTCACACG	ERCC6
-sgERCC6_1_SC	GTCTGAGTATTTCCCCACAG	ERCC6
-sgERCC6_2_SC	TGATGCGCACCCCACAGCAG	ERCC6
 sgERFE_1_SC	CGGGGCAGCTCGTTCCCGGG	ERFE
 sgERFE_2_SC	GAGCCCGAACCCTGTACGTG	ERFE
 sgERFE_3_SC	GAGGACGACGACGACGTGGT	ERFE
@@ -60187,22 +60161,10 @@ sgFAM234B_1_SC	AGTAGTTCAACACCATCACT	FAM234B
 sgFAM234B_2_SC	ATATACAAGCTGTCGCACTG	FAM234B
 sgFAM234B_3_SC	CGTGCGCACATATGACACCA	FAM234B
 sgFAM234B_4_SC	GGCCGGACCGGAAATCCAGT	FAM234B
-sgFAM237A_1_SC	CATTTCCAGGAGAAGCACTG	FAM237A
-sgFAM237A_2_SC	GAAACAGTGTTGGAAACGCG	FAM237A
-sgFAM237A_3_SC	GCACATTCCCACAATGAGCA	FAM237A
-sgFAM237A_4_SC	TTAGGAAGGAGGCAATTGGT	FAM237A
 sgFAM241B_1_SC	AAATGAGTACCTACCTGTCG	FAM241B
 sgFAM241B_2_SC	ACCACTACCCAGCCACCAAG	FAM241B
 sgFAM241B_3_SC	AGGATGACGACCCCCGAGTG	FAM241B
 sgFAM241B_4_SC	GGTGCGGATCTTGGCCAATG	FAM241B
-sgFAM47E_1	AGATTCAGGTAGAGCGCTAA	FAM47E
-sgFAM47E_2	TCACGGTCCCAGGTAGACTT	FAM47E
-sgFAM47E_3	TCATCGTGTGGAGCGCATCA	FAM47E
-sgFAM47E_4	TGAGTCACCAGACCAGTGCA	FAM47E
-sgFAM47E_1_SC	CAACTGCCGGCTGTGCAGAG	FAM47E
-sgFAM47E_2_SC	GAGGCAGATCAAGCTGCTCA	FAM47E
-sgFAM47E_3_SC	GTAGAGCGCTAAGGGATGTG	FAM47E
-sgFAM47E_4_SC	GTCACCAGACCAGTGCAAGG	FAM47E
 sgFBH1_1_SC	AAGCAGAGGACAGTACGTCT	FBH1
 sgFBH1_2_SC	CACTGGGAAGACCTCAACGC	FBH1
 sgFBH1_3_SC	GGTCTCGGTGACATCTGGCA	FBH1
@@ -60249,8 +60211,6 @@ sgFMC1_1_SC	CCGACCCTATCGCGACACCG	FMC1
 sgFMC1_2_SC	GTCGCGATAGGGTCGGCCGG	FMC1
 sgFMC1_3_SC	GTTTCCGGATGCTACGCAGG	FMC1
 sgFMC1_4_SC	TCCTCGAAAAGTGTGCGACG	FMC1
-sgFMC1_5_SC	GCGTAGCATCCGGAAACATG	FMC1
-sgFMC1_6_SC	GTGCACGGAAAGCCTTCACA	FMC1
 sgFNDC10_1_SC	AGCACCTTGTAGGGGCACCA	FNDC10
 sgFNDC10_2_SC	CTCGCACGGGAAGCGCGTGT	FNDC10
 sgFNDC10_3_SC	GAGGACGCTGTCGTGCACGT	FNDC10
@@ -60258,18 +60218,6 @@ sgFNDC10_4_SC	TGAGCGCGAAGGCGCGCACG	FNDC10
 sgFNDC11_1_SC	CCGAGGTCAGGAACTCACGC	FNDC11
 sgFNDC11_2_SC	TAAGTGCTCCTACTACATCG	FNDC11
 sgFNDC11_3_SC	TGGGTCTGGCGACCGGAGCA	FNDC11
-sgFNTB_1	AGGATCCAATAGCAGAGCCA	FNTB
-sgFNTB_2	AGTAGAAGAAAAGATCCAAG	FNTB
-sgFNTB_3	CACAGAAGGTATAGCCACCA	FNTB
-sgFNTB_4	TCGGGCCTCAGACTGTACAG	FNTB
-sgFNTB_1_SC	ACAGAAGGTATAGCCACCAT	FNTB
-sgFNTB_2_SC	ACTCTGTAGCCACTATCTGG	FNTB
-sgFNTB_3_SC	CAGCTTACCTTGGTACAAGG	FNTB
-sgFNTB_4_SC	TCTCATGCATGTCGGAGGTG	FNTB
-sgFOXL3_1_SC	AACTACTGGACGTTCGCGGG	FOXL3
-sgFOXL3_2_SC	GAAGTCGTAGATGCCGGACA	FOXL3
-sgFOXL3_3_SC	GCAGCTCCGACGAAGACAAG	FOXL3
-sgFOXL3_4_SC	TCGAGAACGGCAACTACCGG	FOXL3
 sgFREY1_1_SC	AGGGGGGCGGAAAATGCCTC	FREY1
 sgFREY1_2_SC	AGTGGCTGCGAGAGTTCCAG	FREY1
 sgFREY1_3_SC	GAGAGATACTACCATCCACC	FREY1
@@ -60277,14 +60225,6 @@ sgFREY1_4_SC	TGCCCCAGGAGTCACCTCAG	FREY1
 sgFSAF1_1_SC	ACATCTCTCTCCAAAACACT	FSAF1
 sgFSAF1_2_SC	AGGCTCGTTTAGAAGTGCAC	FSAF1
 sgFSAF1_3_SC	GTTCTCTCATAAGAGGCCAG	FSAF1
-sgFXYD6_1	GAACAAACTTACTTAGGATA	FXYD6
-sgFXYD6_2	TACCACTGGCCAGGACCATG	FXYD6
-sgFXYD6_3	TGGGGGACTGGTGTTCGCTG	FXYD6
-sgFXYD6_4	TTACCAGACCCTGAGGATTG	FXYD6
-sgFXYD6_1_SC	CAAACTTACTTAGGATAAGG	FXYD6
-sgFXYD6_2_SC	CACCAGTCCCCCAATCCTCA	FXYD6
-sgFXYD6_3_SC	GAGAACCTCATCACCGCCAA	FXYD6
-sgFXYD6_4_SC	GGAGGATCCCAACCGAGAAG	FXYD6
 sgFYB1_1_SC	AAGAACTTATTCAACAACCA	FYB1
 sgFYB1_2_SC	CCAGTGGGCTTTAGAAACGG	FYB1
 sgFYB1_3_SC	GAGTTCTCGGTACTTAGGGG	FYB1
@@ -60301,14 +60241,6 @@ sgGALNT17_1_SC	AGCCAGCGGTGAATTCCACG	GALNT17
 sgGALNT17_2_SC	CAGCCCCCCAAAAGACTGGT	GALNT17
 sgGALNT17_3_SC	CCTGGCATGGATGTATACGG	GALNT17
 sgGALNT17_4_SC	TTGTAGCCATACTTCTCATG	GALNT17
-sgGALNT4_1	ATAGAAAGCAATGATAACAG	GALNT4
-sgGALNT4_2	CCATGGTAGGTGATCTGATG	GALNT4
-sgGALNT4_3	CTGCCCGAGCAGTATTCTGT	GALNT4
-sgGALNT4_4	GATTAGGACCAATAAGCGAG	GALNT4
-sgGALNT4_1_SC	ATTAGGACCAATAAGCGAGA	GALNT4
-sgGALNT4_2_SC	GATCCACCCGTGTTCCCACG	GALNT4
-sgGALNT4_3_SC	GCAATGATAACAGAGGTGGT	GALNT4
-sgGALNT4_4_SC	TACCTTGGAACGTATGACAC	GALNT4
 sgGAREM1_1_SC	ACACACCATCCGCAACATTG	GAREM1
 sgGAREM1_2_SC	ACCTAGCCAGTGATGGACCA	GAREM1
 sgGAREM1_3_SC	GGTGAACCTTCATGGTTGCA	GAREM1
@@ -60384,34 +60316,16 @@ sgGFUS_1_SC	GAACGACAACGTCCTGCACT	GFUS
 sgGFUS_2_SC	GGGGCCCGAAGACGTTGGTG	GFUS
 sgGFUS_3_SC	TACCCAAAATTGCTGTTGTG	GFUS
 sgGFUS_4_SC	TCGGGTAGGTCGTCTTGTCA	GFUS
-sgGIMAP5_1	ACCCACAAAGAGGACTTAGG	GIMAP5
-sgGIMAP5_2	GCTGCGGGAAAAGTGCCACA	GIMAP5
-sgGIMAP5_3	TACTGTGCCTTCAACAACTG	GIMAP5
-sgGIMAP5_4	TGGAGGGCGTGTCAACCACC	GIMAP5
-sgGIMAP5_1_SC	AAACAGGAACATGGAACGGG	GIMAP5
-sgGIMAP5_2_SC	GCATTGAGGATTATCCTAGT	GIMAP5
 sgGON7_1_SC	CCAGATGAAGGACATGGTAA	GON7
 sgGON7_2_SC	GAGCTGCTGGGAGAGTACGT	GON7
 sgGON7_3_SC	GGTGACGGCGACCCTTTCCA	GON7
 sgGON7_4_SC	TATTCGACCCTCTGGTACAG	GON7
-sgGPAT3_1_SC	GATAATGAATGGTACCAGAG	GPAT3
-sgGPAT3_2_SC	GCTGGTTATAGGAACTACAC	GPAT3
-sgGPAT3_3_SC	GTCTGCGGCTCACTATGGTG	GPAT3
-sgGPAT3_4_SC	TCAAGATTAAAACATCAATG	GPAT3
 sgGPAT4_1_SC	CTTTACAAGCCCTACACCAA	GPAT4
 sgGPAT4_2_SC	GATGATCACATCGATCGGTG	GPAT4
 sgGPAT4_3_SC	GTAGAGTTTGCGGATACCAA	GPAT4
 sgGPR15LG_1_SC	AGAGGCGTCCTGCCAAGGCC	GPR15LG
 sgGPR15LG_2_SC	AGTTGGGGCTAGGGACTCGG	GPR15LG
 sgGPR15LG_3_SC	CCCAACTCAACAAACCTGAA	GPR15LG
-sgGPRASP2_1	ACTGAGGTCCAAGTAATGGG	GPRASP2
-sgGPRASP2_2	CCAGTACGCGGATCCGCCAA	GPRASP2
-sgGPRASP2_3	TCCAGACCAGGAATCAACAT	GPRASP2
-sgGPRASP2_4	TGAGTTCTATAAGCAGTCCT	GPRASP2
-sgGPRASP2_1_SC	ACAAGAACCCAGGTTTGAGG	GPRASP2
-sgGPRASP2_2_SC	AGTGGCCAGTGGCCAAGCAA	GPRASP2
-sgGPRASP2_3_SC	CCAACCCCATGAAAAAGACC	GPRASP2
-sgGPRASP2_4_SC	CTAAACATCAGACTAATCCC	GPRASP2
 sgGPRASP3_1_SC	ACGTCAAATCAGGATCAGGG	GPRASP3
 sgGPRASP3_2_SC	CTTGGGAGTGAAATCTCCCA	GPRASP3
 sgGPRASP3_3_SC	TAATGAAAAAAATAGGCCCA	GPRASP3
@@ -60434,10 +60348,6 @@ sgGSDME_1_SC	ATGAAGACTGGCTCTCTACG	GSDME
 sgGSDME_2_SC	GGAGAAGTGTGGTGGCATCG	GSDME
 sgGSDME_3_SC	GTATAACTCAATGACACCGT	GSDME
 sgGSDME_4_SC	TCTTCTGTGTCAAAACGCAC	GSDME
-sgGSTT2_1_SC	CATTGGGGTCCAGGTGCCCG	GSTT2
-sgGSTT2_2_SC	CCACGGTGCGCAGCTCTAAG	GSTT2
-sgGSTT2_3_SC	GACCCACAGGGGTATACCAA	GSTT2
-sgGSTT2_4_SC	GTGATTTCATCTTGACCGAA	GSTT2
 sgGUCY1A1_1_SC	CCAAAGTGTGAAGATAGACT	GUCY1A1
 sgGUCY1A1_2_SC	CGATGTGGGAATCACCAGCG	GUCY1A1
 sgGUCY1A1_3_SC	CTTATCCAGGCATAGAATGG	GUCY1A1
@@ -60590,17 +60500,9 @@ sgH4C9_1_SC	ATGTCAGGACGCGGCAAAGG	H4C9
 sgH4C9_2_SC	GGAACACCTTCAACACTCCG	H4C9
 sgH4C9_3_SC	GTGCTGCGCGACAACATCCA	H4C9
 sgH4C9_4_SC	TGTCGCGCAGCACCTTGCGG	H4C9
-sgHACL2_1_SC	CCTCACCAACACGGTGACTG	HACL2
-sgHACL2_2_SC	GACACACAAAACTTACAGAG	HACL2
-sgHACL2_3_SC	GGACACGGCCATAGGATAGG	HACL2
-sgHACL2_4_SC	TGTGCGGTTCATCTTCACGC	HACL2
 sgHAPSTR1_1_SC	CCCTAACCGAGCTACTTCAA	HAPSTR1
 sgHAPSTR1_2_SC	GCAATAAGGATGTGTTGGCT	HAPSTR1
 sgHAPSTR1_3_SC	GCCGTGGCCCAGCTCTACAA	HAPSTR1
-sgHAPSTR2_1_SC	AACAGCAAGGACTTTCCATG	HAPSTR2
-sgHAPSTR2_2_SC	ACCCCCGAAGCCACCCACTG	HAPSTR2
-sgHAPSTR2_3_SC	CTTGTAAAGCTGAGCAACGG	HAPSTR2
-sgHAPSTR2_4_SC	GCACATCTTTGATGCGACGC	HAPSTR2
 sgHARS1_1_SC	AGGGCTGGATTACTACACTG	HARS1
 sgHARS1_2_SC	GCACAAGAGACTATAGTCCC	HARS1
 sgHARS1_3_SC	GCTGGACATAGTCCCCAATG	HARS1
@@ -60621,10 +60523,6 @@ sgHDHD5_1_SC	AAGACCAAAAGGATACCCCT	HDHD5
 sgHDHD5_2_SC	ACTCGGAGAAGAGCTTCATG	HDHD5
 sgHDHD5_3_SC	ATCGATGGAGTGCTTGTGCG	HDHD5
 sgHDHD5_4_SC	CCTCTCTTACCTTCAATGCG	HDHD5
-sgHEMK2_1_SC	ACGCCGTTCCACGGGCACGT	HEMK2
-sgHEMK2_2_SC	ACTTACATGTACAAAGCCTG	HEMK2
-sgHEMK2_3_SC	CAGCGACGTGTACGAGCCCG	HEMK2
-sgHEMK2_4_SC	GGTGGAGTCACTACATAGGG	HEMK2
 sgHEXD_1_SC	AGCAAGAGCAGAACAGCACG	HEXD
 sgHEXD_2_SC	GTGCCTTCAAGGGTGCCACG	HEXD
 sgHEXD_3_SC	TGCCTGCAGTTGCTTCTACG	HEXD
@@ -60719,13 +60617,6 @@ sgIRAG1_4_SC	TCCCCAGTCAGGACAATCGT	IRAG1
 sgIRAG2_1_SC	AGACACACTTCATCGACAGA	IRAG2
 sgIRAG2_2_SC	TCTCCCACGATAGAGGCCCA	IRAG2
 sgIRAG2_3_SC	TTCAGCTTCTCTAAACTCCA	IRAG2
-sgISY1_2	AGGCAGTTCAGTACATTCTG	ISY1
-sgISY1_3	GAGGTCCGGATAAAGGAGCT	ISY1
-sgISY1_4	TCAAACAGCTCTCTAACACC	ISY1
-sgISY1_1_SC	CTCCAAAGTACTTGTAACCT	ISY1
-sgISY1_2_SC	GAGCCGAGTTAGTGGAAAAG	ISY1
-sgISY1_3_SC	GTCCGGATAAAGGAGCTGGG	ISY1
-sgISY1_4_SC	TCAGCACGTGTCTTTCTGGG	ISY1
 sgITPRID1_1_SC	CAGGCGGGATTGTAACCCAG	ITPRID1
 sgITPRID1_2_SC	GACCCCTCAGACACACAGGA	ITPRID1
 sgITPRID1_3_SC	GGTTGTGGCTCAGCAGCCAG	ITPRID1
@@ -60745,11 +60636,6 @@ sgJHY_1_SC	AAATCAAGCAATGTACCAAG	JHY
 sgJHY_2_SC	GACGTCTATTCAGAATGCCA	JHY
 sgJHY_3_SC	GGAGCCCGACAGCTTAGACG	JHY
 sgJHY_4_SC	TCTTCCAGTTCGGGTCATAG	JHY
-sgJMJD7_1	AGAGCGTTGCGGATAATGCA	JMJD7
-sgJMJD7_2	CATTCCTCTAGAGCCACAGT	JMJD7
-sgJMJD7_3	CTATGAGAACCTCTACTGCG	JMJD7
-sgJMJD7_4	TTACGCGGATGCCGTGAGAG	JMJD7
-sgJMJD7_1_SC	GGCATCCGCGTAACCATCTG	JMJD7
 sgJPT1_1_SC	AACCAACAGAACAACCTGTG	JPT1
 sgJPT1_2_SC	ACCACAACCACCACCTTCAA	JPT1
 sgJPT1_3_SC	AGGGAGTCGACCCCAACAGC	JPT1
@@ -60762,10 +60648,6 @@ sgKASH5_1_SC	AGAATACAGAGTGACGACGC	KASH5
 sgKASH5_2_SC	AGGGTCACAAGCTTCGAACG	KASH5
 sgKASH5_3_SC	CATTCTCCCCAACCAGACGT	KASH5
 sgKASH5_4_SC	TCCAGTCACGCATGACAACC	KASH5
-sgKAT14_1_SC	AGTCCCTCAACAGTAATGAT	KAT14
-sgKAT14_2_SC	CCTGTAAAATTCATAAGCCG	KAT14
-sgKAT14_3_SC	GCACCTGAACGGAAGTACAT	KAT14
-sgKAT14_4_SC	TTCTGAAAGCAAGCTAGGTG	KAT14
 sgKATNIP_1_SC	AGTCCACAGGAGGTTCGATG	KATNIP
 sgKATNIP_2_SC	GCATGTCACCCATCGAAGTG	KATNIP
 sgKATNIP_3_SC	TTCGAAACACAAGACAGCTG	KATNIP
@@ -60785,25 +60667,6 @@ sgKIRREL1_1_SC	AATAAGCAGTTGGCTCACGG	KIRREL1
 sgKIRREL1_2_SC	CATCGTGCCTCGAATCGGAG	KIRREL1
 sgKIRREL1_3_SC	GAGTCGCTATGAGACAAATG	KIRREL1
 sgKIRREL1_4_SC	TGGAACGCTATACAGTGGAG	KIRREL1
-sgKLHL23_1	AAATGTTCAAAGCCTGCTTG	KLHL23
-sgKLHL23_2	ACACACATGAAATTCTGCAA	KLHL23
-sgKLHL23_3	GCCTCCAATTATATACATTG	KLHL23
-sgKLHL23_4	TAATACCTGGCATTGAGCAT	KLHL23
-sgKLHL23_1_SC	CAGTAAAGAAGGCTTGTGAG	KLHL23
-sgKLHL23_2_SC	GACTGCACAGTGGTAATACC	KLHL23
-sgKLHL23_3_SC	TGCATAAAGAGATTTCCCAG	KLHL23
-sgKLHL23_4_SC	TGTGTGTCCAGAACTAGAGA	KLHL23
-sgKLRC3_1	AATGCTTCTCTGAATCATCA	KLRC3
-sgKLRC3_2	AGAAGAGTTCTTTGAAGCAC	KLRC3
-sgKLRC3_1_SC	CCGAATACAAGAACGCAGAA	KLRC3
-sgKLRK1_1	AATAATGAAACGGATTCCCA	KLRK1
-sgKLRK1_2	CGGAGGTCTCGACACAGCTG	KLRK1
-sgKLRK1_3	GAAGTTCAAATTCCCTTGAC	KLRK1
-sgKLRK1_4	TTTGAGACATACAAGAAGCC	KLRK1
-sgKLRK1_1_SC	CATGGGCCACAGTAACTTTC	KLRK1
-sgKLRK1_2_SC	CTTTGCTGTATACTTTCAGA	KLRK1
-sgKLRK1_3_SC	TGAATTTCATAATTATAACT	KLRK1
-sgKLRK1_4_SC	TTGTTACCATAATAATGAAA	KLRK1
 sgKMT5A_1_SC	GCACGTGACTACCTGCAGCT	KMT5A
 sgKMT5A_2_SC	GGAATCTACAGGAAACGAGA	KMT5A
 sgKMT5A_3_SC	TGACAGATTGACCTCATCGA	KMT5A
@@ -60823,20 +60686,6 @@ sgKNL1_4_SC	TACCAGAAGTCATATTATGG	KNL1
 sgKPLCE_1_SC	TACTTCACATAAGTTTGAGT	KPLCE
 sgKPLCE_2_SC	TGTGAAAGGTTCGGGACTAG	KPLCE
 sgKPLCE_3_SC	TTGATGTAGGTCATCTGGCA	KPLCE
-sgKRABD1_1_SC	CAGAGAGGCCTTACCTACAA	KRABD1
-sgKRABD1_2_SC	CAGCTGTGTCCTTAACAACC	KRABD1
-sgKRABD1_3_SC	GGCTGTGTACTTCACTACGA	KRABD1
-sgKRABD1_4_SC	TCCTGTTTCACCCAGCCACA	KRABD1
-sgKRABD2_1_SC	AAACTGATAGAGGCTACTCA	KRABD2
-sgKRABD2_2_SC	AAGAACCCAGTACCCAAGAG	KRABD2
-sgKRABD2_3_SC	CAAGACACTGACCACCTCAT	KRABD2
-sgKRABD3_1_SC	CACTGTCTGACTTACCCTCG	KRABD3
-sgKRABD3_2_SC	CAGAAACTGCCGACAAACCG	KRABD3
-sgKRABD3_3_SC	CCCACGCAGGCGAAGCGCAA	KRABD3
-sgKRABD3_4_SC	GAAGGTGACGACCCATTTGG	KRABD3
-sgKRABD5_1_SC	AAAGCTTCTGATCTGAGTCC	KRABD5
-sgKRABD5_2_SC	AGGTCTCGCTGTCTCTAAGC	KRABD5
-sgKRABD5_3_SC	TCTGCACTCTTCACATTCCA	KRABD5
 sgKYAT1_1_SC	CCACGGCAAAGTCTGGTGGT	KYAT1
 sgKYAT1_2_SC	GCCCGTCGTAGACCATCCAC	KYAT1
 sgKYAT1_3_SC	GTCACCAGCACATTCCTGAG	KYAT1
@@ -60890,9 +60739,6 @@ sgLINS1_4_SC	CAGGCACAGATCCACGACAG	LINS1
 sgLNPK_1_SC	AGCAAAAAATGGGAGTGTCA	LNPK
 sgLNPK_2_SC	CCAAAGCACCTCGTTCTCGG	LNPK
 sgLNPK_3_SC	TCCGGACTCAAAGAAAGCAA	LNPK
-sgLORICRIN_1_SC	GACTGCGTGAAGACCTCTGG	LORICRIN
-sgLORICRIN_2_SC	GGGAGCGTCAAGTACTCCGG	LORICRIN
-sgLORICRIN_3_SC	GTCTGCGGCTACTCTGGCGG	LORICRIN
 sgLRATD1_1_SC	CTACAGCGAGTTGCCCACAG	LRATD1
 sgLRATD1_2_SC	GACCGCGTAGACGCTTAGGT	LRATD1
 sgLRATD1_3_SC	GCATTCCTGGCCCCGAAAGG	LRATD1
@@ -60901,32 +60747,10 @@ sgLRATD2_1_SC	AAATGTAGGAGACCCCAATG	LRATD2
 sgLRATD2_2_SC	CCCACATATACGGCCCAGTG	LRATD2
 sgLRATD2_3_SC	GCATTCGTCCCGGTAGAACA	LRATD2
 sgLRATD2_4_SC	GGTACAGATCGTTGACCACG	LRATD2
-sgLRTM3_1_SC	ATAATGCATCCAGAAGACAA	LRTM3
-sgLRTM3_2_SC	CCAGTACACCAAAAACGCAA	LRTM3
-sgLRTM3_3_SC	GATGCCTGGAGCTTTAGTGG	LRTM3
-sgLRTM3_4_SC	TCTTATACAATACAGCAGCG	LRTM3
-sgLTAP1_1_SC	GATTGATATTCGACTCTCCA	LTAP1
-sgLTAP1_2_SC	GCTATGAAACAGCCCGCTAT	LTAP1
-sgLTAP1_3_SC	GCTTTGCGTACACCCTTGAA	LTAP1
-sgLTAP1_4_SC	TTTGCAATGAAATCTCGAAG	LTAP1
 sgLTO1_1_SC	AGTAGTTTGGGTGTGATGGA	LTO1
 sgLTO1_2_SC	CATATTCGATGCCATCGTGA	LTO1
 sgLTO1_3_SC	CATGGGGAAGGGTATCGGGA	LTO1
 sgLTO1_4_SC	TCACAGATCGGGTGCTACCA	LTO1
-sgLUC7L2_1	AGGAGCTGAAGGGAATGTGG	LUC7L2
-sgLUC7L2_2	CCATGACCTGGCTTTAAGAG	LUC7L2
-sgLUC7L2_3	CTGGCAGAGACTTACCGTCC	LUC7L2
-sgLUC7L2_4	TCATGATAATGACAGACGAC	LUC7L2
-sgLUC7L2_1_SC	GTTCCAGAAAGGACATCATG	LUC7L2
-sgLUC7L2_2_SC	TTTGGGGGTAAACTGCACCT	LUC7L2
-sgLY75_1	GGTTGAGTATTAGGGCACAG	LY75
-sgLY75_2	TTACCGATTTGGTAATATCG	LY75
-sgLY75_3	TTATGAATATGACCGAAAGT	LY75
-sgLY75_4	TTCTTGTGGAGAGTATAACT	LY75
-sgLY75_1_SC	GAATAGTAGCAAATAGCACC	LY75
-sgLY75_2_SC	GAGTATAACTGGGCAACTGT	LY75
-sgLY75_3_SC	GGTGGATAAGAATTAGCGAG	LY75
-sgLY75_4_SC	GTGGAAAGTCCAATCATGTG	LY75
 sgLYSET_1_SC	ATAGTAAAATGCTGCTGCAC	LYSET
 sgLYSET_2_SC	ATGAACTTCCGTCAGCGGAT	LYSET
 sgLYSET_3_SC	TGTCCACACCCAAAAAGGCA	LYSET
@@ -61035,14 +60859,6 @@ sgMEAK7_1_SC	CAGTCATAGTCCAGCCACTG	MEAK7
 sgMEAK7_2_SC	CCTGTTGAAAGGAAACTCCG	MEAK7
 sgMEAK7_3_SC	TCCCCGGCAGAACCACGTCG	MEAK7
 sgMEAK7_4_SC	TGTGATCTTACAGTTTACAG	MEAK7
-sgMEF2B_1	AGGCCCCGTATACCACATCT	MEF2B
-sgMEF2B_2	CACCAACACTGACATCCTCG	MEF2B
-sgMEF2B_3	CCTCTTCCAGTATGCCAGCA	MEF2B
-sgMEF2B_4	TCTGACCTCCGCCCTTCCGT	MEF2B
-sgMEF2B_1_SC	GAGGTGTTTAGTCCCCCTCG	MEF2B
-sgMEF2B_2_SC	GAGTCACTTACATACAGCCG	MEF2B
-sgMEF2B_3_SC	TGTCCCCATAGACGCTGAAG	MEF2B
-sgMEF2B_4_SC	TTCCGTCGGCAGGTACAGTG	MEF2B
 sgMEIOC_1_SC	GACGTTAGCAAAATCATTAG	MEIOC
 sgMEIOC_2_SC	TATTAGGATGAACATACTCT	MEIOC
 sgMEIOC_3_SC	TCATCTCCATAAGTAGACCA	MEIOC
@@ -61113,16 +60929,10 @@ sgMINDY4_1_SC	AAGATGCTCAGAGACTACAC	MINDY4
 sgMINDY4_2_SC	AAGTCTGGTCTGATTGTGCG	MINDY4
 sgMINDY4_3_SC	ATACGGCATAGTGCAGAACA	MINDY4
 sgMINDY4_4_SC	CAGTTCACTAAGCTGACCCA	MINDY4
-sgMISP3_1_SC	AAGCGCTTGAGTTCGCCCAG	MISP3
-sgMISP3_2_SC	ACATCGAGCGGGAGGCCCAC	MISP3
-sgMISP3_3_SC	TCTCCTCGCGTTCGCAGCTG	MISP3
 sgMMUT_1_SC	ATCATGTAAGAACCTCCCCA	MMUT
 sgMMUT_2_SC	CATATTTGAATATACAGCAA	MMUT
 sgMMUT_3_SC	GGAGTGAAGCCATTCACACG	MMUT
 sgMMUT_4_SC	TTTGATCTGGCGACACATCG	MMUT
-sgMOB4_2	AGCTCATAAAACTCCAAAAG	MOB4
-sgMOB4_3	CAGACATGGTACCTGCGCCT	MOB4
-sgMOB4_1_SC	TGTCTAGTATAGTCTATAGC	MOB4
 sgMOSMO_1_SC	AACCCGGACTGGATCAACAC	MOSMO
 sgMOSMO_2_SC	ATTTCATTGACTGTCACATG	MOSMO
 sgMOSMO_3_SC	GGCGATGGCGAAGATATCGG	MOSMO
@@ -61150,9 +60960,6 @@ sgMRPL58_1_SC	CCAGATTCCGGAACTGATAG	MRPL58
 sgMRPL58_2_SC	GGAGCAGCCAGACTCCGGCT	MRPL58
 sgMRPL58_3_SC	GGGGGGCAGAATGTGAACAA	MRPL58
 sgMRPL58_4_SC	TGTCCGAGCCCTGAGATTCG	MRPL58
-sgMRPS24_1	ATCCTCCACCGTTCGCTCTG	MRPS24
-sgMRPS24_3	TTACGCGTACTCGGGCCGCC	MRPS24
-sgMRPS24_1_SC	GCCAAGCGCAAGGCAGCTCT	MRPS24
 sgMRTFA_1_SC	AGACAGCTCTTCCTTCGATG	MRTFA
 sgMRTFA_2_SC	GAGCAGTGAGCGCTCCGAGG	MRTFA
 sgMRTFA_3_SC	TCCCGGCTTGCCAGTCAGTG	MRTFA
@@ -61176,13 +60983,6 @@ sgMTCL3_1_SC	ACGGACTCTAGCTCCCGAGG	MTCL3
 sgMTCL3_2_SC	CAGATGCACGCTAAGAACGG	MTCL3
 sgMTCL3_3_SC	CCAGACCGGGGAAATCGACG	MTCL3
 sgMTCL3_4_SC	TTCGCTGCGACAGACAATCG	MTCL3
-sgMTHFS_1	GCAGCGCCAAGCGGAGCCTG	MTHFS
-sgMTHFS_2	GGTGAGAATAGAATCACCAG	MTHFS
-sgMTHFS_3	GTCCCGCGTACTGAGCCAGA	MTHFS
-sgMTHFS_4	TCTGCGGGCGATGAGTGCCG	MTHFS
-sgMTHFS_1_SC	CCGGTTCCAGAGCAATCACA	MTHFS
-sgMTHFS_2_SC	TGCCATGTTTGTCAAACCCA	MTHFS
-sgMTHFS_3_SC	TGGTGAGGGTGATGTTCGGG	MTHFS
 sgMTNAP1_1_SC	CAAGAGAAAGGACTTACCCT	MTNAP1
 sgMTNAP1_2_SC	CAGTAACTGTAACATCAGTA	MTNAP1
 sgMTNAP1_3_SC	CCACGTGCTAAAAAGATGAA	MTNAP1
@@ -61217,14 +61017,6 @@ sgMYORG_1_SC	CTACTTCAACAAGCCGTCAA	MYORG
 sgMYORG_2_SC	CTCGGCGCCACCATACCAGT	MYORG
 sgMYORG_3_SC	GTGGCTTGTAGGGCGTGTCG	MYORG
 sgMYORG_4_SC	TGGCGACTTCGACTTCGATG	MYORG
-sgMYZAP_1	AAGAAATGGTGGTGTATGGG	MYZAP
-sgMYZAP_2	ACGATCCAGGGCAGACGACT	MYZAP
-sgMYZAP_3	AGCAGCAGAGATCAGCCTAG	MYZAP
-sgMYZAP_4	TTCCAAAGTCACATCCACGA	MYZAP
-sgMYZAP_1_SC	ACACCATAAACAACACCCTG	MYZAP
-sgMYZAP_2_SC	ATCCTCACAGAAAACCCTCG	MYZAP
-sgMYZAP_3_SC	GGAGAAAGACCAGAGGATCG	MYZAP
-sgMYZAP_4_SC	GGTGTCTGATCCGCTCACGG	MYZAP
 sgNAA80_1_SC	AGGGTAAGCTCAGTTGGACC	NAA80
 sgNAA80_2_SC	GCGGGCATGGCCCACCACAA	NAA80
 sgNAA80_3_SC	TGAGGTCAGCACAAGCATCC	NAA80
@@ -61247,25 +61039,12 @@ sgNAXE_1_SC	CCACCCGAGTTCAGCCGCTG	NAXE
 sgNAXE_2_SC	GATTGATGAACTGTATGAGC	NAXE
 sgNAXE_3_SC	GTCACCAATGCAGTGAAGAG	NAXE
 sgNAXE_4_SC	TAACGAATACCAGTTCAGCG	NAXE
-sgNBL1_1	AACAGTGCCAGCTTGTTGAT	NBL1
-sgNBL1_2	ACCAGGGACTCTGTGGACTG	NBL1
-sgNBL1_3	AGTACTCACAATCTCCCACA	NBL1
-sgNBL1_4	GGGCAGCCAGTAGCATGGCA	NBL1
-sgNBL1_1_SC	AAGAACATCACCCAGATCGT	NBL1
-sgNBL1_2_SC	ACAGTGAACCAGGGACTCTG	NBL1
-sgNBL1_3_SC	AGTGCCAGCTTGTTGATGGG	NBL1
-sgNBL1_4_SC	CAGCCAGTAGCATGGCAGGG	NBL1
 sgNCBP3_1_SC	AGCTGGAAATCGTGCCTGTG	NCBP3
 sgNCBP3_2_SC	TCACGTCCCGCTGAATACGA	NCBP3
 sgNCBP3_3_SC	TGTCTTTCTAGCAATCCCCA	NCBP3
 sgNDUFAF8_1_SC	CACGCACCTGCCGTACGCCG	NDUFAF8
 sgNDUFAF8_2_SC	CTTACTCAGGCGGCCGCCCG	NDUFAF8
 sgNDUFAF8_3_SC	GCGCGCAGAAGTCCTTACTC	NDUFAF8
-sgNDUFC2_1	GACCCGCGGCTCCTCTACAT	NDUFC2
-sgNDUFC2_3	TCATCCGGCAGAAACCGTAA	NDUFC2
-sgNDUFC2_1_SC	AGAACCCTTACGGTTTCTGC	NDUFC2
-sgNDUFC2_2_SC	CGCCCAAGCTGACCGACCCG	NDUFC2
-sgNDUFC2_3_SC	CGGAGGCCGATCGCGACGGC	NDUFC2
 sgNECTIN1_1_SC	CAATTGGATAGAGGGTACCC	NECTIN1
 sgNECTIN1_2_SC	GCAGGAATTCCACACGCTCG	NECTIN1
 sgNECTIN1_3_SC	GGAAACTCGGTTAAAAGGTG	NECTIN1
@@ -61332,14 +61111,6 @@ sgNKAPD1_1_SC	CACAGATGCTCACAATAAGG	NKAPD1
 sgNKAPD1_2_SC	CAGATGGAAGATGCTTACCG	NKAPD1
 sgNKAPD1_3_SC	GATCAGCAAGATATTACCAA	NKAPD1
 sgNKAPD1_4_SC	TTCTTCTGAGAACTCACTCG	NKAPD1
-sgNME1_1	AAGACGGGCCGAGTCATGCT	NME1
-sgNME1_2	GGCTTCCGAAGATCTTCTCA	NME1
-sgNME1_3	GTGCATGTATTTCACCAGGC	NME1
-sgNME1_4	TCATTGCGATCAAACCAGAT	NME1
-sgNME1_1_SC	CATTGCGATCAAACCAGATG	NME1
-sgNME1_2_SC	GACGGGCCGAGTCATGCTCG	NME1
-sgNME1_3_SC	GGAGACTTCTGCATACAAGT	NME1
-sgNME1_4_SC	TGAATTTCAGACCAACAAGG	NME1
 sgNOCT_1_SC	CAATGGAACATCCTCGCCCA	NOCT
 sgNOCT_2_SC	CAGGTGACACCAAATACTCT	NOCT
 sgNOCT_3_SC	TAGCCTAGTCTACTGAGGAG	NOCT
@@ -61359,13 +61130,6 @@ sgNSMCE3_1_SC	GAAGAAGATTCCGATCAAGC	NSMCE3
 sgNSMCE3_2_SC	GAGCCATAGCGGAAACCCCG	NSMCE3
 sgNSMCE3_3_SC	GATCATCAGGAGGCCCGTAG	NSMCE3
 sgNSMCE3_4_SC	TATACCCGAAGACGTACTGG	NSMCE3
-sgNT5C1B_1	ACTAATAACCATGCCCAAGT	NT5C1B
-sgNT5C1B_2	CTGCGCGCTCTTCAACATGG	NT5C1B
-sgNT5C1B_4	GACGTGCGCGAATATTCCAG	NT5C1B
-sgNT5C1B_1_SC	ATGCCTTCAAATAGCCAATG	NT5C1B
-sgNT5C1B_2_SC	GCTCCGTGTAGCCTTTGATG	NT5C1B
-sgNT5C1B_3_SC	GCTGCTCGGACAGAGAGTTG	NT5C1B
-sgNT5C1B_4_SC	GTCAATGGTCTAGAATATCC	NT5C1B
 sgNTAQ1_1_SC	CTTCTACATAAGTGTCAAAG	NTAQ1
 sgNTAQ1_2_SC	GTAGACGCAGGCGTCCCGCG	NTAQ1
 sgNTAQ1_3_SC	TGGAGATGGACCTGTGATCT	NTAQ1
@@ -61374,12 +61138,6 @@ sgNTMT2_1_SC	ACATCATATCTCCTGAAGGG	NTMT2
 sgNTMT2_2_SC	CATTGCGAATGGCTTTGTGA	NTMT2
 sgNTMT2_3_SC	TTAACAAGCCAAGTCATCAA	NTMT2
 sgNTMT2_4_SC	TTTCCTAAGAAATTTCTGAG	NTMT2
-sgNUDT3_1	ACCCGCACCTACGACGGCGA	NUDT3
-sgNUDT3_2	AGAACCAGGAGAGGAAGCAC	NUDT3
-sgNUDT3_3	AGCAGTTCGTGAAGTCTGTG	NUDT3
-sgNUDT3_4	GTGTTTCCGCAGCGAGAGCG	NUDT3
-sgNUDT3_1_SC	AGTTCGTGAAGTCTGTGAGG	NUDT3
-sgNUDT3_2_SC	GGACAATCCATCTGTCTGGA	NUDT3
 sgNUP42_1_SC	AACGTTTAATAAATCAATGG	NUP42
 sgNUP42_2_SC	CGGTGCTGGAACGAACATCC	NUP42
 sgNUP42_3_SC	TAGGTAATAATAGACGTGGA	NUP42
@@ -61423,33 +61181,14 @@ sgOPRPN_1_SC	AAATGTAGGTTTGGATAACC	OPRPN
 sgOPRPN_2_SC	AAGATGGTGGAACTCGCCCT	OPRPN
 sgOPRPN_3_SC	GAATTAAGTCTTGAGTCATA	OPRPN
 sgOPRPN_4_SC	GCTCAGGGTTAGAGATAGGA	OPRPN
-sgOR2A1_1	ATGATGACGGAGTATCGGAG	OR2A1
-sgOR2A1_1_SC	CGTCCAGGAAGTGACGGCCA	OR2A1
-sgOR2A1_2_SC	TGACGGAGTATCGGAGAGGG	OR2A1
-sgOR2A4_1	AAGTAACACAAGATGAATCA	OR2A4
-sgOR2A4_2	ATGATGGCCAAATATCGGAG	OR2A4
-sgOR2A4_4	CTGCATCATGCGGCCCGCAA	OR2A4
-sgOR2A4_1_SC	ACAGAAAGGTCTGCATCATG	OR2A4
-sgOR2A4_2_SC	CAAGGATAAAAGGACTCCAG	OR2A4
-sgOR2A4_3_SC	TGGGGAACGGGACCATACTG	OR2A4
 sgOR8U3_1_SC	AGGTGAGAAAACAACCCAGT	OR8U3
 sgOR8U3_2_SC	ATCAGTGTTGAATAATGCAG	OR8U3
 sgOR8U3_3_SC	TAAAAACACCCCAAAGCACG	OR8U3
 sgOR8U3_4_SC	TAATAGCAGAGGAGTAACAA	OR8U3
-sgORM1_1	CCACCTACCTGAATGTCCAG	ORM1
-sgORM1_2	CTTCACCCCCAACAAGACAG	ORM1
-sgORM1_3	GATGGGCACCGGTACTAGGT	ORM1
-sgORM1_4	TGTAGGTCTTGGTGTCCCTG	ORM1
-sgORM1_1_SC	AAACGAGGAGTACAATAAGT	ORM1
 sgOTULINL_1_SC	ATTAGAGATTATCACAAGAG	OTULINL
 sgOTULINL_2_SC	CACCCCGTAACAAGCTGATG	OTULINL
 sgOTULINL_3_SC	GAAGTGACCAAGTTCACTCC	OTULINL
 sgOTULINL_4_SC	TTATTTCAGATATTCAGCCA	OTULINL
-sgP2RY11_1	ACGCAGCCCAGGCATGACTG	P2RY11
-sgP2RY11_2	AGGCCTGCATCAAGTGTCTG	P2RY11
-sgP2RY11_3	AGGCGTGCTTGGGTCGCAGG	P2RY11
-sgP2RY11_4	CCCCAAGCACTGGCGCTATG	P2RY11
-sgP2RY11_1_SC	CTGCCGACGACAAACTCAGT	P2RY11
 sgPABIR1_1_SC	AATGAAATCGATGCGCTTGG	PABIR1
 sgPABIR1_2_SC	ACACCGGCGAAGTGTCACTG	PABIR1
 sgPABIR1_3_SC	GCAGATAAGCCACTCCTGGG	PABIR1
@@ -61462,9 +61201,6 @@ sgPABIR3_1_SC	ATTTAGGAATCGACGCTCTC	PABIR3
 sgPABIR3_2_SC	CCCAAGTCCATTGATCAAAG	PABIR3
 sgPABIR3_3_SC	CCGAGTTCCACTACCGCAGA	PABIR3
 sgPABIR3_4_SC	GATTTGATGAAGGCGGCTGA	PABIR3
-sgPABPN1_1	ACTGGTCGAGGGTGACCCGG	PABPN1
-sgPABPN1_4	GGGCTCCCGAACCAGGCCCA	PABPN1
-sgPABPN1_1_SC	AGTTACTCACCATTGCCTGG	PABPN1
 sgPACC1_1_SC	CACCCAGAGGATCAACTACA	PACC1
 sgPACC1_2_SC	CAGCTGTAAGCACCATTACG	PACC1
 sgPACC1_3_SC	CCGCCTGAACAAGAGTAGTG	PACC1
@@ -61473,21 +61209,13 @@ sgPAK5_1_SC	ATTGTGGGCTCGGACAAGCG	PAK5
 sgPAK5_2_SC	GGAGGGGTGATGGTACAAGG	PAK5
 sgPAK5_3_SC	GGATGGGTGTGATGCATGAA	PAK5
 sgPAK5_4_SC	TTGGAATGAATAATCCAGAG	PAK5
-sgPALM2AKAP2_1_SC	ACAGCGAGCCTTCTAAACGT	PALM2AKAP2
-sgPALM2AKAP2_2_SC	AGAGATCCGCTATCTAGATG	PALM2AKAP2
-sgPALM2AKAP2_3_SC	CCTATCCAATGATTTCAGCA	PALM2AKAP2
-sgPALM2AKAP2_4_SC	TGATATCTGGCTAAAAAGCG	PALM2AKAP2
-sgPALM2AKAP2_5_SC	AACTTGAAGATAACATTCAG	PALM2AKAP2
-sgPALM2AKAP2_6_SC	GCAGGACGGGACCAGCAGAG	PALM2AKAP2
-sgPALM2AKAP2_7_SC	GGTGGTCTCGGATTAGTCAG	PALM2AKAP2
-sgPALM2AKAP2_8_SC	GTAAGGAGGCCATTATGCGG	PALM2AKAP2
+sgPALM2AKAP2_1_SC	AACTTGAAGATAACATTCAG	PALM2AKAP2
+sgPALM2AKAP2_2_SC	GCAGGACGGGACCAGCAGAG	PALM2AKAP2
+sgPALM2AKAP2_3_SC	GGTGGTCTCGGATTAGTCAG	PALM2AKAP2
+sgPALM2AKAP2_4_SC	GTAAGGAGGCCATTATGCGG	PALM2AKAP2
 sgPALS1_1_SC	CATCACAGTACACATGAACA	PALS1
 sgPALS1_2_SC	CTGCTCAGCAACCTTATCGT	PALS1
 sgPALS1_3_SC	GCGTATTCGGCAACAACAGG	PALS1
-sgPALS2_1_SC	CTTTGATGCCACAATATCAT	PALS2
-sgPALS2_2_SC	GGGGGAATGATAGATCGACA	PALS2
-sgPALS2_3_SC	GTAATGGTATCTCTATAACT	PALS2
-sgPALS2_4_SC	TGGTATTCACAAAAGAGCTG	PALS2
 sgPATJ_1_SC	AGCGACACGAGTTATTTCCA	PATJ
 sgPATJ_2_SC	CTTGAACCACCTTCAGACAG	PATJ
 sgPATJ_3_SC	GAGGACTGTCTATTCCCAGG	PATJ
@@ -61527,9 +61255,6 @@ sgPEAK3_4_SC	TGCCCAAGAAGATCCTAACC	PEAK3
 sgPEDS1_1_SC	AGAAGACGAAGCACTCCCAG	PEDS1
 sgPEDS1_2_SC	CCAACACCGAGTATGACGAG	PEDS1
 sgPEDS1_3_SC	GAGGCGTCTTGTTGCCGCTG	PEDS1
-sgPEDS1_4_SC	ACCAACACCGAGTATGACGA	PEDS1
-sgPEDS1_5_SC	ATGCAGAAGTAGGTCTCGTG	PEDS1
-sgPEDS1_6_SC	GTAGAGCGCAGCCAGCTCGC	PEDS1
 sgPEX39_1_SC	CCTGGAGAAACGCCACATCG	PEX39
 sgPEX39_2_SC	CGCCAGGGTAACCGAAGCTG	PEX39
 sgPEX39_3_SC	GAGGCCGGGGCCGAGCATTG	PEX39
@@ -61582,13 +61307,6 @@ sgPJVK_1_SC	AACCATATTGTAAATGACGT	PJVK
 sgPJVK_2_SC	AGACAGTGAGCACTGTCGTG	PJVK
 sgPJVK_3_SC	TACTCAAAGAAATTACTACA	PJVK
 sgPJVK_4_SC	TATGGATGAACAGAATCCCA	PJVK
-sgPLA2G4B_1	ATCACAAGCTCTCAGATCAA	PLA2G4B
-sgPLA2G4B_2	GTGGCCATAATAGCTACCAC	PLA2G4B
-sgPLA2G4B_3	TGTCAGTACTGTTTGATGCG	PLA2G4B
-sgPLA2G4B_4	TTGGCTCCGAGTTCTTTATG	PLA2G4B
-sgPLA2G4B_1_SC	CAAACAGTACTGACAACACA	PLA2G4B
-sgPLA2G4B_2_SC	CAAGCTCTCAGATCAACGGG	PLA2G4B
-sgPLA2G4B_3_SC	TGGCCATAATAGCTACCACT	PLA2G4B
 sgPLAAT2_1_SC	CTACGTGGGAGATGGCTATG	PLAAT2
 sgPLAAT2_2_SC	CTTCCAACAAAATCGTCAAG	PLAAT2
 sgPLAAT2_3_SC	TCGCTTTGGCTATGCACACT	PLAAT2
@@ -61660,14 +61378,6 @@ sgPLPPR5_1_SC	ACACAGGGCAAGGAAATGTG	PLPPR5
 sgPLPPR5_2_SC	CAGTATACACAATTCATCAG	PLPPR5
 sgPLPPR5_3_SC	CTGTTGCTATATAAACCCGC	PLPPR5
 sgPLPPR5_4_SC	TTGCCTACAACTAGCCACAA	PLPPR5
-sgPMF1_1	CCTTCTCTGGGATCCCGCTG	PMF1
-sgPMF1_2	GAATGCCTTGGATAAAATTG	PMF1
-sgPMF1_3	TAGATTTGCTGTGTCATCGC	PMF1
-sgPMF1_4	TCTCTGACATCAAAGAGGAG	PMF1
-sgPMF1_1_SC	ACCCGGCACTACCATTTCGA	PMF1
-sgPMF1_2_SC	GCGTCCACTTTACCTGCCGG	PMF1
-sgPMF1_3_SC	GGAAATCTCTGACATCAAAG	PMF1
-sgPMF1_4_SC	GTGAGGAAAAAAGGCATGAG	PMF1
 sgPNMA8A_1_SC	CACGCGGTACGGGCCCAGTG	PNMA8A
 sgPNMA8A_2_SC	CTGCGAACCAAAGGTTTGGT	PNMA8A
 sgPNMA8A_3_SC	GGTCTGTAGAGACCCTACCC	PNMA8A
@@ -61676,14 +61386,6 @@ sgPNMA8B_1_SC	ACGGACAAGACCTGTCGGAG	PNMA8B
 sgPNMA8B_2_SC	AGGTGGAAATGCACTCCCGG	PNMA8B
 sgPNMA8B_3_SC	GAGCGACTCGCAGGAAAGTG	PNMA8B
 sgPNMA8B_4_SC	GTGATCGAGGAGATCGACCA	PNMA8B
-sgPOFUT3_1_SC	CAGTCATGATGGGCTTTCCG	POFUT3
-sgPOFUT3_2_SC	GGGACCACCAGAGCATAATG	POFUT3
-sgPOFUT3_3_SC	TCTGACTGTACATACACCAG	POFUT3
-sgPOFUT3_4_SC	TGGGGGATCCGTAATATACA	POFUT3
-sgPOFUT4_1_SC	ATCGGGAGCTGCCTACCGCG	POFUT4
-sgPOFUT4_2_SC	CGGCACAGACTTCCGCGCGT	POFUT4
-sgPOFUT4_3_SC	GCGACAGCGGGTAATCCGAG	POFUT4
-sgPOFUT4_4_SC	TGTGACTGCAGATAGAGCAG	POFUT4
 sgPOGLUT2_1_SC	CCGCAAAGAGAGACTCGAGC	POGLUT2
 sgPOGLUT2_2_SC	CTGCCTGAATATAGAAATAG	POGLUT2
 sgPOGLUT2_3_SC	GAATCAGTCAAATCGTACGT	POGLUT2
@@ -61714,13 +61416,6 @@ sgPOU2AF3_1_SC	ATGGTGTGGAGCACTTTGTG	POU2AF3
 sgPOU2AF3_2_SC	CTGGTTAAAGCAGAAAGGGG	POU2AF3
 sgPOU2AF3_3_SC	GGGCGTGTGAGGACAAGTGT	POU2AF3
 sgPOU2AF3_4_SC	TTCTGGTGTCCAGAGAAGCA	POU2AF3
-sgPPAN_1	AGAAAGTGTGTGACCCCGAG	PPAN
-sgPPAN_2	AGTCGGGGTTGTAGTCGATG	PPAN
-sgPPAN_3	GCTTCACATGCATACCATGG	PPAN
-sgPPAN_4	TGGCTCAGTGAGCAAGACGG	PPAN
-sgPPAN_1_SC	CTCTGGGATCCCTTCAAGGA	PPAN
-sgPPAN_2_SC	TCAGAAAGTGTGTGACCCCG	PPAN
-sgPPAN_3_SC	TGGTATGCATGTGAAGCTCA	PPAN
 sgPPDPFL_1_SC	CTGAAGTGGCAGAATCCACC	PPDPFL
 sgPPDPFL_2_SC	GATGACGACAAACCACAGCA	PPDPFL
 sgPPDPFL_3_SC	TCTGGCTAGAAGGCAACCAA	PPDPFL
@@ -61771,14 +61466,6 @@ sgPSME3IP1_1_SC	AACTCACAATAACCTCAAGA	PSME3IP1
 sgPSME3IP1_2_SC	CAGGAGCTGTGAAGCATAAG	PSME3IP1
 sgPSME3IP1_3_SC	CGAAAACCTGAAGATCCAGA	PSME3IP1
 sgPSME3IP1_4_SC	TAGATGAACGGCGCAAAAGG	PSME3IP1
-sgPTCD1_1	CAGGAGCGTCAGGAAAACAC	PTCD1
-sgPTCD1_2	CATGCAGCATGGCTGACATG	PTCD1
-sgPTCD1_3	CTGCAAGAAGTACCAGTACG	PTCD1
-sgPTCD1_4	TTTGCGGAATAGTCTCCGGG	PTCD1
-sgPTCD1_1_SC	CCCCAGGAAATCATCCACAA	PTCD1
-sgPTCD1_2_SC	GCAAACACCTGATCAAGGAA	PTCD1
-sgPTCD1_3_SC	GCAGGATGAACAGTCCCATG	PTCD1
-sgPTCD1_4_SC	GGGAGGAGTATTTGTCAGAG	PTCD1
 sgPTGR3_1_SC	AACTATAAAACTGAACCCGT	PTGR3
 sgPTGR3_2_SC	CTCACCGGTTCCGGACGAGG	PTGR3
 sgPTGR3_3_SC	GCTTAACTGAGGGGTCATAG	PTGR3
@@ -61794,10 +61481,6 @@ sgPUM3_1_SC	AGAAAAGTATCACAAAACTT	PUM3
 sgPUM3_2_SC	ATTGTATGCGTACTCCACGA	PUM3
 sgPUM3_3_SC	CACACACGATGGCGCCAGAG	PUM3
 sgPUM3_4_SC	TGTTCGGGCAAAGCAGATGT	PUM3
-sgPWWP3A_1_SC	AAATACGCTCTTACCTAACG	PWWP3A
-sgPWWP3A_2_SC	ATTCCTACTTCAAACGAACG	PWWP3A
-sgPWWP3A_3_SC	GCAAGTGTGCTATACATCGA	PWWP3A
-sgPWWP3A_4_SC	GCAGTTCCAGACCTCACAGG	PWWP3A
 sgPWWP3B_1_SC	AAAGTATCAGACGAAAAGAG	PWWP3B
 sgPWWP3B_2_SC	CTCATTAGGACTACAGTCAG	PWWP3B
 sgPWWP3B_3_SC	TCATAATGTAAAATGAAGCG	PWWP3B
@@ -61809,18 +61492,10 @@ sgPYCR3_4_SC	TGACATAGGTTCCTGTCTGT	PYCR3
 sgPYM1_1_SC	CAAACGTAACCTGAAGCGAA	PYM1
 sgPYM1_2_SC	CTTATCAAGAGTCCTGCTCA	PYM1
 sgPYM1_3_SC	GCGTCAACACAGCGACCTGA	PYM1
-sgQARS1_1_SC	ACTTGACTCGATAGGCTACA	QARS1
-sgQARS1_2_SC	GGCTAGAAGAAACAGACCGG	QARS1
-sgQARS1_3_SC	GTGACTCCGCACATACTCAA	QARS1
-sgQARS1_4_SC	TGGAGTGACCACATAGCCTG	QARS1
 sgQNG1_1_SC	AAATCCTTGTAGCAGATACG	QNG1
 sgQNG1_2_SC	GGTCACTGTCGCGTAGTACG	QNG1
 sgQNG1_3_SC	TACAGAGGGAAAACATACAG	QNG1
 sgQNG1_4_SC	TGACAGCGGAGGCGTACGGA	QNG1
-sgQTMAN_1_SC	ACATTGTCTGGCCTCACAGG	QTMAN
-sgQTMAN_2_SC	AGAGCTTGAATTATCTGACG	QTMAN
-sgQTMAN_3_SC	CTCACATCAGGAAACCTGAT	QTMAN
-sgQTMAN_4_SC	CTCGGCCTTAAAGGAAATGG	QTMAN
 sgQTRT2_1_SC	AAAAAACCTGGGCAAAACAG	QTRT2
 sgQTRT2_2_SC	AGGAAATCCAACAACCCTGG	QTRT2
 sgQTRT2_3_SC	CACACGCTGCATAATATCCA	QTRT2
@@ -61829,8 +61504,6 @@ sgRAB5IF_1_SC	CCACCGTACCTTATCCTCCC	RAB5IF
 sgRAB5IF_2_SC	CCGCAGCACCTTACTCCAGA	RAB5IF
 sgRAB5IF_3_SC	GAGCGGCGGGCGGCGGAAGG	RAB5IF
 sgRAB5IF_4_SC	TCAGCCGCAGCTGGCCAACG	RAB5IF
-sgRAB5IF_5_SC	GAGGGTTCTTGGGAATAGCA	RAB5IF
-sgRAB5IF_6_SC	GTTCCGACAGATCATTGCTG	RAB5IF
 sgRACK1_1_SC	AGTGTATTTGCACACACCCA	RACK1
 sgRACK1_2_SC	CCACACAGGCTATCTGAACA	RACK1
 sgRACK1_3_SC	CTTGCGTTGTGAGATCCCAG	RACK1
@@ -61842,17 +61515,9 @@ sgRADX_4_SC	TAGAACAAAGTCTGATTCCG	RADX
 sgRARS1_1_SC	CATTATTAGCCGCCTACAAG	RARS1
 sgRARS1_2_SC	GAAAGATTGTATTTGTCCCA	RARS1
 sgRARS1_3_SC	TAAGAAGAGGTTTGATACTG	RARS1
-sgRBAK_1	AGGGAACCCTCACTGTACAT	RBAK
-sgRBAK_2	GACTTCTATAATGTATAGTG	RBAK
-sgRBAK_3	GTAGTGATGGAAGCTATGCT	RBAK
-sgRBAK_4	TCATAAGAGAGCTTACATAG	RBAK
-sgRBAK_1_SC	TGATGAGAAGATAACTTACA	RBAK
 sgRBIS_1_SC	AAAGATAAACATTATGAATG	RBIS
 sgRBIS_2_SC	AGTTACCACTAATCTTAAGA	RBIS
 sgRBIS_3_SC	TGAAATACATTCCTGGACTT	RBIS
-sgRBM4_2	ACGCGGCCTGAACGATCTAT	RBM4
-sgRBM4_1_SC	CTCTGCGTAATTATACACGG	RBM4
-sgRBM4_2_SC	GATAGATCGTTCAGGCCGCG	RBM4
 sgRCC1L_1_SC	CTTGTGTTGACTGACAGGGA	RCC1L
 sgRCC1L_2_SC	GCCCCACACGAAGACGCGAT	RCC1L
 sgRCC1L_3_SC	GGCCAGGCAGCAATCACCGT	RCC1L
@@ -61883,18 +61548,10 @@ sgREX1BD_1_SC	CTACCGGAGCACAGTGCACG	REX1BD
 sgREX1BD_2_SC	CTGCACCAGCGTCCGGATCG	REX1BD
 sgREX1BD_3_SC	GAGGAGGCCACCGAAGCTCG	REX1BD
 sgREX1BD_4_SC	GGTACTGGCGGTGGCCTCTG	REX1BD
-sgREXO5_1_SC	AAACCACCTAAACAACGTAG	REXO5
-sgREXO5_2_SC	ATACAGTGTCCAGACAGACT	REXO5
-sgREXO5_3_SC	TGAGATCCAAATCTAAGGAG	REXO5
-sgREXO5_4_SC	TTCAGTGCCTCACATCCAAG	REXO5
 sgRFLNA_1_SC	ATGCTCTCCCCAAAGAACAC	RFLNA
 sgRFLNA_2_SC	CTCTGAGGTCAAGTACGCCT	RFLNA
 sgRFLNA_3_SC	TGCCACGATGGTCTCGCTGT	RFLNA
 sgRFLNA_4_SC	TGGCAGCACCCAACTGCACG	RFLNA
-sgRFLNA_5_SC	CACTCACCGGATCTCATGCG	RFLNA
-sgRFLNA_6_SC	GGCCTACAGCGAGACCATCG	RFLNA
-sgRFLNA_7_SC	GTCCTGGAAATGCTTCTCCG	RFLNA
-sgRFLNA_8_SC	TGCGCCCGTACCCACCGTCA	RFLNA
 sgRHEX_1_SC	CTGGCATGGCTTAGTGATCG	RHEX
 sgRHEX_2_SC	GAGCTATCCAAGCTATCTGA	RHEX
 sgRHEX_3_SC	GAGTGAACAGATACTGAAAG	RHEX
@@ -61935,22 +61592,10 @@ sgRMC1_1_SC	ATATTCGATATCAAGTTACG	RMC1
 sgRMC1_2_SC	ATCTGGTGGAGCTACTGGCG	RMC1
 sgRMC1_3_SC	ATTCCAGCTGGGAATTATCA	RMC1
 sgRMC1_4_SC	CTGTCTGACTCACTTAACAC	RMC1
-sgRMP24_1_SC	AGTTATCCAGAACCAACAGC	RMP24
-sgRMP24_2_SC	CAAAGACTCCAAAAGTGTAT	RMP24
-sgRMP24_3_SC	CTTACCGTGCGACGAAGTGT	RMP24
-sgRMP24_4_SC	GCTGAGTTTACTTGTAGGAG	RMP24
-sgRMP64_1_SC	ACTCCACCACTGGCTGACTG	RMP64
-sgRMP64_2_SC	AGTCATCAGAATTTGATGTG	RMP64
-sgRMP64_3_SC	GACAGTGCAGAACCCCGGCG	RMP64
-sgRMP64_4_SC	TTTGTTTGGATTGCTTCAAG	RMP64
 sgRO60_1_SC	ATGGCAAGTGCAAAGAGCAT	RO60
 sgRO60_2_SC	CTGACATGAATCGACTACAC	RO60
 sgRO60_3_SC	GCTAATTCAGTACTTGAACC	RO60
 sgRO60_4_SC	GTCCGCTATAGCCTTCCGGA	RO60
-sgRPL17_2	CTGTCCACTTACATTTCGTG	RPL17
-sgRPL17_3	GAGAATCTACATCTAAACCC	RPL17
-sgRPL17_4	TTCTTTCAGGCCAAGCAATG	RPL17
-sgRPL17_1_SC	TTTCTAGCATGCAAATCAAG	RPL17
 sgRSKR_1_SC	AGGCTTCTCTACCAGTACTG	RSKR
 sgRSKR_2_SC	GCTCAAGCCTACACTATCTG	RSKR
 sgRSKR_3_SC	TCCTACAGAGGGATACCGTG	RSKR
@@ -62002,14 +61647,6 @@ sgRXYLT1_1_SC	ACATCCACGTCATTAATCCA	RXYLT1
 sgRXYLT1_2_SC	ATATTAGATAAATCCACGAA	RXYLT1
 sgRXYLT1_3_SC	CTGGTCCAGCTGTAATACCA	RXYLT1
 sgRXYLT1_4_SC	TTGTGCATAAAGTAACCACT	RXYLT1
-sgSAA4_1	ATGCTGCCCAAAGAGGACCT	SAA4
-sgSAA4_2	CCTGAAGATAGACCCTGGAA	SAA4
-sgSAA4_3	CTTTCCAGGGGTTGGGGACA	SAA4
-sgSAA4_4	TAATCCCTGAAGATAGACCC	SAA4
-sgSAA4_1_SC	AACAGATATCTCTATGCTCG	SAA4
-sgSAA4_2_SC	ACTGGTGACTCCCATGACCA	SAA4
-sgSAA4_3_SC	TCTTTCTCTTCAGCACAATG	SAA4
-sgSAA4_4_SC	TTTCCAGGGGTTGGGGACAT	SAA4
 sgSAMTOR_1_SC	ACTATGCATACCTCTACAGC	SAMTOR
 sgSAMTOR_2_SC	AGGGCGAAGGTCGTATTGAA	SAMTOR
 sgSAMTOR_3_SC	GATCTGGCGAGAACACTGTG	SAMTOR
@@ -62018,10 +61655,6 @@ sgSANBR_1_SC	AAAATCAATGTGGATCGACG	SANBR
 sgSANBR_2_SC	GATCACGAAGTGTAACCATG	SANBR
 sgSANBR_3_SC	TCAACTGGGAAACTATAGCA	SANBR
 sgSANBR_4_SC	TCTGATATCAAAAGATCTCG	SANBR
-sgSARS1_1_SC	ATGGCTTTGAAGGCGAAAAG	SARS1
-sgSARS1_2_SC	GAAGGTTCCCAATCTCTCGG	SARS1
-sgSARS1_3_SC	TCCCATGACTTGTTGTCATG	SARS1
-sgSARS1_4_SC	TGTCTGCCCGAAATCTACCT	SARS1
 sgSAXO4_1_SC	CCCCGTGTGGGCAGTCACGT	SAXO4
 sgSAXO4_2_SC	GAAATCGATCGGCGCAAAGG	SAXO4
 sgSAXO4_3_SC	GGGCCCACGCTTCATGACGT	SAXO4
@@ -62034,21 +61667,6 @@ sgSCAND3_1_SC	AAACTGAGGATATCCGAAAG	SCAND3
 sgSCAND3_2_SC	ACGGTATTACTTACACAGTG	SCAND3
 sgSCAND3_3_SC	CATTAGTATCTAAGCTACTG	SCAND3
 sgSCAND3_4_SC	GAGTTCATGCTAGTTTCACT	SCAND3
-sgSCHIP1_1	CAGTAAGACTGAAACCAGCT	SCHIP1
-sgSCHIP1_2	GCTGCTTACAAGATCAGCGA	SCHIP1
-sgSCHIP1_3	TACAGCTGGTATAAATTCCT	SCHIP1
-sgSCHIP1_4	TGATAGAGACACTACTGAAG	SCHIP1
-sgSCHIP1_1_SC	AGATTTGCACTCGGAGCAAG	SCHIP1
-sgSCHIP1_2_SC	CCAATCCATAGGTGGCACCG	SCHIP1
-sgSCHIP1_3_SC	GAGGACGAGCGCGACCAGCG	SCHIP1
-sgSCHIP1_4_SC	TACGGAACCAGGGCCAGGCG	SCHIP1
-sgSCNM1_1	AGTCGTGTCTGAGTTAGCAG	SCNM1
-sgSCNM1_2	CCTGCAGAAAAGAAGAGTCG	SCNM1
-sgSCNM1_3	CGGCAGCAACTGTTATAGTG	SCNM1
-sgSCNM1_4	GATGTTTCTTGCCTGCACGG	SCNM1
-sgSCNM1_1_SC	CAGAGGTCAAACTCCAAAGT	SCNM1
-sgSCNM1_2_SC	GTGTCCAGTACCGGTCGATG	SCNM1
-sgSCNM1_3_SC	TCCCATACCTGTACTTCCGG	SCNM1
 sgSELENOF_1_SC	AACAACCGTAGCCCAAACGC	SELENOF
 sgSELENOF_2_SC	GGAAGGTTCCCTCAAGTCCA	SELENOF
 sgSELENOF_3_SC	GTTGGCGACTGTGCTTCAAG	SELENOF
@@ -62103,10 +61721,6 @@ sgSEPTIN12_4_SC	GGACCAAGCATCTCGCAGGG	SEPTIN12
 sgSEPTIN14_1_SC	ACTGAAACTTACACTAACTG	SEPTIN14
 sgSEPTIN14_2_SC	AGAATCATGGTACTCAAACA	SEPTIN14
 sgSEPTIN14_3_SC	GTGAGCAGATCTATCCGACA	SEPTIN14
-sgSEPTIN2_1_SC	ATATTGATGAGCAATTTGAG	SEPTIN2
-sgSEPTIN2_2_SC	GGTCAAGCTACGCCTGACAG	SEPTIN2
-sgSEPTIN2_3_SC	TATGAAGGCAATACACAACA	SEPTIN2
-sgSEPTIN2_4_SC	TTTCTGGGTACAGATCAGTT	SEPTIN2
 sgSEPTIN3_1_SC	CAAATCCCAAGTGAGCCGCA	SEPTIN3
 sgSEPTIN3_2_SC	GACTTCAACATCATGGTCGT	SEPTIN3
 sgSEPTIN3_3_SC	GGTACATACGAGTGTCCTGT	SEPTIN3
@@ -62135,14 +61749,6 @@ sgSEPTIN9_1_SC	CGTGATGGACTTGATCTCGA	SEPTIN9
 sgSEPTIN9_2_SC	GCCTGCATCACGGAACGAGA	SEPTIN9
 sgSEPTIN9_3_SC	TCATTGATGAACTTCATGAT	SEPTIN9
 sgSEPTIN9_4_SC	TCCCCTACTCCGAGCCACTG	SEPTIN9
-sgSGK3_1	ACCTCACAGAACATCAACCT	SGK3
-sgSGK3_2	ATTCCATCAAAATAGTATAC	SGK3
-sgSGK3_3	TGTCCCACAAAATGTGGTAG	SGK3
-sgSGK3_4	TTATAAAGTTCTGGTTTCAG	SGK3
-sgSGK3_1_SC	CTCTGGTGTCCCACAAAATG	SGK3
-sgSGK3_2_SC	GCTGAAATTGCTAGTGCATT	SGK3
-sgSGK3_3_SC	GGATGAAAGAAGTTCTCAGA	SGK3
-sgSGK3_4_SC	TTTATTAAACAAAGACGAGC	SGK3
 sgSGO2_1_SC	ATAGTTGATGTACCTCCCAG	SGO2
 sgSGO2_2_SC	GAAATTCATTTGTGACGTCT	SGO2
 sgSGO2_3_SC	TATCATTATCCTCATACATG	SGO2
@@ -62183,26 +61789,6 @@ sgSKIC8_1_SC	AAGTCCATAGATGCAGGACC	SKIC8
 sgSKIC8_2_SC	CCTGTTGAAGGCGTGATGAG	SKIC8
 sgSKIC8_3_SC	CTGGCCACAGGAACTCATGT	SKIC8
 sgSKIC8_4_SC	GAATATTCTTTGGACACGAG	SKIC8
-sgSLC25A18_1	CCTGTTCCCATAGGATGCAG	SLC25A18
-sgSLC25A18_2	GAGTCTTGGCCAAGTCGATG	SLC25A18
-sgSLC25A18_3	GGAAGCCGAACCAGTTGTGT	SLC25A18
-sgSLC25A18_4	TGGGACAGGTCACCACGACC	SLC25A18
-sgSLC25A18_1_SC	TTGTTAAGGTTGGCAAACAG	SLC25A18
-sgSLC33A2_1_SC	CAGCAGCAACCCCGCCACAG	SLC33A2
-sgSLC33A2_2_SC	CCAAGGTTCTGTACGCTCCG	SLC33A2
-sgSLC33A2_3_SC	CCATTCCACAGTCCCAACTC	SLC33A2
-sgSLC33A2_4_SC	GGGACGTGCTAGCCGTGCCG	SLC33A2
-sgSLC35D4_1_SC	CAAAGTGAGAAACACAGGAA	SLC35D4
-sgSLC35D4_2_SC	CTTACCTGGGAGTCATTGAA	SLC35D4
-sgSLC35D4_3_SC	GGCTTCTTACCTCACGAACA	SLC35D4
-sgSLC35H1_1_SC	CAAGTCCACACAGTTCAACG	SLC35H1
-sgSLC35H1_2_SC	CTACAACAAGTGGCTGACAA	SLC35H1
-sgSLC35H1_3_SC	GGCCAGTACTCACAGCGAGA	SLC35H1
-sgSLC35H1_4_SC	GGCCGACTACCTCAGAAGAG	SLC35H1
-sgSLC38A12_1_SC	ACCTTTATTGAAGAACATGG	SLC38A12
-sgSLC38A12_2_SC	AGAAGGTGAACGGTCCGAGG	SLC38A12
-sgSLC38A12_3_SC	TACATGTTTAACCTCATCGT	SLC38A12
-sgSLC38A12_4_SC	TCATCCGGGACAACTACGAG	SLC38A12
 sgSLC49A3_1_SC	GCTGTCACTGGTCTACCTCG	SLC49A3
 sgSLC49A3_2_SC	GCTTGGTCCGGTCCACATAG	SLC49A3
 sgSLC49A3_3_SC	TGCCGGGAGTGTGCTACGCA	SLC49A3
@@ -62210,18 +61796,6 @@ sgSLC49A4_1_SC	AGTTCCCAAAACCATAAGGA	SLC49A4
 sgSLC49A4_2_SC	CACCATTTCTCTCTACGACG	SLC49A4
 sgSLC49A4_3_SC	CAGCCAGCAAATACACCAAG	SLC49A4
 sgSLC49A4_4_SC	GCATATTAAAGATCGCATAG	SLC49A4
-sgSLC60A1_1_SC	AGGCCAGCACCTTCACGTCG	SLC60A1
-sgSLC60A1_2_SC	CACAGCATAGCTGTACACGA	SLC60A1
-sgSLC60A1_3_SC	GCTGGTAAGGATGTACCAGA	SLC60A1
-sgSLC60A1_4_SC	TGCCAAAGGAAGAACCTCAG	SLC60A1
-sgSLC60A2_1_SC	ATGATTGTGTTGAGCAACAT	SLC60A2
-sgSLC60A2_2_SC	GATGGAAGTCAGACTCTGTG	SLC60A2
-sgSLC60A2_3_SC	GTGTAAGGCCTGCATATGTG	SLC60A2
-sgSLC60A2_4_SC	TCAATGTCGGCTACCACCGT	SLC60A2
-sgSLC61A1_1_SC	ACCTGTGCTGGACCCACACG	SLC61A1
-sgSLC61A1_2_SC	CTGGTATATCCATGAGCACG	SLC61A1
-sgSLC61A1_3_SC	CTTGGCCCTTCGAAACTGGG	SLC61A1
-sgSLC61A1_4_SC	GCGACCCAGCCAATCCACAA	SLC61A1
 sgSLC66A1_1_SC	CCCCCGGAAGGCTTCCCTAG	SLC66A1
 sgSLC66A1_2_SC	GACATAATACACAGCCGTGT	SLC66A1
 sgSLC66A1_3_SC	GGAGACTCCTGCAACCTCAT	SLC66A1
@@ -62234,33 +61808,6 @@ sgSLC66A3_1_SC	GCGGATACCCATAGTAACAC	SLC66A3
 sgSLC66A3_2_SC	GCTGCGCGCCGCTAGCACAG	SLC66A3
 sgSLC66A3_3_SC	GTCTATGATCCACTTCTGCA	SLC66A3
 sgSLC66A3_4_SC	TACCCCATCCTCATCGCGCA	SLC66A3
-sgSLC67A1_1_SC	CCCAGGTTCGCAGACCAGCG	SLC67A1
-sgSLC67A1_2_SC	GATGGTCATCACGGACCTGT	SLC67A1
-sgSLC67A1_3_SC	GGCCTTCAGGTCGAACACAC	SLC67A1
-sgSLC67A1_4_SC	TCACCCGTACGCGGAGACCA	SLC67A1
-sgSLC67A2_1_SC	AGCACATGGGTCTTTCGCAA	SLC67A2
-sgSLC67A2_2_SC	GAGTTGCAAAATGCCATAGG	SLC67A2
-sgSLC67A2_3_SC	GCCAACACTACTTCGACCCA	SLC67A2
-sgSLC67A2_4_SC	TGAGATAGCCACCGACCACG	SLC67A2
-sgSLC68A1_1_SC	CGAACCACAGGAAGTTCCGA	SLC68A1
-sgSLC68A1_2_SC	GATGGGGAGCGACATAGGAG	SLC68A1
-sgSLC68A1_3_SC	GGTCGGCCAGCAAGGCATGG	SLC68A1
-sgSLC71A1_1_SC	AATATTGGCCTGCCTCCGGT	SLC71A1
-sgSLC71A1_2_SC	ACTATTGACAGCACCCACCT	SLC71A1
-sgSLC71A1_3_SC	ATAACAGCAAAGTACCACCT	SLC71A1
-sgSLC71A1_4_SC	TTATCTTGGACGAGTATATG	SLC71A1
-sgSLC71A2_1_SC	AAAATGAGACCGGTTTCCTG	SLC71A2
-sgSLC71A2_2_SC	GACAAGACTAGCCGCAAAGG	SLC71A2
-sgSLC71A2_3_SC	GCAGCATTCATAGCTATGGT	SLC71A2
-sgSLC71A2_4_SC	TCTGGAAGCCCAAGCCAAGG	SLC71A2
-sgSLC75A1_1_SC	CGAGCCCAGGTCAGCAACGA	SLC75A1
-sgSLC75A1_2_SC	GGCCCAGACTGCATATGAGG	SLC75A1
-sgSLC75A1_3_SC	TACAACAGTGTCCTGTTCGG	SLC75A1
-sgSLC75A1_4_SC	TGAGCAGATCAGCCGCATCA	SLC75A1
-sgSLC9D1_1_SC	ATTAACAGTGTCATGTAACA	SLC9D1
-sgSLC9D1_2_SC	CGTGTGATCAAACTGCACCG	SLC9D1
-sgSLC9D1_3_SC	GCGCCCGCCTGTATGAGAGT	SLC9D1
-sgSLC9D1_4_SC	TAAAGTGGTGATCTGCACGT	SLC9D1
 sgSLF1_1_SC	AGAGACCATGTATAGAACCC	SLF1
 sgSLF1_2_SC	CATGGCTATTAAGACAGATG	SLF1
 sgSLF1_3_SC	GCATGAAGAACGCATACAGG	SLF1
@@ -62283,17 +61830,6 @@ sgSNU13_1_SC	AGTTACATGACTGCTGAACG	SNU13
 sgSNU13_2_SC	CTTGGAGCGCACAAACACGT	SNU13
 sgSNU13_3_SC	GCTTCGGAAAGGAGCCAATG	SNU13
 sgSNU13_4_SC	TGAGGCTGATGTGAATCCAA	SNU13
-sgSNW1_2	CCTTTCCGGTATCCGTACGG	SNW1
-sgSNW1_3	CTGTAAAGGAACAACAAGAG	SNW1
-sgSNW1_4	TATGATGCAATTGCTCGACA	SNW1
-sgSNW1_1_SC	GAAGATGGCGCTCACCAGGT	SNW1
-sgSOHLH2_1	AGGTCCTACAGCGAACACCT	SOHLH2
-sgSOHLH2_2	CATCACCATCAGTGACACGA	SOHLH2
-sgSOHLH2_3	GCCTTCTTCACTAAGTGCCG	SOHLH2
-sgSOHLH2_4	TGATGCGGCTTCAGTTCTTG	SOHLH2
-sgSOHLH2_1_SC	AAAAGGGAGAAAGAATGATG	SOHLH2
-sgSOHLH2_2_SC	CACCATCAGTGACACGAAGG	SOHLH2
-sgSOHLH2_3_SC	TTAAGACTGAAAACGCAACT	SOHLH2
 sgSPACA9_1_SC	CTTCTGCTCGATGCTGCGAA	SPACA9
 sgSPACA9_2_SC	GCCCATCTCCAGCATTGGAC	SPACA9
 sgSPACA9_3_SC	GGAACATGAGCAGAACCCGC	SPACA9
@@ -62335,10 +61871,6 @@ sgSPMAP2L_1_SC	ATGCACCTTACGAACTCCAT	SPMAP2L
 sgSPMAP2L_2_SC	CGAGAAACACGAGAATCCCG	SPMAP2L
 sgSPMAP2L_3_SC	CTAACCTGTTAGGTACATAG	SPMAP2L
 sgSPMAP2L_4_SC	TCAAAGCCTAAAAAGCAATG	SPMAP2L
-sgSPMIP1_1_SC	AGCAGGGCTCGGGTGATAGG	SPMIP1
-sgSPMIP1_2_SC	CCGACTGAAAAGGCGCCTCT	SPMIP1
-sgSPMIP1_3_SC	GTACCGCCCCTGGAAGTCGT	SPMIP1
-sgSPMIP1_4_SC	TCACCATCGACCCATACTTG	SPMIP1
 sgSPMIP10_1_SC	AAGGCATGACATAACGTCTT	SPMIP10
 sgSPMIP10_2_SC	CCTTGCTTTAATGAAAATCG	SPMIP10
 sgSPMIP10_3_SC	CTTAGCAAGCAGAAGTGTGT	SPMIP10
@@ -62388,10 +61920,6 @@ sgSTIMATE_1_SC	CAAAGCATGAAAGACGTCCG	STIMATE
 sgSTIMATE_2_SC	CCGGACGCGACTGTGGAGGG	STIMATE
 sgSTIMATE_3_SC	CTCACGCATTAACGTGCTGA	STIMATE
 sgSTIMATE_4_SC	GGAACACTTACAGTGAACAA	STIMATE
-sgSTIMATE_5_SC	AGCATGAAAGACGTCCGTGG	STIMATE
-sgSTIMATE_6_SC	GGGGACGATCAGCATGACGA	STIMATE
-sgSTIMATE_7_SC	GGGGAGCCAACCAGGACTCG	STIMATE
-sgSTIMATE_8_SC	TGAGCGCGCCGCTCTCGCAG	STIMATE
 sgSTING1_1_SC	CATTACAACAACCTGCTACG	STING1
 sgSTING1_2_SC	GCTGGGACTGCTGTTAAACG	STING1
 sgSTING1_3_SC	GGTACCGGGGCAGCTACTGG	STING1
@@ -62403,13 +61931,6 @@ sgSTN1_1_SC	CTTTGCAAAACTCTACATCA	STN1
 sgSTN1_2_SC	GATGCTTTCTACAGTTATGG	STN1
 sgSTN1_3_SC	GGGGACACGATCCGAGTCAG	STN1
 sgSTN1_4_SC	TCAGCAAACTCGTGAGACTG	STN1
-sgSTON1_1	AAAACCAAAAAAGAACTACG	STON1
-sgSTON1_2	AGCCCACTCGCAATATCAGG	STON1
-sgSTON1_4	TTGCAGATGTATTATGAACA	STON1
-sgSTON1_1_SC	AACTCCCCAGACATGCTCGG	STON1
-sgSTON1_2_SC	ATGATGTCTTCCCGGCAATG	STON1
-sgSTON1_3_SC	GCAAATGGATACCAATCAGA	STON1
-sgSTON1_4_SC	TGTGTACATGAGTGGTCACT	STON1
 sgSTPG3_1_SC	ACAAAGTCTGCCATGCCCTG	STPG3
 sgSTPG3_2_SC	GACTCTCGTACGGACGGGCT	STPG3
 sgSTPG3_3_SC	GGAGGCAAACACTGGACCCA	STPG3
@@ -62422,21 +61943,10 @@ sgSTUM_1_SC	AGCACACATGCCTGTCCGGG	STUM
 sgSTUM_2_SC	CTGGACGAGGACGCCCCCCG	STUM
 sgSTUM_3_SC	GTCCCGGCACGAAAGTGTTG	STUM
 sgSTUM_4_SC	TCTCACAGGGACATTCGTCT	STUM
-sgSTYXL2_1_SC	ACCAAGCAGAAGGGTACCGG	STYXL2
-sgSTYXL2_2_SC	AGGCTGCAAGCAACATAGCG	STYXL2
-sgSTYXL2_3_SC	CCGAGGACATCGAGTCTGCG	STYXL2
-sgSTYXL2_4_SC	TGGCTAAGAAGAGACAACGG	STYXL2
 sgSVBP_1_SC	ATCTGTCAGCAGAGTTGAGA	SVBP
 sgSVBP_2_SC	GAAGCAGAGACAAAGAGCAG	SVBP
 sgSVBP_3_SC	GCTGACAGATTCTTTAACTT	SVBP
 sgSVBP_4_SC	GTTCTGTCATGACTCTGTTG	SVBP
-sgSYNJ2BP_1	AGTGGATTATTTGGTCACTG	SYNJ2BP
-sgSYNJ2BP_2	CAGCCGCATCAAAGAAAATG	SYNJ2BP
-sgSYNJ2BP_3	CAGTATGTCTCCAACGACAG	SYNJ2BP
-sgSYNJ2BP_4	GAAGAGATCAATCTTACCAG	SYNJ2BP
-sgSYNJ2BP_1_SC	GACGTAGATGCCACTGTCGT	SYNJ2BP
-sgSYNJ2BP_2_SC	GTAGACCTCTTTCGTAATGC	SYNJ2BP
-sgSYNJ2BP_3_SC	GTCTCTGAGAGTGCAGCACA	SYNJ2BP
 sgTAFA1_1_SC	CTGCTGGAAAGTGTGCTGAA	TAFA1
 sgTAFA1_2_SC	TACCTACCATCGACGCAAGA	TAFA1
 sgTAFA1_3_SC	TATCCACAAATACAGGACCC	TAFA1
@@ -62455,10 +61965,6 @@ sgTAFA4_4_SC	GGTCACCACCAAATCAAGCA	TAFA4
 sgTAFA5_1_SC	CGGGTGCTTACCGTCCACAC	TAFA5
 sgTAFA5_2_SC	CTTTCTACACGCACAGCGGG	TAFA5
 sgTAFA5_3_SC	TGCCGGGCGATCGTCCTCCG	TAFA5
-sgTAFAZZIN_1_SC	CCTGACCGTGCACAACAGGG	TAFAZZIN
-sgTAFAZZIN_2_SC	GAATTCCTGCGTTTCAAGTG	TAFAZZIN
-sgTAFAZZIN_3_SC	GAGATGGCGTCTACCAGAAG	TAFAZZIN
-sgTAFAZZIN_4_SC	GCAGGACTGGTGATTGGACA	TAFAZZIN
 sgTAMALIN_1_SC	CAGGGCTAGACTCATGAACT	TAMALIN
 sgTAMALIN_2_SC	CCCCAGCATCTACGACACGC	TAMALIN
 sgTAMALIN_3_SC	TGTCCACAATCTCTCGATGC	TAMALIN
@@ -62546,10 +62052,6 @@ sgTESMIN_1_SC	CGTGCAGGACGGGTTCCTTG	TESMIN
 sgTESMIN_2_SC	GCAGACCCGTTGACTACCGA	TESMIN
 sgTESMIN_3_SC	GTGATATGCCAATTGAAAGG	TESMIN
 sgTESMIN_4_SC	GTTGTTGCAAAAGTCCCCAC	TESMIN
-sgTEX13C_1_SC	CAAGGAGATTGTCCCCATAG	TEX13C
-sgTEX13C_2_SC	CAGGCCCTCTTAATGGCACG	TEX13C
-sgTEX13C_3_SC	CCAAGGAATGACTTCCCAAG	TEX13C
-sgTEX13C_4_SC	CTCCCCTGATGTATAGCAGG	TEX13C
 sgTEX44_1_SC	AAGGACAAGTCAGAGTCTAG	TEX44
 sgTEX44_2_SC	AAGGCTCATAGACACTTGCA	TEX44
 sgTEX44_3_SC	ACAGTCCACCCAGCACATGG	TEX44
@@ -62562,27 +62064,10 @@ sgTEX47_1_SC	AAGTGCAGGTAATTGCTACG	TEX47
 sgTEX47_2_SC	ACATCGTCGAGATACATAAC	TEX47
 sgTEX47_3_SC	TTTCTCATAACATTCCAATG	TEX47
 sgTEX47_4_SC	TTTGTAGAGAGTGTCGCTGG	TEX47
-sgTEX48_1_SC	ACAAGCCATCGACCCAAAGT	TEX48
-sgTEX48_2_SC	GAGACTGCGTTAATGCGCTT	TEX48
-sgTEX48_3_SC	TGGATCAGGGGTGTTCTCGA	TEX48
-sgTEX50_1_SC	ATGCTGCGACTTTGCTAACA	TEX50
-sgTEX50_2_SC	GTTGTTTATCTGCTTCTTCG	TEX50
-sgTEX50_3_SC	GTTTATCCAGAAGATAAGGC	TEX50
-sgTEX50_4_SC	TGATGGAACTGTCTGGACAA	TEX50
 sgTEX55_1_SC	CAACGAGGCCATACAATCTG	TEX55
 sgTEX55_2_SC	CTTCTGTGCAGATTGACAGT	TEX55
 sgTEX55_3_SC	GGACCGCAGAATGTCTGGCG	TEX55
 sgTEX55_4_SC	TCAGGTGTCTGGCCTGACGG	TEX55
-sgTGIF2_2	GCAAGTACAGCCAGTCCCGG	TGIF2
-sgTGIF2_3	GGAGTCGGTGAAGATCCTCC	TGIF2
-sgTGIF2_4	GGCGGGCAAAAGGAAGCGCA	TGIF2
-sgTGIF2_1_SC	GCGGGCAAAAGGAAGCGCAG	TGIF2
-sgTICAM2_1	ATTTAGATGATGCTGTAAAT	TICAM2
-sgTICAM2_2	TGAGCACAGCAATACAACAG	TICAM2
-sgTICAM2_3	TGTAAATGCTGTCTGCCACA	TICAM2
-sgTICAM2_4	TTGGGGTAAAAGGCACAGTG	TICAM2
-sgTICAM2_1_SC	AGCACAGCAATACAACAGAG	TICAM2
-sgTICAM2_2_SC	GAATCTGACTCATGATATCC	TICAM2
 sgTIMM29_1_SC	CAGCAGACCCACATACACAG	TIMM29
 sgTIMM29_2_SC	CCGGGGAAGTCGGTCCAGCG	TIMM29
 sgTIMM29_3_SC	GCTCTGCTCGCTGGTGTACG	TIMM29
@@ -62599,9 +62084,6 @@ sgTLCD4_1_SC	ACATACCGCTGATTCACAAA	TLCD4
 sgTLCD4_2_SC	ACGATAGCTTTAGAAAACTT	TLCD4
 sgTLCD4_3_SC	AGTATCCACATGCCATTCTT	TLCD4
 sgTLCD4_4_SC	GTATGCATACTACCTTGTAC	TLCD4
-sgTLCD4_5_SC	AACCACCAAAGAATGGCATG	TLCD4
-sgTLCD4_6_SC	ACCAGAAATGAGGTAGCCTG	TLCD4
-sgTLCD4_7_SC	TACAAGGTAGTATGCATACA	TLCD4
 sgTLCD5_1_SC	ACCAGCGCATCTGTAGCAAG	TLCD5
 sgTLCD5_2_SC	ATAAGCACCGAAGCTATGAG	TLCD5
 sgTLCD5_3_SC	ATCAATGAAGCCAATATAAG	TLCD5
@@ -62614,19 +62096,6 @@ sgTLNRD1_1_SC	ACGGATACCAGCCTCTTCCG	TLNRD1
 sgTLNRD1_2_SC	CGTGGCGGCATCGCGTCACG	TLNRD1
 sgTLNRD1_3_SC	GACCGAGTGCTCGGCCCACG	TLNRD1
 sgTLNRD1_4_SC	GTGCAGAGCCAGCTCAACAT	TLNRD1
-sgTMED7_1	AAGCTCGAAGGTGATCTCAG	TMED7
-sgTMED7_2	CGAGCAGCCTGCACCCCCAA	TMED7
-sgTMED7_3	TCTCACTAGGAAACAAAGGT	TMED7
-sgTMED7_4	TTCTACGAGGACATCGCTCA	TMED7
-sgTMED7_1_SC	AGCTTCGTGAATTGAAACAC	TMED7
-sgTMEFF1_1	AGCGGCGGGGACTGTCCCGG	TMEFF1
-sgTMEFF1_2	CGCCTTCTGCTGCTACACGT	TMEFF1
-sgTMEFF1_3	GATGCTTCTCGAACAAAACA	TMEFF1
-sgTMEFF1_4	TCATACATACCAGAGTAGCA	TMEFF1
-sgTMEFF1_1_SC	CACTCAGCTTTATATTTGCA	TMEFF1
-sgTMEFF1_2_SC	CTCCCATCAGAAGCACACAC	TMEFF1
-sgTMEFF1_3_SC	GAGATAACAGTAATAGCAAG	TMEFF1
-sgTMEFF1_4_SC	TTCCTGTCTGTGGATCAAAT	TMEFF1
 sgTMEM121B_1_SC	ACAGCGCCTGGTAGCCCCAG	TMEM121B
 sgTMEM121B_2_SC	AGGGCGCGCGTAGCTCGATG	TMEM121B
 sgTMEM121B_3_SC	ATGACAGCCGCGGACTTCGG	TMEM121B
@@ -62635,10 +62104,6 @@ sgTMEM131L_1_SC	CAACCCTAGTAGGGACAGCG	TMEM131L
 sgTMEM131L_2_SC	CATCATTTAATACAACACTA	TMEM131L
 sgTMEM131L_3_SC	CCTAAGTCTTGTAACCGCAG	TMEM131L
 sgTMEM131L_4_SC	TTTCTCTGGATCAATCTACC	TMEM131L
-sgTMEM225B_1_SC	AAGGCTCTGAGGATGAAGCT	TMEM225B
-sgTMEM225B_2_SC	CCTGCAGTTTACATCATCCT	TMEM225B
-sgTMEM225B_3_SC	CTGGGTGCGACTGACAAACG	TMEM225B
-sgTMEM225B_4_SC	TATAATCAGGTAGCCTAGGG	TMEM225B
 sgTMEM250_1_SC	ACGTGTACATCAAGACGCGC	TMEM250
 sgTMEM250_2_SC	CGCGAACGCCCAGGTACTGT	TMEM250
 sgTMEM250_3_SC	CTGTTCACTGCGGCGCTCTG	TMEM250
@@ -62654,18 +62119,10 @@ sgTMEM268_1_SC	AAAGACCAGCACAAGAGTCA	TMEM268
 sgTMEM268_2_SC	AGAAATGAAGACTAGCCAAG	TMEM268
 sgTMEM268_3_SC	TCTACAACTCGAGGCCTATG	TMEM268
 sgTMEM268_4_SC	TGTCAATCCGGAGAACAGTG	TMEM268
-sgTMEM269_1_SC	GACGGCAAAGTCATTCAGCT	TMEM269
-sgTMEM269_2_SC	GGAAATGCCACTATGCCTCC	TMEM269
-sgTMEM269_3_SC	GGGTAGACCCTTGTATGTGG	TMEM269
-sgTMEM269_4_SC	TCAGAAGTCCATCCACGCCT	TMEM269
 sgTMEM273_1_SC	ACCCACAGCAGTCCCGATGA	TMEM273
 sgTMEM273_2_SC	GGCAACAGGCAAGACCCCTG	TMEM273
 sgTMEM273_3_SC	GTGGGTGTCGCCATATCTGC	TMEM273
 sgTMEM273_4_SC	TGAAGATCTGCATGATCAGG	TMEM273
-sgTMEM278_1_SC	CAGGAATCCCAGGTAGACGA	TMEM278
-sgTMEM278_2_SC	CGACCACCCTGGGCACGTCA	TMEM278
-sgTMEM278_3_SC	GAGAACAGCGCGCGGCACCG	TMEM278
-sgTMEM278_4_SC	GGCACAGGCTCACCCTCGAG	TMEM278
 sgTMEM35A_1_SC	AAGGGTCATGACGATGCCAC	TMEM35A
 sgTMEM35A_2_SC	GAAAACAAAGAAGAGTCCCA	TMEM35A
 sgTMEM35A_3_SC	TTCACTTACCATCTCACTGT	TMEM35A
@@ -62689,21 +62146,6 @@ sgTMT1A_4_SC	TGTGATATACAACGAACAGA	TMT1A
 sgTMT1B_1_SC	AAGCTACTTCCCCTACCTGA	TMT1B
 sgTMT1B_2_SC	CCAATATGAGCGGTTTGTGG	TMT1B
 sgTMT1B_3_SC	GTAGAACTGAAAGTTGGCTC	TMT1B
-sgTNFSF12_1	ACCTAAAGGCCGGAAAACAC	TNFSF12
-sgTNFSF12_2	CGGGGAGTTTATAGTCACCC	TNFSF12
-sgTNFSF12_4	TTTACAGTTCATCCACGACC	TNFSF12
-sgTNFSF12_1_SC	ATCGCAGCCCATTATGAAGG	TNFSF12
-sgTNFSF12_2_SC	CGAACTAGTCGGTTCAGGAA	TNFSF12
-sgTNFSF12_3_SC	CTATAAACTCCCCGATCTGG	TNFSF12
-sgTNFSF12_4_SC	GGTGTGGACGGGACAGTGAG	TNFSF12
-sgTNNI3K_1	CCATAGATATTAACAACATG	TNNI3K
-sgTNNI3K_2	CCCACAAACTGAATTACGCA	TNNI3K
-sgTNNI3K_3	GAACCAGGCGAATGTGACCG	TNNI3K
-sgTNNI3K_4	TACAATAGCTGGCCACCTAG	TNNI3K
-sgTNNI3K_1_SC	AGGCATGACTTACCTCTAGG	TNNI3K
-sgTNNI3K_2_SC	GGGTGATGGAACAGACACAT	TNNI3K
-sgTNNI3K_3_SC	TAATACTCACAGGTGTAAGG	TNNI3K
-sgTNNI3K_4_SC	TGGAGCTGATATGAATCTAG	TNNI3K
 sgTOGARAM1_1_SC	AATGAAGCTCGACTTGACGA	TOGARAM1
 sgTOGARAM1_2_SC	GCAAAATTAAAGCTTTCTCA	TOGARAM1
 sgTOGARAM1_3_SC	GCAGGTGTAAGCTGAACTGG	TOGARAM1
@@ -62716,10 +62158,6 @@ sgTOMM70_1_SC	AAGTAAGATTTGATAAACTG	TOMM70
 sgTOMM70_2_SC	AGCCATGTTAAAATCTTGAG	TOMM70
 sgTOMM70_3_SC	CAGCGAACGGAAGACCCCGG	TOMM70
 sgTOMM70_4_SC	TGAGAAGCTAGACAATAAGA	TOMM70
-sgTOMT_1_SC	ACCAGCAATGTTACCACCAG	TOMT
-sgTOMT_2_SC	CTGGAATTGGGAACCTACTG	TOMT
-sgTOMT_3_SC	GCCCTGACAGGCAGTCTCGG	TOMT
-sgTOMT_4_SC	TGTGGCTCAAGTACTCGCAG	TOMT
 sgTOP6BL_1_SC	CTATTCTCAGGATATGACAG	TOP6BL
 sgTOP6BL_2_SC	TCCAGATGTGAGTTATCAGG	TOP6BL
 sgTOP6BL_3_SC	TCTTTGAAGAAAGTAGTCAT	TOP6BL
@@ -62731,20 +62169,6 @@ sgTRARG1_1_SC	ATCTGTCCAAGACCCTCTCG	TRARG1
 sgTRARG1_2_SC	CCTTCAAGGCCATCTCCGAG	TRARG1
 sgTRARG1_3_SC	GATGGAGATACTCCTCACCA	TRARG1
 sgTRARG1_4_SC	GCCAGGATGAGGTAATCTCT	TRARG1
-sgTRIM39_2	GCCGATTAGGTCGGAGACTG	TRIM39
-sgTRIM39_3	TAAGCACTTGCCCTCCACCT	TRIM39
-sgTRIM39_4	TCCTGTGTAGCATCGTCCAG	TRIM39
-sgTRIM39_1_SC	AGCATCGTCCAGTGGCACAA	TRIM39
-sgTRIM39_2_SC	AGTTTGAAGAGCTTCATAGG	TRIM39
-sgTRIM39_3_SC	GGTTAGGATGAGCTGTCTCA	TRIM39
-sgTRIM39_4_SC	TCGGCAACTAGGCAGTATGG	TRIM39
-sgTRIM6_1	ACAGATGTCCAAAGCTACTG	TRIM6
-sgTRIM6_2	GGGGCTACGAATTATAGAAG	TRIM6
-sgTRIM6_3	TGGCCACAGTCTATGCTCAG	TRIM6
-sgTRIM6_4	TGGTCACCACACGTTCCTCG	TRIM6
-sgTRIM6_1_SC	CATAGTGAGGCGGCTCAGAG	TRIM6
-sgTRIM6_2_SC	GAACCCCTGAGCATAGACTG	TRIM6
-sgTRIM6_3_SC	TCACCACACGTTCCTCGTGG	TRIM6
 sgTRIR_1_SC	CTGGCCCCGGGGATCCGAAG	TRIR
 sgTRIR_2_SC	GCTCCTTACGAAGCTAAGTG	TRIR
 sgTRIR_3_SC	GTGAACTTGTTCGCCAACGA	TRIR
@@ -62760,13 +62184,6 @@ sgTSPOAP1_1_SC	ACAGCCAGCACATCTACCCT	TSPOAP1
 sgTSPOAP1_2_SC	GCGCACCATGTCGCCCCACG	TSPOAP1
 sgTSPOAP1_3_SC	GCTCCCCTAGAATCACGGGT	TSPOAP1
 sgTSPOAP1_4_SC	TTGAGGACCACCAGACGGCG	TSPOAP1
-sgTTLL3_1	AGCTGGTGGTGAAGTCTGAG	TTLL3
-sgTTLL3_2	CAGAAACGCCAAAATCTACG	TTLL3
-sgTTLL3_3	GCTGTCGCGGTAGAACCACA	TTLL3
-sgTTLL3_1_SC	CCTCCAGCGCTACTACCAAG	TTLL3
-sgTTLL3_2_SC	CGTGGTACCCCAGATAGACA	TTLL3
-sgTTLL3_3_SC	GATCTGGATAGCTCAGCGAT	TTLL3
-sgTTLL3_4_SC	GCATCAACCTCATCAAACCA	TTLL3
 sgTUT4_1_SC	ACTGTATCCTACCTTGCCAG	TUT4
 sgTUT4_2_SC	GTGCAGAGATCGAAAAAGGT	TUT4
 sgTUT4_3_SC	TCGAACAATATGGCAACCAA	TUT4
@@ -62778,10 +62195,6 @@ sgTUT7_4_SC	TTGACTGTTGATCAGAAACG	TUT7
 sgTWNK_1_SC	AAATCCGCCAGTATTTGCGG	TWNK
 sgTWNK_2_SC	CCTACCCTTACTCTACCCCG	TWNK
 sgTWNK_3_SC	GGGGGATGGAGTGAGCTACG	TWNK
-sgTYW2_1_SC	CCATGCCGTTGCCATGATCG	TYW2
-sgTYW2_2_SC	CTTTGATACACAGCACCGTG	TYW2
-sgTYW2_3_SC	TCCAGCGTTTGGCAAAACGA	TYW2
-sgTYW2_4_SC	TGCTGGTGGATCTCTATGCA	TYW2
 sgUFD1_1_SC	GAAAAAGATACACGGCTTTG	UFD1
 sgUFD1_2_SC	GATGGCAATCACATCCCCGG	UFD1
 sgUFD1_3_SC	TCGGACCGCATGACGCATTG	UFD1
@@ -62796,12 +62209,6 @@ sgUQCC5_4_SC	TCCTGGGAGGAACGATGGAG	UQCC5
 sgUQCC6_1_SC	CAGGGGCAGAAGTGGTGCAC	UQCC6
 sgUQCC6_2_SC	GGTGCACAGGTACTACCGAC	UQCC6
 sgUQCC6_3_SC	GTCTCCTGGCCATGTGCGCA	UQCC6
-sgURGCP_1	ACTGGGCCTAAAGGTCGACG	URGCP
-sgURGCP_2	ATGCCCGGGAGATTTCGGAT	URGCP
-sgURGCP_3	CCGAGTCAGGCAACACGAGT	URGCP
-sgURGCP_4	GAACTTCGAATGCAGCAGAA	URGCP
-sgURGCP_1_SC	GATTGCGAGTTCCGTTATGG	URGCP
-sgURGCP_2_SC	TCATCCAACTTTACCTGCAA	URGCP
 sgUSF3_1_SC	ACAAAAGCAGACCGCCAATG	USF3
 sgUSF3_2_SC	AGCAGTCCATCATTACAGGG	USF3
 sgUSF3_3_SC	CTGTAGCCACATATCTACTG	USF3
@@ -62834,14 +62241,6 @@ sgVIRMA_1_SC	AGTGCCACTGATATATCATG	VIRMA
 sgVIRMA_2_SC	ATGTTAACGGAACTCCTGAG	VIRMA
 sgVIRMA_3_SC	GACATATGATCCATATGACA	VIRMA
 sgVIRMA_4_SC	TGTCGTGATCAGGTTCACTG	VIRMA
-sgVMA12_1_SC	AGAACCCAGAACTAGTTGCC	VMA12
-sgVMA12_2_SC	CAGTGAAATCTATCTCCCAG	VMA12
-sgVMA12_3_SC	CCCAGGATACAAGACATGGT	VMA12
-sgVMA12_4_SC	GACGGAAAGAAACCAAGCGT	VMA12
-sgVMA22_1_SC	ACGAACGGTGTTGAACGCCC	VMA22
-sgVMA22_2_SC	AGCTGGTGTCCACGCCCCAG	VMA22
-sgVMA22_3_SC	ATGTGGGAAGCATACTGCAG	VMA22
-sgVMA22_4_SC	CCGGTTCTGGGGTCTTAGTG	VMA22
 sgVPS26C_1_SC	GAAGTTTACTCCCAGTCCCG	VPS26C
 sgVPS26C_2_SC	GGAAGTGCTCTCTGGCGTGG	VPS26C
 sgVPS26C_3_SC	GGAGTGAACGATAAATTCAC	VPS26C
@@ -62854,10 +62253,6 @@ sgVPS50_1_SC	ACGGTTAAGTGAAATGCTGG	VPS50
 sgVPS50_2_SC	TGACATTAACCATTATACCA	VPS50
 sgVPS50_3_SC	TTGAAGACCTGTCTGCAATG	VPS50
 sgVPS50_4_SC	TTGAGCAGTACTGTAGTGGT	VPS50
-sgVSIG8_1	AGTGACAATGACCTTCCGGG	VSIG8
-sgVSIG8_2	CAGGACAAGAGGATCAACCA	VSIG8
-sgVSIG8_3	CATGACATATGGCAACGATG	VSIG8
-sgVSIG8_1_SC	CTTGACCTTGACGTAGACCG	VSIG8
 sgVSIR_1_SC	AACCTGACCCTGCTGGATAG	VSIR
 sgVSIR_2_SC	CTCTGCCCTTTCAGACATCA	VSIR
 sgVSIR_3_SC	GACATACAGGGAATACGGCG	VSIR
@@ -62892,9 +62287,6 @@ sgWFDC13_2	GGAGGTTCCAAGATATACTC	WFDC13
 sgWFDC13_3	GTGCTAGGCAGAACACCACC	WFDC13
 sgWFDC13_4	TCAGGTGCTGATATGCAGGG	WFDC13
 sgWFDC13_1_SC	TGAACAGACTATCCCACAGA	WFDC13
-sgWHR1_1_SC	CTCATGCAGCTGTTCCCGCG	WHR1
-sgWHR1_2_SC	GTGGAGTCGGATCCTCTTCG	WHR1
-sgWHR1_3_SC	TGATGGCCGACCGTATGCTG	WHR1
 sgWHRN_1_SC	GCTGCTCTTCGACCAATACA	WHRN
 sgWHRN_2_SC	GGATGAACCCGTGTCACTGT	WHRN
 sgWHRN_3_SC	TACCTGGATGAGTACCGTGG	WHRN
@@ -62923,16 +62315,6 @@ sgZIM2_1	CTCACCTGGGACCCAGCAGA	ZIM2
 sgZIM2_2	GATCCATTGGAACCACACCA	ZIM2
 sgZIM2_3	GATCCGTTCGTGTCTCCTAA	ZIM2
 sgZIM2_1_SC	GCCTACCCAAGCACCAGTCG	ZIM2
-sgZNF177_1	CACAAAAACTGGTAGTGTGG	ZNF177
-sgZNF177_2	GACTCCTAAGAGTTGAGGGA	ZNF177
-sgZNF177_3	TCAATCAAGAGTCATCCCTC	ZNF177
-sgZNF177_4	TCCCTGGAGTGTAACCATTG	ZNF177
-sgZNF177_1_SC	CAGACACAGTCTGATCTCCA	ZNF177
-sgZNF177_2_SC	CAGCTGAAGACAGATGAAAG	ZNF177
-sgZNF177_3_SC	GTGGCTGACAACCTGGTCAC	ZNF177
-sgZNF475_1_SC	ACTTGTTGCCTAAAGAGTTA	ZNF475
-sgZNF475_2_SC	CAAATGTAGCAAACAACTGC	ZNF475
-sgZNF475_3_SC	TACCTAAAAAACCAGAAGTC	ZNF475
 sgZNF875_1_SC	CACACCTGGTCAGACACAAG	ZNF875
 sgZNF875_2_SC	CCTCCAGAAGACACAAACTG	ZNF875
 sgZNF875_3_SC	GCAGGAAATCCTCTCCACCT	ZNF875
