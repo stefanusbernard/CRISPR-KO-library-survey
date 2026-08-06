@@ -1,6 +1,6 @@
-# A survey of multi-targeting and off-targeting sgRNAs across five genome-wide CRISPR-Cas9 knockout screen's sgRNA libraries
+# A survey of multi-targeting and off-targeting sgRNAs across five genome-wide CRISPR-Cas9 knockout sgRNA libraries with GuideRefine
 
-Analysis of sgRNA alignment quality and gene coverage across five human genome-wide CRISPR-KO libraries (Avana, Brunello, TKOv3, Yusa, and Jacquere), aligned against the T2T-CHM13v2.0 genome assembly.
+Analysis of sgRNA alignment quality and gene coverage across five human genome-wide CRISPR-KO libraries (Avana, Brunello, TKOv3, Yusa, and Jacquere), aligned against the T2T-CHM13v2.0 genome assembly. Each library is first restricted to genes that are both (a) HGNC protein-coding and (b) have a RefSeq Select-tagged canonical transcript in T2T-CHM13, applied upstream of library refinement.
 
 ---
 
@@ -15,15 +15,16 @@ CRISPR-KO-library-survey/
 │   ├── Fig2A-B_Fig3A_library_overview.Rmd           # → Fig2A, Fig2B, Fig3A
 │   ├── SuppFig1A_T2T_vs_hg38_comparison.Rmd         # → SuppFig1A, SuppTable2A
 │   ├── Fig2C-D_SuppFig1B-K_lfc_stratification.Rmd   # → Fig2C–D, SuppFig1B–K
-│   ├── SuppFig1L-N_drepanos_comparison.Rmd          # → SuppFig1L–N, SuppTable1A
+│   ├── SuppFig1L-N_SuppTable1A_drepanos_comparison.Rmd # → SuppFig1L–N, SuppTable1A
 │   ├── Fig3B-E_SuppFig2A-D_cds_pam_analysis.Rmd     # → Fig3B–E, SuppFig3A–D
-│   ├── SuppTable1A_aggregate_sgrna.Rmd              # → SuppTable1C
-│   ├── SuppTable1B-C_removed_genes_T2T_annotation.Rmd # → SuppTable1D, SuppTable1B
+│   ├── SuppTable1B_aggregate_sgrna_mini_library.Rmd # → SuppTable1B
+│   ├── SuppTable1C_all_consistently_underrepresented_genes.Rmd # → SuppTable1C
 │   ├── LibrarySurvey_install_req_packages.R         # Package installer (run first)
 │   ├── T2T_annotation_scripts/                      # One-time genome resource setup
 │   │   ├── 01_T2T_gff_to_ccds_conversion.Rmd       # GFF → GRanges annotation object
 │   │   └── 02_forge_T2T_bsgenome.Rmd               # Build BSgenome.Hsapiens.NCBI.T2TCHM13v2.0
 │   └── data_preparation_scripts/
+│       ├── build_restricted_library.Rmd             # Builds the restricted+control library (Fig1B)
 │       ├── sgrna_off_target_classification.Rmd      # Classifies sgRNA alignments
 │       ├── normalize_lfc_utils.py                   # Shared normalization functions
 │       ├── normalize_avana_lfc.ipynb
@@ -37,7 +38,7 @@ CRISPR-KO-library-survey/
 │   ├── T2T_data/                    # T2T-CHM13 TxDb and related resources
 │   ├── library_data/
 │   │   ├── original_library/        # Original sgRNA library TSV files
-│   │   └── refined_library/         # Refined library TSV files (GuideRefine output)
+│   │   └── restricted_library/      # Restricted+control library TSVs (GuideRefine input)
 │   ├── sgrna_lfc_data/              # Alignment CSVs and normalized LFC per library
 │   │   ├── avana_data/
 │   │   ├── brunello_data/
@@ -48,13 +49,15 @@ CRISPR-KO-library-survey/
 │   │   ├── output_normalized/
 │   │   └── T2T_vs_hg38_comparison/
 │   ├── guiderefine_output/          # Full reports and disposed sgRNA lists
-│   │   ├── May2026_T2T-CHM13/
+│   │   ├── Jul2026_T2T-CHM13/
 │   │   └── hg38/
 │   ├── removed_genes_survey/        # Removed-gene lists and CDS/PAM data across libraries
 │   ├── drepanos_bernard_difference/ # Drepanos vs. Bernard sgRNA classification comparison
 │   └── read_count_data/             # Raw read counts per library/screen
 │
-└── figure/                          # Output figures (.png)
+├── figure/                          # Output figures (.png)
+│
+└── library_survey_supplementary_materials/  # Supplementary tables 1A-1C, per-library classification CSVs
 ```
 
 ---
@@ -87,13 +90,23 @@ Run the scripts in `scripts/T2T_annotation_scripts/` once to build the genome re
 | `01_T2T_gff_to_ccds_conversion.Rmd` | `data/annotation/T2T-CHM13v2.0_gene_annot_granges.rds` |
 | `02_forge_T2T_bsgenome.Rmd` | `BSgenome.Hsapiens.NCBI.T2TCHM13v2.0` R package |
 
-### Step 1 — Classify sgRNA alignments
+### Step 1 — Build the restricted library
+
+Run `scripts/data_preparation_scripts/build_restricted_library.Rmd`. For each library, this splits out control sgRNAs, restricts targeting guides to genes passing both eligibility criteria (HGNC protein-coding, T2T-CHM13 canonical transcript), and writes a restricted+control library ready for refinement.
+
+**Requires:** `data/library_data/original_library/*.tsv`, an HGNC complete-set snapshot (`data/hgnc_complete_set_*.txt`), and `data/annotation/T2T-CHM13v2.0_gene_annot_granges.rds` (from Step 0).
+
+**Produces:** `data/library_data/restricted_library/*.tsv`, `library_survey_supplementary_materials/Fig1B_working_library_composition.csv`
+
+Next, run GuideRefine (separate tool) on each restricted library — this produces the alignment CSVs, full reports, and disposed-sgRNA lists that the remaining steps depend on.
+
+### Step 2 — Classify sgRNA alignments
 
 Run `scripts/data_preparation_scripts/sgrna_off_target_classification.Rmd`. It classifies every library against **both** genome builds — T2T-CHM13 (needed for the main figures) and GRCh38/hg38 (needed for `SuppFig1A_T2T_vs_hg38_comparison.Rmd`).
 
 **T2T-CHM13:**
 
-**Requires:** alignment CSVs from GuideRefine (`data/sgrna_lfc_data/{library}_data/*_aln.csv`) and disposed sgRNA lists (`data/guiderefine_output/May2026_T2T-CHM13/*_disposed_sgRNAs.tsv`).
+**Requires:** alignment CSVs from GuideRefine (`data/sgrna_lfc_data/{library}_data/*_aln.csv`) and disposed sgRNA lists (`data/guiderefine_output/Jul2026_T2T-CHM13/*_disposed_sgRNAs.tsv`).
 
 **Produces:** `data/sgrna_lfc_data/{library}_data/*_sgrna_alignment_classification_T2T.csv`
 
@@ -103,7 +116,7 @@ Run `scripts/data_preparation_scripts/sgrna_off_target_classification.Rmd`. It c
 
 **Produces:** `data/sgrna_lfc_data/{library}_data/*_sgrna_alignment_classification_hg38.csv`
 
-### Step 2 — Normalize LFC
+### Step 3 — Normalize LFC
 
 Run each `scripts/data_preparation_scripts/normalize_{library}_lfc.ipynb` in Jupyter.
 
@@ -111,7 +124,7 @@ Run each `scripts/data_preparation_scripts/normalize_{library}_lfc.ipynb` in Jup
 
 **Produces:** `data/sgrna_lfc_data/output_normalized/*_normalized_lfc.csv`
 
-### Step 3 — Generate figures and supplementary tables
+### Step 4 — Generate figures and supplementary tables
 
 Knit each `.Rmd` in `scripts/` from RStudio or via `rmarkdown::render()`.
 
@@ -120,10 +133,10 @@ Knit each `.Rmd` in `scripts/` from RStudio or via `rmarkdown::render()`.
 | `Fig2A-B_Fig3A_library_overview.Rmd` | Fig2A, Fig2B, Fig3A |
 | `SuppFig1A_T2T_vs_hg38_comparison.Rmd` | SuppFig1A, SuppTable2A |
 | `Fig2C-D_SuppFig1B-K_lfc_stratification.Rmd` | Fig2C–D, SuppFig1B–K |
-| `SuppFig1L-N_drepanos_comparison.Rmd` | SuppFig1L–N, SuppTable1A |
+| `SuppFig1L-N_SuppTable1A_drepanos_comparison.Rmd` | SuppFig1L–N, SuppTable1A |
 | `Fig3B-E_SuppFig2A-D_cds_pam_analysis.Rmd` | Fig3B–E, SuppFig3A–D |
-| `SuppTable1A_aggregate_sgrna.Rmd` | SuppTable1C |
-| `SuppTable1B-C_removed_genes_T2T_annotation.Rmd` | SuppTable1D, SuppTable1B |
+| `SuppTable1B_aggregate_sgrna_mini_library.Rmd` | SuppTable1B |
+| `SuppTable1C_all_consistently_underrepresented_genes.Rmd` | SuppTable1C |
 
 ---
 
