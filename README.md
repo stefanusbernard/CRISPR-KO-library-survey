@@ -15,10 +15,10 @@ CRISPR-KO-library-survey/
 │   ├── Fig2A-B_Fig3A_library_overview.Rmd           # → Fig2A, Fig2B, Fig3A
 │   ├── SuppFig1A_T2T_vs_hg38_comparison.Rmd         # → SuppFig1A, SuppTable2A
 │   ├── Fig2C-D_SuppFig1B-K_lfc_stratification.Rmd   # → Fig2C–D, SuppFig1B–K
-│   ├── SuppFig1L-N_drepanos_comparison.Rmd          # → SuppFig1L–N
+│   ├── SuppFig1L-N_drepanos_comparison.Rmd          # → SuppFig1L–N, SuppTable1A
 │   ├── Fig3B-E_SuppFig2A-D_cds_pam_analysis.Rmd     # → Fig3B–E, SuppFig3A–D
-│   ├── SuppTable1A_aggregate_sgrna.Rmd              # → SuppTable1A
-│   ├── SuppTable1B-C_removed_genes_T2T_annotation.Rmd # → SuppTable1B, SuppTable1C
+│   ├── SuppTable1A_aggregate_sgrna.Rmd              # → SuppTable1C
+│   ├── SuppTable1B-C_removed_genes_T2T_annotation.Rmd # → SuppTable1D, SuppTable1B
 │   ├── LibrarySurvey_install_req_packages.R         # Package installer (run first)
 │   ├── T2T_annotation_scripts/                      # One-time genome resource setup
 │   │   ├── 01_T2T_gff_to_ccds_conversion.Rmd       # GFF → GRanges annotation object
@@ -120,10 +120,10 @@ Knit each `.Rmd` in `scripts/` from RStudio or via `rmarkdown::render()`.
 | `Fig2A-B_Fig3A_library_overview.Rmd` | Fig2A, Fig2B, Fig3A |
 | `SuppFig1A_T2T_vs_hg38_comparison.Rmd` | SuppFig1A, SuppTable2A |
 | `Fig2C-D_SuppFig1B-K_lfc_stratification.Rmd` | Fig2C–D, SuppFig1B–K |
-| `SuppFig1L-N_drepanos_comparison.Rmd` | SuppFig1L–N |
+| `SuppFig1L-N_drepanos_comparison.Rmd` | SuppFig1L–N, SuppTable1A |
 | `Fig3B-E_SuppFig2A-D_cds_pam_analysis.Rmd` | Fig3B–E, SuppFig3A–D |
-| `SuppTable1A_aggregate_sgrna.Rmd` | SuppTable1A |
-| `SuppTable1B-C_removed_genes_T2T_annotation.Rmd` | SuppTable1B, SuppTable1C |
+| `SuppTable1A_aggregate_sgrna.Rmd` | SuppTable1C |
+| `SuppTable1B-C_removed_genes_T2T_annotation.Rmd` | SuppTable1D, SuppTable1B |
 
 ---
 

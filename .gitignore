@@ -28,3 +28,6 @@ __pycache__/
 .DS_Store
 
 scripts/backup_scripts/
+
+# Sandboxed Plan B execution folder - local testing only, never committed
+PLAN_B/
