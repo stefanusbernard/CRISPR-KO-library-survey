@@ -1,0 +1,6 @@
+library,original_rows,control_rows,total_sgrnas_before_restriction,total_target_genes_before_restriction,total_sgrnas_after_restriction,total_target_genes_after_restriction,total_sgrnas_control_hgnc_t2t
+avana_library,71826,0,71826,17780,69727,17298,69727
+broadgpp-brunello-library-contents,77441,1000,76441,19114,73757,18421,74757
+tkov3_guide_sequence,71090,142,70948,18053,69097,17546,69239
+yusa_hcrispr_ko_grnas,90709,0,90709,18009,88624,17536,88624
+Jacquere_PerGuideAnnotations_Quota4,78784,1000,77784,19733,74176,18726,75176
