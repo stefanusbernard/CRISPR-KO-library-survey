@@ -15,6 +15,7 @@ library(here)
 library(tidyverse)
 library(UpSetR)
 library(GenomicFeatures)
+library(GenomeInfoDb)
 library(BSgenome.Hsapiens.NCBI.T2TCHM13v2.0)
 library(GenomeInfoDbData)
 library(txdbmaker)
@@ -208,12 +209,62 @@ removed_gene_list_combined <- list(
   Jacquere = na.omit(removed_genes[["jacquere_removed_genes_all"]])
 )
 
-# 520 protein-coding genes removed across all 5 CRISPR-KO libraries
+# Genes removed (< 3 surviving guides) in every one of the 5 libraries.
+# removed_genes_all_library.csv comes from Fig2A-B_Fig3A_library_overview.Rmd,
+# which reads GuideRefine's fresh full_report.xlsx (Step 1-2) -- already
+# restricted to the HGNC+T2T-CHM13 universe, so no separate gene-existence
+# filter is needed here.
 removed_genes_all_libraries <- unique(Reduce(intersect, removed_gene_list_combined))
 
-# Import pre-computed spacer/CDS/PAM-site data for removed and control genes
-all_spacers_cds_removed_genes <- read_csv(here::here("data", "removed_genes_survey", "all_spacers_cds_data_499_removed_genes.csv"))
-all_spacers_cds_control_genes <- read_csv(here::here("data", "removed_genes_survey", "all_spacers_cds_data_18777_genes.csv"))
+# Control genes = the full restricted universe (HGNC protein-coding AND
+# T2T-CHM13 RefSeq Select -- same definition build_restricted_library.Rmd
+# uses) minus whatever's removed above. Recomputed here from the same two raw
+# inputs (dated HGNC file, T2T-CHM13 annotation) rather than from a separate
+# cached file -- both are cheap to re-filter/intersect, no caching needed.
+hgnc_raw_path <- list.files(here::here("data"), pattern = "^hgnc_complete_set_.*\\.txt$", full.names = TRUE)[1]
+hgnc_protein_coding <- read_tsv(hgnc_raw_path, show_col_types = FALSE) %>%
+  filter(locus_group == "protein-coding gene" & !is.na(ensembl_gene_id)) %>%
+  pull(symbol)
+t2t_genes <- unique(readRDS(here::here("data", "annotation", "T2T-CHM13v2.0_gene_annot_granges.rds"))$gene)
+
+eligible_genes <- intersect(hgnc_protein_coding, t2t_genes)
+control_genes  <- setdiff(eligible_genes, removed_genes_all_libraries)
+cat("Removed genes:", length(removed_genes_all_libraries), " | Control genes:", length(control_genes), "\n")
+
+# Reslice the existing spacer/CDS/PAM data by the two gene lists above.
+# Combine first, then reslice, so a gene's removed-vs-control label can't
+# silently lose its data if it changes category between runs.
+#
+# - old_removed: the removed-genes spacer/CDS/PAM data. Regenerated fresh each
+#   run by the `find-protospacers` chunk below (~5 min, cheap), dynamically
+#   named to match the current removed-gene count -- so read it back the same
+#   way, by pattern, rather than a hardcoded count that will go stale the
+#   moment the removed-gene count changes.
+# - old_control: the ~18,777-gene file, a static, unchanging ~1-week
+#   findSpacers() computation -- always this exact name, never renamed or
+#   regenerated.
+old_removed_path <- list.files(here::here("data", "removed_genes_survey"),
+                                pattern = "^all_spacers_cds_data_\\d+_removed_genes\\.csv$", full.names = TRUE)[1]
+old_removed <- read_csv(old_removed_path, show_col_types = FALSE) %>%
+  mutate(chromosome = as.character(chromosome))
+old_control <- read_csv(here::here("data", "removed_genes_survey", "all_spacers_cds_data_18777_genes.csv"), show_col_types = FALSE) %>%
+  mutate(chromosome = as.character(chromosome))
+master_cds_pam <- bind_rows(old_removed, old_control) %>% distinct()
+master_genes    <- unique(master_cds_pam$gene_id)
+
+all_spacers_cds_removed_genes <- master_cds_pam %>% filter(gene_id %in% removed_genes_all_libraries)
+all_spacers_cds_control_genes <- master_cds_pam %>% filter(gene_id %in% control_genes)
+
+# Safety net: the only expected gap is the documented 7 control genes
+# (OR2G6, PLN, SPRR2A/B/D/E/F) with zero spacer rows from strand-specific
+# PAM counting on very short CDSs. Any other gap here means a new,
+# undocumented problem.
+missing_removed <- setdiff(removed_genes_all_libraries, master_genes)
+missing_control <- setdiff(control_genes, master_genes)
+cat("Removed genes missing from master table:", length(missing_removed), "\n")
+cat("Control genes missing from master table:", length(missing_control), "-", paste(sort(missing_control), collapse = ", "), "\n")
+stopifnot(length(missing_removed) == 0)
+stopifnot(setequal(missing_control, c("OR2G6", "PLN", "SPRR2A", "SPRR2B", "SPRR2D", "SPRR2E", "SPRR2F")))
 
 # Pre-compute PAM counts (reused in barplots, boxplots, and density sections)
 removed_pam_count <- count_pam_per_gene(all_spacers_cds_removed_genes)
@@ -269,16 +320,12 @@ saveDb(T2T_txdb, here::here("data", "T2T_data", "TxDb_T2T-CHM13v2.sqlite"))
 
 T2T_txdb <- loadDb(here::here("data", "T2T_data", "TxDb_T2T-CHM13v2.sqlite"))
 
-# 499 removed genes (out of 520) mapped to T2T-CHM13
 removed_genes_cds <- calculate_feature_length(T2T_txdb, unique(all_spacers_cds_removed_genes$gene_id), feature = "cds")
-
-# 18,562 control genes (out of 18,777) mapped to T2T-CHM13
 control_genes_cds <- calculate_feature_length(T2T_txdb, unique(all_spacers_cds_control_genes$gene_id), feature = "cds")
 
 ```
 
 ## Obtain possible protospacer sites from CDS of removed genes
-Reminder: this is only for the consistently underrepresented genes
 
 ```{r find-protospacers}
 
@@ -329,23 +376,25 @@ all_spacers_cds_data <- data.frame(
                 strand     = spacer_strand) %>%
   relocate(cds_name, .before = start_cds)
 
-write_csv(all_spacers_cds_data, here::here("data", "removed_genes_survey", "all_spacers_cds_data_499_removed_genes.csv"))
+# Dynamically named -- this recompute only takes ~5 min (unlike the 18777-gene
+# file, ~1 week), so it's regenerated fresh under its current, correct gene
+# count each run rather than kept under a stale "499" name.
+write_csv(all_spacers_cds_data, here::here("data", "removed_genes_survey",
+          paste0("all_spacers_cds_data_", length(unique(all_spacers_cds_data$gene_id)), "_removed_genes.csv")))
+
+# Control-genes reslice (from the Import data step, cheap -- no findSpacers()
+# recompute needed), also written to its own dynamically-named file.
+write_csv(all_spacers_cds_control_genes, here::here("data", "removed_genes_survey",
+          paste0("all_spacers_cds_data_", length(unique(all_spacers_cds_control_genes$gene_id)), "_control_genes.csv")))
 ```
 
 ## CDS length analysis: removed vs control genes
 
-From 520 removed genes, 21 are not mapped to T2T-CHM13, they does not exist in this genome build
+Every removed and control gene here already passed the HGNC + T2T-CHM13 restriction upstream (`build_restricted_library.Rmd`), so — unlike the pre-Plan-B pipeline — there is no separate category of genes "removed" for lacking a T2T-CHM13 mapping; that's excluded from the universe before this script ever runs.
 
 ### Supp Figure 3A and 3B: Barplot distribution of total CDS length
 
 ```{r cds-length-barplot}
-
-# 21 genes absent from T2T-CHM13v2.0 RefSeq CDS annotation (GCF_009914755.1):
-# CD200R1L, CLN3, CYP4B1, EFCAB13, GSTM2, KCTD16, KRT24, KRT81,
-# KRTAP5-1, KRTAP5-10, KRTAP9-7, LEO1, MS4A14, PLA2G10, PRSS48,
-# SIGLEC5, SPRR3, TAS2R43, TBCD, UPK3BL1, ZNF681
-# All 21 are protein-coding in GRCh38.p14 and present in all 5 CRISPR-KO libraries.
-# See results/supp_table_GRCh38_vs_T2T_21_unmapped_genes.xlsx for full annotation breakdown.
 
 cds_bins   <- c(0, 500, 1000, 1500, 2000, 2500, Inf)
 cds_labels <- c("0–500", "500–1000", "1000–1500", "1500–2000", "2000–2500", ">2500")
@@ -365,10 +414,10 @@ barplot_cds_control <- make_bin_barplot(
   control_genes_cds, "cds_length_bin", "Total CDS length (bp)"
 )
 
-ggsave(here::here("figure", "SuppFig3A_cds_length_499_removed_genes.png"),
+ggsave(here::here("figure", paste0("SuppFig3A_cds_length_", length(unique(all_spacers_cds_removed_genes$gene_id)), "_removed_genes.png")),
        plot = barplot_cds_removed, width = 11, height = 5, dpi = 1000)
 
-ggsave(here::here("figure", "SuppFig3B_cds_length_18562_control_genes.png"),
+ggsave(here::here("figure", paste0("SuppFig3B_cds_length_", length(unique(all_spacers_cds_control_genes$gene_id)), "_control_genes.png")),
        plot = barplot_cds_control, width = 11, height = 5, dpi = 1000)
 ```
 
@@ -400,10 +449,8 @@ ggsave(here::here("figure", "Fig3C_log10_cds_length_removed_genes.png"),
 # Fig 3C: Wilcoxon rank-sum test (unpaired, two-sided)
 # Comparison: log10(CDS length) of removed genes vs control genes
 # ------------------------------------------------------------------
-# W = 6,153,776    p = 3.87e-36
-# Median log10 CDS length — removed genes : 2.97 (≈ 937 bp)
-# Median log10 CDS length — control genes : 3.15 (≈ 1,400 bp)
-# n removed = 499    n control = 18,562
+# Figures below are printed fresh each run (see output) -- comment numbers
+# are only the last formally verified pass's reference point, not current.
 
 wt_fig3c <- wilcox.test(log_transform_cds_length ~ gene_status,
                          data        = combined_cds,
@@ -442,10 +489,10 @@ barplot_pam_control <- make_bin_barplot(
   "Number of spacer sequences with NGG PAM-site at CDS"
 )
 
-ggsave(here::here("figure", "SuppFig3C_spacer_pam_499_removed_genes.png"),
+ggsave(here::here("figure", paste0("SuppFig3C_spacer_pam_", length(unique(all_spacers_cds_removed_genes$gene_id)), "_removed_genes.png")),
        plot = barplot_pam_removed, width = 9, height = 5, dpi = 1000)
 
-ggsave(here::here("figure", "SuppFig3D_spacer_pam_18562_control_genes.png"),
+ggsave(here::here("figure", paste0("SuppFig3D_spacer_pam_", length(unique(all_spacers_cds_control_genes$gene_id)), "_control_genes.png")),
        plot = barplot_pam_control, width = 9, height = 5, dpi = 1000)
 ```
 
@@ -464,7 +511,8 @@ combined_pam <- bind_rows(
 pam_boxplot <- make_log10_boxplot(
   combined_pam,
   y_col  = "log_transform_num_pam_site",
-  ylabel = "log10-transformed protospacer count in CDS"
+  ylabel = "log10-transformed protospacer count in CDS",
+  sig_label_y = 3
 )
 pam_boxplot
 
@@ -477,10 +525,8 @@ ggsave(here::here("figure", "Fig3D_log10_pam_removed_genes.png"),
 # Fig 3D: Wilcoxon rank-sum test (unpaired, two-sided)
 # Comparison: log10(PAM count) of removed genes vs control genes
 # ------------------------------------------------------------------
-# W = 6,354,039    p = 8.74e-46
-# Median log10 PAM count — removed genes : 1.77 (≈ 59 PAM sites)
-# Median log10 PAM count — control genes : 2.00 (≈ 99 PAM sites)
-# n removed = 499    n control = 18,562
+# Figures below are printed fresh each run (see output) -- comment numbers
+# are only the last formally verified pass's reference point, not current.
 
 wt_fig3d <- wilcox.test(log_transform_num_pam_site ~ gene_status,
                          data        = combined_pam,
@@ -577,7 +623,8 @@ ggsave(here::here("figure", "Fig3E_pam_density_distribution.png"),
        plot = pam_density_distribution, width = 6.5, height = 4, dpi = 1000)
 ```
 
-Supplementary Table 1D (comprehensive 520-gene T2T-CHM13 CDS/PAM data) and
-Supplementary Table 1B (reason-for-loss classification of the 21 unmapped
-genes) are generated by
-`scripts/SuppTable1B-C_removed_genes_T2T_annotation.Rmd`, not here.
+Supplementary Table 1C (comprehensive removed-gene T2T-CHM13 CDS/PAM data) is
+generated by `scripts/SuppTable1B-C_removed_genes_T2T_annotation.Rmd`, not
+here. The old Supplementary Table 1B (GRCh38-vs-T2T status of unmapped genes)
+is retired under Plan B; that letter has since been reused for the renamed
+rescue-library table (formerly 1C).

@@ -25,24 +25,35 @@ source(here::here("scripts", "CRISPR-KO-library-survey-functions.R"))
 
 ```{r}
 
-terms <- c("CONTROL", "Control", "control", "INTRON", "Intron", "intron", "LacZ", "luciferase", "NO_SITE", "ONE_INTERGENIC_SITE")
-# lacZ and luciferase are the control in Toronto V3 library
-
-terms_for_filtering <- paste(terms, collapse = "|")
-
 brunello <- 'broadgpp-brunello-library-contents'
 toronto <- 'tkov3_guide_sequence'
 avana <- 'avana_library'
 yusa <- 'yusa_hcrispr_ko_grnas'
 jacquere <- 'Jacquere_PerGuideAnnotations_Quota4'
 
-# import sgRNA refining report
+# [PLAN B, D5 fix] one combined control-term list, used for every library --
+# GuideRefine's full_report.xlsx aggregates each control label into its own
+# "gene" row (e.g. one "EGFP" row, one "NO_SITE" row), and a generic-only
+# filter here previously let TKOv3's EGFP and Jacquere's NO_SITE/ONE_SITE_INTERGENIC
+# rows count as passed_genes, contaminating Fig2B/Fig3A's percentage
+# denominators for those two libraries. None of these terms collide with a
+# real HGNC gene symbol, so applying the full combined list to every library
+# (not just the one it applies to) is safe -- it simply matches nothing extra
+# in libraries that don't have that control type.
+generic_terms <- c("CONTROL", "Control", "control", "INTRON", "Intron", "intron",
+                    "LacZ", "luciferase", "EGFP", "NO_SITE", "ONE_SITE_INTERGENIC")
+terms_for_filtering <- paste(generic_terms, collapse = "|")
 
-avana_report <- import_and_process_report(here::here("data", "guiderefine_output", "May2026_T2T-CHM13", paste0(avana, "_full_report.xlsx")))
-brunello_report <- import_and_process_report(here::here("data", "guiderefine_output", "May2026_T2T-CHM13", paste0(brunello, "_full_report.xlsx")))
-toronto_report <- import_and_process_report(here::here("data", "guiderefine_output", "May2026_T2T-CHM13", paste0(toronto, "_full_report.xlsx")))
-yusa_report <- import_and_process_report(here::here("data", "guiderefine_output", "May2026_T2T-CHM13", paste0(yusa, "_full_report.xlsx")))
-jacquere_report <- import_and_process_report(here::here("data", "guiderefine_output", "May2026_T2T-CHM13", paste0(jacquere, "_full_report.xlsx")))
+# import sgRNA refining report
+# [PLAN B] No separate HGNC/T2T-CHM13 filter needed here -- these reports come
+# from GuideRefine's fresh output on the already-restricted library (Step 0/1),
+# so every gene is guaranteed to already qualify.
+
+avana_report <- import_and_process_report(here::here("data", "guiderefine_output", "Jul2026_T2T-CHM13", paste0(avana, "_full_report.xlsx")), terms_for_filtering)
+brunello_report <- import_and_process_report(here::here("data", "guiderefine_output", "Jul2026_T2T-CHM13", paste0(brunello, "_full_report.xlsx")), terms_for_filtering)
+toronto_report <- import_and_process_report(here::here("data", "guiderefine_output", "Jul2026_T2T-CHM13", paste0(toronto, "_full_report.xlsx")), terms_for_filtering)
+yusa_report <- import_and_process_report(here::here("data", "guiderefine_output", "Jul2026_T2T-CHM13", paste0(yusa, "_full_report.xlsx")), terms_for_filtering)
+jacquere_report <- import_and_process_report(here::here("data", "guiderefine_output", "Jul2026_T2T-CHM13", paste0(jacquere, "_full_report.xlsx")), terms_for_filtering)
 
 ```
 

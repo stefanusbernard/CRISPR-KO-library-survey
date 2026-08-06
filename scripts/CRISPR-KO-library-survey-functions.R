@@ -14,8 +14,8 @@ source(here::here("scripts", "GuideRefine-functions.R"))
 
 # Function to obtain the list of paralog pairs from ENSEMBL 115
 
-ensembl_paralog_gene_pairs <- function(dataset_ensembl = "../data/paralog_data/ensembl_115_human_paralogs_2_dec.txt", 
-                                       dataset_hgnc = "https://storage.googleapis.com/public-download-files/hgnc/tsv/tsv/hgnc_complete_set.txt") {
+ensembl_paralog_gene_pairs <- function(dataset_ensembl = "../data/paralog_data/ensembl_115_human_paralogs_2_dec.txt",
+                                       dataset_hgnc = list.files(here::here("data"), pattern = "^hgnc_complete_set_.*\\.txt$", full.names = TRUE)[1]) {
   
   # retrieve ensembl_paralog from ENSEMBL 115
   
@@ -72,31 +72,35 @@ ensembl_paralog_gene_pairs <- function(dataset_ensembl = "../data/paralog_data/e
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------
 
-import_and_process_report <- function(file_dir) {
-
-  terms <- c("CONTROL", "Control", "control", "INTRON", "Intron", "intron", "LacZ", "luciferase")
-  terms_for_filtering <- paste(terms, collapse = "|")
+# [PLAN B, D5 fix] terms_for_filtering is now a required parameter, not a
+# hardcoded generic list -- same bug class as import_sgrna_library_alignment():
+# the generic-only list let TKOv3's EGFP and Jacquere's NO_SITE/ONE_SITE_INTERGENIC
+# control-group rows (aggregated by GuideRefine into one "gene" row each, both
+# passing quality check) count toward passed_genes and the sgRNA-count sums in
+# percentages_and_list_genes() -- a small denominator contamination in Fig2B/
+# Fig3A's TKOv3/Jacquere bars specifically. Did not affect removed_genes_all_library.csv
+# or the 467 count, since those control rows are quality-check "pass", never "fail".
+import_and_process_report <- function(file_dir, terms_for_filtering) {
 
   report <- read_excel(file_dir)
   report <- report %>% filter(!str_detect(gene, terms_for_filtering))
-  
-  # we noted that our pipeline also removed sgRNAs targeting non protein-coding genes like lncRNA and else, but in this study we focus our investigation to the protein-coding genes
-  # protein-coding genes are defined as gene with protein product by HGNC
-  
-  dataset_hgnc <- "https://storage.googleapis.com/public-download-files/hgnc/tsv/tsv/hgnc_complete_set.txt"
-  # to match with paralog investigation later, we obtained protein-coding genes defined by HGNC with established ENSEMBL Gene ID
-  hgnc_protein_coding <- read_tsv(dataset_hgnc) %>%
-    filter(locus_group == "protein-coding gene" & !is.na(ensembl_gene_id)) %>%
-    dplyr::select(symbol, locus_group, ensembl_gene_id)
-  
+
+  # [PLAN B] No HGNC/T2T-CHM13 filter needed here -- file_dir now points at
+  # GuideRefine's fresh full_report.xlsx, generated from the already-restricted
+  # library (Step 0/1), so every gene in the report is guaranteed HGNC
+  # protein-coding AND T2T-CHM13 RefSeq-Select-eligible already. An explicit
+  # filter here used to be needed when this read an unrestricted report; kept
+  # in place until confirmed redundant (verified via Fig3B-E's own safety-net
+  # check: zero unexpected gaps beyond the documented 7-gene one).
+
   # first we convert the failed and passed genes in the report from all libraries (except not counted/symbol change)
   # by checkGeneSymbols and update it to a suggested approved symbol
   report <- report %>%
     filter(`quality check` %in% c("fail", "pass"))
-  
+
   # and then we filtered the failed and passed genes if they are protein-coding genes defined by HGNC database
   report_check_gene_symbol <- checkGeneSymbols(report$gene) %>% dplyr::rename("gene" = "x")
-  
+
   # left join the report_check_gene_symbol with the report hence we get the approved gene symbol name
   report <- report %>%
     left_join(report_check_gene_symbol, join_by(gene)) %>%
@@ -104,18 +108,16 @@ import_and_process_report <- function(file_dir) {
     mutate(gene_hgnc = if_else(is.na(gene_hgnc), gene, gene_hgnc)) %>%
     relocate(Approved, .after = gene) %>%
     relocate(gene_hgnc, .after = Approved) %>%
-    distinct() %>%
-    # only select the gene that is defined as protein-coding gene by HGNC data
-    filter(gene_hgnc %in% hgnc_protein_coding$symbol)
-  
+    distinct()
+
   # only pick one from duplicate gene original (not gene_hgnc)
   # the reason is the total sgrna from duplicate gene original seems like the total from duplicated data due to small bug in updating gene symbol
-  
+
   check_duplicate <- report %>%
     filter(duplicated(gene) | duplicated(gene, fromLast = TRUE))
-  
+
   print(paste0("Warning!, there are: ", length(unique(check_duplicate$gene_hgnc)), " genes with duplicate rows"))
-  
+
   return(report)
 }
 
@@ -178,10 +180,12 @@ import_sgrna_library <- function(data_dir, terms_for_filtering) {
 }
 
 # import alignment data and keep alignment for normal chromosome only
-import_sgrna_library_alignment <- function(data_dir, genome_type) {
-
-  terms <- c("CONTROL", "Control", "control", "INTRON", "Intron", "intron", "LacZ", "luciferase")
-  terms_for_filtering <- paste(terms, collapse = "|")
+# [PLAN B, D5 fix] terms_for_filtering is now a required parameter, not a
+# hardcoded generic list -- the generic-only list silently let Jacquere's
+# NO_SITE/ONE_SITE_INTERGENIC and TKOv3's EGFP control guides leak through as
+# if they were real target genes (confirmed via the classification row-count
+# gap; see PLAN_B notes on sgrna_off_target_classification.Rmd).
+import_sgrna_library_alignment <- function(data_dir, genome_type, terms_for_filtering) {
 
   if (str_detect(genome_type, "T2T-CHM13")) {
     alignment <- read_csv(data_dir) %>% distinct()
@@ -347,14 +351,20 @@ annotate_sgrna_coding_genes <- function(alignment_data, annotation_data, bsgenom
 
 # Reads library TSV + LFC CSV, joins them, and removes control sgRNAs.
 # Returns the raw joined data without any alignment stratification applied.
-load_library_lfc_raw <- function(library_path, lfc_path) {
+# [PLAN B, D5 fix] terms_for_filtering is now a required parameter, not a
+# hardcoded generic list -- same bug class as import_sgrna_library_alignment():
+# the generic-only list let TKOv3's EGFP and Jacquere's NO_SITE/ONE_SITE_INTERGENIC
+# control guides leak through into *_lfc_raw. Every current call site drops
+# these rows anyway via apply_stratification()'s join against already-clean
+# classification data (verified: none of the leaked sgRNA IDs exist in the
+# classification CSVs), so no reported figure/stat was ever affected -- but
+# this function's own filter should do the job rather than rely on that as an
+# accidental safety net.
+load_library_lfc_raw <- function(library_path, lfc_path, terms_for_filtering) {
   library_df <- read_tsv(library_path, col_names = FALSE)
   colnames(library_df) <- c("sgRNA", "spacer", "gene")
 
   normalized_lfc_data <- read_csv(lfc_path)
-
-  terms <- c("CONTROL", "Control", "control", "INTRON", "Intron", "intron", "LacZ", "luciferase")
-  terms_for_filtering <- paste(terms, collapse = "|")
 
   normalized_lfc_data %>%
     left_join(library_df, by = c("sgRNA", "spacer", "gene")) %>%
@@ -376,8 +386,8 @@ apply_stratification <- function(library_lfc_raw, stratification_data) {
 }
 
 # Convenience wrapper kept for backwards compatibility with other scripts.
-obtain_required_data <- function(library, normalized_lfc_data, stratification_data) {
-  raw <- load_library_lfc_raw(library, normalized_lfc_data)
+obtain_required_data <- function(library, normalized_lfc_data, stratification_data, terms_for_filtering) {
+  raw <- load_library_lfc_raw(library, normalized_lfc_data, terms_for_filtering)
   apply_stratification(raw, stratification_data)
 }
 

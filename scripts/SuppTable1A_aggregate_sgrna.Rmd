@@ -1,5 +1,5 @@
 ---
-title: "Rescuing guides for 499 consistently unrepresented genes across five CRISPR-KO libraries"
+title: "Rescuing guides for consistently unrepresented genes across five CRISPR-KO libraries"
 author: "Author: Stefanus Bernard"
 date: "Date: `r format(Sys.time(), '%d %B %Y')`"
 output:
@@ -25,9 +25,9 @@ library(BSgenome.Hsapiens.NCBI.T2TCHM13v2.0)
 ## Helper functions
 
 ```{r helper-functions}
-# Load the 499 consistently unrepresented genes from the supplementary table.
-# Genes with NA num_pam_site did not map to T2T-CHM13 annotation and are excluded
-# (520 total across all libraries - 21 unmapped = 499).
+# Load the consistently unrepresented genes from SuppTable1C. Genes with NA
+# num_pam_site are excluded (expect only the documented 7-gene strand-specific
+# PAM-counting gap now, not a T2T-mapping gap -- see PLAN_B notes).
 get_unrepresented_genes <- function(filepath) {
   read_excel(filepath) %>%
     filter(!is.na(num_pam_site)) %>%
@@ -135,58 +135,61 @@ deduplicate_rescue_library <- function(rescue_library, min_guides = 3) {
 
 ```{r import-disposed-sgrnas}
 brunello_disposed <- read_tsv(
-  here("data", "guiderefine_output", "May2026_T2T-CHM13",
+  here("data", "guiderefine_output", "Jul2026_T2T-CHM13",
        "broadgpp-brunello-library-contents_disposed_sgRNAs.tsv"),
   show_col_types = FALSE
 )
 tkov3_disposed <- read_tsv(
-  here("data", "guiderefine_output", "May2026_T2T-CHM13",
+  here("data", "guiderefine_output", "Jul2026_T2T-CHM13",
        "tkov3_guide_sequence_disposed_sgRNAs.tsv"),
   show_col_types = FALSE
 )
 
 avana_disposed <- read_tsv(
-  here("data", "guiderefine_output", "May2026_T2T-CHM13",
+  here("data", "guiderefine_output", "Jul2026_T2T-CHM13",
        "avana_library_disposed_sgRNAs.tsv"),
   show_col_types = FALSE
 )
 jacquere_disposed <- read_tsv(
-  here("data", "guiderefine_output", "May2026_T2T-CHM13",
+  here("data", "guiderefine_output", "Jul2026_T2T-CHM13",
        "Jacquere_PerGuideAnnotations_Quota4_disposed_sgRNAs.tsv"),
   show_col_types = FALSE
 )
 ```
 
-```{r import-original-libraries}
+```{r import-restricted-libraries}
 lib_cols <- c("sgrna", "spacer", "gene")
 
+# Restricted+control subset libraries (Step 0), not the original raw ones --
+# the whole point of the from-scratch rebuild is that every downstream step
+# reads only this universe.
 avana_lib <- read_tsv(
-  here("data", "library_data", "original_library", "avana_library.tsv"),
+  here("data", "library_data", "restricted_library", "avana_library.tsv"),
   col_names = lib_cols, show_col_types = FALSE
 )
 brunello_lib <- read_tsv(
-  here("data", "library_data", "original_library",
+  here("data", "library_data", "restricted_library",
        "broadgpp-brunello-library-contents.tsv"),
   col_names = lib_cols, show_col_types = FALSE
 )
 tkov3_lib <- read_tsv(
-  here("data", "library_data", "original_library", "tkov3_guide_sequence.tsv"),
+  here("data", "library_data", "restricted_library", "tkov3_guide_sequence.tsv"),
   col_names = lib_cols, show_col_types = FALSE
 )
 jacquere_lib <- read_tsv(
-  here("data", "library_data", "original_library",
+  here("data", "library_data", "restricted_library",
        "Jacquere_PerGuideAnnotations_Quota4.tsv"),
   col_names = lib_cols, show_col_types = FALSE
 )
 ```
 
 ```{r import-unrepresented-genes}
-# 499 consistently unrepresented genes across five CRISPR-KO libraries
-# (520 genes identified as unrepresented, 21 excluded: no T2T-CHM13 annotation match)
-unrepresented_genes <- get_unrepresented_genes(
-  here("library_survey_supplementary_materials", "supp_table_1d_520_genes.xlsx")
-)
-message("Unrepresented genes loaded: ", length(unrepresented_genes), "  — expected 499")
+# Consistently unrepresented genes across five CRISPR-KO libraries, from the
+# fresh SuppTable1C (dynamically named -- reads whichever gene count it was
+# actually built with, not a hardcoded old count).
+supp_table_1c_path <- list.files(here("library_survey_supplementary_materials"), pattern = "^supp_table_1c_.*_genes\\.xlsx$", full.names = TRUE)[1]
+unrepresented_genes <- get_unrepresented_genes(supp_table_1c_path)
+message("Unrepresented genes loaded: ", length(unrepresented_genes))
 
 lib_disposed_pairs <- list(
   Avana    = list(lib = avana_lib,    disposed = avana_disposed),
@@ -207,7 +210,7 @@ surviving_guides <- surviving_guides %>%
   arrange(desc(sum_guides))
 
 cat("Shape:", nrow(surviving_guides), "x", ncol(surviving_guides),
-    " — expected (≤499, 4 libraries + gene + sum)\n")
+    " — rows should be <= the unrepresented-gene count loaded above (4 libraries + gene + sum)\n")
 
 head(surviving_guides, 20)
 ```
@@ -248,8 +251,7 @@ rescue_library_df <- rescue_library_deduped %>%
 ```{r on-target-ruleset3}
 data(SpCas9, package = "crisprBase")
 bsgenome     <- BSgenome.Hsapiens.NCBI.T2TCHM13v2.0
-bowtie_index <- here("..", "GuideRefine", "bowtie_index",
-                     "T2T-CHM13_bsgenome", "T2T-CHM13_BSgenome")
+bowtie_index <- "d:/GitHub/GuideRefine/bowtie_index/T2T-CHM13_bsgenome/T2T-CHM13_BSgenome"
 
 # Assign each unique spacer to one scoring method based on first occurrence in the
 # deduplicated library (Avana/Brunello/TKOv3 precede Jacquere in lib_disposed_pairs order)
@@ -336,7 +338,7 @@ cat("\nGenes with >= 3 high-efficiency guides (RS3 score > 0):",
     n_distinct(survived_genes_targeted$gene), "\n")
 
 write.xlsx(survived_genes_targeted,
-           here("results", "supp_table_1c_aggregated_on_target_guides_represented_genes.xlsx"),
+           here("library_survey_supplementary_materials", "supp_table_1b_aggregated_on_target_guides_represented_genes.xlsx"),
            rowNames = FALSE)
 
 ```

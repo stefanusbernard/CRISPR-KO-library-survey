@@ -22,7 +22,7 @@ Classifies every sgRNA alignment in a library into one of five categories:
 
 **Requires:**
 - Alignment CSV from GuideRefine: `data/sgrna_lfc_data/{library}_data/*_aln.csv`
-- Disposed sgRNA list from GuideRefine: `data/guiderefine_output/May2026_T2T-CHM13/*_disposed_sgRNAs.tsv`
+- Disposed sgRNA list from GuideRefine: `data/guiderefine_output/Jul2026_T2T-CHM13/*_disposed_sgRNAs.tsv`
 - T2T-CHM13v2.0 annotation object: `data/annotation/T2T-CHM13v2.0_gene_annot_granges.rds`
 - hg38 CCDS file (hg38 mode only): `data/annotation/CCDS.20221027.txt`
 

@@ -17,6 +17,14 @@ library(tidyverse)
 source(here::here("scripts", "CRISPR-KO-library-survey-functions.R"))
 ```
 
+Both builds are now restricted to the Fig1B universe (HGNC + T2T-CHM13),
+reslicing existing classification data on both sides rather than restricting
+only one. Consequence: this reframes the comparison from "do the builds
+disagree" (genes missing entirely from T2T-CHM13 no longer appear at all) to
+"for guides confirmed real in both builds, is T2T-CHM13 classification more
+problematic than GRCh38's" — the annotation-gap finding itself is told in full
+by Fig1B/Fig3A/B, not here.
+
 # Load classification files for both genome builds
 
 ```{r}
@@ -31,10 +39,25 @@ libraries <- list(
 library_levels <- c("brunello", "tkov3", "yusa", "avana", "jacquere")
 alignment_levels <- c("multi-target guides", "single mismatch", "pam-distal double mismatch")
 
+# Restrict both builds to the same Fig1B universe. Reslice (filter existing
+# classification by sgRNA ID) rather than re-running GuideRefine for GRCh38 --
+# per-guide alignment doesn't depend on which other guides are in the run, and
+# this is a supplementary comparison figure, not the primary restricted result.
+restricted_library_file <- c(
+  avana = "avana_library", brunello = "broadgpp-brunello-library-contents",
+  tkov3 = "tkov3_guide_sequence", yusa = "yusa_hcrispr_ko_grnas",
+  jacquere = "Jacquere_PerGuideAnnotations_Quota4"
+)
+restricted_sgrna_ids <- function(library_name) {
+  path <- here::here("data", "library_data", "restricted_library", paste0(restricted_library_file[[library_name]], ".tsv"))
+  read_tsv(path, col_names = c("sgRNA", "spacer", "gene"), show_col_types = FALSE)$sgRNA
+}
+
 load_classification <- function(dir_path, library_name, genome) {
   file_path <- file.path(dir_path, paste0(library_name, "_sgrna_alignment_classification_", genome, ".csv"))
   read_csv(file_path, show_col_types = FALSE) %>%
-    dplyr::select(sgRNA, spacer, gene, n_mismatches, num_alignments, alignment)
+    dplyr::select(sgRNA, spacer, gene, n_mismatches, num_alignments, alignment) %>%
+    filter(sgRNA %in% restricted_sgrna_ids(library_name))
 }
 ```
 

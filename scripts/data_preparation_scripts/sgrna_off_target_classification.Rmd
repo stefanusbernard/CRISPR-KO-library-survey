@@ -21,22 +21,21 @@ source(here::here("scripts", "GuideRefine-functions.R"))
 source(here::here("scripts", "CRISPR-KO-library-survey-functions.R"))
 ```
 
-# Import alignment data of each sgRNA libraries and library
+# Control terms (per-library) used for the real filtering step below
 
 ```{r}
-# import sgRNA library
-# WE SHOULD DISPOSE ANY CONTROL FROM THE SGRNA LIBRARY AS THEY ARE NOT USED IN THIS ANALYSIS
-
-terms <- c("CONTROL", "Control", "control", "INTRON", "Intron", "intron", "LacZ", "luciferase", "NO_SITE", "ONE_INTERGENIC_SITE")
-# lacZ and luciferase are the control in Toronto V3 library
-terms_for_filtering <- paste(terms, collapse = "|")
-
-avana_library_meyers <- import_sgrna_library(here::here("data", "library_data", "original_library", "avana_library.tsv"), terms_for_filtering)
-brunello_library <- import_sgrna_library(here::here("data", "library_data", "original_library", "broadgpp-brunello-library-contents.tsv"), terms_for_filtering)
-toronto_library <- import_sgrna_library(here::here("data", "library_data", "original_library", "tkov3_guide_sequence.tsv"), terms_for_filtering)
-yusa_library <- import_sgrna_library(here::here("data", "library_data", "original_library", "yusa_hcrispr_ko_grnas.tsv"), terms_for_filtering)
-jacquere_library <- import_sgrna_library(here::here("data", "library_data", "original_library", "Jacquere_PerGuideAnnotations_Quota4.tsv"), terms_for_filtering)
-
+# [PLAN B, D5 fix] per-library control terms, verified against each library's
+# actual raw gene column -- a single generic list silently missed Jacquere's
+# NO_SITE/ONE_SITE_INTERGENIC (note: correct word order, the old list here had
+# "ONE_INTERGENIC_SITE" which never matched the real data) and TKOv3's EGFP.
+# The REAL filtering happens inside import_sgrna_library_alignment() below,
+# not a separate import_sgrna_library() call -- a version of this fix that
+# only patched the latter was previously dead code (nothing downstream ever
+# read its output), confirmed by the classification row-count gap.
+generic_terms <- c("CONTROL", "Control", "control", "INTRON", "Intron", "intron", "LacZ", "luciferase")
+terms_for_filtering_tkov3 <- paste(c(generic_terms, "EGFP"), collapse = "|")
+terms_for_filtering_jacquere <- paste(c(generic_terms, "NO_SITE", "ONE_SITE_INTERGENIC"), collapse = "|")
+terms_for_filtering <- paste(generic_terms, collapse = "|")
 ```
 
 # For T2T-CHM13 use this chunk code
@@ -48,18 +47,18 @@ genome_type_version <- "T2T-CHM13"
 bsgenome <- BSgenome.Hsapiens.NCBI.T2TCHM13v2.0
 
 # T2T-CHM13
-avana_alignment_meyers <- import_sgrna_library_alignment(here::here("data", "sgrna_lfc_data", "avana_data", "avana_library_aln.csv"), genome_type_version)
-brunello_alignment <- import_sgrna_library_alignment(here::here("data", "sgrna_lfc_data", "brunello_data", "broadgpp-brunello-library-contents_aln.csv"), genome_type_version)
-toronto_alignment <- import_sgrna_library_alignment(here::here("data", "sgrna_lfc_data", "tkov3_data", "tkov3_guide_sequence_aln.csv"), genome_type_version)
-yusa_alignment <- import_sgrna_library_alignment(here::here("data", "sgrna_lfc_data", "yusa_data", "yusa_hcrispr_ko_grnas_aln.csv"), genome_type_version)
-jacquere_alignment <- import_sgrna_library_alignment(here::here("data", "sgrna_lfc_data", "jacquere_data", "Jacquere_PerGuideAnnotations_Quota4_aln.csv"), genome_type_version)
+avana_alignment_meyers <- import_sgrna_library_alignment(here::here("data", "sgrna_lfc_data", "avana_data", "avana_library_aln.csv"), genome_type_version, terms_for_filtering)
+brunello_alignment <- import_sgrna_library_alignment(here::here("data", "sgrna_lfc_data", "brunello_data", "broadgpp-brunello-library-contents_aln.csv"), genome_type_version, terms_for_filtering)
+toronto_alignment <- import_sgrna_library_alignment(here::here("data", "sgrna_lfc_data", "tkov3_data", "tkov3_guide_sequence_aln.csv"), genome_type_version, terms_for_filtering_tkov3)
+yusa_alignment <- import_sgrna_library_alignment(here::here("data", "sgrna_lfc_data", "yusa_data", "yusa_hcrispr_ko_grnas_aln.csv"), genome_type_version, terms_for_filtering)
+jacquere_alignment <- import_sgrna_library_alignment(here::here("data", "sgrna_lfc_data", "jacquere_data", "Jacquere_PerGuideAnnotations_Quota4_aln.csv"), genome_type_version, terms_for_filtering_jacquere)
 
-# list_removed_sgrna sgRNAs
-disposed_avana <- import_list_off_target_guides(here::here("data", "guiderefine_output", "May2026_T2T-CHM13", "avana_library_disposed_sgRNAs.tsv"))
-disposed_brunello <- import_list_off_target_guides(here::here("data", "guiderefine_output", "May2026_T2T-CHM13", "broadgpp-brunello-library-contents_disposed_sgRNAs.tsv"))
-disposed_toronto <- import_list_off_target_guides(here::here("data", "guiderefine_output", "May2026_T2T-CHM13", "tkov3_guide_sequence_disposed_sgRNAs.tsv"))
-disposed_yusa <- import_list_off_target_guides(here::here("data", "guiderefine_output", "May2026_T2T-CHM13", "yusa_hcrispr_ko_grnas_disposed_sgRNAs.tsv"))
-disposed_jacquere <- import_list_off_target_guides(here::here("data", "guiderefine_output", "May2026_T2T-CHM13", "Jacquere_PerGuideAnnotations_Quota4_disposed_sgRNAs.tsv"))
+# list_removed_sgrna sgRNAs -- from the fresh restricted-library GuideRefine re-run (Jul2026), not the old May2026 unrestricted one
+disposed_avana <- import_list_off_target_guides(here::here("data", "guiderefine_output", "Jul2026_T2T-CHM13", "avana_library_disposed_sgRNAs.tsv"))
+disposed_brunello <- import_list_off_target_guides(here::here("data", "guiderefine_output", "Jul2026_T2T-CHM13", "broadgpp-brunello-library-contents_disposed_sgRNAs.tsv"))
+disposed_toronto <- import_list_off_target_guides(here::here("data", "guiderefine_output", "Jul2026_T2T-CHM13", "tkov3_guide_sequence_disposed_sgRNAs.tsv"))
+disposed_yusa <- import_list_off_target_guides(here::here("data", "guiderefine_output", "Jul2026_T2T-CHM13", "yusa_hcrispr_ko_grnas_disposed_sgRNAs.tsv"))
+disposed_jacquere <- import_list_off_target_guides(here::here("data", "guiderefine_output", "Jul2026_T2T-CHM13", "Jacquere_PerGuideAnnotations_Quota4_disposed_sgRNAs.tsv"))
 
 ```
 
@@ -107,11 +106,11 @@ genome_type_version_hg38 <- "hg38"
 bsgenome_hg38 <- BSgenome.Hsapiens.UCSC.hg38
 
 # hg38
-avana_alignment_meyers_hg38 <- import_sgrna_library_alignment(here::here("data", "sgrna_lfc_data", "hg38_alignment", "avana_library_aln.csv"), genome_type_version_hg38)
-brunello_alignment_hg38 <- import_sgrna_library_alignment(here::here("data", "sgrna_lfc_data", "hg38_alignment", "broadgpp-brunello-library-contents_aln.csv"), genome_type_version_hg38)
-toronto_alignment_hg38 <- import_sgrna_library_alignment(here::here("data", "sgrna_lfc_data", "hg38_alignment", "tkov3_guide_sequence_aln.csv"), genome_type_version_hg38)
-yusa_alignment_hg38 <- import_sgrna_library_alignment(here::here("data", "sgrna_lfc_data", "hg38_alignment", "yusa_hcrispr_ko_grnas_aln.csv"), genome_type_version_hg38)
-jacquere_alignment_hg38 <- import_sgrna_library_alignment(here::here("data", "sgrna_lfc_data", "hg38_alignment", "Jacquere_PerGuideAnnotations_Quota4_aln.csv"), genome_type_version_hg38)
+avana_alignment_meyers_hg38 <- import_sgrna_library_alignment(here::here("data", "sgrna_lfc_data", "hg38_alignment", "avana_library_aln.csv"), genome_type_version_hg38, terms_for_filtering)
+brunello_alignment_hg38 <- import_sgrna_library_alignment(here::here("data", "sgrna_lfc_data", "hg38_alignment", "broadgpp-brunello-library-contents_aln.csv"), genome_type_version_hg38, terms_for_filtering)
+toronto_alignment_hg38 <- import_sgrna_library_alignment(here::here("data", "sgrna_lfc_data", "hg38_alignment", "tkov3_guide_sequence_aln.csv"), genome_type_version_hg38, terms_for_filtering_tkov3)
+yusa_alignment_hg38 <- import_sgrna_library_alignment(here::here("data", "sgrna_lfc_data", "hg38_alignment", "yusa_hcrispr_ko_grnas_aln.csv"), genome_type_version_hg38, terms_for_filtering)
+jacquere_alignment_hg38 <- import_sgrna_library_alignment(here::here("data", "sgrna_lfc_data", "hg38_alignment", "Jacquere_PerGuideAnnotations_Quota4_aln.csv"), genome_type_version_hg38, terms_for_filtering_jacquere)
 
 # list_removed_sgrna sgRNAs
 disposed_avana_hg38 <- import_list_off_target_guides(here::here("data", "guiderefine_output", "hg38", "avana_library_disposed_sgRNAs.tsv"))

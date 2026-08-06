@@ -73,6 +73,13 @@ run_jt_clinfun <- function(df, fig_label, lib_name, analysis) {
 > it overlays directly. Runs last (SuppFig1L-N) as an external validation
 > case study on top of SuppFig1B-K.
 >
+> **Restricted to the Fig1B universe** (HGNC + T2T-CHM13), reslicing the
+> existing GRCh38 classification down to the restricted+control subset's
+> sgRNA IDs rather than re-running GuideRefine for GRCh38. Reframes this from
+> "does everything match Drepanos" to "for guides we can compare, is one
+> build worse" — the Drepanos-side data itself isn't restricted; anything it
+> doesn't cover is simply absent from the inner join, not a gap to explain.
+>
 > **Note on source file**: uses `Jacquere_PerGuideAnnotations_Quota4.csv`
 > (80,124 rows, full coverage of our 4-guides/gene Jacquere library), not
 > the earlier `Jacquere_PerGuideAnnotations.csv` (60,550 rows), which turned
@@ -103,11 +110,23 @@ drepanos_cfd100 <- read_csv(
     has_cfd100_offtarget = max_cfd100_hits > 0
   )
 
+# Restricted to the Fig1B universe (reslicing existing classification, not a
+# fresh GRCh38 GuideRefine re-run -- see PLAN_B notes). Any Fig1B-universe gene
+# with no corresponding Drepanos/GRCh38 data is simply dropped by the inner
+# join below, not treated as a gap needing explanation -- this reframes the
+# comparison from "does everything match" to "for guides we can compare,
+# which build is worse."
+jacquere_restricted_sgrna_ids <- read_tsv(
+  here::here("data", "library_data", "restricted_library", "Jacquere_PerGuideAnnotations_Quota4.tsv"),
+  col_names = c("sgRNA", "spacer", "gene"), show_col_types = FALSE
+)$sgRNA
+
 bernard_classification <- read_csv(
   here::here("data", "sgrna_lfc_data", "jacquere_data", "jacquere_sgrna_alignment_classification_hg38.csv"),
   show_col_types = FALSE
 ) %>%
-  dplyr::select(sgRNA, spacer, gene, n_mismatches, num_alignments, alignment)
+  dplyr::select(sgRNA, spacer, gene, n_mismatches, num_alignments, alignment) %>%
+  filter(sgRNA %in% jacquere_restricted_sgrna_ids)
 
 joined <- inner_join(drepanos_cfd100, bernard_classification, by = "spacer", suffix = c("_drepanos", "_bernard"))
 
@@ -277,9 +296,16 @@ label pointing at a different spacer across files.
 ```{r}
 single_guides <- c("perfect", "single mismatch")
 
+# [PLAN B, D5 fix] one combined control-term list (see Fig2C-D_SuppFig1B-K_lfc_stratification.Rmd
+# for the full rationale) -- load_library_lfc_raw() now requires it explicitly.
+generic_terms <- c("CONTROL", "Control", "control", "INTRON", "Intron", "intron",
+                    "LacZ", "luciferase", "EGFP", "NO_SITE", "ONE_SITE_INTERGENIC")
+terms_for_filtering <- paste(generic_terms, collapse = "|")
+
 jacquere_lfc_raw <- load_library_lfc_raw(
-  here::here("data", "library_data", "original_library", "Jacquere_PerGuideAnnotations_Quota4.tsv"),
-  here::here("data", "sgrna_lfc_data", "output_normalized", "jacquere_normalized_lfc.csv")
+  here::here("data", "library_data", "restricted_library", "Jacquere_PerGuideAnnotations_Quota4.tsv"),
+  here::here("data", "sgrna_lfc_data", "output_normalized", "jacquere_normalized_lfc.csv"),
+  terms_for_filtering
 )
 
 jacquere_single_hg38 <- count_alignment_bin(filter(bernard_classification, alignment %in% single_guides), single_guides)
@@ -350,7 +376,7 @@ supp_table_1a <- jacquere_cfd_by_bin_hg38 %>%
 
 supp_table_1a
 
-write.xlsx(supp_table_1a, here::here("results", "supp_table_1a_jacquere_cfd_score_by_alignment_bin.xlsx"))
+write.xlsx(supp_table_1a, here::here("library_survey_supplementary_materials", "supp_table_1a_jacquere_cfd_score_by_alignment_bin.xlsx"))
 ```
 
 ### Median on-target vs. single mismatch off-target => 1 max CFD (manuscript reporting)
