@@ -1,5 +1,5 @@
 ---
-title: "Supplementary Table 1C: T2T-CHM13 annotation data for removed genes"
+title: "Supplementary Table 1B: T2T-CHM13 annotation data for removed genes"
 author: "Author: Stefanus Bernard"
 date: "Date: `r format(Sys.time(), '%d %B %Y')`"
 output:
@@ -77,9 +77,9 @@ removed_genes_cds <- calculate_cds_length(T2T_txdb, mapped_removed_genes)
 nrow(removed_genes_cds)
 ```
 
-## Step 4: build Supplementary Table 1C
+## Step 4: build Supplementary Table 1B
 
-```{r build-table-1c}
+```{r build-table-1b}
 cds_bins   <- c(0, 500, 1000, 1500, 2000, 2500, Inf)
 cds_labels <- c("0–500", "500–1000", "1000–1500", "1500–2000", "2000–2500", ">2500")
 
@@ -108,14 +108,14 @@ if (nrow(hgnc_via_prev) > 0) {
 
 hgnc_lookup <- bind_rows(hgnc_current, hgnc_via_prev)
 
-supp_table_1c <- tibble(gene_id = removed_genes_all_libraries) %>%
+supp_table_1b <- tibble(gene_id = removed_genes_all_libraries) %>%
   left_join(hgnc_lookup, by = "gene_id") %>%
   left_join(removed_pam_count, by = "gene_id") %>%
   left_join(removed_genes_cds, join_by(gene_id == gene)) %>%
   mutate(cds_length_bin = cut(total_cds_length_bp, breaks = cds_bins, labels = cds_labels,
                                right = TRUE, include.lowest = TRUE))
 
-cat("Table 1C rows:", nrow(supp_table_1c), "\n")
+cat("Table 1B rows:", nrow(supp_table_1b), "\n")
 
-write.xlsx(supp_table_1c, here::here("library_survey_supplementary_materials", paste0("supp_table_1c_", nrow(supp_table_1c), "_genes.xlsx")))
+write.xlsx(supp_table_1b, here::here("library_survey_supplementary_materials", paste0("supp_table_1b_", nrow(supp_table_1b), "_genes.xlsx")))
 ```

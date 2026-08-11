@@ -160,8 +160,8 @@ jacquere_lib <- read_tsv(
 ```
 
 ```{r import-unrepresented-genes}
-supp_table_1c_path <- list.files(here("library_survey_supplementary_materials"), pattern = "^supp_table_1c_.*_genes\\.xlsx$", full.names = TRUE)[1]
-unrepresented_genes <- get_unrepresented_genes(supp_table_1c_path)
+supp_table_1b_path <- list.files(here("library_survey_supplementary_materials"), pattern = "^supp_table_1b_.*_genes\\.xlsx$", full.names = TRUE)[1]
+unrepresented_genes <- get_unrepresented_genes(supp_table_1b_path)
 message("Unrepresented genes loaded: ", length(unrepresented_genes))
 
 lib_disposed_pairs <- list(
@@ -311,7 +311,7 @@ cat("  Final (>=3 high-efficiency guides)       :", n_distinct(survived_genes_ta
     sprintf(" (%.1f%%)\n", 100 * n_distinct(survived_genes_targeted$gene) / length(unrepresented_genes)))
 
 write.xlsx(survived_genes_targeted,
-           here("library_survey_supplementary_materials", "supp_table_1b_aggregated_on_target_guides_represented_genes.xlsx"),
+           here("library_survey_supplementary_materials", "supp_table_1c_aggregated_on_target_guides_represented_genes.xlsx"),
            rowNames = FALSE)
 
 ```
