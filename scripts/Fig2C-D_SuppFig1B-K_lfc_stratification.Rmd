@@ -41,24 +41,24 @@ terms_for_filtering <- paste(generic_terms, collapse = "|")
 
 ```{r load-library-lfc}
 
-avana_lfc_raw    <- load_library_lfc_raw(here::here("data", "library_data", "restricted_library", "avana_library.tsv"),
+avana_lfc_raw    <- load_library_lfc_raw(here::here("public_crispr_library", "restricted_library", "avana_library.tsv"),
                                           here::here("data", "sgrna_lfc_data", "output_normalized", "avana_normalized_lfc.csv"),
                                           terms_for_filtering)
 
-tkov3_lfc_raw    <- load_library_lfc_raw(here::here("data", "library_data", "restricted_library", "tkov3_guide_sequence.tsv"),
+tkov3_lfc_raw    <- load_library_lfc_raw(here::here("public_crispr_library", "restricted_library", "tkov3_guide_sequence.tsv"),
                                           here::here("data", "sgrna_lfc_data", "output_normalized", "tkov3_rpe1_normalized_lfc.csv"),
                                           terms_for_filtering)
 
-yusa_lfc_raw     <- load_library_lfc_raw(here::here("data", "library_data", "restricted_library", "yusa_hcrispr_ko_grnas.tsv"),
+yusa_lfc_raw     <- load_library_lfc_raw(here::here("public_crispr_library", "restricted_library", "yusa_hcrispr_ko_grnas.tsv"),
                                           here::here("data", "sgrna_lfc_data", "output_normalized", "yusa_normalized_lfc.csv"),
                                           terms_for_filtering)
 
-brunello_lfc_raw <- load_library_lfc_raw(here::here("data", "library_data", "restricted_library", "broadgpp-brunello-library-contents.tsv"),
+brunello_lfc_raw <- load_library_lfc_raw(here::here("public_crispr_library", "restricted_library", "broadgpp-brunello-library-contents.tsv"),
                                           here::here("data", "sgrna_lfc_data", "output_normalized", "brunello_a375_normalized_lfc.csv"),
                                           terms_for_filtering)
 
 # Jacquere sgRNA Log2FC data only available for ~60,000 sgRNAs
-jacquere_lfc_raw <- load_library_lfc_raw(here::here("data", "library_data", "restricted_library", "Jacquere_PerGuideAnnotations_Quota4.tsv"),
+jacquere_lfc_raw <- load_library_lfc_raw(here::here("public_crispr_library", "restricted_library", "Jacquere_PerGuideAnnotations_Quota4.tsv"),
                                           here::here("data", "sgrna_lfc_data", "output_normalized", "jacquere_normalized_lfc.csv"),
                                           terms_for_filtering)
 

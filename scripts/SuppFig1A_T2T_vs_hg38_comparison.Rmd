@@ -37,7 +37,7 @@ restricted_library_file <- c(
   jacquere = "Jacquere_PerGuideAnnotations_Quota4"
 )
 restricted_sgrna_ids <- function(library_name) {
-  path <- here::here("data", "library_data", "restricted_library", paste0(restricted_library_file[[library_name]], ".tsv"))
+  path <- here::here("public_crispr_library", "restricted_library", paste0(restricted_library_file[[library_name]], ".tsv"))
   read_tsv(path, col_names = c("sgRNA", "spacer", "gene"), show_col_types = FALSE)$sgRNA
 }
 

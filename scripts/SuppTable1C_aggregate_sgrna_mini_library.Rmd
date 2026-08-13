@@ -140,20 +140,20 @@ jacquere_disposed <- read_tsv(
 lib_cols <- c("sgrna", "spacer", "gene")
 
 avana_lib <- read_tsv(
-  here("data", "library_data", "restricted_library", "avana_library.tsv"),
+  here("public_crispr_library", "restricted_library", "avana_library.tsv"),
   col_names = lib_cols, show_col_types = FALSE
 )
 brunello_lib <- read_tsv(
-  here("data", "library_data", "restricted_library",
+  here("public_crispr_library", "restricted_library",
        "broadgpp-brunello-library-contents.tsv"),
   col_names = lib_cols, show_col_types = FALSE
 )
 tkov3_lib <- read_tsv(
-  here("data", "library_data", "restricted_library", "tkov3_guide_sequence.tsv"),
+  here("public_crispr_library", "restricted_library", "tkov3_guide_sequence.tsv"),
   col_names = lib_cols, show_col_types = FALSE
 )
 jacquere_lib <- read_tsv(
-  here("data", "library_data", "restricted_library",
+  here("public_crispr_library", "restricted_library",
        "Jacquere_PerGuideAnnotations_Quota4.tsv"),
   col_names = lib_cols, show_col_types = FALSE
 )

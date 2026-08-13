@@ -83,7 +83,7 @@ drepanos_cfd100 <- read_csv(
   )
 
 jacquere_restricted_sgrna_ids <- read_tsv(
-  here::here("data", "library_data", "restricted_library", "Jacquere_PerGuideAnnotations_Quota4.tsv"),
+  here::here("public_crispr_library", "restricted_library", "Jacquere_PerGuideAnnotations_Quota4.tsv"),
   col_names = c("sgRNA", "spacer", "gene"), show_col_types = FALSE
 )$sgRNA
 
@@ -262,7 +262,7 @@ generic_terms <- c("CONTROL", "Control", "control", "INTRON", "Intron", "intron"
 terms_for_filtering <- paste(generic_terms, collapse = "|")
 
 jacquere_lfc_raw <- load_library_lfc_raw(
-  here::here("data", "library_data", "restricted_library", "Jacquere_PerGuideAnnotations_Quota4.tsv"),
+  here::here("public_crispr_library", "restricted_library", "Jacquere_PerGuideAnnotations_Quota4.tsv"),
   here::here("data", "sgrna_lfc_data", "output_normalized", "jacquere_normalized_lfc.csv"),
   terms_for_filtering
 )
