@@ -55,8 +55,8 @@ control_terms_by_library <- list(
 ```
 
 ```{r build-subset}
-base <- here::here("data", "library_data", "original_library")
-restricted_dir <- here::here("data", "library_data", "restricted_library")
+base <- here::here("public_crispr_library", "processed")
+restricted_dir <- here::here("public_crispr_library", "restricted_library")
 dir.create(restricted_dir, showWarnings = FALSE, recursive = TRUE)
 
 files <- list(
@@ -85,7 +85,7 @@ for (name in names(files)) {
     dplyr::select(sgRNA, spacer, gene)
 
   subset_lib <- bind_rows(target_restricted, control_rows) %>% arrange(sgRNA)
-  write_tsv(subset_lib, file.path(restricted_dir, paste0(name, ".tsv")), col_names = FALSE)
+  write_tsv(subset_lib, file.path(restricted_dir, basename(files[[name]])), col_names = FALSE)
 
   n_genes_before <- length(genes_u)
   n_genes_after  <- target_annotated %>%

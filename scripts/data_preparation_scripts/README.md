@@ -7,13 +7,41 @@ These scripts generate the intermediate data files consumed by the main figure s
 ## Execution order
 
 ```
+(only when adding a new library)
+Step -1 → reformat_sgRNA_library.rmd or reformat_Jacquere_library.Rmd
+
+Step 0 → build_restricted_library.Rmd          (once)
+          → then run GuideRefine (external) on each restricted library
 Step 1 → sgrna_off_target_classification.Rmd   (once per library)
-Step 2 → normalize_{library}_lfc.ipynb         (once per library)
+Step 2 → normalize_{library}_lfc.ipynb         (once per library, in
+          ../sgrna_log_fold_change_scripts/ — see that folder's README)
 ```
 
 ---
 
 ## Scripts
+
+### `reformat_sgRNA_library.rmd` / `reformat_Jacquere_library.Rmd` (R)
+
+Convert a raw, publicly-downloaded sgRNA library into GuideRefine's 3-column format (`sgRNA`, `spacer`, `gene`, no header). `reformat_sgRNA_library.rmd` handles standard single-gene-per-row libraries (Avana, Brunello, TKOv3, Yusa); `reformat_Jacquere_library.Rmd` additionally resolves Jacquere's multi-gene `GENE1|GENE2` fields. Only needed when adding a library — the 5 libraries used in this study are already reformatted.
+
+**Requires:** `public_crispr_library/raw/*`
+
+**Produces:** `public_crispr_library/processed/*.tsv`
+
+See [`public_crispr_library/README.md`](../../public_crispr_library/README.md) for details.
+
+---
+
+### `build_restricted_library.Rmd` (R)
+
+Splits out control sgRNAs and restricts targeting guides to genes that are both (a) HGNC protein-coding and (b) have a RefSeq Select-tagged canonical transcript in T2T-CHM13.
+
+**Requires:** `public_crispr_library/processed/*.tsv`, an HGNC complete-set snapshot (`data/hgnc_complete_set_*.txt`), and `data/annotation/T2T-CHM13v2.0_gene_annot_granges.rds`.
+
+**Produces:** `public_crispr_library/restricted_library/*.tsv` — this is the actual GuideRefine input used in this study.
+
+---
 
 ### `sgrna_off_target_classification.Rmd` (R)
 
@@ -32,80 +60,4 @@ Run once per library (avana, brunello, tkov3, yusa, jacquere). The script suppor
 
 ---
 
-### `normalize_lfc_utils.py` (Python — shared utility)
-
-Shared helper functions imported by all five normalization notebooks. Not run directly.
-
-Provides:
-- `normalize_column()` — median-centres and MAD-scales a single LFC column.
-- `scale_essential()` — scales LFC values so that the mean absolute LFC of Hart 2014 core-essential genes equals 1.
-- `sanity_check_scale_essential()` — boxplot QC showing LFC distributions before and after scaling.
-- `mean_row()` — averages LFC across cell lines per sgRNA.
-
----
-
-### `normalize_avana_lfc.ipynb` (Python)
-
-Normalizes raw LFC data for the **Avana** library.
-
-**Requires:** `data/sgrna_lfc_data/avana_data/` (raw LFC files)
-
-**Produces:** `data/sgrna_lfc_data/output_normalized/avana_normalized_lfc.csv`
-
----
-
-### `normalize_brunello_lfc.ipynb` (Python)
-
-Normalizes raw LFC data for the **Brunello** library (A375 cell line, Sanson et al. 2018).
-
-**Requires:** `data/sgrna_lfc_data/brunello_data/` (raw LFC files)
-
-**Produces:** `data/sgrna_lfc_data/output_normalized/brunello_a375_normalized_lfc.csv`
-
----
-
-### `normalize_jacquere_lfc.ipynb` (Python)
-
-Normalizes raw LFC data for the **Jacquere** library.
-
-**Requires:** `data/sgrna_lfc_data/jacquere_data/` (raw LFC files)
-
-**Produces:** `data/sgrna_lfc_data/output_normalized/jacquere_normalized_lfc.csv`
-
----
-
-### `normalize_tkov3_lfc.ipynb` (Python)
-
-Normalizes raw LFC data for the **TKOv3** library (RPE-1 cell line).
-
-**Requires:** `data/sgrna_lfc_data/tkov3_data/` (raw LFC files)
-
-**Produces:** `data/sgrna_lfc_data/output_normalized/tkov3_rpe1_normalized_lfc.csv`
-
----
-
-### `normalize_yusa_lfc.ipynb` (Python)
-
-Normalizes raw LFC data for the **Yusa (Project Score)** library.
-
-**Requires:** `data/sgrna_lfc_data/yusa_data/` (raw LFC files)
-
-**Produces:** `data/sgrna_lfc_data/output_normalized/yusa_normalized_lfc.csv`
-
----
-
-## Normalization method (all notebooks)
-
-Each notebook applies the same two-step normalization via `normalize_lfc_utils.py`:
-
-1. **Median-MAD normalization** — each LFC column is centred by its median and scaled by its MAD, making distributions comparable across screens.
-2. **Essential-gene scaling** — LFC values are divided by the mean absolute LFC of Hart 2014 core-essential genes (`data/sgrna_lfc_data/constitutive_core_essential_hart_2014.csv`), anchoring the scale so that essential-gene depletion corresponds to approximately −1.
-
-The notebooks were run using the `depmap_ppi` conda environment (Python 3.12.7, Anaconda distribution). The full environment is exported to [`depmap_ppi_environment.yml`](depmap_ppi_environment.yml) in this directory — recreate it with:
-
-```bash
-conda env create -f scripts/data_preparation_scripts/depmap_ppi_environment.yml
-conda activate depmap_ppi
-```
-
-Key package versions: pandas 2.2.2, numpy 1.26.4, matplotlib 3.9.2, seaborn 0.13.2, jupyterlab 4.2.5.
+LFC normalization (`normalize_{library}_lfc.ipynb`, `normalize_lfc_utils.py`, the `depmap_ppi` conda environment) now lives in [`../sgrna_log_fold_change_scripts/`](../sgrna_log_fold_change_scripts/README.md).
