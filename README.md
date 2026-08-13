@@ -23,15 +23,23 @@ CRISPR-KO-library-survey/
 │   ├── T2T_annotation_scripts/                      # One-time genome resource setup
 │   │   ├── 01_T2T_gff_to_ccds_conversion.Rmd       # GFF → GRanges annotation object
 │   │   └── 02_forge_T2T_bsgenome.Rmd               # Build BSgenome.Hsapiens.NCBI.T2TCHM13v2.0
-│   └── data_preparation_scripts/
-│       ├── build_restricted_library.Rmd             # Builds the restricted+control library
-│       ├── sgrna_off_target_classification.Rmd      # Classifies sgRNA alignments
+│   ├── data_preparation_scripts/
+│   │   ├── build_restricted_library.Rmd             # Builds the restricted+control library
+│   │   ├── sgrna_off_target_classification.Rmd      # Classifies sgRNA alignments
+│   │   ├── reformat_sgRNA_library.rmd                # Raw -> processed for standard-format libraries
+│   │   └── reformat_Jacquere_library.Rmd             # Raw -> processed for Jacquere (multi-gene fields)
+│   └── sgrna_log_fold_change_scripts/
 │       ├── normalize_lfc_utils.py                   # Shared normalization functions
 │       ├── normalize_avana_lfc.ipynb
 │       ├── normalize_brunello_lfc.ipynb
 │       ├── normalize_jacquere_lfc.ipynb
 │       ├── normalize_tkov3_lfc.ipynb
 │       └── normalize_yusa_lfc.ipynb
+│
+├── public_crispr_library/                           # Raw, processed, and restricted input sgRNA libraries (Avana, Brunello, TKOv3, Yusa, Jacquere)
+│   ├── raw/
+│   ├── processed/
+│   └── restricted_library/
 │
 ├── figure/                                          # Output figures (.png)
 │
@@ -57,7 +65,7 @@ This installs all required CRAN and Bioconductor packages. Run it once before pr
 Install Python dependencies (for LFC normalization) by recreating the exact conda environment:
 
 ```bash
-conda env create -f scripts/data_preparation_scripts/depmap_ppi_environment.yml
+conda env create -f scripts/sgrna_log_fold_change_scripts/depmap_ppi_environment.yml
 conda activate depmap_ppi
 ```
 
@@ -74,9 +82,9 @@ Run the scripts in `scripts/T2T_annotation_scripts/` once to build the genome re
 
 Run `scripts/data_preparation_scripts/build_restricted_library.Rmd`. For each library, this splits out control sgRNAs, restricts targeting guides to genes passing both eligibility criteria (HGNC protein-coding, T2T-CHM13 canonical transcript), and writes a restricted+control library ready for refinement.
 
-**Requires:** `data/library_data/original_library/*.tsv`, an HGNC complete-set snapshot (`data/hgnc_complete_set_*.txt`), and `data/annotation/T2T-CHM13v2.0_gene_annot_granges.rds` (from Step 0).
+**Requires:** `public_crispr_library/processed/*.tsv`, an HGNC complete-set snapshot (`data/hgnc_complete_set_*.txt`), and `data/annotation/T2T-CHM13v2.0_gene_annot_granges.rds` (from Step 0).
 
-**Produces:** `data/library_data/restricted_library/*.tsv`, `library_survey_supplementary_materials/all_working_library_composition.csv`
+**Produces:** `public_crispr_library/restricted_library/*.tsv`, `library_survey_supplementary_materials/all_working_library_composition.csv`
 
 Next, run GuideRefine (separate tool) on each restricted library — this produces the alignment CSVs, full reports, and disposed-sgRNA lists that the remaining steps depend on.
 
@@ -98,7 +106,7 @@ Run `scripts/data_preparation_scripts/sgrna_off_target_classification.Rmd`. It c
 
 ### Step 3 — Normalize LFC
 
-Run each `scripts/data_preparation_scripts/normalize_{library}_lfc.ipynb` in Jupyter.
+Run each `scripts/sgrna_log_fold_change_scripts/normalize_{library}_lfc.ipynb` in Jupyter.
 
 **Requires:** raw LFC files in `data/sgrna_lfc_data/{library}_data/`.
 
@@ -191,7 +199,7 @@ Large files (`.csv`, `.tsv`, `.xlsx`, `.gz`) are git-ignored. Re-download or cop
 
 ### Python (3.12.7)
 
-Notebooks were run using the `depmap_ppi` conda environment (Python 3.12.7, Anaconda distribution). The full environment specification is exported to [`scripts/data_preparation_scripts/depmap_ppi_environment.yml`](scripts/data_preparation_scripts/depmap_ppi_environment.yml).
+Notebooks were run using the `depmap_ppi` conda environment (Python 3.12.7, Anaconda distribution). The full environment specification is exported to [`scripts/sgrna_log_fold_change_scripts/depmap_ppi_environment.yml`](scripts/sgrna_log_fold_change_scripts/depmap_ppi_environment.yml).
 
 | Package | Version | Purpose |
 |---|---|---|
