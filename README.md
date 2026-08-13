@@ -12,19 +12,19 @@ CRISPR-KO-library-survey/
 ├── scripts/
 │   ├── GuideRefine-functions.R                      # Local copy of GuideRefine shared functions
 │   ├── CRISPR-KO-library-survey-functions.R         # Shared R functions for this project
-│   ├── Fig2A-B_Fig3A_library_overview.Rmd           # → Fig2A, Fig2B, Fig3A
-│   ├── SuppFig1A_T2T_vs_hg38_comparison.Rmd         # → SuppFig1A, SuppTable2A
-│   ├── Fig2C-D_SuppFig1B-K_lfc_stratification.Rmd   # → Fig2C–D, SuppFig1B–K
-│   ├── SuppFig1L-N_SuppTable1A_drepanos_comparison.Rmd # → SuppFig1L–N, SuppTable1A
-│   ├── Fig3B-E_SuppFig2A-D_cds_pam_analysis.Rmd     # → Fig3B–E, SuppFig3A–D
-│   ├── SuppTable1B_aggregate_sgrna_mini_library.Rmd # → SuppTable1B
-│   ├── SuppTable1C_all_consistently_underrepresented_genes.Rmd # → SuppTable1C
+│   ├── Fig2A-B_Fig3A_library_overview.Rmd
+│   ├── SuppFig1A_T2T_vs_hg38_comparison.Rmd
+│   ├── Fig2C-D_SuppFig1B-K_lfc_stratification.Rmd
+│   ├── SuppFig1L-N_SuppTable1A_drepanos_comparison.Rmd
+│   ├── Fig3B-E_SuppFig2A-D_cds_pam_analysis.Rmd
+│   ├── SuppTable1B_all_consistently_underrepresented_genes.Rmd
+│   ├── SuppTable1C_aggregate_sgrna_mini_library.Rmd
 │   ├── LibrarySurvey_install_req_packages.R         # Package installer (run first)
 │   ├── T2T_annotation_scripts/                      # One-time genome resource setup
 │   │   ├── 01_T2T_gff_to_ccds_conversion.Rmd       # GFF → GRanges annotation object
 │   │   └── 02_forge_T2T_bsgenome.Rmd               # Build BSgenome.Hsapiens.NCBI.T2TCHM13v2.0
 │   └── data_preparation_scripts/
-│       ├── build_restricted_library.Rmd             # Builds the restricted+control library (Fig1B)
+│       ├── build_restricted_library.Rmd             # Builds the restricted+control library
 │       ├── sgrna_off_target_classification.Rmd      # Classifies sgRNA alignments
 │       ├── normalize_lfc_utils.py                   # Shared normalization functions
 │       ├── normalize_avana_lfc.ipynb
@@ -33,32 +33,12 @@ CRISPR-KO-library-survey/
 │       ├── normalize_tkov3_lfc.ipynb
 │       └── normalize_yusa_lfc.ipynb
 │
-├── data/
-│   ├── annotation/                  # Genome annotation files (see annotation/README.md)
-│   ├── T2T_data/                    # T2T-CHM13 TxDb and related resources
-│   ├── library_data/
-│   │   ├── original_library/        # Original sgRNA library TSV files
-│   │   └── restricted_library/      # Restricted+control library TSVs (GuideRefine input)
-│   ├── sgrna_lfc_data/              # Alignment CSVs and normalized LFC per library
-│   │   ├── avana_data/
-│   │   ├── brunello_data/
-│   │   ├── tkov3_data/
-│   │   ├── yusa_data/
-│   │   ├── jacquere_data/
-│   │   ├── hg38_alignment/
-│   │   ├── output_normalized/
-│   │   └── T2T_vs_hg38_comparison/
-│   ├── guiderefine_output/          # Full reports and disposed sgRNA lists
-│   │   ├── Jul2026_T2T-CHM13/
-│   │   └── hg38/
-│   ├── removed_genes_survey/        # Removed-gene lists and CDS/PAM data across libraries
-│   ├── drepanos_bernard_difference/ # Drepanos vs. Bernard sgRNA classification comparison
-│   └── read_count_data/             # Raw read counts per library/screen
+├── figure/                                          # Output figures (.png)
 │
-├── figure/                          # Output figures (.png)
-│
-└── library_survey_supplementary_materials/  # Supplementary tables 1A-1C, per-library classification CSVs
+└── library_survey_supplementary_materials/          # Supplementary tables 1A–1C, per-library classification CSVs, GuideRefine output
 ```
+
+`data/` is git-ignored and not shown above — it is regenerated locally by the steps in [Running the analysis](#running-the-analysis).
 
 ---
 
@@ -96,7 +76,7 @@ Run `scripts/data_preparation_scripts/build_restricted_library.Rmd`. For each li
 
 **Requires:** `data/library_data/original_library/*.tsv`, an HGNC complete-set snapshot (`data/hgnc_complete_set_*.txt`), and `data/annotation/T2T-CHM13v2.0_gene_annot_granges.rds` (from Step 0).
 
-**Produces:** `data/library_data/restricted_library/*.tsv`, `library_survey_supplementary_materials/Fig1B_working_library_composition.csv`
+**Produces:** `data/library_data/restricted_library/*.tsv`, `library_survey_supplementary_materials/all_working_library_composition.csv`
 
 Next, run GuideRefine (separate tool) on each restricted library — this produces the alignment CSVs, full reports, and disposed-sgRNA lists that the remaining steps depend on.
 
@@ -135,8 +115,8 @@ Knit each `.Rmd` in `scripts/` from RStudio or via `rmarkdown::render()`.
 | `Fig2C-D_SuppFig1B-K_lfc_stratification.Rmd` | Fig2C–D, SuppFig1B–K |
 | `SuppFig1L-N_SuppTable1A_drepanos_comparison.Rmd` | SuppFig1L–N, SuppTable1A |
 | `Fig3B-E_SuppFig2A-D_cds_pam_analysis.Rmd` | Fig3B–E, SuppFig3A–D |
-| `SuppTable1B_aggregate_sgrna_mini_library.Rmd` | SuppTable1B |
-| `SuppTable1C_all_consistently_underrepresented_genes.Rmd` | SuppTable1C |
+| `SuppTable1B_all_consistently_underrepresented_genes.Rmd` | SuppTable1B |
+| `SuppTable1C_aggregate_sgrna_mini_library.Rmd` | SuppTable1C |
 
 ---
 
@@ -155,9 +135,7 @@ source(here::here("scripts", "CRISPR-KO-library-survey-functions.R"))
 
 ## Data sources
 
-See [`data/README.md`](data/README.md) for LFC file provenance, and [`data/annotation/README.md`](data/annotation/README.md) for genome annotation file sources.
-
-> Large files (`.csv`, `.tsv`, `.xlsx`, `.gz`) are git-ignored. Re-download or copy from GuideRefine if cloning on a new machine.
+Large files (`.csv`, `.tsv`, `.xlsx`, `.gz`) are git-ignored. Re-download or copy from GuideRefine if cloning on a new machine.
 
 ---
 
