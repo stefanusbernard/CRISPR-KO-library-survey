@@ -1,3 +1,6 @@
 *.ipynb filter=nbstripout
 *.zpln filter=nbstripout
 *.ipynb diff=ipynb
+library_survey_supplementary_materials/**/*.html linguist-generated
+*.Rmd linguist-detectable
+*.rmd linguist-detectable
